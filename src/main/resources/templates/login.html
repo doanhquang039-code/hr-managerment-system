@@ -174,11 +174,22 @@
             class="social-icon text-danger"
             ><i class="fab fa-instagram fa-lg"></i
           ></a>
-          <a href="/oauth2/authorization/google"> 🔵 Đăng nhập với Google </a>
-          <br />
-          <a href="/oauth2/authorization/facebook">
-            🔷 Đăng nhập với Facebook
-          </a>
+        </div>
+        <div class="d-grid gap-2">
+          <a th:href="@{/oauth2/authorization/google}" class="btn btn-danger"
+            >Login with Google</a
+          >
+          <a th:href="@{/oauth2/authorization/facebook}" class="btn btn-primary"
+            >Login with Facebook</a
+          >
+          <a
+            th:href="@{/oauth2/authorization/zalo}"
+            class="btn btn-info text-white"
+            >Login with Zalo</a
+          >
+          <a th:href="@{/oauth2/authorization/tiktok}" class="btn btn-dark"
+            >Login with TikTok</a
+          >
         </div>
       </div>
     </div>

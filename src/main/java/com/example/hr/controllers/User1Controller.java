@@ -28,15 +28,29 @@ public class User1Controller {
     @Autowired
     private TaskAssignmentRepository taskAssignmentRepository;
 
-   @GetMapping("/dashboard") // Hoặc endpoint tương ứng của bạn
-public String dashboard(Principal principal, Model model) {
-    // Lấy username từ người dùng đang đăng nhập
-    String username = principal.getName(); 
+  @GetMapping("/dashboard")
+public String dashboard(Authentication authentication, Model model) {
+    String email = "";
     
-    // Sau đó mới dùng biến username này để tìm kiếm và dùng .orElse(null)
-    User user = userRepository.findByUsername(username).orElse(null);
+    if (authentication.getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User) {
+        // Nếu là Google Login
+        org.springframework.security.oauth2.core.user.OAuth2User oAuth2User = 
+            (org.springframework.security.oauth2.core.user.OAuth2User) authentication.getPrincipal();
+        email = oAuth2User.getAttribute("email");
+    } else {
+        // Nếu là Login thường
+        email = authentication.getName();
+    }
+
+    // Tìm user trong DB theo Email lấy từ Google
+    User user = userRepository.findByEmail(email).orElse(null);
     
+    if (user == null) {
+        // Nếu login Google thành công nhưng Email này chưa có trong bảng User của mình
+        return "redirect:/login?error=user_not_found";
+    }
+
     model.addAttribute("user", user);
-    return "user/dashboard";
+    return "user1/dashboard"; // Đảm bảo file này tồn tại trong templates/user/
 }
 }

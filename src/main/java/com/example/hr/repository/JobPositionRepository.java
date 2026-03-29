@@ -1,13 +1,19 @@
 package com.example.hr.repository;
 
+import com.example.hr.models.JobPosition;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.example.hr.models.JobPosition;
-
-
+@Repository
 public interface JobPositionRepository extends JpaRepository<JobPosition, Integer> {
-	List<JobPosition> findByActiveTrue();
-	List<JobPosition> findByTitleContainingIgnoreCase(String title);
+
+    // ✅ Thêm cái này — Controller đang gọi
+    List<JobPosition> findByActiveTrue();
+
+    // ✅ Đổi từ findByTitleContainingIgnoreCase → findByPositionNameContainingIgnoreCase
+    List<JobPosition> findByPositionNameContainingIgnoreCase(String positionName);
+
+    // ✅ Giữ lại
+    List<JobPosition> findByActive(Boolean active);
 }
