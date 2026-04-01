@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.User;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.data.domain.Sort;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     
@@ -21,4 +21,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Hàm tìm kiếm theo tên (Hết lỗi findByFullNameContainingAndStatus)
     List<User> findByFullNameContainingAndStatus(String fullName, UserStatus status);
+    List<User> findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email, Sort sort);
+    
+    // Lọc theo phòng ban và sắp xếp
+    List<User> findByDepartmentId(Integer deptId, Sort sort);
 }

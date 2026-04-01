@@ -13,7 +13,9 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.models.Contract;
 import com.example.hr.repository.ContractRepository;
 import com.example.hr.repository.UserRepository;
+
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @Controller
 @RequestMapping({ "/admin/contracts", "/manager/contracts" })
@@ -43,4 +45,17 @@ public String list(@RequestParam(name = "keyword", required = false) String keyw
         contractRepository.save(contract);
         return "redirect:/admin/contracts";
     }
+    @GetMapping("/contracts")
+public String listContracts(
+        @RequestParam(required = false) String employeeName,
+        @RequestParam(required = false) String type,
+        @RequestParam(defaultValue = "startDate") String sortBy,
+        Model model) {
+    
+    Sort sort = Sort.by(sortBy).descending();
+    List<Contract> contracts = contractRepository.filterContracts(employeeName, type, null, sort);
+    
+    model.addAttribute("contracts", contracts);
+    return "contract/list";
+}
 }

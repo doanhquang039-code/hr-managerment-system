@@ -86,7 +86,7 @@ public class EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(to);
         helper.setSubject(subject);
-        helper.setText(htmlContent, true); // true = HTML
+        helper.setText(htmlContent, true); 
         mailSender.send(message);
     }
 }

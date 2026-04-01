@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import org.springframework.data.domain.Sort;
 import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
@@ -205,4 +205,24 @@ public class UserController {
         userRepository.save(user);
         return "redirect:/admin/users";
     }
+    @GetMapping("/user/list")
+public String listUsers(
+        @RequestParam(required = false) String keyword,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "asc") String direction,
+        Model model) {
+    
+    Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+    List<User> users;
+
+    if (keyword != null && !keyword.isEmpty()) {
+        users = userRepository.findByFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, sort);
+    } else {
+        users = userRepository.findAll(sort);
+    }
+
+    model.addAttribute("users", users);
+    model.addAttribute("keyword", keyword);
+    return "user_list";
+}
 }

@@ -1,5 +1,5 @@
 package com.example.hr.repository;
-
+import org.springframework.data.domain.Sort;
 import com.example.hr.models.Contract;
 import com.example.hr.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +15,8 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     List<Contract> findAllWithUser(@Param("keyword") String keyword);
 
     List<Contract> findByUser(User user);
+    @Query("SELECT c FROM Contract c WHERE " +
+           "(:employeeName IS NULL OR c.user.fullName LIKE %:employeeName%) AND " +
+           "(:type IS NULL OR c.contractType = :type)")
+    List<Contract> filterContracts(String employeeName, String type, String status, Sort sort);
 }

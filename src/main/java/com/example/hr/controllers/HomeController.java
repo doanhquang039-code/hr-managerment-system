@@ -36,7 +36,7 @@ public class HomeController {
         } else if (roles.contains("ROLE_HIRING")) {
             return "hiring/dashboard";
         } else {
-            return "user/profile";
+            return "user1/profile";
         }
     }
 }
