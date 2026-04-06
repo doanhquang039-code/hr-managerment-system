@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo Thanh toán - HRMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f0f2f5; }
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(180deg, #1a1f2e 0%, #2d3748 100%);
+            color: white;
+            padding-top: 20px;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar a {
+            color: #a0aec0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 0;
+            transition: all 0.2s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 3px solid #667eea;
+        }
+        .gateway-option {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .gateway-option:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+        .gateway-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .gateway-logo {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .gateway-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .gateway-desc {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .section-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar shadow">
+            <div style="font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px;">⚡ HRMS ADMIN</div>
+            <hr style="border-color: rgba(255,255,255,0.15)">
+            <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+            <a th:href="@{/admin/payment}" class="active"><i class="bi bi-bank"></i> Thanh toán</a>
+            <form th:action="@{/logout}" method="post" class="px-3 mt-4">
+                <button type="submit" class="btn btn-outline-light btn-sm w-100">
+                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </button>
+            </form>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+            <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
+                <div>
+                    <h1 class="h3 mb-0">➕ Tạo Thanh toán</h1>
+                    <small class="text-muted">Tạo giao dịch thanh toán mới</small>
+                </div>
+                <a th:href="@{/admin/payment}" class="btn btn-secondary">← Quay lại</a>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <form th:action="@{/admin/payment/save}" method="post" id="paymentForm">
+                        <!-- Thông tin cơ bản -->
+                        <div class="section-title">
+                            👤 Thông tin nhân viên
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nhân viên <span class="text-danger">*</span></label>
+                            <select name="userId" class="form-select" required>
+                                <option value="">-- Chọn nhân viên --</option>
+                                <option th:each="user : ${users}" 
+                                        th:value="${user.id}" 
+                                        th:text="${user.fullName + ' (' + user.username + ')'}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Thông tin thanh toán -->
+                        <div class="section-title">
+                            💰 Thông tin thanh toán
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Loại thanh toán <span class="text-danger">*</span></label>
+                                    <select name="paymentType" class="form-select" required>
+                                        <option value="SALARY">💵 Lương</option>
+                                        <option value="BONUS">🎁 Thưởng</option>
+                                        <option value="REWARD">🏆 Reward</option>
+                                        <option value="ADVANCE">⏳ Tạm ứng</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Số tiền <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="number" name="amount" step="0.01" class="form-control" placeholder="0.00" required>
+                                        <span class="input-group-text">VND</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Payroll (Tùy chọn)</label>
+                                    <select name="payrollId" class="form-select">
+                                        <option value="">-- Không liên kết --</option>
+                                        <option th:each="payroll : ${payrolls}" 
+                                                th:value="${payroll.id}" 
+                                                th:text="${'Tháng ' + payroll.month + '/' + payroll.year}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Phương thức thanh toán -->
+                        <div class="section-title">
+                            🏦 Phương thức thanh toán
+                        </div>
+
+                        <!-- Chuyển khoản -->
+                        <div class="gateway-option" onclick="selectPaymentMethod('BANK_TRANSFER')">
+                            <div class="gateway-logo">🏦</div>
+                            <div class="gateway-name">Chuyển khoản ngân hàng</div>
+                            <div class="gateway-desc">Thanh toán trực tiếp qua tài khoản ngân hàng</div>
+                            <input type="radio" name="paymentMethod" value="BANK_TRANSFER" style="display: none;" id="method_bank">
+                        </div>
+
+                        <!-- Momo -->
+                        <div class="gateway-option" onclick="selectPaymentMethod('MOMO')">
+                            <div class="gateway-logo">📱</div>
+                            <div class="gateway-name">Momo</div>
+                            <div class="gateway-desc">Ví điện tử Momo - Thanh toán an toàn, nhanh chóng</div>
+                            <input type="radio" name="paymentMethod" value="MOMO" style="display: none;" id="method_momo">
+                        </div>
+
+                        <!-- VNPay -->
+                        <div class="gateway-option" onclick="selectPaymentMethod('VNPAY')">
+                            <div class="gateway-logo">💳</div>
+                            <div class="gateway-name">VNPay</div>
+                            <div class="gateway-desc">Cổng thanh toán VNPay - Hỗ trợ tất cả ngân hàng</div>
+                            <input type="radio" name="paymentMethod" value="VNPAY" style="display: none;" id="method_vnpay">
+                        </div>
+
+                        <!-- Tiền mặt -->
+                        <div class="gateway-option" onclick="selectPaymentMethod('CASH')">
+                            <div class="gateway-logo">💰</div>
+                            <div class="gateway-name">Tiền mặt</div>
+                            <div class="gateway-desc">Thanh toán bằng tiền mặt trực tiếp</div>
+                            <input type="radio" name="paymentMethod" value="CASH" style="display: none;" id="method_cash">
+                        </div>
+
+                        <!-- Thông tin tài khoản (hiển thị khi chọn chuyển khoản) -->
+                        <div id="bankInfo" style="display: none;">
+                            <div class="section-title">
+                                🏛️ Thông tin tài khoản ngân hàng
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Số tài khoản</label>
+                                        <input type="text" name="accountNumber" class="form-control" placeholder="Ví dụ: 1234567890">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tên ngân hàng</label>
+                                        <select name="bankName" class="form-select">
+                                            <option value="">-- Chọn ngân hàng --</option>
+                                            <option>Vietcombank</option>
+                                            <option>Techcombank</option>
+                                            <option>MB Bank</option>
+                                            <option>ACB</option>
+                                            <option>VietinBank</option>
+                                            <option>BIDV</option>
+                                            <option>Agribank</option>
+                                            <option>TPBank</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ghi chú -->
+                        <div class="section-title">
+                            📝 Ghi chú
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú thêm</label>
+                            <textarea name="notes" class="form-control" rows="3" placeholder="Nhập ghi chú..."></textarea>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Tạo thanh toán
+                            </button>
+                            <a th:href="@{/admin/payment}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Sidebar - Hướng dẫn -->
+                <div class="col-md-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-info text-white fw-bold">
+                            ℹ️ Hướng dẫn
+                        </div>
+                        <div class="card-body">
+                            <h6 class="mb-3">Lưu ý khi tạo thanh toán:</h6>
+                            <ul class="small">
+                                <li>Chọn nhân viên cần thanh toán</li>
+                                <li>Nhập số tiền chính xác</li>
+                                <li>Chọn phương thức thanh toán phù hợp</li>
+                                <li>Nếu chuyển khoản, điền đầy đủ thông tin tài khoản</li>
+                                <li>Nhấn "Tạo thanh toán" để hoàn tất</li>
+                            </ul>
+                            <hr>
+                            <h6 class="mb-2">Các phương thức hỗ trợ:</h6>
+                            <p class="small">
+                                <strong>🏦 Chuyển khoản:</strong> Chuyển tiền trực tiếp qua ngân hàng<br>
+                                <strong>📱 Momo:</strong> Người nhận nhận tiền qua ví Momo<br>
+                                <strong>💳 VNPay:</strong> Sử dụng cổng thanh toán VNPay<br>
+                                <strong>💰 Tiền mặt:</strong> Thanh toán bằng tiền mặt
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function selectPaymentMethod(method) {
+        // Bỏ selected từ các option khác
+        document.querySelectorAll('.gateway-option').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Thêm selected vào option được chọn
+        event.currentTarget.classList.add('selected');
+        
+        // Select radio button tương ứng
+        document.getElementById('method_' + method.toLowerCase()).checked = true;
+        
+        // Hiển thị/ẩn thông tin tài khoản ngân hàng
+        if (method === 'BANK_TRANSFER') {
+            document.getElementById('bankInfo').style.display = 'block';
+        } else {
+            document.getElementById('bankInfo').style.display = 'none';
+        }
+    }
+    
+    // Mặc định chọn chuyển khoản
+    window.addEventListener('load', function() {
+        selectPaymentMethod('BANK_TRANSFER');
+        document.querySelector('.gateway-option').click();
+    });
+</script>
+</body>
+</html>
