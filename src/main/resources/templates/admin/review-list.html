@@ -1,0 +1,183 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Đánh Giá Hiệu Suất - HRMS Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
+    .sidebar { height: 100vh; background: linear-gradient(180deg, #1a1f2e 0%, #2d3748 100%); color: white; padding-top: 20px; position: sticky; top: 0; overflow-y: auto; }
+    .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; transition: all 0.2s; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #667eea; }
+    .sidebar-logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px; }
+    .score-badge { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+    .score-great { background: linear-gradient(135deg,#11998e,#38ef7d); color: white; }
+    .score-good  { background: linear-gradient(135deg,#667eea,#764ba2); color: white; }
+    .score-avg   { background: linear-gradient(135deg,#f093fb,#f5576c); color: white; }
+    .score-poor  { background: linear-gradient(135deg,#f7971e,#ffd200); color: #1a202c; }
+    .review-card { border-radius: 12px; border: none; transition: transform 0.2s, box-shadow 0.2s; }
+    .review-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important; }
+    .progress { height: 8px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <nav class="col-md-2 d-none d-md-block sidebar shadow">
+      <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+      <hr style="border-color: rgba(255,255,255,0.15)"/>
+      <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+      <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
+      <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 8px 16px"/>
+      <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
+      <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
+      <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
+      <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+      <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
+      <a th:href="@{/admin/reviews}" class="active"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
+      <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+      <form th:action="@{/logout}" method="post" class="px-3 mt-4">
+        <button type="submit" class="btn btn-outline-light btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </button>
+      </form>
+    </nav>
+
+    <!-- Main -->
+    <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+      <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
+        <div>
+          <h1 class="h3 mb-0"><i class="bi bi-star-half text-warning me-2"></i>Đánh Giá Hiệu Suất (KPI)</h1>
+          <small class="text-muted">Quản lý đánh giá hiệu suất nhân viên theo kỳ</small>
+        </div>
+        <a th:href="@{/admin/reviews/add}" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-1"></i> Thêm đánh giá
+        </a>
+      </div>
+
+      <!-- Flash message -->
+      <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <!-- Filter -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+          <form th:action="@{/admin/reviews}" method="get" class="row g-2 align-items-center">
+            <div class="col-md-4">
+              <input type="text" name="period" th:value="${period}" class="form-control"
+                     placeholder="Kỳ đánh giá (VD: 2025-Q1)"/>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-search me-1"></i> Lọc
+              </button>
+              <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary ms-1">Tất cả</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Review Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="ps-4 border-0 text-uppercase small fw-bold">Nhân viên</th>
+                  <th class="border-0 text-uppercase small fw-bold">Kỳ / Ngày</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">KPI</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Thái độ</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Teamwork</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Tổng</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Trạng thái</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(reviews)}">
+                  <td colspan="8" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                    <div class="mt-2">Chưa có đánh giá nào. <a th:href="@{/admin/reviews/add}">Thêm ngay</a></div>
+                  </td>
+                </tr>
+                <tr th:each="r : ${reviews}">
+                  <td class="ps-4">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="fw-semibold" th:text="${r.user.fullName}">Nhân viên</div>
+                    </div>
+                    <div class="text-muted small" th:text="${r.user.department != null ? r.user.department.departmentName : '---'}"></div>
+                  </td>
+                  <td>
+                    <div class="fw-semibold" th:text="${r.reviewPeriod}">Q1-2025</div>
+                    <div class="text-muted small" th:text="${r.reviewDate}"></div>
+                  </td>
+                  <td class="text-center">
+                    <div class="progress mb-1">
+                      <div class="progress-bar bg-primary" th:style="'width:' + r.kpiScore + '%'"></div>
+                    </div>
+                    <small th:text="${r.kpiScore}">0</small>
+                  </td>
+                  <td class="text-center">
+                    <div class="progress mb-1">
+                      <div class="progress-bar bg-info" th:style="'width:' + r.attitudeScore + '%'"></div>
+                    </div>
+                    <small th:text="${r.attitudeScore}">0</small>
+                  </td>
+                  <td class="text-center">
+                    <div class="progress mb-1">
+                      <div class="progress-bar bg-success" th:style="'width:' + r.teamworkScore + '%'"></div>
+                    </div>
+                    <small th:text="${r.teamworkScore}">0</small>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge rounded-pill px-3 py-2"
+                          th:classappend="'bg-' + r.ratingColor"
+                          th:text="${r.overallScore + ' - ' + r.ratingLabel}">0</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge"
+                          th:classappend="${r.status.name() == 'APPROVED' ? 'bg-success' : (r.status.name() == 'SUBMITTED' ? 'bg-primary' : 'bg-secondary')}"
+                          th:text="${r.status.label}">Draft</span>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <a th:href="@{/admin/reviews/edit/{id}(id=${r.id})}"
+                         class="btn btn-outline-warning" title="Sửa">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a th:if="${r.status.name() != 'APPROVED'}"
+                         th:href="@{/admin/reviews/approve/{id}(id=${r.id})}"
+                         class="btn btn-outline-success" title="Duyệt">
+                        <i class="bi bi-check-lg"></i>
+                      </a>
+                      <a th:href="@{/admin/reviews/delete/{id}(id=${r.id})}"
+                         class="btn btn-outline-danger" title="Xoá"
+                         onclick="return confirm('Xoá đánh giá này?')">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0 py-3">
+          <small class="text-muted">Tổng: <span th:text="${reviews.size()}">0</span> đánh giá</small>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Tin Tuyển Dụng - HRMS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
+    .sidebar { height: 100vh; background: linear-gradient(180deg, #1a1f2e, #2d3748); color: white; padding-top: 20px; position: sticky; top: 0; overflow-y: auto; }
+    .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; transition: all 0.2s; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #667eea; }
+    .sidebar-logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px; }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block sidebar shadow">
+      <div class="sidebar-logo">🎯 HIRING</div>
+      <hr style="border-color:rgba(255,255,255,.15)"/>
+      <a th:href="@{/hiring}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a th:href="@{/hiring/postings}" class="active"><i class="bi bi-megaphone"></i> Tin tuyển dụng</a>
+      <a th:href="@{/hiring/candidates}"><i class="bi bi-people"></i> Ứng viên</a>
+      <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
+      <a th:href="@{/admin/dashboard}"><i class="bi bi-arrow-left-circle"></i> Admin</a>
+      <form th:action="@{/logout}" method="post" class="px-3 mt-4">
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+      </form>
+    </nav>
+
+    <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+      <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
+        <div>
+          <h1 class="h3 mb-0"><i class="bi bi-megaphone text-primary me-2"></i>Tin Tuyển Dụng</h1>
+          <small class="text-muted">Quản lý các vị trí đang tuyển dụng</small>
+        </div>
+        <a th:href="@{/hiring/postings/add}" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-1"></i> Đăng tin mới
+        </a>
+      </div>
+
+      <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${successMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <!-- Search -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+          <form th:action="@{/hiring/postings}" method="get" class="row g-2">
+            <div class="col-md-6">
+              <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                     placeholder="Tìm kiếm theo tiêu đề vị trí..."/>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search me-1"></i>Tìm</button>
+              <a th:href="@{/hiring/postings}" class="btn btn-outline-secondary ms-1">Tất cả</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="ps-4 border-0 text-uppercase small fw-bold">Vị trí</th>
+                  <th class="border-0 text-uppercase small fw-bold">Phòng ban</th>
+                  <th class="border-0 text-uppercase small fw-bold">Lương</th>
+                  <th class="border-0 text-uppercase small fw-bold">Deadline</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Trạng thái</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(postings)}">
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                    <div class="mt-2">Chưa có tin tuyển dụng. <a th:href="@{/hiring/postings/add}">Đăng ngay</a></div>
+                  </td>
+                </tr>
+                <tr th:each="p : ${postings}">
+                  <td class="ps-4">
+                    <div class="fw-semibold" th:text="${p.title}">Tên vị trí</div>
+                    <div class="text-muted small" th:text="${p.position != null ? p.position.positionName : '---'}"></div>
+                  </td>
+                  <td th:text="${p.department != null ? p.department.departmentName : '---'}">--</td>
+                  <td>
+                    <span class="small" th:if="${p.salaryMin != null and p.salaryMax != null}">
+                      <span th:text="${#numbers.formatDecimal(p.salaryMin, 0, 'COMMA', 0, 'POINT')}"></span>
+                      - <span th:text="${#numbers.formatDecimal(p.salaryMax, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ
+                    </span>
+                    <span class="text-muted small" th:unless="${p.salaryMin != null}">Thương lượng</span>
+                  </td>
+                  <td>
+                    <span th:if="${p.deadline != null}"
+                          th:classappend="${p.deadline.isBefore(T(java.time.LocalDate).now()) ? 'text-danger' : 'text-dark'}"
+                          th:text="${p.deadline}">--</span>
+                    <span class="text-muted" th:unless="${p.deadline != null}">--</span>
+                  </td>
+                  <td class="text-center">
+                    <span class="badge rounded-pill px-3"
+                          th:classappend="${p.status == 'OPEN' ? 'bg-success' : (p.status == 'FILLED' ? 'bg-primary' : 'bg-secondary')}"
+                          th:text="${p.status == 'OPEN' ? 'Đang mở' : (p.status == 'FILLED' ? 'Đã tuyển đủ' : 'Đã đóng')}">
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <a th:href="@{/hiring/postings/edit/{id}(id=${p.id})}" class="btn btn-outline-warning" title="Sửa">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a th:if="${p.status == 'OPEN'}"
+                         th:href="@{/hiring/postings/close/{id}(id=${p.id})}"
+                         class="btn btn-outline-secondary" title="Đóng tin"
+                         onclick="return confirm('Đóng tin tuyển dụng này?')">
+                        <i class="bi bi-x-circle"></i>
+                      </a>
+                      <a th:href="@{/hiring/postings/delete/{id}(id=${p.id})}"
+                         class="btn btn-outline-danger" title="Xoá"
+                         onclick="return confirm('Xoá tin tuyển dụng?')">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0 py-3">
+          <small class="text-muted">Tổng: <span th:text="${postings.size()}">0</span> tin tuyển dụng</small>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

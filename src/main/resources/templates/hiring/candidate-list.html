@@ -1,0 +1,167 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Quản Lý Ứng Viên - HRMS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
+    .sidebar { height: 100vh; background: linear-gradient(180deg, #1a1f2e, #2d3748); color: white; padding-top: 20px; position: sticky; top: 0; overflow-y: auto; }
+    .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; transition: all 0.2s; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #667eea; }
+    .sidebar-logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px; }
+    .filter-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; text-decoration: none; transition: all 0.2s; border: 2px solid transparent; }
+    .filter-chip.active, .filter-chip:hover { filter: brightness(0.9); }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block sidebar shadow">
+      <div class="sidebar-logo">🎯 HIRING</div>
+      <hr style="border-color:rgba(255,255,255,.15)"/>
+      <a th:href="@{/hiring}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a th:href="@{/hiring/postings}"><i class="bi bi-megaphone"></i> Tin tuyển dụng</a>
+      <a th:href="@{/hiring/candidates}" class="active"><i class="bi bi-people"></i> Ứng viên</a>
+      <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
+      <a th:href="@{/admin/dashboard}"><i class="bi bi-arrow-left-circle"></i> Admin</a>
+      <form th:action="@{/logout}" method="post" class="px-3 mt-4">
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+      </form>
+    </nav>
+
+    <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+      <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
+        <div>
+          <h1 class="h3 mb-0"><i class="bi bi-people text-success me-2"></i>Quản Lý Ứng Viên</h1>
+          <small class="text-muted">Theo dõi trạng thái ứng viên theo pipeline</small>
+        </div>
+        <a th:href="@{/hiring/candidates/add}" class="btn btn-success">
+          <i class="bi bi-person-plus me-1"></i> Thêm ứng viên
+        </a>
+      </div>
+
+      <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${successMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+
+      <!-- Pipeline Stats -->
+      <div class="d-flex flex-wrap gap-2 mb-4">
+        <a th:href="@{/hiring/candidates}" class="filter-chip bg-light text-dark border border-secondary"
+           th:classappend="${selectedStatus == null ? ' active border-secondary' : ''}">
+          Tất cả
+        </a>
+        <a th:href="@{/hiring/candidates(status='NEW')}" class="filter-chip bg-secondary text-white"
+           th:classappend="${selectedStatus == 'NEW' ? ' active' : ''}">
+          🆕 Mới (<span th:text="${newCount}">0</span>)
+        </a>
+        <a th:href="@{/hiring/candidates(status='SCREENING')}" class="filter-chip bg-info text-white"
+           th:classappend="${selectedStatus == 'SCREENING' ? ' active' : ''}">
+          🔍 Sàng lọc (<span th:text="${screeningCount}">0</span>)
+        </a>
+        <a th:href="@{/hiring/candidates(status='INTERVIEW')}" class="filter-chip bg-primary text-white"
+           th:classappend="${selectedStatus == 'INTERVIEW' ? ' active' : ''}">
+          💬 Phỏng vấn (<span th:text="${interviewCount}">0</span>)
+        </a>
+        <a th:href="@{/hiring/candidates(status='HIRED')}" class="filter-chip bg-success text-white"
+           th:classappend="${selectedStatus == 'HIRED' ? ' active' : ''}">
+          ✅ Đã tuyển (<span th:text="${hiredCount}">0</span>)
+        </a>
+      </div>
+
+      <!-- Search -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-3">
+          <form th:action="@{/hiring/candidates}" method="get" class="row g-2">
+            <div class="col-md-6">
+              <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                     placeholder="Tìm kiếm tên ứng viên..."/>
+            </div>
+            <div class="col-auto">
+              <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search me-1"></i>Tìm</button>
+              <a th:href="@{/hiring/candidates}" class="btn btn-outline-secondary ms-1">Tất cả</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="bg-light">
+                <tr>
+                  <th class="ps-4 border-0 text-uppercase small fw-bold">Ứng viên</th>
+                  <th class="border-0 text-uppercase small fw-bold">Vị trí ứng tuyển</th>
+                  <th class="border-0 text-uppercase small fw-bold">Ngày nộp</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Trạng thái</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Chuyển trạng thái</th>
+                  <th class="border-0 text-uppercase small fw-bold text-center">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${#lists.isEmpty(candidates)}">
+                  <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox" style="font-size:2rem;"></i>
+                    <div class="mt-2">Không có ứng viên nào.</div>
+                  </td>
+                </tr>
+                <tr th:each="c : ${candidates}">
+                  <td class="ps-4">
+                    <div class="fw-semibold" th:text="${c.fullName}">Tên</div>
+                    <div class="text-muted small">
+                      <i class="bi bi-envelope me-1"></i><span th:text="${c.email}">email</span>
+                      <span th:if="${c.phone}">· <i class="bi bi-phone me-1"></i><span th:text="${c.phone}"></span></span>
+                    </div>
+                  </td>
+                  <td th:text="${c.jobPosting != null ? c.jobPosting.title : '---'}">--</td>
+                  <td th:text="${c.appliedDate}">--</td>
+                  <td class="text-center">
+                    <span class="badge rounded-pill px-3" th:classappend="'bg-' + c.statusColor" th:text="${c.statusLabel}">New</span>
+                  </td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                        Chuyển <i class="bi bi-chevron-down ms-1" style="font-size:.7rem;"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/hiring/candidates/status/{id}(id=${c.id},status='SCREENING')}">🔍 Sàng lọc</a></li>
+                        <li><a class="dropdown-item" th:href="@{/hiring/candidates/status/{id}(id=${c.id},status='INTERVIEW')}">💬 Phỏng vấn</a></li>
+                        <li><a class="dropdown-item" th:href="@{/hiring/candidates/status/{id}(id=${c.id},status='OFFER')}">📋 Gửi Offer</a></li>
+                        <li><a class="dropdown-item text-success" th:href="@{/hiring/candidates/status/{id}(id=${c.id},status='HIRED')}">✅ Đã tuyển</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" th:href="@{/hiring/candidates/status/{id}(id=${c.id},status='REJECTED')}">❌ Từ chối</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                      <a th:href="@{/hiring/candidates/edit/{id}(id=${c.id})}" class="btn btn-outline-warning" title="Sửa">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a th:href="@{/hiring/candidates/delete/{id}(id=${c.id})}"
+                         class="btn btn-outline-danger" title="Xoá"
+                         onclick="return confirm('Xoá ứng viên này?')">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer bg-white border-0 py-3">
+          <small class="text-muted">Hiển thị <span th:text="${candidates.size()}">0</span> ứng viên</small>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

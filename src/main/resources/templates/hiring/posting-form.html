@@ -1,0 +1,131 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Form Tin Tuyển Dụng - HRMS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
+    .sidebar { height: 100vh; background: linear-gradient(180deg, #1a1f2e, #2d3748); color: white; padding-top: 20px; position: sticky; top: 0; overflow-y: auto; }
+    .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; transition: all 0.2s; }
+    .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.1); color: white; border-left: 3px solid #667eea; }
+    .sidebar-logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px; }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block sidebar shadow">
+      <div class="sidebar-logo">🎯 HIRING</div>
+      <hr style="border-color:rgba(255,255,255,.15)"/>
+      <a th:href="@{/hiring}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a th:href="@{/hiring/postings}" class="active"><i class="bi bi-megaphone"></i> Tin tuyển dụng</a>
+      <a th:href="@{/hiring/candidates}"><i class="bi bi-people"></i> Ứng viên</a>
+      <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
+      <a th:href="@{/admin/dashboard}"><i class="bi bi-arrow-left-circle"></i> Admin</a>
+      <form th:action="@{/logout}" method="post" class="px-3 mt-4">
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+      </form>
+    </nav>
+
+    <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+      <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
+        <h1 class="h3 mb-0">
+          <i class="bi bi-megaphone text-primary me-2"></i>
+          <span th:text="${posting.id == null ? 'Đăng Tin Tuyển Dụng Mới' : 'Chỉnh Sửa Tin Tuyển Dụng'}"></span>
+        </h1>
+        <a th:href="@{/hiring/postings}" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+      </div>
+
+      <form th:action="@{/hiring/postings/save}" th:object="${posting}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+        <div class="row">
+          <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Tiêu đề vị trí <span class="text-danger">*</span></label>
+                    <input type="text" th:field="*{title}" class="form-control form-control-lg"
+                           placeholder="VD: Nhân Viên Kế Toán, Kỹ Sư Phần Mềm..." required/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Phòng ban</label>
+                    <select th:field="*{department.id}" class="form-select">
+                      <option value="">-- Chọn phòng ban --</option>
+                      <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}"></option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Chức vụ</label>
+                    <select th:field="*{position.id}" class="form-select">
+                      <option value="">-- Chọn chức vụ --</option>
+                      <option th:each="p : ${positions}" th:value="${p.id}" th:text="${p.positionName}"></option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Lương tối thiểu (VNĐ)</label>
+                    <input type="number" th:field="*{salaryMin}" class="form-control" placeholder="0"/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Lương tối đa (VNĐ)</label>
+                    <input type="number" th:field="*{salaryMax}" class="form-control" placeholder="0"/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Hạn nộp hồ sơ</label>
+                    <input type="date" th:field="*{deadline}" class="form-control"/>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-semibold">Trạng thái</label>
+                    <select th:field="*{status}" class="form-select">
+                      <option value="OPEN">Đang mở</option>
+                      <option value="CLOSED">Đã đóng</option>
+                      <option value="FILLED">Đã tuyển đủ</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Mô tả công việc</label>
+                    <textarea th:field="*{description}" class="form-control" rows="5"
+                              placeholder="Mô tả chi tiết về vị trí công việc, nhiệm vụ chính..."></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-semibold">Yêu cầu ứng viên</label>
+                    <textarea th:field="*{requirements}" class="form-control" rows="4"
+                              placeholder="Yêu cầu học vấn, kinh nghiệm, kỹ năng..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-4 bg-primary text-white">
+              <div class="card-body py-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-lightbulb me-2"></i>Gợi ý</h6>
+                <ul class="small mb-0 ps-3">
+                  <li class="mb-2">Tiêu đề rõ ràng, cụ thể về vị trí</li>
+                  <li class="mb-2">Mô tả chi tiết giúp thu hút đúng ứng viên</li>
+                  <li class="mb-2">Nêu rõ mức lương để tăng tỉ lệ ứng tuyển</li>
+                  <li>Đặt deadline hợp lý (2-4 tuần)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="bi bi-save me-1"></i> Đăng tin
+          </button>
+          <a th:href="@{/hiring/postings}" class="btn btn-outline-secondary px-4">Huỷ</a>
+        </div>
+      </form>
+    </main>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
