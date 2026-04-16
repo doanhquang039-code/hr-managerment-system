@@ -32,8 +32,23 @@ public class LeaveRequestController {
     // ==================== ADMIN ====================
 
     @GetMapping("/admin/leaves")
-    public String listAll(Model model) {
-        model.addAttribute("leaves", leaveRepository.findAllWithUser(null));
+    public String listAll(@RequestParam(required = false) String keyword,
+                          @RequestParam(required = false) String status,
+                          Model model) {
+        var all = leaveRepository.findAllWithUser(keyword);
+        // Filter by status nếu có
+        var leaves = (status != null && !status.isBlank())
+                ? all.stream().filter(l -> l.getStatus() != null && l.getStatus().name().equals(status)).toList()
+                : all;
+        long countPending  = all.stream().filter(l -> l.getStatus() == LeaveStatus.PENDING).count();
+        long countApproved = all.stream().filter(l -> l.getStatus() == LeaveStatus.APPROVED).count();
+        long countRejected = all.stream().filter(l -> l.getStatus() == LeaveStatus.REJECTED).count();
+        model.addAttribute("leaves", leaves);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("countPending",  countPending);
+        model.addAttribute("countApproved", countApproved);
+        model.addAttribute("countRejected", countRejected);
         return "admin/leave-list";
     }
 

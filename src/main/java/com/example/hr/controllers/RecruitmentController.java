@@ -2,10 +2,13 @@ package com.example.hr.controllers;
 
 import com.example.hr.models.Candidate;
 import com.example.hr.models.JobPosting;
+import com.example.hr.models.User;
+import com.example.hr.enums.UserStatus;
 import com.example.hr.repository.CandidateRepository;
 import com.example.hr.repository.DepartmentRepository;
 import com.example.hr.repository.JobPostingRepository;
 import com.example.hr.repository.JobPositionRepository;
+import com.example.hr.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +25,7 @@ public class RecruitmentController {
     @Autowired private CandidateRepository candidateRepository;
     @Autowired private DepartmentRepository departmentRepository;
     @Autowired private JobPositionRepository jobPositionRepository;
+    @Autowired private UserRepository userRepository;
 
     // ==================== JOB POSTINGS ====================
 
@@ -30,14 +34,22 @@ public class RecruitmentController {
         List<JobPosting> postings = jobPostingRepository.findAll();
         long openCount = postings.stream().filter(p -> "OPEN".equals(p.getStatus())).count();
         long totalCandidates = candidateRepository.count();
-        long newCandidates = candidateRepository.countByStatus("NEW");
-        long hiredCount = candidateRepository.countByStatus("HIRED");
+        long newCandidates      = candidateRepository.countByStatus("NEW");
+        long screeningCount     = candidateRepository.countByStatus("SCREENING");
+        long interviewCount     = candidateRepository.countByStatus("INTERVIEW");
+        long offerCount         = candidateRepository.countByStatus("OFFER");
+        long hiredCount         = candidateRepository.countByStatus("HIRED");
+        long rejectedCount      = candidateRepository.countByStatus("REJECTED");
 
         model.addAttribute("postings", postings);
         model.addAttribute("openCount", openCount);
         model.addAttribute("totalCandidates", totalCandidates);
         model.addAttribute("newCandidates", newCandidates);
+        model.addAttribute("screeningCount", screeningCount);
+        model.addAttribute("interviewCount", interviewCount);
+        model.addAttribute("offerCount", offerCount);
         model.addAttribute("hiredCount", hiredCount);
+        model.addAttribute("rejectedCount", rejectedCount);
         return "hiring/dashboard";
     }
 
@@ -160,6 +172,67 @@ public class RecruitmentController {
     public String deleteCandidate(@PathVariable Integer id, RedirectAttributes ra) {
         candidateRepository.deleteById(id);
         ra.addFlashAttribute("successMsg", "🗑️ Đã xoá ứng viên.");
+        return "redirect:/hiring/candidates";
+    }
+
+    /**
+     * Chuyển ứng viên đã HIRED thành nhân viên chính thức trong hệ thống
+     */
+    @GetMapping("/candidates/hire/{id}")
+    public String hireToEmployee(@PathVariable Integer id, RedirectAttributes ra) {
+        Candidate c = candidateRepository.findById(id).orElseThrow();
+
+        // Kiểm tra trạng thái phải là HIRED
+        if (!"HIRED".equals(c.getStatus())) {
+            ra.addFlashAttribute("errorMsg", "⚠️ Ứng viên chưa ở trạng thái HIRED!");
+            return "redirect:/hiring/candidates";
+        }
+
+        // Tạo tài khoản nhân viên từ thông tin ứng viên
+        // Username: tên viết tắt + "." + họ (không dấu, thường)
+        String[] nameParts = c.getFullName().trim().split("\\s+");
+        String lastName = nameParts[nameParts.length - 1].toLowerCase()
+                .replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a")
+                .replaceAll("[èéẹẻẽêềếệểễ]", "e")
+                .replaceAll("[ìíịỉĩ]", "i")
+                .replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o")
+                .replaceAll("[ùúụủũưừứựửữ]", "u")
+                .replaceAll("[ỳýỵỷỹ]", "y")
+                .replaceAll("đ", "d")
+                .replaceAll("[^a-z]", "");
+        String firstInitial = nameParts.length > 1 ? nameParts[0].substring(0, 1).toLowerCase() : "x";
+        String baseUsername = lastName + "." + firstInitial;
+
+        // Đảm bảo username unique
+        String username = baseUsername;
+        int suffix = 1;
+        while (userRepository.findByUsername(username).isPresent()) {
+            username = baseUsername + suffix++;
+        }
+
+        User newEmployee = new User();
+        newEmployee.setFullName(c.getFullName());
+        newEmployee.setEmail(c.getEmail());
+        newEmployee.setUsername(username);
+        // Mật khẩu mặc định = 123456 (BCrypt)
+        newEmployee.setPassword("$2a$10$hqVbLomRjVdJbGhyByGAeOYPaLYzGDxMIjilh3juV6.ZYc07DNkAu");
+        newEmployee.setRole("USER");
+        newEmployee.setStatus(UserStatus.ACTIVE);
+        // Gán phòng ban từ job posting nếu có
+        if (c.getJobPosting() != null && c.getJobPosting().getDepartment() != null) {
+            newEmployee.setDepartment(c.getJobPosting().getDepartment());
+        }
+
+        userRepository.save(newEmployee);
+
+        // Cập nhật candidate status -> đã tạo nhân viên
+        c.setNotes((c.getNotes() != null ? c.getNotes() + " | " : "") +
+                "[✅ Đã tạo tài khoản nhân viên: " + username + "]");
+        candidateRepository.save(c);
+
+        ra.addFlashAttribute("successMsg",
+            "✅ Đã tạo tài khoản nhân viên cho " + c.getFullName() +
+            "! Username: <strong>" + username + "</strong>, Mật khẩu: 123456");
         return "redirect:/hiring/candidates";
     }
 }

@@ -2,107 +2,262 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Xin nghỉ phép - Nhân viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn Nghỉ Phép - HRMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', sans-serif; }
-        .top-nav { background: #343a40; color: white; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
-        .top-nav a { color: #adb5bd; text-decoration: none; margin-left: 16px; }
-        .top-nav a:hover { color: white; }
-        .status-PENDING  { background: #ffc107; color: #000; }
-        .status-APPROVED { background: #198754; color: white; }
-        .status-REJECTED { background: #dc3545; color: white; }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f0f4f8; min-height: 100vh; margin: 0; }
+
+        .sidebar { width: 260px; min-height: 100vh; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); position: fixed; left: 0; top: 0; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
+        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .brand-name { color: white; font-weight: 700; font-size: 1rem; line-height: 1.2; }
+        .brand-sub { color: #64748b; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
+        .sidebar-section-label { color: #475569; font-size: 0.65rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 12px 20px 4px; }
+        .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: #94a3b8; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+        .sidebar nav a:hover, .sidebar nav a.active { color: white; background: rgba(99,102,241,0.15); border-left-color: #6366f1; }
+        .sidebar nav a i { font-size: 1rem; width: 20px; }
+        .sidebar-logout { padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); position: absolute; bottom: 0; width: 100%; }
+        .user-card { padding: 16px 20px; display: flex; align-items: center; gap: 12px; background: rgba(99,102,241,0.1); margin: 16px 12px; border-radius: 12px; }
+        .user-av { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+        .notif-badge { background: #ef4444; color: white; border-radius: 10px; font-size: 0.62rem; font-weight: 700; padding: 2px 6px; margin-left: auto; }
+
+        .main-content { margin-left: 260px; padding: 28px 32px; }
+        .page-header { margin-bottom: 26px; }
+        .page-header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+
+        /* SUBMIT FORM CARD */
+        .form-card { background: white; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
+        .form-card-header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); padding: 22px 26px; color: white; }
+        .form-card-header h5 { font-weight: 700; margin: 0; font-size: 1.05rem; }
+        .form-card-header p { margin: 5px 0 0; opacity: 0.85; font-size: 0.83rem; }
+        .form-card-body { padding: 24px 26px; }
+
+        .form-label { font-weight: 600; color: #374151; font-size: 0.85rem; margin-bottom: 6px; }
+        .form-control, .form-select { border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 10px 14px; font-size: 0.9rem; transition: all 0.2s; }
+        .form-control:focus, .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+
+        .btn-submit { background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; color: white; padding: 12px 28px; border-radius: 12px; font-weight: 600; font-size: 0.92rem; width: 100%; transition: all 0.2s; cursor: pointer; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.4); color: white; }
+
+        /* LEAVE TYPE QUICK SELECT */
+        .leave-types { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+        .ltype-btn { padding: 7px 14px; border-radius: 8px; border: 1.5px solid #e5e7eb; background: white; cursor: pointer; font-size: 0.78rem; font-weight: 600; color: #64748b; transition: all 0.18s; }
+        .ltype-btn:hover, .ltype-btn.selected { border-color: #6366f1; background: #ede9fe; color: #6366f1; }
+
+        /* HISTORY TABLE */
+        .history-card { background: white; border-radius: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
+        .hc-head { padding: 18px 22px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .hc-head h6 { font-weight: 700; color: #0f172a; margin: 0; font-size: 0.95rem; }
+
+        .data-table th { background: #f8fafc; color: #64748b; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 11px 16px; }
+        .data-table td { padding: 13px 16px; font-size: 0.85rem; border-color: #f1f5f9; vertical-align: middle; }
+        .data-table tr:hover td { background: #fafcff; }
+
+        .badge-p { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+        .badge-a { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .badge-r { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-size: 0.73rem; font-weight: 700; }
+
+        .leave-type-tag { background: #ede9fe; color: #6366f1; padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
+
+        .day-count { text-align: center; font-weight: 800; color: #6366f1; padding: 2px 10px; background: #ede9fe; border-radius: 8px; font-size: 0.85rem; }
     </style>
 </head>
 <body>
-<!-- Navbar -->
-<div class="top-nav">
-    <span>👤 <strong th:text="${currentUser.fullName}">Nhân viên</strong></span>
-    <div>
-        <a th:href="@{/user1/dashboard}">🏠 Dashboard</a>
-        <a th:href="@{/user/attendance}">📋 Chấm công</a>
-        <a th:href="@{/user/leaves}" class="text-white fw-bold">📅 Nghỉ phép</a>
-        <form th:action="@{/logout}" method="post" style="display:inline">
-            <button type="submit" class="btn btn-sm btn-outline-light ms-3">Đăng xuất</button>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+            <div class="brand-name">HRMS</div>
+            <div class="brand-sub">HR Platform</div>
+        </div>
+    </div>
+
+    <div class="user-card" th:if="${currentUser != null}">
+        <div class="user-av" th:text="${#strings.substring(currentUser.fullName, 0, 1)}">N</div>
+        <div>
+            <div style="color:white;font-weight:600;font-size:0.85rem;" th:text="${currentUser.fullName}">Nhân viên</div>
+            <div style="color:#94a3b8;font-size:0.72rem;" th:text="${currentUser.role}">USER</div>
+        </div>
+    </div>
+
+    <div class="sidebar-section-label">Cá nhân</div>
+    <nav>
+        <a href="/user1/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
+        <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+        <a href="/user/leaves" class="active"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
+        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phiếu lương</a>
+        <a href="/user1/tasks"><i class="bi bi-list-task"></i> Công việc của tôi</a>
+        <a href="/user1/reviews"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
+        <a href="/notifications"><i class="bi bi-bell"></i> Thông báo</a>
+    </nav>
+    <div class="sidebar-logout">
+        <form action="/logout" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            </button>
         </form>
     </div>
 </div>
 
-<div class="container py-4">
-    <div class="row">
-        <!-- Form xin nghỉ -->
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold">📝 Nộp đơn xin nghỉ phép</div>
-                <div class="card-body">
+<!-- MAIN -->
+<div class="main-content">
+    <div class="page-header">
+        <h1><i class="bi bi-calendar-x me-2 text-primary"></i>Đơn Nghỉ Phép</h1>
+        <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Nộp đơn xin nghỉ và theo dõi lịch sử</div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Form -->
+        <div class="col-lg-4">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h5><i class="bi bi-send me-2"></i>Nộp Đơn Xin Nghỉ</h5>
+                    <p>Điền đầy đủ thông tin và gửi đơn cho quản lý duyệt</p>
+                </div>
+                <div class="form-card-body">
                     <form th:action="@{/user/leaves/submit}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                        <!-- Leave type quick select -->
                         <div class="mb-3">
-                            <label class="form-label">Loại nghỉ phép</label>
-                            <select name="leaveType" class="form-select" required>
+                            <label class="form-label"><i class="bi bi-tag me-1"></i>Loại nghỉ phép</label>
+                            <div class="leave-types">
+                                <button type="button" class="ltype-btn" onclick="selectType('ANNUAL', this)">🏖️ Phép năm</button>
+                                <button type="button" class="ltype-btn" onclick="selectType('SICK', this)">🏥 Ốm bệnh</button>
+                                <button type="button" class="ltype-btn" onclick="selectType('UNPAID', this)">📆 Không lương</button>
+                                <button type="button" class="ltype-btn" onclick="selectType('MATERNITY', this)">🤱 Thai sản</button>
+                            </div>
+                            <select name="leaveType" id="leaveTypeSelect" class="form-select mt-2" required>
+                                <option value="">-- Chọn loại nghỉ --</option>
                                 <option value="ANNUAL">Nghỉ phép năm</option>
-                                <option value="SICK">Nghỉ bệnh</option>
+                                <option value="SICK">Nghỉ ốm / bệnh</option>
                                 <option value="UNPAID">Nghỉ không lương</option>
                                 <option value="MATERNITY">Nghỉ thai sản</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ngày bắt đầu</label>
-                            <input type="date" name="startDate" class="form-control" required>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label"><i class="bi bi-calendar-check me-1 text-success"></i>Từ ngày</label>
+                                <input type="date" name="startDate" id="startDate" class="form-control" required onchange="calcDays()">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label"><i class="bi bi-calendar-x me-1 text-danger"></i>Đến ngày</label>
+                                <input type="date" name="endDate" id="endDate" class="form-control" required onchange="calcDays()">
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ngày kết thúc</label>
-                            <input type="date" name="endDate" class="form-control" required>
+
+                        <!-- Day counter -->
+                        <div id="dayCountBox" style="display:none;background:#ede9fe;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.85rem;color:#6366f1;font-weight:600;text-align:center;">
+                            📅 Tổng cộng: <span id="dayCount" style="font-size:1.1rem;font-weight:800;"></span> ngày nghỉ
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Lý do</label>
+
+                        <div class="mb-4">
+                            <label class="form-label"><i class="bi bi-chat-text me-1 text-secondary"></i>Lý do xin nghỉ</label>
                             <textarea name="reason" class="form-control" rows="4"
-                                      placeholder="Nhập lý do xin nghỉ..." required></textarea>
+                                      placeholder="Mô tả lý do xin nghỉ..." required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">📤 Gửi đơn</button>
+
+                        <button type="submit" class="btn-submit">
+                            <i class="bi bi-send me-2"></i>Gửi đơn nghỉ phép
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Danh sách đơn của tôi -->
-        <div class="col-md-7">
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold">📋 Đơn nghỉ phép của tôi</div>
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
+        <!-- History -->
+        <div class="col-lg-8">
+            <div class="history-card">
+                <div class="hc-head">
+                    <h6><i class="bi bi-list-ul me-2"></i>Lịch Sử Đơn Nghỉ Của Tôi</h6>
+                    <span style="font-size:0.8rem;color:#94a3b8;" th:text="${myLeaves.size()} + ' đơn'"></span>
+                </div>
+                <div th:if="${#lists.isEmpty(myLeaves)}" style="text-align:center;padding:50px;color:#94a3b8;">
+                    <i class="bi bi-inbox" style="font-size:3rem;display:block;margin-bottom:12px;"></i>
+                    Chưa có đơn nghỉ nào. Hãy nộp đơn đầu tiên!
+                </div>
+                <div class="table-responsive" th:if="${!#lists.isEmpty(myLeaves)}">
+                    <table class="table data-table mb-0">
+                        <thead>
                             <tr>
                                 <th>Loại</th>
                                 <th>Từ ngày</th>
                                 <th>Đến ngày</th>
+                                <th>Số ngày</th>
                                 <th>Lý do</th>
                                 <th>Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:if="${#lists.isEmpty(myLeaves)}">
-                                <td colspan="5" class="text-center text-muted py-4">Chưa có đơn xin nghỉ nào</td>
-                            </tr>
                             <tr th:each="lr : ${myLeaves}">
-                                <td th:text="${lr.leaveType}"></td>
-                                <td th:text="${lr.startDate}"></td>
-                                <td th:text="${lr.endDate}"></td>
                                 <td>
-                                    <span th:text="${#strings.truncate(lr.reason, 40)}"></span>
+                                    <span class="leave-type-tag"
+                                          th:text="${lr.leaveType.name() == 'ANNUAL' ? '🏖️ Phép năm' : (lr.leaveType.name() == 'SICK' ? '🏥 Ốm bệnh' : (lr.leaveType.name() == 'MATERNITY' ? '🤱 Thai sản' : '📆 Không lương'))}">
+                                    </span>
                                 </td>
+                                <td style="font-size:0.84rem;font-weight:600;" th:text="${lr.startDate}">01/01</td>
+                                <td style="font-size:0.84rem;" th:text="${lr.endDate}">02/01</td>
                                 <td>
-                                    <span class="badge"
-                                          th:classappend="${'status-' + lr.status}"
-                                          th:text="${lr.status}"></span>
+                                    <span class="day-count"
+                                          th:text="${lr.endDate != null and lr.startDate != null ? lr.startDate.until(lr.endDate).getDays() + 1 : '?'}">N/A</span>
+                                </td>
+                                <td style="max-width:200px;font-size:0.82rem;color:#475569;"
+                                    th:text="${lr.reason != null ? #strings.abbreviate(lr.reason, 60) : ''}"></td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="${lr.status.name() == 'PENDING' ? ' badge-p' : (lr.status.name() == 'APPROVED' ? ' badge-a' : ' badge-r')}"
+                                          th:text="${lr.status.name() == 'PENDING' ? '⏳ Chờ duyệt' : (lr.status.name() == 'APPROVED' ? '✅ Đã duyệt' : '❌ Từ chối')}">
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- Tip box -->
+            <div style="background:linear-gradient(135deg,#ede9fe,#dbeafe);border-radius:14px;padding:18px 22px;margin-top:18px;border:1px solid #c7d2fe;">
+                <div style="font-weight:700;color:#4338ca;font-size:0.9rem;margin-bottom:8px;">💡 Lưu ý khi xin nghỉ phép</div>
+                <ul style="margin:0;padding-left:18px;font-size:0.83rem;color:#475569;">
+                    <li>Nộp đơn trước ít nhất <strong>2 ngày làm việc</strong> đối với nghỉ phép năm</li>
+                    <li>Nghỉ ốm cần có <strong>giấy xác nhận của cơ sở y tế</strong> nếu nghỉ trên 2 ngày</li>
+                    <li>Đơn nghỉ phép sẽ được <strong>thông báo kết quả qua hệ thống</strong></li>
+                    <li>Liên hệ quản lý trực tiếp nếu nghỉ khẩn cấp</li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function selectType(val, el) {
+        document.getElementById('leaveTypeSelect').value = val;
+        document.querySelectorAll('.ltype-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function calcDays() {
+        const s = document.getElementById('startDate').value;
+        const e = document.getElementById('endDate').value;
+        if (s && e) {
+            const diff = Math.round((new Date(e) - new Date(s)) / 86400000) + 1;
+            if (diff > 0) {
+                document.getElementById('dayCount').textContent = diff;
+                document.getElementById('dayCountBox').style.display = 'block';
+            }
+        }
+    }
+</script>
 </body>
 </html>

@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Department {
+ public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

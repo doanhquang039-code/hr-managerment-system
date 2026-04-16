@@ -43,8 +43,10 @@
         </a>
       </div>
 
-      <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show">
-        <span th:text="${successMsg}"></span>
+      <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" th:utext="${successMsg}">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      <div th:if="${errorMsg}" class="alert alert-warning alert-dismissible fade show" th:utext="${errorMsg}">
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       </div>
 
@@ -140,6 +142,13 @@
                   </td>
                   <td class="text-center">
                     <div class="btn-group btn-group-sm">
+                      <!-- Nút tạo nhân viên (chỉ hiện khi HIRED) -->
+                      <a th:if="${c.status == 'HIRED'}"
+                         th:href="@{/hiring/candidates/hire/{id}(id=${c.id})}"
+                         class="btn btn-success" title="Tạo tài khoản nhân viên"
+                         onclick="return confirm('Tạo tài khoản nhân viên cho ứng viên này?')">
+                        <i class="bi bi-person-check"></i>
+                      </a>
                       <a th:href="@{/hiring/candidates/edit/{id}(id=${c.id})}" class="btn btn-outline-warning" title="Sửa">
                         <i class="bi bi-pencil"></i>
                       </a>

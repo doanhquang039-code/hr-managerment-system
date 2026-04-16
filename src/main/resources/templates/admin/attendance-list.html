@@ -2,142 +2,240 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý Chấm công - HRMS Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Chấm Công - HRMS Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #f8f9fa; }
-        .sidebar { height: 100vh; background: #343a40; color: white; padding-top: 20px; position: sticky; top: 0; }
-        .sidebar a { color: white; text-decoration: none; display: block; padding: 10px 20px; }
-        .sidebar a:hover, .sidebar a.active { background: #495057; }
-        .badge-PRESENT    { background-color: #198754; }
-        .badge-LATE       { background-color: #fd7e14; }
-        .badge-EARLY_LEAVE{ background-color: #0dcaf0; color: #000; }
-        .badge-ABSENT     { background-color: #dc3545; }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f0f4f8; margin: 0; }
+        .sidebar { width: 240px; height: 100vh; position: fixed; left: 0; top: 0; background: linear-gradient(180deg, #0f172a, #1e293b); box-shadow: 4px 0 20px rgba(0,0,0,0.3); z-index: 100; overflow-y: auto; }
+        .sidebar-logo { font-size: 1rem; font-weight: 700; color: white; text-align: center; padding: 18px 12px; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; transition: all .2s; border-left: 3px solid transparent; font-size: 0.85rem; }
+        .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,.08); color: white; border-left-color: #06b6d4; }
+        .sidebar a i { width: 18px; }
+        .sidebar hr { border-color: rgba(255,255,255,0.08); margin: 6px 16px; }
+        .sidebar form { padding: 12px 16px 16px; position: absolute; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); }
+
+        .main { margin-left: 240px; padding: 28px 32px; }
+
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .page-header h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
+
+        /* STATS MINI */
+        .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-mini { border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+        .stat-mini-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .stat-mini-val { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+        .stat-mini-lbl { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 2px; }
+
+        /* FILTER CARD */
+        .filter-card { background: white; border-radius: 14px; padding: 18px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); margin-bottom: 20px; }
+
+        /* TABLE CARD */
+        .table-card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
+        .tc-head { padding: 18px 22px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .tc-head h6 { font-weight: 700; color: #0f172a; margin: 0; }
+        .data-table th { background: #f8fafc; color: #64748b; font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: none; padding: 11px 16px; }
+        .data-table td { padding: 13px 16px; font-size: 0.85rem; border-color: #f1f5f9; vertical-align: middle; }
+        .data-table tr:hover td { background: #fafcff; }
+
+        /* STATUS BADGES */
+        .s-present    { background: #d1fae5; color: #065f46;  border: 1px solid #a7f3d0; }
+        .s-late       { background: #fff7ed; color: #c2410c;  border: 1px solid #fed7aa; }
+        .s-early      { background: #dbeafe; color: #1e40af;  border: 1px solid #bfdbfe; }
+        .s-absent     { background: #fee2e2; color: #991b1b;  border: 1px solid #fecaca; }
+
+        .att-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.73rem; font-weight: 700; }
+        .emp-cell { display: flex; align-items: center; gap: 10px; }
+        .emp-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg,#06b6d4,#0891b2); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.82rem; flex-shrink: 0; }
+        .time-cell { font-family: 'Courier New', monospace; font-size: 0.88rem; font-weight: 600; color: #1e293b; }
+        .time-na { color: #cbd5e1; }
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <nav class="col-md-2 d-none d-md-block sidebar shadow">
-            <h4 class="text-center py-2 text-uppercase fw-bold">HRMS ADMIN</h4>
-            <hr>
-            <a th:href="@{/admin/dashboard}">📊 Dashboard</a>
-            <a th:href="@{/admin/users}">👤 Nhân viên</a>
-            <a th:href="@{/admin/departments}">🏢 Phòng ban</a>
-            <a th:href="@{/admin/positions}">💼 Chức vụ</a>
-            <hr class="mx-3">
-            <a th:href="@{/admin/contracts}">📜 Hợp đồng</a>
-            <a th:href="@{/admin/payroll}">💰 Bảng lương</a>
-            <a th:href="@{/admin/leaves}">📅 Nghỉ phép</a>
-            <a th:href="@{/admin/attendance}" class="active">📋 Chấm công</a>
-            <a th:href="@{/admin/tasks}">📝 Công việc</a>
-            <form th:action="@{/logout}" method="post" class="px-3 mt-4">
-                <button type="submit" class="btn btn-outline-light btn-sm w-100">🚪 Đăng xuất</button>
-            </form>
-        </nav>
+<div class="sidebar">
+    <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+    <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+    <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
+    <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+    <hr/>
+    <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
+    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
+    <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
+    <a th:href="@{/admin/attendance}" class="active"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+    <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
+    <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
+    <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
+    <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
+    <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-outline-light btn-sm w-100">
+            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+        </button>
+    </form>
+</div>
 
-        <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
-            <div class="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h3">📋 Quản lý Chấm công</h1>
-                <a th:href="@{/admin/attendance/add}" class="btn btn-primary">+ Thêm bản ghi</a>
+<div class="main">
+    <!-- Header -->
+    <div class="page-header">
+        <div>
+            <h1><i class="bi bi-clipboard-check me-2 text-info"></i>Quản Lý Chấm Công</h1>
+            <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">
+                Theo dõi và quản lý lịch sử chấm công nhân viên
             </div>
+        </div>
+        <a th:href="@{/admin/attendance/add}" class="btn btn-info text-white">
+            <i class="bi bi-plus-lg me-1"></i>Thêm bản ghi
+        </a>
+    </div>
 
-            <!-- Filter form -->
-            <form th:action="@{/admin/attendance}" method="get" class="row g-2 mb-4">
+    <!-- Stats -->
+    <div class="stat-row" th:if="${!#lists.isEmpty(attendances)}">
+        <div class="stat-mini" style="background:white;">
+            <div class="stat-mini-icon" style="background:#d1fae5;">✅</div>
+            <div>
+                <div class="stat-mini-val" style="color:#10b981;"
+                     th:text="${#lists.size(attendances.?[status.name() == 'PRESENT'])}">0</div>
+                <div class="stat-mini-lbl" style="color:#10b981;">Đúng giờ</div>
+            </div>
+        </div>
+        <div class="stat-mini" style="background:white;">
+            <div class="stat-mini-icon" style="background:#fff7ed;">⏰</div>
+            <div>
+                <div class="stat-mini-val" style="color:#f97316;"
+                     th:text="${#lists.size(attendances.?[status.name() == 'LATE'])}">0</div>
+                <div class="stat-mini-lbl" style="color:#f97316;">Đi muộn</div>
+            </div>
+        </div>
+        <div class="stat-mini" style="background:white;">
+            <div class="stat-mini-icon" style="background:#dbeafe;">🏃</div>
+            <div>
+                <div class="stat-mini-val" style="color:#3b82f6;"
+                     th:text="${#lists.size(attendances.?[status.name() == 'EARLY_LEAVE'])}">0</div>
+                <div class="stat-mini-lbl" style="color:#3b82f6;">Về sớm</div>
+            </div>
+        </div>
+        <div class="stat-mini" style="background:white;">
+            <div class="stat-mini-icon" style="background:#fee2e2;">❌</div>
+            <div>
+                <div class="stat-mini-val" style="color:#ef4444;"
+                     th:text="${#lists.size(attendances.?[status.name() == 'ABSENT'])}">0</div>
+                <div class="stat-mini-lbl" style="color:#ef4444;">Vắng mặt</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-card">
+        <form th:action="@{/admin/attendance}" method="get">
+            <div class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <input type="text" name="keyword" class="form-control" placeholder="🔍 Tìm theo tên..." th:value="${keyword}">
+                    <label class="form-label fw-600" style="font-size:0.8rem;color:#64748b;font-weight:600;">🔍 Tìm nhân viên</label>
+                    <input type="text" name="keyword" class="form-control" placeholder="Nhập tên..." th:value="${keyword}">
                 </div>
                 <div class="col-md-2">
+                    <label class="form-label fw-600" style="font-size:0.8rem;color:#64748b;font-weight:600;">📅 Tháng</label>
                     <select name="month" class="form-select">
                         <option th:each="m : ${#numbers.sequence(1,12)}"
-                                th:value="${m}"
-                                th:text="${'Tháng ' + m}"
+                                th:value="${m}" th:text="'Tháng ' + ${m}"
                                 th:selected="${m == month}"></option>
                     </select>
                 </div>
                 <div class="col-md-2">
+                    <label class="form-label fw-600" style="font-size:0.8rem;color:#64748b;font-weight:600;">📅 Năm</label>
                     <input type="number" name="year" class="form-control" th:value="${year}" min="2020" max="2030">
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-outline-primary w-100">Lọc</button>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-funnel me-1"></i>Lọc
+                    </button>
                 </div>
-            </form>
-
-            <!-- Table -->
-            <div class="card shadow-sm">
-                <div class="card-body p-0">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Nhân viên</th>
-                                <th>Ngày</th>
-                                <th>Check-in</th>
-                                <th>Check-out</th>
-                                <th>Trạng thái</th>
-                                <th>Ghi chú</th>
-                                <th>Thao tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:if="${#lists.isEmpty(attendances)}">
-                                <td colspan="8" class="text-center text-muted py-4">Không có dữ liệu chấm công</td>
-                            </tr>
-                            <tr th:each="a, stat : ${attendances}">
-                                <td th:text="${stat.count}">1</td>
-                                <td>
-                                    <strong th:text="${a.user.fullName}">Nguyễn Văn A</strong>
-                                    <small class="d-block text-muted" th:text="${a.user.department != null ? a.user.department.departmentName : 'N/A'}"></small>
-                                </td>
-                                <td th:text="${a.attendanceDate}"></td>
-                                <td th:text="${a.checkInTime != null ? a.checkInTime : '--:--'}"></td>
-                                <td th:text="${a.checkOutTime != null ? a.checkOutTime : '--:--'}"></td>
-                                <td>
-                                    <span class="badge"
-                                          th:classappend="${'badge-' + a.status}"
-                                          th:text="${a.status}"></span>
-                                </td>
-                                <td th:text="${a.note != null ? a.note : ''}"></td>
-                                <td>
-                                    <a th:href="@{/admin/attendance/delete/{id}(id=${a.id})}"
-                                       class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Xóa bản ghi này?')">Xóa</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="col-md-2">
+                    <a th:href="@{/admin/attendance}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1"></i>Xóa lọc
+                    </a>
                 </div>
             </div>
+        </form>
+    </div>
 
-            <!-- Summary stats -->
-            <div class="row mt-4" th:if="${!#lists.isEmpty(attendances)}">
-                <div class="col-md-3">
-                    <div class="card border-success text-center p-3">
-                        <h6 class="text-success">✅ Đúng giờ</h6>
-                        <h4 th:text="${#lists.size(attendances.?[status.name() == 'PRESENT'])}">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card border-warning text-center p-3">
-                        <h6 class="text-warning">⏰ Đi muộn</h6>
-                        <h4 th:text="${#lists.size(attendances.?[status.name() == 'LATE'])}">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card border-info text-center p-3">
-                        <h6 class="text-info">🏃 Về sớm</h6>
-                        <h4 th:text="${#lists.size(attendances.?[status.name() == 'EARLY_LEAVE'])}">0</h4>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card border-danger text-center p-3">
-                        <h6 class="text-danger">❌ Vắng mặt</h6>
-                        <h4 th:text="${#lists.size(attendances.?[status.name() == 'ABSENT'])}">0</h4>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <!-- Table -->
+    <div class="table-card">
+        <div class="tc-head">
+            <h6><i class="bi bi-table me-2"></i>Danh Sách Chấm Công</h6>
+            <span style="font-size:0.8rem;color:#94a3b8;">
+                <span th:text="${attendances.size()}">0</span> bản ghi
+                — Tháng <span th:text="${month}"></span>/<span th:text="${year}"></span>
+            </span>
+        </div>
+        <div class="table-responsive">
+            <table class="table data-table mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nhân viên</th>
+                        <th>Ngày</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(attendances)}">
+                        <td colspan="8" style="text-align:center;padding:40px;color:#94a3b8;">
+                            <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:12px;"></i>
+                            Không có dữ liệu chấm công trong tháng này
+                        </td>
+                    </tr>
+                    <tr th:each="a, stat : ${attendances}">
+                        <td style="color:#94a3b8;font-size:0.8rem;" th:text="${stat.count}">1</td>
+                        <td>
+                            <div class="emp-cell">
+                                <div class="emp-av" th:text="${#strings.substring(a.user.fullName, 0, 1)}">N</div>
+                                <div>
+                                    <div style="font-weight:700;font-size:0.86rem;" th:text="${a.user.fullName}">Tên</div>
+                                    <div style="font-size:0.72rem;color:#94a3b8;" th:text="${a.user.department != null ? a.user.department.departmentName : 'N/A'}">Phòng ban</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-weight:600;font-size:0.86rem;" th:text="${#temporals.format(a.attendanceDate, 'dd/MM/yyyy')}">01/01</span><br>
+                            <span style="font-size:0.72rem;color:#94a3b8;" th:text="${#temporals.format(a.attendanceDate, 'EEEE')}"></span>
+                        </td>
+                        <td>
+                            <span th:if="${a.checkInTime != null}" class="time-cell" th:text="${a.checkInTime}">--:--</span>
+                            <span th:if="${a.checkInTime == null}" class="time-na">—</span>
+                        </td>
+                        <td>
+                            <span th:if="${a.checkOutTime != null}" class="time-cell" th:text="${a.checkOutTime}">--:--</span>
+                            <span th:if="${a.checkOutTime == null}" class="time-na">—</span>
+                        </td>
+                        <td>
+                            <span class="att-badge"
+                                  th:classappend="${a.status.name() == 'PRESENT' ? ' s-present' : (a.status.name() == 'LATE' ? ' s-late' : (a.status.name() == 'EARLY_LEAVE' ? ' s-early' : ' s-absent'))}"
+                                  th:text="${a.status.name() == 'PRESENT' ? '✅ Đúng giờ' : (a.status.name() == 'LATE' ? '⏰ Đi muộn' : (a.status.name() == 'EARLY_LEAVE' ? '🏃 Về sớm' : '❌ Vắng'))}">
+                            </span>
+                        </td>
+                        <td style="font-size:0.82rem;color:#64748b;max-width:160px;" th:text="${a.note != null ? a.note : '—'}"></td>
+                        <td>
+                            <a th:href="@{/admin/attendance/delete/{id}(id=${a.id})}"
+                               class="btn btn-sm" style="background:#fee2e2;color:#ef4444;border:none;border-radius:8px;font-size:0.75rem;padding:5px 10px;font-weight:600;"
+                               onclick="return confirm('Xoá bản ghi chấm công này?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

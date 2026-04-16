@@ -17,3 +17,4 @@ INSERT IGNORE INTO attendance (user_id, attendance_date, check_in_time, check_ou
 (3, '2026-03-31', '09:00:00', '17:30:00', 'LATE',        'Mất điện'),
 (3, '2026-04-01', '08:00:00', '17:30:00', 'PRESENT',     NULL),
 (3, '2026-04-02', '08:20:00', NULL,        'LATE',        NULL);
+COMMIT;

@@ -6,6 +6,7 @@ import com.example.hr.models.TaskAssignment;
 import com.example.hr.models.User;
 import com.example.hr.repository.*;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.NotificationService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -42,6 +43,7 @@ public class User1Controller {
     @Autowired private AttendanceRepository attendanceRepository;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private AuthUserHelper authUserHelper;
+    @Autowired private NotificationService notificationService;
 
     private static final String UPLOAD_DIR = "public/test1/";
 
@@ -110,6 +112,7 @@ public class User1Controller {
         model.addAttribute("latestPayrollMonth", latestSalary != null ? latestSalary.getMonth() : null);
         model.addAttribute("latestPayrollYear", latestSalary != null ? latestSalary.getYear() : null);
         model.addAttribute("today", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        model.addAttribute("unreadNotifications", notificationService.countUnread(user));
 
         return "user1/dashboard";
     }
@@ -131,6 +134,7 @@ public class User1Controller {
         model.addAttribute("attendanceDays", attendanceDays);
         model.addAttribute("totalLeaves", totalLeaves);
         model.addAttribute("totalTasks", totalTasks);
+        model.addAttribute("unreadNotifications", notificationService.countUnread(user));
         return "user1/profile";
     }
 
@@ -206,6 +210,7 @@ public class User1Controller {
         model.addAttribute("payrolls", payrolls);
         model.addAttribute("totalPaid", totalPaid);
         model.addAttribute("latestNetSalary", latestNetSalary);
+        model.addAttribute("unreadNotifications", notificationService.countUnread(user));
         return "user1/payroll";
     }
 
@@ -234,6 +239,7 @@ public class User1Controller {
         model.addAttribute("pendingCount", pendingCount);
         model.addAttribute("inProgressCount", inProgressCount);
         model.addAttribute("doneCount", doneCount);
+        model.addAttribute("unreadNotifications", notificationService.countUnread(user));
         return "user1/my-tasks";
     }
 

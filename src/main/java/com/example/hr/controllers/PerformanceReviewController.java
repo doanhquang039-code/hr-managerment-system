@@ -7,6 +7,7 @@ import com.example.hr.models.User;
 import com.example.hr.repository.PerformanceReviewRepository;
 import com.example.hr.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class PerformanceReviewController {
     @Autowired private PerformanceReviewRepository reviewRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private AuthUserHelper authUserHelper;
+    @Autowired private NotificationService notificationService;
 
     // ==================== ADMIN ====================
 
@@ -105,6 +107,7 @@ public class PerformanceReviewController {
         List<PerformanceReview> reviews = reviewRepository.findByUserOrdered(user);
         model.addAttribute("reviews", reviews);
         model.addAttribute("user", user);
+        model.addAttribute("unreadNotifications", notificationService.countUnread(user));
         return "user1/reviews";
     }
 
