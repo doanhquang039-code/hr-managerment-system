@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Trợ lý HR — HRMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(160deg, #0f172a 0%, #1e293b 45%, #312e81 100%); min-height: 100vh; margin: 0; }
+        .shell { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .top-bar a { color: #94a3b8; text-decoration: none; font-size: 0.9rem; }
+        .top-bar a:hover { color: #e2e8f0; }
+        .card-chat {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            overflow: hidden;
+        }
+        .chat-head {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+            color: #f1f5f9;
+        }
+        .chat-head h1 { font-size: 1.1rem; font-weight: 700; margin: 0; }
+        .chat-head small { color: #94a3b8; font-size: 0.75rem; }
+        #thread {
+            height: min(52vh, 420px);
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .bubble {
+            max-width: 92%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            white-space: pre-wrap;
+        }
+        .bubble.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .bubble.bot {
+            align-self: flex-start;
+            background: rgba(30, 41, 59, 0.95);
+            color: #e2e8f0;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-bottom-left-radius: 4px;
+        }
+        .bubble .intent-tag {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #a5b4fc;
+        }
+        .input-area {
+            padding: 14px 16px 18px;
+            border-top: 1px solid rgba(148, 163, 184, 0.15);
+            background: rgba(15, 23, 42, 0.5);
+        }
+        .rate-row { font-size: 0.75rem; color: #94a3b8; margin-top: 6px; }
+        .rate-row button {
+            border: none; background: transparent; color: #fbbf24; padding: 0 2px;
+            font-size: 1rem; cursor: pointer;
+        }
+        .rate-row button:hover { transform: scale(1.15); }
+    </style>
+</head>
+<body>
+
+<div class="shell">
+    <div class="top-bar">
+        <a href="/user1/dashboard"><i class="bi bi-arrow-left"></i> Về Dashboard</a>
+        <span class="text-secondary small" th:text="${currentUser != null ? currentUser.fullName : ''}"></span>
+    </div>
+
+    <div class="card-chat">
+        <div class="chat-head">
+            <h1><i class="bi bi-robot text-info"></i> Trợ lý HR nội bộ</h1>
+            <small>Hỏi về nghỉ phép, lương, chấm công, KPI… Lịch sử được lưu theo tài khoản của bạn.</small>
+        </div>
+        <div id="thread">
+            <th:block th:if="${history == null or history.isEmpty()}">
+                <div class="bubble bot">Xin chào! Bạn cần hỗ trợ gì hôm nay?</div>
+            </th:block>
+            <th:block th:if="${history != null and !history.isEmpty()}">
+                <th:block th:each="m : ${history}">
+                    <div class="bubble user" th:text="${m.userQuery}">…</div>
+                    <div class="bubble bot">
+                        <span th:text="${m.botResponse}">…</span>
+                        <span class="intent-tag" th:if="${m.intent != null}" th:text="'#' + ${m.intent}"></span>
+                    </div>
+                </th:block>
+            </th:block>
+        </div>
+        <div class="input-area">
+            <form id="chat-form" class="d-flex gap-2">
+                <input type="text" id="msg" class="form-control form-control-lg" placeholder="Nhập câu hỏi…" autocomplete="off"/>
+                <button type="submit" class="btn btn-lg btn-primary px-4"><i class="bi bi-send-fill"></i></button>
+            </form>
+            <div class="rate-row d-none" id="rate-wrap">
+                Đánh giá câu trả lời vừa rồi:
+                <span id="rate-stars"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const thread = document.getElementById('thread');
+    const form = document.getElementById('chat-form');
+    const input = document.getElementById('msg');
+    const rateWrap = document.getElementById('rate-wrap');
+    const rateStars = document.getElementById('rate-stars');
+
+    const SESSION_KEY = 'hrms_chatbot_session';
+    let sessionId = sessionStorage.getItem(SESSION_KEY);
+    if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        sessionStorage.setItem(SESSION_KEY, sessionId);
+    }
+
+    function readXsrfCookie() {
+        const name = 'XSRF-TOKEN=';
+        const parts = document.cookie.split(';');
+        for (let i = 0; i < parts.length; i++) {
+            let c = parts[i].trim();
+            if (c.startsWith(name)) return decodeURIComponent(c.substring(name.length));
+        }
+        return null;
+    }
+
+    function csrfHeaders() {
+        const h = {};
+        const xsrf = readXsrfCookie();
+        if (xsrf) {
+            h['X-XSRF-TOKEN'] = xsrf;
+        } else {
+            const tokenMeta = document.querySelector('meta[name="_csrf"]');
+            const headerMeta = document.querySelector('meta[name="_csrf_header"]');
+            if (tokenMeta && headerMeta) {
+                h[headerMeta.getAttribute('content')] = tokenMeta.getAttribute('content');
+            }
+        }
+        return h;
+    }
+
+    function appendBubble(text, role) {
+        const div = document.createElement('div');
+        div.className = 'bubble ' + role;
+        div.textContent = text;
+        thread.appendChild(div);
+        thread.scrollTop = thread.scrollHeight;
+        return div;
+    }
+
+    function showRate(messageId) {
+        rateStars.innerHTML = '';
+        for (let s = 1; s <= 5; s++) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.setAttribute('aria-label', s + ' sao');
+            b.textContent = '★';
+            b.addEventListener('click', function () {
+                fetch('/user1/chatbot/api/rate', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: Object.assign({'Content-Type': 'application/json'}, csrfHeaders()),
+                    body: JSON.stringify({ messageId: messageId, rating: s })
+                }).then(function (r) {
+                    if (r.ok) {
+                        rateWrap.classList.add('d-none');
+                    }
+                });
+            });
+            rateStars.appendChild(b);
+        }
+        rateWrap.classList.remove('d-none');
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const text = (input.value || '').trim();
+        if (!text) return;
+        input.value = '';
+        appendBubble(text, 'user');
+
+        fetch('/user1/chatbot/api/message', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: Object.assign({'Content-Type': 'application/json'}, csrfHeaders()),
+            body: JSON.stringify({ message: text, sessionId: sessionId })
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.sessionId) sessionId = data.sessionId;
+                sessionStorage.setItem(SESSION_KEY, sessionId);
+                const bot = appendBubble(data.reply, 'bot');
+                const tag = document.createElement('span');
+                tag.className = 'intent-tag';
+                tag.textContent = '#' + (data.intent || '');
+                bot.appendChild(tag);
+                if (data.messageId) showRate(data.messageId);
+            })
+            .catch(function () {
+                appendBubble('Không gửi được tin nhắn. Thử lại sau hoặc đăng nhập lại.', 'bot');
+            });
+    });
+})();
+</script>
+</body>
+</html>

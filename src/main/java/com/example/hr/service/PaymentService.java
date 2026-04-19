@@ -7,7 +7,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.hr.enums.PaymentStatus;
 import com.example.hr.models.Payment;
 import com.example.hr.models.Payroll;
 import com.example.hr.models.User;
@@ -87,6 +89,10 @@ public class PaymentService {
      */
     public Optional<Payment> getPaymentById(Integer paymentId) {
         return paymentRepository.findById(paymentId);
+    }
+
+    public Optional<Payment> getPaymentDetail(Integer paymentId) {
+        return paymentRepository.findByIdWithRelations(paymentId);
     }
 
     /**
@@ -188,5 +194,53 @@ public class PaymentService {
      */
     public List<Payment> getPaymentsByPayrollId(Integer payrollId) {
         return paymentRepository.findByPayrollId(payrollId);
+    }
+
+    /**
+     * Cập nhật thanh toán thành công từ cổng (MoMo / VNPay) và đánh dấu payroll liên kết là PAID nếu có.
+     */
+    @Transactional
+    public void markPaymentCompletedFromGateway(Integer paymentId, String gatewayTransactionId) {
+        Optional<Payment> opt = paymentRepository.findByIdWithRelations(paymentId);
+        if (opt.isEmpty()) {
+            return;
+        }
+        Payment payment = opt.get();
+        if ("COMPLETED".equalsIgnoreCase(payment.getPaymentStatus())) {
+            return;
+        }
+        payment.setPaymentStatus("COMPLETED");
+        payment.setTransactionId(gatewayTransactionId);
+        payment.setPaymentDate(LocalDate.now());
+        payment.setUpdatedAt(LocalDateTime.now());
+        paymentRepository.save(payment);
+
+        if (payment.getPayroll() != null && payment.getPayroll().getId() != null) {
+            payrollRepository.findById(payment.getPayroll().getId()).ifPresent(pr -> {
+                pr.setPaymentStatus(PaymentStatus.PAID);
+                payrollRepository.save(pr);
+            });
+        }
+    }
+
+    @Transactional
+    public void markPaymentFailedFromGateway(Integer paymentId, String gatewayTransactionId) {
+        paymentRepository.findById(paymentId).ifPresent(payment -> {
+            payment.setPaymentStatus("FAILED");
+            if (gatewayTransactionId != null) {
+                payment.setTransactionId(gatewayTransactionId);
+            }
+            payment.setUpdatedAt(LocalDateTime.now());
+            paymentRepository.save(payment);
+        });
+    }
+
+    @Transactional
+    public void markPaymentProcessing(Integer paymentId) {
+        paymentRepository.findById(paymentId).ifPresent(payment -> {
+            payment.setPaymentStatus("PROCESSING");
+            payment.setUpdatedAt(LocalDateTime.now());
+            paymentRepository.save(payment);
+        });
     }
 }

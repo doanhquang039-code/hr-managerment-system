@@ -25,6 +25,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Integer> {
     // Tìm thanh toán theo mã giao dịch
     Optional<Payment> findByTransactionId(String transactionId);
 
+    @Query("SELECT p FROM Payment p JOIN FETCH p.user LEFT JOIN FETCH p.payroll WHERE p.id = :id")
+    Optional<Payment> findByIdWithRelations(@Param("id") Integer id);
+
     // Tìm thanh toán theo payroll id
     List<Payment> findByPayrollId(Integer payrollId);
 

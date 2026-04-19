@@ -15,6 +15,7 @@ import com.example.hr.models.LeaveRequest;
 import com.example.hr.models.User;
 import com.example.hr.repository.LeaveRequestRepository;
 import com.example.hr.repository.UserRepository;
+import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
 
 import java.time.LocalDate;
@@ -29,6 +30,8 @@ public class LeaveRequestController {
     private UserRepository userRepository;
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private HrAuditLogService hrAuditLogService;
 
     // ==================== ADMIN ====================
 
@@ -103,12 +106,15 @@ public class LeaveRequestController {
                 "/user/leaves"
             );
         }
+        hrAuditLogService.log(auth, "LEAVE_APPROVED", "LeaveRequest", String.valueOf(id),
+                "Duyệt đơn nghỉ " + lr.getLeaveType() + " cho userId=" + (lr.getUser() != null ? lr.getUser().getId() : "?"),
+                null);
         return "redirect:/admin/leaves";
     }
 
     @GetMapping("/admin/leaves/reject/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    public String reject(@PathVariable Integer id) {
+    public String reject(@PathVariable Integer id, Authentication auth) {
         LeaveRequest lr = leaveRepository.findById(id).orElseThrow();
         lr.setStatus(LeaveStatus.REJECTED);
         leaveRepository.save(lr);
@@ -121,6 +127,9 @@ public class LeaveRequestController {
                 "/user/leaves"
             );
         }
+        hrAuditLogService.log(auth, "LEAVE_REJECTED", "LeaveRequest", String.valueOf(id),
+                "Từ chối đơn nghỉ " + lr.getLeaveType() + " userId=" + (lr.getUser() != null ? lr.getUser().getId() : "?"),
+                null);
         return "redirect:/admin/leaves";
     }
 

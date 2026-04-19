@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,12 +30,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                        "/admin/payments/ipn/momo", "/admin/payment/ipn/momo",
+                        "/admin/payments/ipn/vnpay", "/admin/payment/ipn/vnpay"))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/index.html", "/login", "/login/**",
                     "/css/**", "/js/**", "/images/**",
                     "/oauth2/**", "/login/oauth2/code/**",
-                    "/admin/payments/callback/**", "/admin/payments/ipn/**"
+                    "/admin/payments/callback/**", "/admin/payments/ipn/**",
+                    "/admin/payment/callback/**", "/admin/payment/ipn/**"
                 ).permitAll()
                 .requestMatchers(
                     "/admin/leaves/**",

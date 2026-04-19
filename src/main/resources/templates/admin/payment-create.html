@@ -76,7 +76,7 @@
             <div style="font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px;">⚡ HRMS ADMIN</div>
             <hr style="border-color: rgba(255,255,255,0.15)">
             <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a th:href="@{/admin/payment}" class="active"><i class="bi bi-bank"></i> Thanh toán</a>
+            <a th:href="@{/admin/payments}" class="active"><i class="bi bi-bank"></i> Thanh toán</a>
             <form th:action="@{/logout}" method="post" class="px-3 mt-4">
                 <button type="submit" class="btn btn-outline-light btn-sm w-100">
                     <i class="bi bi-box-arrow-right"></i> Đăng xuất
@@ -91,12 +91,13 @@
                     <h1 class="h3 mb-0">➕ Tạo Thanh toán</h1>
                     <small class="text-muted">Tạo giao dịch thanh toán mới</small>
                 </div>
-                <a th:href="@{/admin/payment}" class="btn btn-secondary">← Quay lại</a>
+                <a th:href="@{/admin/payments}" class="btn btn-secondary">← Quay lại</a>
             </div>
 
             <div class="row">
                 <div class="col-md-8">
-                    <form th:action="@{/admin/payment/save}" method="post" id="paymentForm">
+                    <form th:action="@{/admin/payments/save}" method="post" id="paymentForm">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <!-- Thông tin cơ bản -->
                         <div class="section-title">
                             👤 Thông tin nhân viên
@@ -155,7 +156,7 @@
                         </div>
 
                         <!-- Chuyển khoản -->
-                        <div class="gateway-option" onclick="selectPaymentMethod('BANK_TRANSFER')">
+                        <div class="gateway-option" onclick="selectPaymentMethod('BANK_TRANSFER', this)">
                             <div class="gateway-logo">🏦</div>
                             <div class="gateway-name">Chuyển khoản ngân hàng</div>
                             <div class="gateway-desc">Thanh toán trực tiếp qua tài khoản ngân hàng</div>
@@ -163,7 +164,7 @@
                         </div>
 
                         <!-- Momo -->
-                        <div class="gateway-option" onclick="selectPaymentMethod('MOMO')">
+                        <div class="gateway-option" onclick="selectPaymentMethod('MOMO', this)">
                             <div class="gateway-logo">📱</div>
                             <div class="gateway-name">Momo</div>
                             <div class="gateway-desc">Ví điện tử Momo - Thanh toán an toàn, nhanh chóng</div>
@@ -171,7 +172,7 @@
                         </div>
 
                         <!-- VNPay -->
-                        <div class="gateway-option" onclick="selectPaymentMethod('VNPAY')">
+                        <div class="gateway-option" onclick="selectPaymentMethod('VNPAY', this)">
                             <div class="gateway-logo">💳</div>
                             <div class="gateway-name">VNPay</div>
                             <div class="gateway-desc">Cổng thanh toán VNPay - Hỗ trợ tất cả ngân hàng</div>
@@ -179,7 +180,7 @@
                         </div>
 
                         <!-- Tiền mặt -->
-                        <div class="gateway-option" onclick="selectPaymentMethod('CASH')">
+                        <div class="gateway-option" onclick="selectPaymentMethod('CASH', this)">
                             <div class="gateway-logo">💰</div>
                             <div class="gateway-name">Tiền mặt</div>
                             <div class="gateway-desc">Thanh toán bằng tiền mặt trực tiếp</div>
@@ -231,7 +232,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check-circle"></i> Tạo thanh toán
                             </button>
-                            <a th:href="@{/admin/payment}" class="btn btn-secondary">
+                            <a th:href="@{/admin/payments}" class="btn btn-secondary">
                                 <i class="bi bi-x-circle"></i> Hủy
                             </a>
                         </div>
@@ -252,13 +253,14 @@
                                 <li>Chọn phương thức thanh toán phù hợp</li>
                                 <li>Nếu chuyển khoản, điền đầy đủ thông tin tài khoản</li>
                                 <li>Nhấn "Tạo thanh toán" để hoàn tất</li>
+                                <li>MoMo / VNPay: bật <code>payment.gateway.*</code> trong <code>application.properties</code> rồi hệ thống chuyển sang cổng thanh toán</li>
                             </ul>
                             <hr>
                             <h6 class="mb-2">Các phương thức hỗ trợ:</h6>
                             <p class="small">
-                                <strong>🏦 Chuyển khoản:</strong> Chuyển tiền trực tiếp qua ngân hàng<br>
-                                <strong>📱 Momo:</strong> Người nhận nhận tiền qua ví Momo<br>
-                                <strong>💳 VNPay:</strong> Sử dụng cổng thanh toán VNPay<br>
+                                <strong>🏦 Chuyển khoản:</strong> Ghi nhận TK ngân hàng (thủ công / đối soát)<br>
+                                <strong>📱 MoMo:</strong> Cổng ví MoMo (API v2 create)<br>
+                                <strong>💳 VNPay:</strong> Thẻ ATM nội địa &amp; QR ngân hàng (sandbox / production)<br>
                                 <strong>💰 Tiền mặt:</strong> Thanh toán bằng tiền mặt
                             </p>
                         </div>
@@ -271,17 +273,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function selectPaymentMethod(method) {
-        // Bỏ selected từ các option khác
-        document.querySelectorAll('.gateway-option').forEach(el => {
-            el.classList.remove('selected');
-        });
-        
-        // Thêm selected vào option được chọn
-        event.currentTarget.classList.add('selected');
-        
-        // Select radio button tương ứng
-        document.getElementById('method_' + method.toLowerCase()).checked = true;
+    function selectPaymentMethod(method, el) {
+        document.querySelectorAll('.gateway-option').forEach(node => node.classList.remove('selected'));
+        if (el) el.classList.add('selected');
+        const radio = document.getElementById('method_' + method.toLowerCase());
+        if (radio) radio.checked = true;
         
         // Hiển thị/ẩn thông tin tài khoản ngân hàng
         if (method === 'BANK_TRANSFER') {
@@ -293,8 +289,8 @@
     
     // Mặc định chọn chuyển khoản
     window.addEventListener('load', function() {
-        selectPaymentMethod('BANK_TRANSFER');
-        document.querySelector('.gateway-option').click();
+        const first = document.querySelector('.gateway-option');
+        if (first) selectPaymentMethod('BANK_TRANSFER', first);
     });
 </script>
 </body>

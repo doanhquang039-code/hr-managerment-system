@@ -3,6 +3,7 @@ package com.example.hr.repository;
 import java.util.Optional;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.User;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     
     // Lọc theo phòng ban và sắp xếp
     List<User> findByDepartmentId(Integer deptId, Sort sort);
+
+    List<User> findByRoleInAndStatus(List<Role> roles, UserStatus status);
 }

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import com.example.hr.models.User;
 import com.example.hr.repository.ContractRepository;
 import com.example.hr.repository.PayrollRepository;
 import com.example.hr.repository.UserRepository;
+import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
 
 @Controller
@@ -42,6 +44,9 @@ public class PayrollController {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private HrAuditLogService hrAuditLogService;
+
     @GetMapping
     public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
         List<Payroll> payrolls = payrollRepository.findAllWithUser(keyword);
@@ -51,7 +56,7 @@ public class PayrollController {
     }
 
     @PostMapping("/generate/{userId}")
-    public String generatePayroll(@PathVariable Integer userId) {
+    public String generatePayroll(@PathVariable Integer userId, Authentication auth) {
         User user = userRepository.findById(userId).orElseThrow();
         LocalDate today = LocalDate.now();
 
@@ -90,11 +95,13 @@ public class PayrollController {
                 "Phiu luong thang " + payroll.getMonth() + "/" + payroll.getYear() + " da duoc tao. Hay kiem tra ngay!",
                 NotificationType.PAYROLL,
                 "/user1/payroll");
+        hrAuditLogService.log(auth, "PAYROLL_GENERATED", "Payroll", String.valueOf(payroll.getId()),
+                "Tạo bảng lương tháng " + payroll.getMonth() + "/" + payroll.getYear() + " cho userId=" + userId, null);
         return "redirect:/admin/payroll";
     }
 
     @GetMapping("/mark-paid/{id}")
-    public String markAsPaid(@PathVariable Integer id) {
+    public String markAsPaid(@PathVariable Integer id, Authentication auth) {
         Payroll payroll = payrollRepository.findById(id).orElseThrow();
         if (payroll.getPaymentStatus() == PaymentStatus.PAID) {
             return "redirect:/admin/payroll";
@@ -110,11 +117,16 @@ public class PayrollController {
                     NotificationType.SUCCESS,
                     "/user1/payroll");
         }
+        hrAuditLogService.log(auth, "PAYROLL_MARK_PAID", "Payroll", String.valueOf(id),
+                "Đánh dấu đã trả lương tháng " + payroll.getMonth() + "/" + payroll.getYear(), null);
         return "redirect:/admin/payroll";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
+    public String delete(@PathVariable Integer id, Authentication auth) {
+        payrollRepository.findById(id).ifPresent(p ->
+                hrAuditLogService.log(auth, "PAYROLL_DELETED", "Payroll", String.valueOf(id),
+                        "Xóa bảng lương tháng " + p.getMonth() + "/" + p.getYear(), null));
         payrollRepository.deleteById(id);
         return "redirect:/admin/payroll";
     }

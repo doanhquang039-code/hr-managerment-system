@@ -2,6 +2,7 @@ package com.example.hr.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.models.Contract;
 import com.example.hr.repository.ContractRepository;
 import com.example.hr.repository.UserRepository;
+import com.example.hr.service.HrAuditLogService;
 
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -26,6 +28,9 @@ public class ContractController {
     private ContractRepository contractRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HrAuditLogService hrAuditLogService;
 
    @GetMapping
 public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
@@ -42,8 +47,15 @@ public String list(@RequestParam(name = "keyword", required = false) String keyw
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("contract") Contract contract) {
+    public String save(@ModelAttribute("contract") Contract contract, Authentication auth) {
+        boolean isNew = contract.getId() == null;
         contractRepository.save(contract);
+        hrAuditLogService.log(auth, isNew ? "CONTRACT_CREATED" : "CONTRACT_UPDATED", "Contract",
+                contract.getId() != null ? String.valueOf(contract.getId()) : null,
+                "Loại: " + contract.getContractType()
+                        + ", userId=" + (contract.getUser() != null ? contract.getUser().getId() : "?")
+                        + ", hết hạn=" + contract.getExpiryDate(),
+                null);
         return "redirect:/admin/contracts";
     }
     @GetMapping("/contracts")
