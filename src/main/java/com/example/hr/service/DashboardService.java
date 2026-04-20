@@ -9,9 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -93,17 +91,18 @@ public class DashboardService {
 
         // Unacknowledged warnings
         long unackWarnings = warningRepository.findAll().stream()
-                .filter(w -> !w.isAcknowledged())
+                .filter(w -> !Boolean.TRUE.equals(w.getIsAcknowledged()))
                 .count();
         stats.setUnacknowledgedWarnings(unackWarnings);
 
         // Active benefits cost
         BigDecimal benefitCost = benefitRepository.findAll().stream()
                 .filter(b -> b.getStatus() == com.example.hr.enums.BenefitStatus.ACTIVE)
-                .map(EmployeeBenefit::getMonthlyCost)
+                .map(EmployeeBenefit::getMonetaryValue)
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         stats.setMonthlyBenefitCost(benefitCost);
+        stats.setTotalBenefitCost(benefitCost);
 
         // Asset summary
         long totalAssets = assetRepository.count();
@@ -152,7 +151,7 @@ public class DashboardService {
                 .forEach(ot -> {
                     Map<String, Object> act = new LinkedHashMap<>();
                     act.put("type", "OVERTIME_REQUEST");
-                    act.put("description", (ot.getUser() != null ? ot.getUser().getFullName() : "N/A") + " - OT " + ot.getHoursWorked() + "h");
+                    act.put("description", (ot.getUser() != null ? ot.getUser().getFullName() : "N/A") + " - OT " + (ot.getTotalHours() != null ? ot.getTotalHours() : 0) + "h");
                     act.put("status", ot.getStatus());
                     act.put("time", ot.getCreatedAt());
                     activities.add(act);
@@ -160,14 +159,14 @@ public class DashboardService {
 
         // Recent warnings
         warningRepository.findAll().stream()
-                .sorted(Comparator.comparing(EmployeeWarning::getWarningDate, Comparator.nullsLast(Comparator.reverseOrder())))
+                .sorted(Comparator.comparing(EmployeeWarning::getIssuedDate, Comparator.nullsLast(Comparator.reverseOrder())))
                 .limit(3)
                 .forEach(w -> {
                     Map<String, Object> act = new LinkedHashMap<>();
                     act.put("type", "WARNING_ISSUED");
                     act.put("description", (w.getUser() != null ? w.getUser().getFullName() : "N/A") + " - Cảnh cáo " + w.getWarningLevel().name());
-                    act.put("status", w.isAcknowledged() ? "ACKNOWLEDGED" : "PENDING");
-                    act.put("time", w.getWarningDate());
+                    act.put("status", Boolean.TRUE.equals(w.getIsAcknowledged()) ? "ACKNOWLEDGED" : "PENDING");
+                    act.put("time", w.getIssuedDate());
                     activities.add(act);
                 });
 

@@ -16,6 +16,11 @@ public class HrAuditLogService {
     private HrAuditLogRepository hrAuditLogRepository;
 
     @Transactional
+    public void log(String actorUsername, String action, String entityType, String entityId, String detail) {
+        log(actorUsername, action, entityType, entityId, detail, null);
+    }
+
+    @Transactional
     public void log(Authentication auth, String action, String entityType, String entityId, String detail, String ipAddress) {
         String actor = "system";
         if (auth != null && auth.getName() != null && !auth.getName().isBlank()) {

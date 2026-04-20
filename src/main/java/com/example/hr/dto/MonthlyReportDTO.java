@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -19,6 +20,15 @@ public class MonthlyReportDTO {
 
     private int month;
     private int year;
+    private LocalDateTime generatedAt;
+
+    // Compatibility fields for report generation/export
+    private long totalEmployees;
+    private long totalLeaveRequests;
+    private long totalOvertimeRequests;
+    private long activeTrainingPrograms;
+    private long activeWarnings;
+    private BigDecimal totalPayrollAmount;
 
     // Nhân sự
     private long totalHeadcount;

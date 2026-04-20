@@ -48,15 +48,20 @@ public class DashboardStatsDTO {
     // Warnings
     private long activeWarnings;
     private long severeWarnings;
+    private long unacknowledgedWarnings;
 
     // Benefits
     private BigDecimal totalBenefitCost;
+    private BigDecimal monthlyBenefitCost;
     private long expiringBenefits;
 
     // Assets
     private long totalAssets;
+    private long availableAssets;
     private BigDecimal totalAssetValue;
     private long overdueAssetReturns;
+
+    private long expiringDocuments;
 
     // Documents
     private long pendingDocumentVerifications;

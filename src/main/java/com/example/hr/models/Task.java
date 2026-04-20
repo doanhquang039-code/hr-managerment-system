@@ -1,6 +1,7 @@
 package com.example.hr.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import com.example.hr.enums.TaskType;
 
@@ -15,7 +16,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "Task")
+@Table(name = "task")
 @Data
 public class Task {
 	@Id
@@ -38,6 +39,12 @@ public class Task {
     private BigDecimal baseReward = BigDecimal.ZERO;
 
     private Boolean isExtraShift = false;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 	public Integer getId() {
 		return id;
@@ -94,4 +101,20 @@ public class Task {
 	public void setIsExtraShift(Boolean isExtraShift) {
 		this.isExtraShift = isExtraShift;
 	}
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

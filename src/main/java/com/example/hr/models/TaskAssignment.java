@@ -2,6 +2,7 @@ package com.example.hr.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.example.hr.enums.TaskStatus;
 
@@ -42,6 +43,12 @@ public class TaskAssignment {
 
 	@Column(name = "actual_hours", precision = 5, scale = 2)
 	private BigDecimal actualHours;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 	public Integer getId() {
 		return id;
@@ -90,4 +97,20 @@ public class TaskAssignment {
 	public void setActualHours(BigDecimal actualHours) {
 		this.actualHours = actualHours;
 	}
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

@@ -31,7 +31,8 @@ public class LeaveBalanceService {
             LeaveType.ANNUAL, 12,       // Phép năm: 12 ngày
             LeaveType.SICK, 30,          // Ốm: 30 ngày
             LeaveType.MATERNITY, 180,    // Thai sản: 180 ngày
-            LeaveType.PERSONAL, 3,       // Việc cá nhân: 3 ngày
+            LeaveType.PATERNITY, 7,      // Chăm con: 7 ngày (tuỳ chính sách)
+            LeaveType.MARRIAGE, 3,       // Nghỉ cưới: 3 ngày
             LeaveType.BEREAVEMENT, 3     // Tang: 3 ngày
     );
 

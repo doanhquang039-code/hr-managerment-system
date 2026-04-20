@@ -45,6 +45,11 @@ public class SecurityConfig {
                     "/admin/payment/callback/**", "/admin/payment/ipn/**"
                 ).permitAll()
                 .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html"
+                ).permitAll()
+                .requestMatchers(
                     "/admin/leaves/**",
                     "/admin/attendance/**",
                     "/admin/tasks/**",

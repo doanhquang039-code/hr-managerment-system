@@ -1,20 +1,19 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.0
     container_name: hr_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: hr_management_system
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hr_management_system}
+      MYSQL_USER: ${MYSQL_USER:-hr_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-hr_password}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - hr_network
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
@@ -29,17 +28,31 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hr_management_system?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-hr_management_system}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-hr_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-hr_password}
+      TZ: Asia/Ho_Chi_Minh
     ports:
       - "8080:8080"
     networks:
       - hr_network
+    volumes:
+      - uploads_data:/app/public/test1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health"]
+      timeout: 5s
+      retries: 20
+      interval: 10s
+      start_period: 20s
 
 volumes:
   mysql_data:
+  uploads_data:
 
 networks:
   hr_network:

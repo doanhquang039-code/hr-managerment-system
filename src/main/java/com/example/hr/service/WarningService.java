@@ -1,6 +1,7 @@
 package com.example.hr.service;
 
 import com.example.hr.dto.EmployeeWarningDTO;
+import com.example.hr.enums.NotificationType;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.enums.WarningLevel;
 import com.example.hr.exception.BusinessValidationException;
@@ -182,6 +183,7 @@ public class WarningService {
                     notificationService.createNotification(
                             warning.getUser(),
                             "Bạn có cảnh cáo chưa xác nhận từ " + warning.getIssuedDate(),
+                            NotificationType.WARNING,
                             "/user1/warnings"
                     );
                 } catch (Exception e) {
@@ -226,7 +228,7 @@ public class WarningService {
         try {
             String message = String.format("Bạn nhận được cảnh cáo mức %s: %s",
                     warning.getWarningLevel().getDisplayName(), warning.getReason());
-            notificationService.createNotification(warning.getUser(), message, "/user1/warnings");
+            notificationService.createNotification(warning.getUser(), message, NotificationType.WARNING, "/user1/warnings");
         } catch (Exception e) {
             log.error("Failed to notify user about warning: {}", e.getMessage());
         }

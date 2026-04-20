@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class ReportGenerationService {
         MonthlyReportDTO report = new MonthlyReportDTO();
         report.setMonth(month);
         report.setYear(year);
-        report.setGeneratedAt(java.time.LocalDateTime.now());
+        report.setGeneratedAt(LocalDateTime.now());
 
         // Employee stats
         long totalEmployees = userRepository.count();
@@ -98,14 +99,13 @@ public class ReportGenerationService {
 
         // Warning stats
         long activeWarnings = warningRepository.findAll().stream()
-                .filter(w -> !w.isAcknowledged())
+                .filter(w -> !Boolean.TRUE.equals(w.getIsAcknowledged()))
                 .count();
         report.setActiveWarnings(activeWarnings);
 
         // Payroll total
         BigDecimal totalPayroll = payrollRepository.findAll().stream()
-                .filter(p -> p.getPayPeriodStart() != null)
-                .filter(p -> p.getPayPeriodStart().getMonthValue() == month && p.getPayPeriodStart().getYear() == year)
+                .filter(p -> Objects.equals(p.getMonth(), month) && Objects.equals(p.getYear(), year))
                 .map(Payroll::getNetSalary)
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -172,11 +172,12 @@ public class ReportGenerationService {
                             (ot.getUser().getFullName() != null ? ot.getUser().getFullName() : ot.getUser().getUsername())
                             : "N/A");
                     row.add(ot.getOvertimeDate());
-                    row.add(ot.getHoursWorked());
+                    row.add(ot.getTotalHours());
                     row.add(ot.getReason());
                     row.add(ot.getStatus().name());
                     row.add(ot.getApprovedBy() != null ? ot.getApprovedBy().getFullName() : "Chưa duyệt");
-                    row.add(ot.getOvertimePay() != null ? ot.getOvertimePay() : BigDecimal.ZERO);
+                    // OvertimeRequest hiện chưa lưu tiền OT; để 0 và có thể tính lại khi có hourlyRate.
+                    row.add(BigDecimal.ZERO);
                     return row;
                 })
                 .collect(Collectors.toList());
@@ -233,10 +234,10 @@ public class ReportGenerationService {
                     row.add(tp.getTrainingType());
                     row.add(tp.getStartDate());
                     row.add(tp.getEndDate());
-                    row.add(tp.getCurrentEnrollment() != null ? tp.getCurrentEnrollment() : 0);
+                    row.add(tp.getEnrollments() != null ? tp.getEnrollments().size() : 0);
                     row.add(tp.getBudget());
                     row.add(tp.getStatus().name());
-                    row.add(tp.getTrainer());
+                    row.add(tp.getInstructor());
                     return row;
                 })
                 .collect(Collectors.toList());
@@ -252,8 +253,7 @@ public class ReportGenerationService {
 
         // Get payroll by department
         List<Payroll> payrolls = payrollRepository.findAll().stream()
-                .filter(p -> p.getPayPeriodStart() != null)
-                .filter(p -> p.getPayPeriodStart().getMonthValue() == month && p.getPayPeriodStart().getYear() == year)
+                .filter(p -> Objects.equals(p.getMonth(), month) && Objects.equals(p.getYear(), year))
                 .toList();
 
         Map<String, List<Payroll>> byDept = payrolls.stream()

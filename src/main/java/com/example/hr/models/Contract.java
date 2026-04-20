@@ -4,9 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Contract")
+@Table(name = "contract")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,6 +34,12 @@ public class Contract {
 
     @Column(name = "contract_image")
     private String contractImage;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 	public Integer getId() {
 		return id;
@@ -89,4 +96,20 @@ public class Contract {
 	public void setContractImage(String contractImage) {
 		this.contractImage = contractImage;
 	}
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

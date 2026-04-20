@@ -2,7 +2,7 @@ package com.example.hr.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "department")
@@ -27,6 +27,12 @@ import java.util.List;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_department_id")
     private Department parentDepartment;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
 	public Integer getId() {
 		return id;
@@ -67,5 +73,21 @@ import java.util.List;
 	public void setParentDepartment(Department parentDepartment) {
 		this.parentDepartment = parentDepartment;
 	}
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
     
 }

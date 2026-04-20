@@ -15,9 +15,25 @@ public class CloudinaryService {
     @Autowired
     private Cloudinary cloudinary;
 
+    /**
+     * Upload raw result (compatible with legacy callers).
+     */
+    public Map<?, ?> upload(MultipartFile file) throws IOException {
+        String resourceType = file.getContentType() != null && file.getContentType().startsWith("video")
+                ? "video"
+                : "auto";
+
+        return cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap(
+                        "resource_type", resourceType
+                ));
+    }
+
     public String uploadFile(MultipartFile file, String folderName) throws IOException {
         // Xác định loại resource (video hoặc image)
-        String resourceType = file.getContentType().startsWith("video") ? "video" : "auto";
+        String resourceType = file.getContentType() != null && file.getContentType().startsWith("video")
+                ? "video"
+                : "auto";
         
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap(

@@ -1,6 +1,7 @@
 package com.example.hr.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.example.hr.enums.AttendanceStatus;
@@ -50,4 +51,7 @@ public class Attendance {
 
     @Column(columnDefinition = "TEXT")
     private String note;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

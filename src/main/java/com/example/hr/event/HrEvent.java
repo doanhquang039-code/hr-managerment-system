@@ -22,5 +22,5 @@ public abstract class HrEvent extends ApplicationEvent {
 
     public String getActorUsername() { return actorUsername; }
     public String getEventType() { return eventType; }
-    public LocalDateTime getTimestamp() { return timestamp; }
+    public LocalDateTime getEventTime() { return timestamp; }
 }

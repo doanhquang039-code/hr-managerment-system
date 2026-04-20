@@ -1,6 +1,7 @@
 package com.example.hr.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.enums.LeaveType;
@@ -53,6 +54,9 @@ public class LeaveRequest {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "approved_by")
 	private User approvedBy;
+
+	@Column(name = "created_at")
+	private LocalDateTime createdAt = LocalDateTime.now();
 
 	public Integer getId() {
 		return id;
@@ -116,5 +120,13 @@ public class LeaveRequest {
 
 	public void setApprovedBy(User approvedBy) {
 		this.approvedBy = approvedBy;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
 	}
 }
