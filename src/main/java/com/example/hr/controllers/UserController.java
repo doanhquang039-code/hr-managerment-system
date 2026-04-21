@@ -168,8 +168,25 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@ModelAttribute("user") User user, @RequestParam("image") MultipartFile file)
+    public String saveUser(@ModelAttribute("user") User user,
+                           @RequestParam("image") MultipartFile file,
+                           @RequestParam(value = "departmentId", required = false) Integer departmentId,
+                           @RequestParam(value = "positionId", required = false) Integer positionId)
             throws IOException {
+
+        // Resolve department & position từ ID (form gửi id, không phải entity)
+        if (departmentId != null) {
+            departmentRepository.findById(departmentId).ifPresent(user::setDepartment);
+        } else {
+            user.setDepartment(null);
+        }
+        if (positionId != null) {
+            positionRepository.findById(positionId).ifPresent(user::setPosition);
+        } else {
+            user.setPosition(null);
+        }
+
+        // Xử lý ảnh
         if (!file.isEmpty()) {
             String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
             Path path = Paths.get(UPLOAD_DIR + fileName);
@@ -177,13 +194,27 @@ public class UserController {
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
             user.setProfileImage(fileName);
         } else if (user.getId() != null) {
-            User existingUser = userRepository.findById(user.getId()).get();
-            user.setProfileImage(existingUser.getProfileImage());
+            // Giữ ảnh cũ
+            userRepository.findById(user.getId())
+                    .ifPresent(existing -> user.setProfileImage(existing.getProfileImage()));
         }
 
-        if (user.getId() == null || (user.getPassword() != null && !user.getPassword().isEmpty())) {
+        // Xử lý password: chỉ encode khi tạo mới hoặc khi user nhập password mới
+        if (user.getId() == null) {
+            // Tạo mới: bắt buộc có password
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            String rawPwd = user.getPassword();
+            if (rawPwd != null && !rawPwd.isBlank()) {
+                // Đổi password mới
+                user.setPassword(passwordEncoder.encode(rawPwd));
+            } else {
+                // Giữ password cũ
+                userRepository.findById(user.getId())
+                        .ifPresent(existing -> user.setPassword(existing.getPassword()));
+            }
         }
+
         userRepository.save(user);
         return "redirect:/admin/users";
     }

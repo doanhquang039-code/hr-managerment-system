@@ -28,4 +28,17 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<User> findByDepartmentId(Integer deptId, Sort sort);
 
     List<User> findByRoleInAndStatus(List<Role> roles, UserStatus status);
+
+    // UserApiController methods
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByEmployeeCode(String employeeCode);
+    boolean existsByUsernameAndIdNot(String username, Integer id);
+    boolean existsByEmailAndIdNot(String email, Integer id);
+    boolean existsByEmployeeCodeAndIdNot(String employeeCode, Integer id);
+
+    List<User> findByStatusAndFullNameContainingIgnoreCaseOrStatusAndEmailContainingIgnoreCaseOrStatusAndEmployeeCodeContainingIgnoreCase(
+            UserStatus s1, String name,
+            UserStatus s2, String email,
+            UserStatus s3, String code);
 }

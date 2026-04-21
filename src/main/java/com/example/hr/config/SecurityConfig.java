@@ -55,7 +55,14 @@ public class SecurityConfig {
                     "/admin/tasks/**",
                     "/admin/assignments/**",
                     "/admin/reviews/**",
-                    "/admin/contracts/**"
+                    "/admin/contracts/**",
+                    "/admin/kpi/**",
+                    "/admin/expenses/**",
+                    "/admin/skills/**",
+                    "/api/kpi/**",
+                    "/api/expenses/**",
+                    "/api/skills/**",
+                    "/api/shifts/**"
                 ).hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/hiring/**").hasAnyRole("ADMIN", "HIRING", "MANAGER")
