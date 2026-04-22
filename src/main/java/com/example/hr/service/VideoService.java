@@ -3,6 +3,8 @@ package com.example.hr.service;
 import com.example.hr.models.TrainingVideo;
 import com.example.hr.models.User;
 import com.example.hr.repository.TrainingVideoRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,7 @@ public class VideoService {
         return videoRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
+    @Cacheable(value = "videoLibrary", key = "'published'")
     public List<TrainingVideo> findPublished() {
         return videoRepository.findByIsPublishedTrueOrderByIdDesc();
     }
@@ -67,6 +70,7 @@ public class VideoService {
     /**
      * Upload video lên Cloudinary, lưu metadata vào DB.
      */
+    @CacheEvict(value = "videoLibrary", allEntries = true)
     public TrainingVideo uploadVideo(MultipartFile file,
                                      String title,
                                      String description,
@@ -120,6 +124,7 @@ public class VideoService {
 
     // ---- Delete ----
 
+    @CacheEvict(value = "videoLibrary", allEntries = true)
     public void deleteVideo(Integer id) throws IOException {
         TrainingVideo video = videoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Video không tồn tại: " + id));

@@ -25,6 +25,40 @@ public class CloudinaryService {
         return result.get("secure_url").toString();
     }
 
+    /** Upload ảnh avatar — trả về URL + public_id */
+    public Map<?, ?> uploadAvatar(MultipartFile file, String folder) throws IOException {
+        return cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap(
+                        "resource_type", "image",
+                        "folder", folder,
+                        "transformation", "w_200,h_200,c_fill,g_face,q_auto,f_auto"
+                ));
+    }
+
+    /** Upload document (PDF, image, Word) — trả về full Map */
+    public Map<?, ?> uploadDocument(MultipartFile file, String folder) throws IOException {
+        String ct = file.getContentType() != null ? file.getContentType() : "";
+        String resourceType = ct.startsWith("image/") ? "image" : "raw";
+        return cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap(
+                        "resource_type", resourceType,
+                        "folder", folder,
+                        "use_filename", true,
+                        "unique_filename", true
+                ));
+    }
+
+    /** Upload receipt/image nhỏ */
+    public Map<?, ?> uploadReceipt(MultipartFile file, String folder) throws IOException {
+        return cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap(
+                        "resource_type", "auto",
+                        "folder", folder,
+                        "quality", "auto",
+                        "fetch_format", "auto"
+                ));
+    }
+
     /** Upload video — trả về full Map để lấy public_id, duration, secure_url */
     public Map<?, ?> uploadVideo(MultipartFile file, String folder) throws IOException {
         // Dùng uploadLarge với InputStream để tránh OutOfMemoryError với video lớn

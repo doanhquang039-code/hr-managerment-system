@@ -6,20 +6,16 @@ import com.example.hr.models.TaskAssignment;
 import com.example.hr.models.User;
 import com.example.hr.repository.*;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.CloudinaryService;
 import com.example.hr.service.NotificationService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +42,7 @@ public class User1Controller {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private AuthUserHelper authUserHelper;
     @Autowired private NotificationService notificationService;
+    @Autowired private CloudinaryService cloudinaryService;
 
     private static final String UPLOAD_DIR = "public/test1/";
 
@@ -143,18 +140,29 @@ public class User1Controller {
     @PostMapping("/profile/update-avatar")
     public String updateAvatar(@RequestParam("image") MultipartFile file,
                                Authentication authentication,
-                               RedirectAttributes redirectAttributes) throws IOException {
+                               RedirectAttributes redirectAttributes) {
         User user = getCurrentUser(authentication);
         if (user == null) return "redirect:/login";
 
-        if (!file.isEmpty()) {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR + fileName);
-            Files.createDirectories(path.getParent());
-            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            user.setProfileImage(fileName);
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("successMsg", "Vui lòng chọn ảnh!");
+            return "redirect:/user1/profile";
+        }
+
+        String ct = file.getContentType();
+        if (ct == null || !ct.startsWith("image/")) {
+            redirectAttributes.addFlashAttribute("successMsg", "❌ Chỉ chấp nhận file ảnh!");
+            return "redirect:/user1/profile";
+        }
+
+        try {
+            Map<?, ?> result = cloudinaryService.uploadAvatar(file, "hr_avatars");
+            String url = result.get("secure_url").toString();
+            user.setProfileImage(url);
             userRepository.save(user);
             redirectAttributes.addFlashAttribute("successMsg", "✅ Ảnh đại diện đã được cập nhật!");
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("successMsg", "❌ Lỗi upload: " + e.getMessage());
         }
         return "redirect:/user1/profile";
     }

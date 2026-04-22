@@ -117,17 +117,23 @@
         <a href="/user1/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
         <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
         <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca làm việc</a>
         <a href="/user/leaves"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
+        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> Làm thêm giờ</a>
         <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phiếu lương</a>
         <a href="/user1/tasks"><i class="bi bi-list-task"></i> Công việc của tôi</a>
         <a href="/user1/reviews" class="active"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
+        <a href="/user1/kpi"><i class="bi bi-bullseye"></i> KPI Goals</a>
+        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi phí</a>
+        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> Kỹ năng</a>
+        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> Tài liệu</a>
         <a href="/notifications">
             <i class="bi bi-bell"></i> Thông báo
             <span class="notif-badge" th:if="${unreadNotifications != null and unreadNotifications > 0}"
                   th:text="${unreadNotifications}">0</span>
         </a>
     </nav>
-    <div class="sidebar-section-label">Hỗ trợ</div>
+    <div class="sidebar-section-label">Đào tạo</div>
     <nav>
         <a href="/videos"><i class="bi bi-play-circle"></i> Video đào tạo</a>
     </nav>

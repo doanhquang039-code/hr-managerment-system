@@ -20,6 +20,23 @@ services:
       retries: 10
       interval: 10s
 
+  redis:
+    image: redis:7-alpine
+    container_name: hr_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - hr_network
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      timeout: 5s
+      retries: 5
+      interval: 10s
+
   app:
     build:
       context: .
@@ -28,6 +45,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -35,6 +54,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-hr_management_system}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-hr_user}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-hr_password}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
       TZ: Asia/Ho_Chi_Minh
     ports:
       - "8080:8080"
@@ -52,6 +73,7 @@ services:
 
 volumes:
   mysql_data:
+  redis_data:
   uploads_data:
 
 networks:

@@ -71,4 +71,8 @@ private String password;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    /** Firebase Cloud Messaging token — dùng cho push notifications */
+    @Column(name = "fcm_token", length = 500)
+    private String fcmToken;
 }

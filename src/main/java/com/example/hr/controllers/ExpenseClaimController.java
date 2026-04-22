@@ -5,12 +5,14 @@ import com.example.hr.models.ExpenseClaim;
 import com.example.hr.models.User;
 import com.example.hr.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.CloudinaryService;
 import com.example.hr.service.ExpenseClaimService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -21,13 +23,16 @@ public class ExpenseClaimController {
     private final ExpenseClaimService expenseClaimService;
     private final UserRepository userRepository;
     private final AuthUserHelper authUserHelper;
+    private final CloudinaryService cloudinaryService;
 
     public ExpenseClaimController(ExpenseClaimService expenseClaimService,
                                    UserRepository userRepository,
-                                   AuthUserHelper authUserHelper) {
+                                   AuthUserHelper authUserHelper,
+                                   CloudinaryService cloudinaryService) {
         this.expenseClaimService = expenseClaimService;
         this.userRepository = userRepository;
         this.authUserHelper = authUserHelper;
+        this.cloudinaryService = cloudinaryService;
     }
 
     // ==================== ADMIN ====================

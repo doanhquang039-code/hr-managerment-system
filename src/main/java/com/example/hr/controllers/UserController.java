@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.User;
 import com.example.hr.repository.*;
+import com.example.hr.service.CloudinaryService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -42,6 +43,8 @@ public class UserController {
     private JobPositionRepository positionRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     private final String UPLOAD_DIR = "public/test1/";
 
@@ -204,13 +207,21 @@ public class UserController {
             try { user.setHireDate(java.time.LocalDate.parse(hireDate)); } catch (Exception ignored) {}
         }
 
-        // Xử lý ảnh
+        // Xử lý ảnh — upload lên Cloudinary
         if (!file.isEmpty()) {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR + fileName);
-            Files.createDirectories(path.getParent());
-            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            user.setProfileImage(fileName);
+            String ct = file.getContentType();
+            if (ct != null && ct.startsWith("image/")) {
+                try {
+                    java.util.Map<?, ?> result = cloudinaryService.uploadAvatar(file, "hr_avatars");
+                    user.setProfileImage(result.get("secure_url").toString());
+                } catch (Exception e) {
+                    // fallback: giữ ảnh cũ
+                    if (user.getId() != null) {
+                        userRepository.findById(user.getId())
+                                .ifPresent(existing -> user.setProfileImage(existing.getProfileImage()));
+                    }
+                }
+            }
         } else if (user.getId() != null) {
             // Giữ ảnh cũ
             userRepository.findById(user.getId())

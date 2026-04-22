@@ -60,7 +60,8 @@
     <!-- Player + Info -->
     <div class="player-area">
         <div class="video-player-wrap">
-            <video controls autoplay preload="metadata" poster="${video.thumbnailOrDefault}">
+            <video controls autoplay preload="metadata"
+                   th:attr="poster=${video.thumbnailOrDefault}">
                 <source th:src="${video.videoUrl}" type="video/mp4"/>
                 Trình duyệt không hỗ trợ phát video.
             </video>

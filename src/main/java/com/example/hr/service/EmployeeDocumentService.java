@@ -9,6 +9,8 @@ import com.example.hr.models.EmployeeDocument;
 import com.example.hr.models.User;
 import com.example.hr.repository.EmployeeDocumentRepository;
 import com.example.hr.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +40,9 @@ public class EmployeeDocumentService {
     private final EmployeeDocumentRepository documentRepository;
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
+
+    @Autowired(required = false)
+    private CloudStorageFacade cloudStorageFacade;
 
     public EmployeeDocumentService(EmployeeDocumentRepository documentRepository,
                                      UserRepository userRepository,
@@ -104,6 +109,22 @@ public class EmployeeDocumentService {
         document.setExpiryDate(dto.getExpiryDate());
         document.setUploadedAt(LocalDateTime.now());
         document.setIsVerified(false);
+
+        // Sync lên Google Drive / S3 nếu có
+        if (cloudStorageFacade != null) {
+            try {
+                java.util.Map<String, String> cloudUrls = cloudStorageFacade
+                        .uploadEmployeeDocument(file.getBytes(), dto.getDocumentName(),
+                                file.getContentType(), dto.getUserId());
+                if (cloudUrls.containsKey("driveFileId")) {
+                    document.setDriveFileId(cloudUrls.get("driveFileId"));
+                }
+            } catch (Exception e) {
+                // Log nhưng không fail — Cloudinary đã upload thành công
+                org.slf4j.LoggerFactory.getLogger(getClass())
+                        .warn("Cloud sync failed for document: {}", e.getMessage());
+            }
+        }
 
         return documentRepository.save(document);
     }

@@ -6,6 +6,8 @@ import com.example.hr.models.*;
 import com.example.hr.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -55,6 +57,7 @@ public class DashboardService {
     /**
      * Build tổng hợp stats cho Dashboard.
      */
+    @Cacheable(value = "dashboard", key = "'stats'")
     public DashboardStatsDTO buildDashboardStats() {
         log.info("Building dashboard statistics...");
         DashboardStatsDTO stats = new DashboardStatsDTO();
@@ -128,6 +131,7 @@ public class DashboardService {
     /**
      * Lấy activity log gần đây cho dashboard.
      */
+    @Cacheable(value = "dashboard", key = "'activity-' + #limit")
     public List<Map<String, Object>> getRecentActivity(int limit) {
         List<Map<String, Object>> activities = new ArrayList<>();
 

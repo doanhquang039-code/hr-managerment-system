@@ -8,6 +8,7 @@ import com.example.hr.util.ExcelExportUtil;
 import com.example.hr.util.PayrollCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,6 +28,9 @@ import java.util.stream.Collectors;
 public class ReportGenerationService {
 
     private static final Logger log = LoggerFactory.getLogger(ReportGenerationService.class);
+
+    @Autowired(required = false)
+    private CloudStorageFacade cloudStorageFacade;
 
     private final UserRepository userRepository;
     private final PayrollRepository payrollRepository;
@@ -325,5 +329,28 @@ public class ReportGenerationService {
         summary.put("totalAssetValue", totalAssetValue);
 
         return summary;
+    }
+
+    /**
+     * Generate monthly report as Excel bytes — dùng cho S3 backup.
+     */
+    public byte[] generateMonthlyReportBytes(int month, int year) {
+        try {
+            MonthlyReportDTO report = generateMonthlyReport(year, month);
+            // Tạo simple CSV/JSON bytes nếu không có Excel util
+            String csv = String.format(
+                "Month,Year,TotalEmployees,NewHires,TotalPayroll,LeaveRequests,OvertimeRequests\n%d,%d,%d,%d,%s,%d,%d",
+                month, year,
+                report.getTotalHeadcount(),
+                report.getNewHires(),
+                report.getTotalPayroll() != null ? report.getTotalPayroll().toPlainString() : "0",
+                report.getLeaveRequestsCount(),
+                report.getOvertimeRequestsCount()
+            );
+            return csv.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("Failed to generate monthly report bytes: {}", e.getMessage());
+            return new byte[0];
+        }
     }
 }

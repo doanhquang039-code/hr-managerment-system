@@ -62,6 +62,13 @@
                    th:checked="${announcement.id == null or announcement.active}"/>
             <label class="form-check-label" for="active">Đang hiển thị</label>
         </div>
+        <div class="form-check mb-4" th:if="${announcement.id == null}">
+            <input class="form-check-input" type="checkbox" name="sendEmail" value="true" id="sendEmail"/>
+            <label class="form-check-label fw-600" for="sendEmail">
+                📧 Gửi email đến tất cả nhân viên (qua SendGrid)
+            </label>
+            <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">Chỉ áp dụng khi tạo mới và "Đang hiển thị" được bật</div>
+        </div>
         <button type="submit" class="btn btn-primary">Lưu</button>
         <a th:href="@{/admin/announcements}" class="btn btn-outline-secondary">Huỷ</a>
     </form>

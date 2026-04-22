@@ -4,8 +4,12 @@ import com.example.hr.enums.AnnouncementPriority;
 import com.example.hr.models.CompanyAnnouncement;
 import com.example.hr.models.User;
 import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.CloudStorageFacade;
 import com.example.hr.service.CompanyAnnouncementService;
+import com.example.hr.service.EmailFacade;
+import com.example.hr.enums.UserStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,13 +26,22 @@ public class AdminAnnouncementController {
     private final CompanyAnnouncementService announcementService;
     private final DepartmentRepository departmentRepository;
     private final AuthUserHelper authUserHelper;
+    private final EmailFacade emailFacade;
+    private final UserRepository userRepository;
+    private final CloudStorageFacade cloudStorageFacade;
 
     public AdminAnnouncementController(CompanyAnnouncementService announcementService,
                                        DepartmentRepository departmentRepository,
-                                       AuthUserHelper authUserHelper) {
+                                       AuthUserHelper authUserHelper,
+                                       EmailFacade emailFacade,
+                                       UserRepository userRepository,
+                                       CloudStorageFacade cloudStorageFacade) {
         this.announcementService = announcementService;
         this.departmentRepository = departmentRepository;
         this.authUserHelper = authUserHelper;
+        this.emailFacade = emailFacade;
+        this.userRepository = userRepository;
+        this.cloudStorageFacade = cloudStorageFacade;
     }
 
     @GetMapping
@@ -72,11 +85,30 @@ public class AdminAnnouncementController {
         boolean activeFlag = "true".equalsIgnoreCase(active) || "on".equalsIgnoreCase(active);
         if (id == null) {
             User author = authUserHelper.getCurrentUser(auth);
-            if (author == null) {
-                return "redirect:/login";
-            }
-            announcementService.create(author, title.trim(), content.trim(), departmentId, p, published, activeFlag);
+            if (author == null) return "redirect:/login";
+            CompanyAnnouncement saved = announcementService.create(
+                    author, title.trim(), content.trim(), departmentId, p, published, activeFlag);
             ra.addFlashAttribute("success", "Đã tạo thông báo.");
+
+            // Gửi email broadcast nếu active
+            if (activeFlag) {
+                boolean sendEmail = "true".equalsIgnoreCase(
+                        ((org.springframework.web.context.request.ServletRequestAttributes)
+                                org.springframework.web.context.request.RequestContextHolder
+                                        .getRequestAttributes())
+                                .getRequest().getParameter("sendEmail"));
+                if (sendEmail) {
+                    userRepository.findByStatus(UserStatus.ACTIVE).forEach(u -> {
+                        if (u.getEmail() != null && !u.getEmail().isBlank()) {
+                            emailFacade.sendAnnouncement(u.getEmail(), u.getFullName(),
+                                    title.trim(), content.trim());
+                        }
+                    });
+                    // Firebase broadcast
+                    cloudStorageFacade.broadcastAnnouncement(title.trim(), content.trim());
+                    ra.addFlashAttribute("success", "Đã tạo thông báo và gửi email đến tất cả nhân viên!");
+                }
+            }
         } else {
             announcementService.update(id, title.trim(), content.trim(), departmentId, p, published, activeFlag);
             ra.addFlashAttribute("success", "Đã cập nhật thông báo.");

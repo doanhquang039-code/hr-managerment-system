@@ -4,6 +4,7 @@ import com.example.hr.enums.ExpenseStatus;
 import com.example.hr.models.ExpenseClaim;
 import com.example.hr.models.User;
 import com.example.hr.repository.ExpenseClaimRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +18,12 @@ import java.util.Optional;
 public class ExpenseClaimService {
 
     private final ExpenseClaimRepository expenseClaimRepository;
+    private final EmailFacade emailFacade;
 
-    public ExpenseClaimService(ExpenseClaimRepository expenseClaimRepository) {
+    public ExpenseClaimService(ExpenseClaimRepository expenseClaimRepository,
+                                @Lazy EmailFacade emailFacade) {
         this.expenseClaimRepository = expenseClaimRepository;
+        this.emailFacade = emailFacade;
     }
 
     public List<ExpenseClaim> findAll() {
@@ -54,7 +58,15 @@ public class ExpenseClaimService {
         claim.setApprovedBy(approver);
         claim.setApprovedAt(LocalDateTime.now());
         claim.setUpdatedAt(LocalDateTime.now());
-        return expenseClaimRepository.save(claim);
+        ExpenseClaim saved = expenseClaimRepository.save(claim);
+
+        // Gửi email thông báo
+        User user = saved.getUser();
+        if (user != null && user.getEmail() != null && !user.getEmail().isBlank()) {
+            emailFacade.sendExpenseStatus(user.getEmail(), user.getFullName(),
+                    saved.getClaimTitle(), saved.getAmount(), true, null);
+        }
+        return saved;
     }
 
     public ExpenseClaim reject(Integer id, User approver, String reason) {
@@ -65,7 +77,15 @@ public class ExpenseClaimService {
         claim.setApprovedAt(LocalDateTime.now());
         claim.setRejectionReason(reason);
         claim.setUpdatedAt(LocalDateTime.now());
-        return expenseClaimRepository.save(claim);
+        ExpenseClaim saved = expenseClaimRepository.save(claim);
+
+        // Gửi email thông báo
+        User user = saved.getUser();
+        if (user != null && user.getEmail() != null && !user.getEmail().isBlank()) {
+            emailFacade.sendExpenseStatus(user.getEmail(), user.getFullName(),
+                    saved.getClaimTitle(), saved.getAmount(), false, reason);
+        }
+        return saved;
     }
 
     public ExpenseClaim markPaid(Integer id) {

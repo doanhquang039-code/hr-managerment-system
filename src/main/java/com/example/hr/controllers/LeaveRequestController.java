@@ -17,6 +17,7 @@ import com.example.hr.repository.LeaveRequestRepository;
 import com.example.hr.repository.UserRepository;
 import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
+import com.example.hr.service.EmailFacade;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,6 +33,8 @@ public class LeaveRequestController {
     private NotificationService notificationService;
     @Autowired
     private HrAuditLogService hrAuditLogService;
+    @Autowired
+    private EmailFacade emailFacade;
 
     // ==================== ADMIN ====================
 
@@ -105,6 +108,14 @@ public class LeaveRequestController {
                 NotificationType.SUCCESS,
                 "/user/leaves"
             );
+            // Gửi email
+            User u = lr.getUser();
+            if (u.getEmail() != null && !u.getEmail().isBlank()) {
+                emailFacade.sendLeaveStatus(u.getEmail(), u.getFullName(),
+                        lr.getLeaveType().name(),
+                        lr.getStartDate().toString(), lr.getEndDate().toString(),
+                        true, null);
+            }
         }
         hrAuditLogService.log(auth, "LEAVE_APPROVED", "LeaveRequest", String.valueOf(id),
                 "Duyệt đơn nghỉ " + lr.getLeaveType() + " cho userId=" + (lr.getUser() != null ? lr.getUser().getId() : "?"),
@@ -126,6 +137,14 @@ public class LeaveRequestController {
                 NotificationType.DANGER,
                 "/user/leaves"
             );
+            // Gửi email
+            User u = lr.getUser();
+            if (u.getEmail() != null && !u.getEmail().isBlank()) {
+                emailFacade.sendLeaveStatus(u.getEmail(), u.getFullName(),
+                        lr.getLeaveType().name(),
+                        lr.getStartDate().toString(), lr.getEndDate().toString(),
+                        false, "Đơn không được chấp thuận");
+            }
         }
         hrAuditLogService.log(auth, "LEAVE_REJECTED", "LeaveRequest", String.valueOf(id),
                 "Từ chối đơn nghỉ " + lr.getLeaveType() + " userId=" + (lr.getUser() != null ? lr.getUser().getId() : "?"),

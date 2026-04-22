@@ -23,6 +23,7 @@ import com.example.hr.models.User;
 import com.example.hr.repository.ContractRepository;
 import com.example.hr.repository.PayrollRepository;
 import com.example.hr.repository.UserRepository;
+import com.example.hr.service.EmailFacade;
 import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
 
@@ -46,6 +47,9 @@ public class PayrollController {
 
     @Autowired
     private HrAuditLogService hrAuditLogService;
+
+    @Autowired
+    private EmailFacade emailFacade;
 
     @GetMapping
     public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
@@ -111,11 +115,23 @@ public class PayrollController {
         payrollRepository.save(payroll);
 
         if (payroll.getUser() != null) {
+            User u = payroll.getUser();
             notificationService.createNotification(
-                    payroll.getUser(),
+                    u,
                     "Luong thang " + payroll.getMonth() + "/" + payroll.getYear() + " da duoc thanh toan toan bo!",
                     NotificationType.SUCCESS,
                     "/user1/payroll");
+
+            // Gửi email payslip qua SendGrid/Gmail
+            if (u.getEmail() != null && !u.getEmail().isBlank()) {
+                BigDecimal base       = payroll.getBaseSalary()  != null ? payroll.getBaseSalary()  : BigDecimal.ZERO;
+                BigDecimal bonus      = payroll.getBonus()       != null ? payroll.getBonus()       : BigDecimal.ZERO;
+                BigDecimal deductions = payroll.getDeductions()  != null ? payroll.getDeductions()  : BigDecimal.ZERO;
+                BigDecimal net        = base.add(bonus).subtract(deductions);
+                emailFacade.sendPayslip(u.getEmail(), u.getFullName(),
+                        payroll.getMonth(), payroll.getYear(),
+                        base, net, deductions, bonus);
+            }
         }
         hrAuditLogService.log(auth, "PAYROLL_MARK_PAID", "Payroll", String.valueOf(id),
                 "Đánh dấu đã trả lương tháng " + payroll.getMonth() + "/" + payroll.getYear(), null);

@@ -59,6 +59,7 @@ public class SecurityConfig {
                     "/admin/kpi/**",
                     "/admin/expenses/**",
                     "/admin/skills/**",
+                    "/admin/documents/**",
                     "/api/kpi/**",
                     "/api/expenses/**",
                     "/api/skills/**",
@@ -67,6 +68,8 @@ public class SecurityConfig {
                 .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/hiring/**").hasAnyRole("ADMIN", "HIRING", "MANAGER")
                 .requestMatchers("/admin/videos/**").hasAnyRole("ADMIN", "MANAGER")
+                .requestMatchers("/admin/cache/**").hasRole("ADMIN")
+                .requestMatchers("/admin/cloud/**").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/videos/**").permitAll()
                 .requestMatchers("/user1/**", "/user/**", "/notifications/**").authenticated()

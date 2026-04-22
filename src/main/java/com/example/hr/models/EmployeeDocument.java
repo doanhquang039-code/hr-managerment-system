@@ -62,6 +62,14 @@ public class EmployeeDocument {
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
 
+    /** Google Drive file ID — dùng để share/xóa */
+    @Column(name = "drive_file_id", length = 200)
+    private String driveFileId;
+
+    /** AWS S3 object key — dùng để download/xóa */
+    @Column(name = "s3_key", length = 500)
+    private String s3Key;
+
     // --- Helper methods ---
 
     /**

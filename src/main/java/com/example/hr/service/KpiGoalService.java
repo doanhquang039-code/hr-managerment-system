@@ -5,6 +5,7 @@ import com.example.hr.models.KpiGoal;
 import com.example.hr.models.User;
 import com.example.hr.repository.KpiGoalRepository;
 import com.example.hr.repository.UserRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +21,14 @@ public class KpiGoalService {
 
     private final KpiGoalRepository kpiGoalRepository;
     private final UserRepository userRepository;
+    private final EmailFacade emailFacade;
 
-    public KpiGoalService(KpiGoalRepository kpiGoalRepository, UserRepository userRepository) {
+    public KpiGoalService(KpiGoalRepository kpiGoalRepository,
+                           UserRepository userRepository,
+                           @Lazy EmailFacade emailFacade) {
         this.kpiGoalRepository = kpiGoalRepository;
         this.userRepository = userRepository;
+        this.emailFacade = emailFacade;
     }
 
     public List<KpiGoal> findAll() {
@@ -47,11 +52,23 @@ public class KpiGoalService {
     }
 
     public KpiGoal save(KpiGoal goal) {
-        if (goal.getId() == null) {
+        boolean isNew = goal.getId() == null;
+        if (isNew) {
             goal.setCreatedAt(LocalDateTime.now());
         }
         goal.setUpdatedAt(LocalDateTime.now());
-        return kpiGoalRepository.save(goal);
+        KpiGoal saved = kpiGoalRepository.save(goal);
+
+        // Gửi email thông báo khi tạo KPI mới
+        if (isNew && saved.getUser() != null) {
+            User u = saved.getUser();
+            if (u.getEmail() != null && !u.getEmail().isBlank()) {
+                emailFacade.sendKpiAssigned(u.getEmail(), u.getFullName(),
+                        saved.getGoalTitle(),
+                        saved.getEndDate() != null ? saved.getEndDate().toString() : "N/A");
+            }
+        }
+        return saved;
     }
 
     public void delete(Integer id) {
