@@ -118,7 +118,14 @@ public class DocumentController {
         User currentUser = authUserHelper.getCurrentUser(auth);
         if (currentUser == null) return "redirect:/login";
 
-        List<EmployeeDocument> myDocs = documentService.getDocumentsByUser(currentUser.getId());
+        List<EmployeeDocument> myDocs = documentService.getDocumentsByUser(currentUser.getId()).stream()
+                .sorted((a, b) -> {
+                    if (a.getUploadedAt() == null && b.getUploadedAt() == null) return 0;
+                    if (a.getUploadedAt() == null) return 1;
+                    if (b.getUploadedAt() == null) return -1;
+                    return b.getUploadedAt().compareTo(a.getUploadedAt());
+                })
+                .toList();
         model.addAttribute("myDocs", myDocs);
         model.addAttribute("docTypes", DocumentType.values());
         model.addAttribute("currentUser", currentUser);
@@ -152,6 +159,29 @@ public class DocumentController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
         }
+        return "redirect:/user1/documents";
+    }
+
+    @GetMapping("/user1/documents/delete/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public String userDelete(@PathVariable Integer id,
+                             Authentication auth,
+                             RedirectAttributes ra) {
+        User currentUser = authUserHelper.getCurrentUser(auth);
+        if (currentUser == null) return "redirect:/login";
+
+        EmployeeDocument doc = documentService.getDocumentById(id);
+        if (!doc.getUser().getId().equals(currentUser.getId())) {
+            ra.addFlashAttribute("error", "Bạn không có quyền xóa tài liệu này.");
+            return "redirect:/user1/documents";
+        }
+        if (Boolean.TRUE.equals(doc.getIsVerified())) {
+            ra.addFlashAttribute("error", "Tài liệu đã được xác minh, không thể tự xóa.");
+            return "redirect:/user1/documents";
+        }
+
+        documentService.deleteDocument(id);
+        ra.addFlashAttribute("success", "Đã xóa tài liệu.");
         return "redirect:/user1/documents";
     }
 }

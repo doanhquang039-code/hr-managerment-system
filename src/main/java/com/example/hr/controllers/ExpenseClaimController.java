@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -26,9 +27,9 @@ public class ExpenseClaimController {
     private final CloudinaryService cloudinaryService;
 
     public ExpenseClaimController(ExpenseClaimService expenseClaimService,
-                                   UserRepository userRepository,
-                                   AuthUserHelper authUserHelper,
-                                   CloudinaryService cloudinaryService) {
+                                  UserRepository userRepository,
+                                  AuthUserHelper authUserHelper,
+                                  CloudinaryService cloudinaryService) {
         this.expenseClaimService = expenseClaimService;
         this.userRepository = userRepository;
         this.authUserHelper = authUserHelper;
@@ -112,10 +113,31 @@ public class ExpenseClaimController {
     @PostMapping("/user1/expenses/submit")
     @PreAuthorize("isAuthenticated()")
     public String submitClaim(@ModelAttribute ExpenseClaim claim,
-                               Authentication auth,
-                               RedirectAttributes ra) {
+                              @RequestParam(name = "receiptFile", required = false) MultipartFile receiptFile,
+                              Authentication auth,
+                              RedirectAttributes ra) {
         User currentUser = authUserHelper.getCurrentUser(auth);
         if (currentUser == null) return "redirect:/login";
+
+        if (receiptFile != null && !receiptFile.isEmpty()) {
+            String contentType = receiptFile.getContentType() != null ? receiptFile.getContentType() : "";
+            boolean supportedType = contentType.startsWith("image/")
+                    || "application/pdf".equalsIgnoreCase(contentType);
+            if (!supportedType) {
+                ra.addFlashAttribute("success", "Chỉ được tải lên ảnh hoặc file PDF cho chứng từ.");
+                return "redirect:/user1/expenses";
+            }
+            try {
+                Object secureUrl = cloudinaryService.uploadReceipt(receiptFile, "hrms/expense-receipts")
+                        .get("secure_url");
+                if (secureUrl != null) {
+                    claim.setReceiptUrl(secureUrl.toString());
+                }
+            } catch (IOException e) {
+                ra.addFlashAttribute("success", "Tải lên chứng từ thất bại: " + e.getMessage());
+                return "redirect:/user1/expenses";
+            }
+        }
 
         claim.setUser(currentUser);
         expenseClaimService.save(claim);

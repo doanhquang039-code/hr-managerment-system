@@ -9,24 +9,47 @@
             </a>
         </div>
         <div class="card-header bg-white py-3">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <form th:action="@{/admin/users}" method="get" class="d-flex">
-                        <input type="text" name="keyword" th:value="${keyword}" class="form-control me-2"
-                            placeholder="Nhập tên nhân viên cần tìm...">
-                        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-                    </form>
+            <form th:action="@{/admin/users}" method="get">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-600 text-muted mb-1">🔍 Tìm kiếm</label>
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                               placeholder="Tên, email, mã nhân viên...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-600 text-muted mb-1">Phòng ban</label>
+                        <select name="deptId" class="form-select">
+                            <option value="">Tất cả</option>
+                            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}"
+                                    th:selected="${d.id == selectedDeptId}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-600 text-muted mb-1">Vai trò</label>
+                        <select name="role" class="form-select">
+                            <option value="">Tất cả</option>
+                            <option value="ADMIN" th:selected="${selectedRole == 'ADMIN'}">Admin</option>
+                            <option value="MANAGER" th:selected="${selectedRole == 'MANAGER'}">Manager</option>
+                            <option value="USER" th:selected="${selectedRole == 'USER'}">Employee</option>
+                            <option value="HIRING" th:selected="${selectedRole == 'HIRING'}">Hiring</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-600 text-muted mb-1">Sắp xếp</label>
+                        <select name="sortBy" class="form-select">
+                            <option value="fullName" th:selected="${sortBy == 'fullName'}">Tên A-Z</option>
+                            <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Mới nhất</option>
+                            <option value="department" th:selected="${sortBy == 'department'}">Phòng ban</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="bi bi-search me-1"></i>Lọc
+                        </button>
+                        <a th:href="@{/admin/users}" class="btn btn-outline-secondary">✕</a>
+                    </div>
                 </div>
-                <div class="col-md-6 text-end">
-                    <a th:href="@{/admin/users/export/excel}" class="btn btn-outline-success border-2 fw-bold">
-                        <i class="bi bi-file-earmark-excel"></i> Xuất Excel
-                    </a>
-                    <a th:href="@{/admin/users/export/pdf}" class="btn btn-outline-danger border-2 fw-bold">
-                        <i class="bi bi-file-earmark-pdf"></i> Xuất PDF
-                    </a>
-                    <a th:href="@{/admin/users/add}" class="btn btn-success fw-bold">➕ Thêm nhân viên</a>
-                </div>
-            </div>
+            </form>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">

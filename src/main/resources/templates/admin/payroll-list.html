@@ -144,23 +144,43 @@
     <div class="filter-card">
         <form th:action="@{/admin/payroll}" method="get">
             <div class="row g-2 align-items-end">
-                <div class="col-md-5">
+                <div class="col-md-3">
                     <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">🔍 Tìm nhân viên</label>
-                    <input type="text" name="keyword" class="form-control" placeholder="Nhập tên nhân viên..." th:value="${keyword}">
+                    <input type="text" name="keyword" class="form-control" placeholder="Tên nhân viên..." th:value="${keyword}">
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-success text-white w-100 fw-600">
-                        <i class="bi bi-search me-1"></i>Tìm
-                    </button>
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Tháng</label>
+                    <select name="month" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option th:each="m : ${#numbers.sequence(1,12)}" th:value="${m}"
+                                th:text="${'Tháng ' + m}" th:selected="${m == selectedMonth}"></option>
+                    </select>
                 </div>
-                <div class="col-md-2" th:if="${keyword != null and !keyword.isEmpty()}">
-                    <a th:href="@{/admin/payroll}" class="btn btn-outline-secondary w-100">
-                        <i class="bi bi-x me-1"></i>Xóa lọc
-                    </a>
+                <div class="col-md-2">
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Năm</label>
+                    <select name="year" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option th:each="y : ${#numbers.sequence(2023,2027)}" th:value="${y}"
+                                th:text="${y}" th:selected="${y == selectedYear}"></option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">⏳ Chờ TT</option>
+                        <option value="PAID" th:selected="${selectedStatus == 'PAID'}">✅ Đã TT</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-success text-white flex-fill fw-600">
+                        <i class="bi bi-search me-1"></i>Lọc
+                    </button>
+                    <a th:href="@{/admin/payroll}" class="btn btn-outline-secondary">✕</a>
                 </div>
             </div>
         </form>
-    </div>
+        </div>
 
     <!-- Payroll Table -->
     <div class="table-card">

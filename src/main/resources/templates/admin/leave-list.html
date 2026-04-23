@@ -154,18 +154,37 @@
     <div class="filter-card">
         <form th:action="@{/admin/leaves}" method="get">
             <div class="row g-2 align-items-end">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">🔍 Tìm nhân viên</label>
-                    <input type="text" name="keyword" class="form-control" placeholder="Nhập tên..." th:value="${keyword}">
+                    <input type="text" name="keyword" class="form-control" placeholder="Tên nhân viên..." th:value="${keyword}">
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-warning text-dark w-100 fw-600">
-                        <i class="bi bi-search me-1"></i>Tìm
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Loại nghỉ</label>
+                    <select name="leaveType" class="form-select">
+                        <option value="">Tất cả</option>
+                        <option value="ANNUAL" th:selected="${selectedLeaveType == 'ANNUAL'}">🏖️ Phép năm</option>
+                        <option value="SICK" th:selected="${selectedLeaveType == 'SICK'}">🏥 Ốm bệnh</option>
+                        <option value="UNPAID" th:selected="${selectedLeaveType == 'UNPAID'}">📆 Không lương</option>
+                        <option value="MATERNITY" th:selected="${selectedLeaveType == 'MATERNITY'}">🤱 Thai sản</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Từ ngày</label>
+                    <input type="date" name="fromDate" class="form-control" th:value="${fromDate}">
+                </div>
+                <div class="col-md-2">
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Đến ngày</label>
+                    <input type="date" name="toDate" class="form-control" th:value="${toDate}">
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-warning text-dark flex-fill fw-bold">
+                        <i class="bi bi-search me-1"></i>Lọc
                     </button>
+                    <a th:href="@{/admin/leaves}" class="btn btn-outline-secondary">✕</a>
                 </div>
             </div>
         </form>
-    </div>
+        </div>
 
     <!-- Table -->
     <div class="table-card">

@@ -52,10 +52,37 @@ public class PayrollController {
     private EmailFacade emailFacade;
 
     @GetMapping
-    public String list(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+    public String list(@RequestParam(name = "keyword", required = false) String keyword,
+                       @RequestParam(name = "month", required = false) Integer month,
+                       @RequestParam(name = "year", required = false) Integer year,
+                       @RequestParam(name = "status", required = false) String status,
+                       Model model) {
         List<Payroll> payrolls = payrollRepository.findAllWithUser(keyword);
+
+        // Filter by month
+        if (month != null) {
+            payrolls = payrolls.stream()
+                    .filter(p -> p.getMonth() != null && p.getMonth().equals(month))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        // Filter by year
+        if (year != null) {
+            payrolls = payrolls.stream()
+                    .filter(p -> p.getYear() != null && p.getYear().equals(year))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        // Filter by status
+        if (status != null && !status.isBlank()) {
+            payrolls = payrolls.stream()
+                    .filter(p -> p.getPaymentStatus() != null && p.getPaymentStatus().name().equals(status))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
         model.addAttribute("payrolls", payrolls);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedMonth", month);
+        model.addAttribute("selectedYear", year);
+        model.addAttribute("selectedStatus", status);
         return "admin/payroll-list";
     }
 

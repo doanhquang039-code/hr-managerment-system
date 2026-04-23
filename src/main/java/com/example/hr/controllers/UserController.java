@@ -49,15 +49,57 @@ public class UserController {
     private final String UPLOAD_DIR = "public/test1/";
 
     @GetMapping
-    public String listUsers(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
-        List<User> users;
+    public String listUsers(@RequestParam(name = "keyword", required = false) String keyword,
+                            @RequestParam(name = "deptId", required = false) Integer deptId,
+                            @RequestParam(name = "role", required = false) String role,
+                            @RequestParam(name = "sortBy", defaultValue = "fullName") String sortBy,
+                            Model model) {
+        List<User> users = userRepository.findByStatus(UserStatus.ACTIVE);
+
+        // Filter by keyword
         if (keyword != null && !keyword.isEmpty()) {
-            users = userRepository.findByFullNameContainingAndStatus(keyword, UserStatus.ACTIVE);
-        } else {
-            users = userRepository.findByStatus(UserStatus.ACTIVE);
+            String kw = keyword.toLowerCase();
+            users = users.stream()
+                    .filter(u -> u.getFullName().toLowerCase().contains(kw)
+                            || (u.getEmail() != null && u.getEmail().toLowerCase().contains(kw))
+                            || (u.getEmployeeCode() != null && u.getEmployeeCode().toLowerCase().contains(kw)))
+                    .collect(java.util.stream.Collectors.toList());
         }
+
+        // Filter by department
+        if (deptId != null) {
+            users = users.stream()
+                    .filter(u -> u.getDepartment() != null && u.getDepartment().getId().equals(deptId))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
+        // Filter by role
+        if (role != null && !role.isEmpty()) {
+            users = users.stream()
+                    .filter(u -> u.getRole() != null && u.getRole().name().equals(role))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
+        // Sort
+        if ("createdAt".equals(sortBy)) {
+            users.sort((a, b) -> b.getCreatedAt() != null && a.getCreatedAt() != null
+                    ? b.getCreatedAt().compareTo(a.getCreatedAt()) : 0);
+        } else if ("department".equals(sortBy)) {
+            users.sort((a, b) -> {
+                String da = a.getDepartment() != null ? a.getDepartment().getDepartmentName() : "";
+                String db = b.getDepartment() != null ? b.getDepartment().getDepartmentName() : "";
+                return da.compareTo(db);
+            });
+        } else {
+            users.sort((a, b) -> a.getFullName().compareToIgnoreCase(b.getFullName()));
+        }
+
         model.addAttribute("users", users);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedDeptId", deptId);
+        model.addAttribute("selectedRole", role);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("departments", departmentRepository.findAll());
         return "admin/user-list";
     }
 

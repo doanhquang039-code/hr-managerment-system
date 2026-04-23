@@ -42,18 +42,48 @@ public class LeaveRequestController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String listAll(@RequestParam(required = false) String keyword,
                           @RequestParam(required = false) String status,
+                          @RequestParam(required = false) String leaveType,
+                          @RequestParam(required = false) String fromDate,
+                          @RequestParam(required = false) String toDate,
                           Model model) {
         var all = leaveRepository.findAllWithUser(keyword);
-        // Filter by status nếu có
+
+        // Filter by leave type
+        if (leaveType != null && !leaveType.isBlank()) {
+            all = all.stream()
+                    .filter(l -> l.getLeaveType() != null && l.getLeaveType().name().equals(leaveType))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
+        // Filter by date range
+        if (fromDate != null && !fromDate.isBlank()) {
+            java.time.LocalDate from = java.time.LocalDate.parse(fromDate);
+            all = all.stream()
+                    .filter(l -> l.getStartDate() != null && !l.getStartDate().isBefore(from))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+        if (toDate != null && !toDate.isBlank()) {
+            java.time.LocalDate to = java.time.LocalDate.parse(toDate);
+            all = all.stream()
+                    .filter(l -> l.getStartDate() != null && !l.getStartDate().isAfter(to))
+                    .collect(java.util.stream.Collectors.toList());
+        }
+
+        // Filter by status
         var leaves = (status != null && !status.isBlank())
                 ? all.stream().filter(l -> l.getStatus() != null && l.getStatus().name().equals(status)).toList()
                 : all;
+
         long countPending  = all.stream().filter(l -> l.getStatus() == LeaveStatus.PENDING).count();
         long countApproved = all.stream().filter(l -> l.getStatus() == LeaveStatus.APPROVED).count();
         long countRejected = all.stream().filter(l -> l.getStatus() == LeaveStatus.REJECTED).count();
+
         model.addAttribute("leaves", leaves);
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedStatus", status);
+        model.addAttribute("selectedLeaveType", leaveType);
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("toDate", toDate);
         model.addAttribute("countPending",  countPending);
         model.addAttribute("countApproved", countApproved);
         model.addAttribute("countRejected", countRejected);

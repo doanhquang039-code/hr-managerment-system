@@ -147,13 +147,14 @@
                         <th>Danh mục</th>
                         <th>Số tiền</th>
                         <th>Ngày chi</th>
+                        <th>Chứng từ</th>
                         <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${#lists.isEmpty(claims)}">
-                        <td colspan="7" style="text-align:center;padding:40px;color:#94a3b8;">
+                        <td colspan="8" style="text-align:center;padding:40px;color:#94a3b8;">
                             <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:12px;"></i>
                             Không có yêu cầu chi phí nào
                         </td>
@@ -175,6 +176,16 @@
                         </td>
                         <td class="amount-cell" th:text="${#numbers.formatDecimal(c.amount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
                         <td style="font-size:0.83rem;" th:text="${c.expenseDate}"></td>
+                        <td>
+                            <a th:if="${c.receiptUrl != null and !#strings.isEmpty(c.receiptUrl)}"
+                               th:href="${c.receiptUrl}"
+                               target="_blank"
+                               rel="noopener"
+                               class="btn-sm-action"
+                               style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe;">Xem file</a>
+                            <span th:if="${c.receiptUrl == null or #strings.isEmpty(c.receiptUrl)}"
+                                  style="color:#94a3b8;font-size:0.78rem;">-</span>
+                        </td>
                         <td>
                             <span class="status-badge"
                                   th:text="${c.status.name() == 'PENDING' ? '⏳ Chờ duyệt' : (c.status.name() == 'APPROVED' ? '✅ Đã duyệt' : (c.status.name() == 'PAID' ? '💰 Đã TT' : '❌ Từ chối'))}">

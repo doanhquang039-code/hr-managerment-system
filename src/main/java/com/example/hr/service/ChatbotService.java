@@ -4,9 +4,7 @@ import com.example.hr.dto.ChatbotChatResponse;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.models.ChatbotMessage;
 import com.example.hr.models.User;
-import com.example.hr.repository.ChatbotMessageRepository;
-import com.example.hr.repository.LeaveRequestRepository;
-import com.example.hr.repository.PayrollRepository;
+import com.example.hr.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +12,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ChatbotService {
@@ -28,6 +25,19 @@ public class ChatbotService {
 
     @Autowired
     private PayrollRepository payrollRepository;
+
+    @Autowired
+    private AttendanceRepository attendanceRepository;
+
+    @Autowired
+    private TaskAssignmentRepository taskAssignmentRepository;
+
+    @Autowired
+    private KpiGoalRepository kpiGoalRepository;
+
+    /** Gemini AI — optional, null nếu chưa cấu hình */
+    @Autowired(required = false)
+    private GeminiAiService geminiAiService;
 
     @Transactional
     public ChatbotChatResponse chat(User user, String rawMessage, String sessionIdIn) {
@@ -44,6 +54,17 @@ public class ChatbotService {
 
         String intent;
         String reply;
+
+        // ===== TRY AI FIRST (nếu Gemini đã cấu hình) =====
+        if (geminiAiService != null && !escalate) {
+            String aiReply = tryGeminiReply(user, message, norm);
+            if (aiReply != null && !aiReply.isBlank()) {
+                intent = "AI_GEMINI";
+                return saveAndBuild(user, sessionId, message, intent, aiReply, false);
+            }
+        }
+
+        // ===== FALLBACK: Rule-based =====
 
         if (escalate) {
             intent = "ESCALATE_HR";
@@ -173,5 +194,104 @@ public class ChatbotService {
         t = java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFD)
                 .replaceAll("\\p{M}+", "");
         return t;
+    }
+
+    // ==================== AI METHODS ====================
+
+    /**
+     * Gọi Gemini với context HR của user hiện tại.
+     * Trả về null nếu AI không available hoặc lỗi.
+     */
+    private String tryGeminiReply(User user, String message, String norm) {
+        if (geminiAiService == null) return null;
+        try {
+            String systemPrompt = buildSystemPrompt(user);
+            String reply = geminiAiService.chat(systemPrompt, message);
+            return reply;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Xây dựng system prompt với dữ liệu HR thực tế của user.
+     */
+    private String buildSystemPrompt(User user) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Bạn là trợ lý HR thông minh của hệ thống HRMS. ");
+        sb.append("Trả lời ngắn gọn, chính xác bằng tiếng Việt. ");
+        sb.append("Chỉ trả lời các câu hỏi liên quan đến HR, nhân sự, công việc. ");
+        sb.append("Nếu câu hỏi không liên quan HR, từ chối lịch sự.\n\n");
+
+        if (user != null) {
+            sb.append("=== THÔNG TIN NHÂN VIÊN ===\n");
+            sb.append("Tên: ").append(user.getFullName()).append("\n");
+            sb.append("Email: ").append(user.getEmail() != null ? user.getEmail() : "N/A").append("\n");
+            if (user.getDepartment() != null) {
+                sb.append("Phòng ban: ").append(user.getDepartment().getDepartmentName()).append("\n");
+            }
+            if (user.getPosition() != null) {
+                sb.append("Chức vụ: ").append(user.getPosition().getPositionName()).append("\n");
+            }
+            sb.append("Vai trò: ").append(user.getRole()).append("\n");
+
+            // Leave info
+            try {
+                long pendingLeaves = leaveRequestRepository.findByUser(user).stream()
+                        .filter(l -> l.getStatus() == LeaveStatus.PENDING).count();
+                long approvedLeaves = leaveRequestRepository.findByUser(user).stream()
+                        .filter(l -> l.getStatus() == LeaveStatus.APPROVED).count();
+                sb.append("\n=== NGHỈ PHÉP ===\n");
+                sb.append("Đơn chờ duyệt: ").append(pendingLeaves).append("\n");
+                sb.append("Đơn đã duyệt: ").append(approvedLeaves).append("\n");
+            } catch (Exception ignored) {}
+
+            // Payroll info
+            try {
+                int m = LocalDate.now().getMonthValue();
+                int y = LocalDate.now().getYear();
+                payrollRepository.findByUserIdAndMonthAndYear(user.getId(), m, y).ifPresent(p -> {
+                    sb.append("\n=== LƯƠNG THÁNG ").append(m).append("/").append(y).append(" ===\n");
+                    sb.append("Lương cơ bản: ").append(p.getBaseSalary()).append(" VND\n");
+                    sb.append("Trạng thái: ").append(p.getPaymentStatus()).append("\n");
+                });
+            } catch (Exception ignored) {}
+
+            // Tasks
+            try {
+                long pendingTasks = taskAssignmentRepository.findByUser(user).stream()
+                        .filter(t -> t.getStatus() != null && t.getStatus().name().equals("PENDING"))
+                        .count();
+                long inProgressTasks = taskAssignmentRepository.findByUser(user).stream()
+                        .filter(t -> t.getStatus() != null && t.getStatus().name().equals("IN_PROGRESS"))
+                        .count();
+                sb.append("\n=== CÔNG VIỆC ===\n");
+                sb.append("Chờ thực hiện: ").append(pendingTasks).append("\n");
+                sb.append("Đang thực hiện: ").append(inProgressTasks).append("\n");
+            } catch (Exception ignored) {}
+
+            // KPI
+            try {
+                long activeKpi = kpiGoalRepository.findByUserId(user.getId()).stream()
+                        .filter(k -> k.getStatus() != null && k.getStatus().name().equals("ACTIVE"))
+                        .count();
+                if (activeKpi > 0) {
+                    sb.append("\n=== KPI ===\n");
+                    sb.append("KPI đang active: ").append(activeKpi).append("\n");
+                }
+            } catch (Exception ignored) {}
+        }
+
+        sb.append("\n=== HƯỚNG DẪN ===\n");
+        sb.append("- Nghỉ phép: /user/leaves\n");
+        sb.append("- Phiếu lương: /user1/payroll\n");
+        sb.append("- Chấm công: /user/attendance\n");
+        sb.append("- Công việc: /user1/tasks\n");
+        sb.append("- KPI: /user1/kpi\n");
+        sb.append("- Thông báo: /notifications\n");
+        sb.append("- Tài liệu: /user1/documents\n");
+        sb.append("- Chi phí: /user1/expenses\n");
+
+        return sb.toString();
     }
 }
