@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -36,6 +36,11 @@
             margin: 20px 0;
             text-align: left;
         }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
+      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
+      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
     </style>
 </head>
 <body>
@@ -60,5 +65,6 @@
             </a>
         </div>
     </div>
+<script th:src="@{/js/lang-toggle.js}"></script>
 </body>
 </html>

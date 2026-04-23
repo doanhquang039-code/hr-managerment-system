@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
@@ -28,6 +28,18 @@
       .card-dept      { background: linear-gradient(135deg,#11998e,#38ef7d); }
       .card-position  { background: linear-gradient(135deg,#f093fb,#f5576c); }
       .card-leave     { background: linear-gradient(135deg,#f7971e,#ffd200); color: #1a202c !important; }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-toggle-wrap { padding: 8px 16px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 4px; }
+      .lang-toggle { display: flex; align-items: center; gap: 6px; justify-content: center; }
+      .lang-btn {
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+        color: #94a3b8; border-radius: 8px; padding: 4px 10px; font-size: 0.75rem;
+        font-weight: 600; cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px;
+      }
+      .lang-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+      .lang-btn.active { background: #667eea; border-color: #667eea; color: white; }
+      .lang-divider { color: rgba(255,255,255,0.2); font-size: 0.7rem; }
       .card-task      { background: linear-gradient(135deg,#4facfe,#00f2fe); color: #1a202c !important; }
       .card-review    { background: linear-gradient(135deg,#a18cd1,#fbc2eb); }
       .chart-card { border-radius: 16px; border: none; }
@@ -60,6 +72,14 @@
           <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nhật ký hệ thống</a>
           <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Thông báo công ty</a>
           <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+          <!-- Language Toggle -->
+          <div class="lang-toggle-wrap">
+            <div class="lang-toggle">
+              <button class="lang-btn" data-lang="vi">&#127475;&#127483; VI</button>
+              <span class="lang-divider">|</span>
+              <button class="lang-btn" data-lang="en">&#127468;&#127463; EN</button>
+            </div>
+          </div>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <a th:href="@{/admin/videos}"><i class="bi bi-collection-play"></i> Video đào tạo</a>
           <a th:href="@{/admin/videos/upload}"><i class="bi bi-cloud-upload"></i> Thêm video mới</a>
@@ -335,5 +355,35 @@
         }
       });
     </script>
-  </body>
+    <script>
+    // Inline fallback - runs immediately
+    (function(){
+      var lang = new URLSearchParams(window.location.search).get('lang') ||
+                 document.cookie.match(/HRMS_LANG=([^;]+)/)?.[1] || 'vi';
+      if(lang === 'en') {
+        document.addEventListener('DOMContentLoaded', function(){
+          if(window.HRMS && window.HRMS.getLang) return; // external script loaded
+          // Minimal inline translation
+          var map = {'Nhân viên':'Employees','Phòng ban':'Departments','Chức vụ':'Positions',
+            'Hợp đồng':'Contracts','Bảng lương':'Payroll','Thanh toán':'Payments',
+            'Nghỉ phép':'Leave Requests','Chấm công':'Attendance','Công việc':'Tasks',
+            'Phân công':'Assignments','Đánh giá KPI':'KPI Reviews','Báo cáo':'Reports',
+            'Tuyển dụng':'Recruitment','Đăng xuất':'Logout','Bảng Điều Khiển':'Dashboard',
+            'NHÂN VIÊN':'EMPLOYEES','PHÒNG BAN':'DEPARTMENTS','CHỨC VỤ':'POSITIONS',
+            'CHỜ DUYỆT NGHỈ':'PENDING LEAVES','CÔNG VIỆC':'TASKS'};
+          var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          var nodes = []; var n;
+          while((n=walker.nextNode())) nodes.push(n);
+          nodes.forEach(function(node){
+            if(node.parentNode.nodeName==='SCRIPT'||node.parentNode.nodeName==='STYLE') return;
+            var t = node.nodeValue;
+            Object.keys(map).forEach(function(vi){ t = t.split(vi).join(map[vi]); });
+            node.nodeValue = t;
+          });
+        });
+      }
+    })();
+  </script>
+  <script th:src="@{/js/lang-toggle.js}"></script>
+</body>
 </html>

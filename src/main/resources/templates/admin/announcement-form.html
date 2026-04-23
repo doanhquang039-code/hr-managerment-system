@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,11 @@
         .sidebar a { color: #94a3b8; text-decoration: none; display: block; padding: 8px 16px; font-size: 0.9rem; }
         .sidebar a:hover { color: white; }
         .main { margin-left: 220px; padding: 24px 32px; max-width: 720px; }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
+      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
+      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
     </style>
 </head>
 <body>
@@ -73,5 +78,6 @@
         <a th:href="@{/admin/announcements}" class="btn btn-outline-secondary">Huỷ</a>
     </form>
 </div>
+<script th:src="@{/js/lang-toggle.js}"></script>
 </body>
 </html>

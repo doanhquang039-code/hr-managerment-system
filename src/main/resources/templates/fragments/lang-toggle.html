@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--/* Language Toggle Widget — include vào sidebar của mỗi role */-->
+<div th:fragment="langToggle" class="lang-toggle-wrap">
+    <div class="lang-toggle">
+        <button class="lang-btn"
+                data-lang="vi"
+                th:classappend="${#locale.language == 'vi' ? ' active' : ''}"
+                title="Tiếng Việt">
+            🇻🇳 VI
+        </button>
+        <span class="lang-divider">|</span>
+        <button class="lang-btn"
+                data-lang="en"
+                th:classappend="${#locale.language == 'en' ? ' active' : ''}"
+                title="English">
+            🇬🇧 EN
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

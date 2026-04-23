@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -57,6 +57,11 @@
         .btn-no:hover { background: #ef4444; color: white; transform: scale(1.05); }
         .btn-edit { background: #ede9fe; color: #7c3aed; border: 1px solid #ddd6fe; border-radius: 8px; padding: 5px 12px; font-size: 0.75rem; font-weight: 600; text-decoration: none; display: inline-block; }
         .btn-del { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 8px; padding: 5px 12px; font-size: 0.75rem; font-weight: 600; text-decoration: none; display: inline-block; }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
+      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
+      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
     </style>
 </head>
 <body>
@@ -77,6 +82,20 @@
     <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
     <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
     <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+          <!-- Language Toggle -->
+          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
+            <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <button class="lang-btn" data-lang="vi"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127475;&#127483; VI
+              </button>
+              <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+              <button class="lang-btn" data-lang="en"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127468;&#127463; EN
+              </button>
+            </div>
+          </div>
     <form th:action="@{/logout}" method="post">
         <button type="submit" class="btn btn-outline-light btn-sm w-100">
             <i class="bi bi-box-arrow-right"></i> Đăng xuất
@@ -97,7 +116,7 @@
 
     <!-- Stats pills (clickable filter) -->
     <div class="stat-row">
-        <a th:href="@{/admin/leaves}" class="stat-pill" th:classappend="${selectedStatus == null ? ' active-filter' : ''}"
+        <a th:href="@{/admin/leaves}" class="stat-pill"
            style="border-color: #e2e8f0;">
             <div class="sp-icon" style="background:#f1f5f9;">📋</div>
             <div>
@@ -105,7 +124,7 @@
                 <div class="sp-lbl" style="color:#64748b;">Tất cả</div>
             </div>
         </a>
-        <a th:href="@{/admin/leaves(status='PENDING')}" class="stat-pill" th:classappend="${selectedStatus == 'PENDING' ? ' active-filter' : ''}"
+        <a th:href="@{/admin/leaves(status='PENDING')}" class="stat-pill"
            style="border-color:#fed7aa;">
             <div class="sp-icon" style="background:#fff7ed;">⏳</div>
             <div>
@@ -113,7 +132,7 @@
                 <div class="sp-lbl" style="color:#f97316;">Chờ duyệt</div>
             </div>
         </a>
-        <a th:href="@{/admin/leaves(status='APPROVED')}" class="stat-pill" th:classappend="${selectedStatus == 'APPROVED' ? ' active-filter' : ''}"
+        <a th:href="@{/admin/leaves(status='APPROVED')}" class="stat-pill"
            style="border-color:#a7f3d0;">
             <div class="sp-icon" style="background:#d1fae5;">✅</div>
             <div>
@@ -121,7 +140,7 @@
                 <div class="sp-lbl" style="color:#10b981;">Đã duyệt</div>
             </div>
         </a>
-        <a th:href="@{/admin/leaves(status='REJECTED')}" class="stat-pill" th:classappend="${selectedStatus == 'REJECTED' ? ' active-filter' : ''}"
+        <a th:href="@{/admin/leaves(status='REJECTED')}" class="stat-pill"
            style="border-color:#fecaca;">
             <div class="sp-icon" style="background:#fee2e2;">❌</div>
             <div>
@@ -197,7 +216,6 @@
                         <td style="font-size:0.82rem;color:#64748b;max-width:180px;" th:text="${l.reason}">Lý do</td>
                         <td>
                             <span class="status-badge"
-                                  th:classappend="${l.status.name() == 'PENDING' ? ' badge-p' : (l.status.name() == 'APPROVED' ? ' badge-a' : ' badge-r')}"
                                   th:text="${l.status.name() == 'PENDING' ? '⏳ Chờ duyệt' : (l.status.name() == 'APPROVED' ? '✅ Đã duyệt' : '❌ Từ chối')}">
                             </span>
                         </td>
@@ -220,5 +238,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/lang-toggle.js}"></script>
 </body>
 </html>

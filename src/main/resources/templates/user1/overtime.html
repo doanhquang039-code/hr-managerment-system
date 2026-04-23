@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -43,6 +43,11 @@
         .badge-a { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
         .badge-r { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .multiplier-tag { background: #ede9fe; color: #6366f1; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
+      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
+      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
     </style>
 </head>
 <body>
@@ -77,6 +82,20 @@
         <a href="/notifications"><i class="bi bi-bell"></i> Thông báo</a>
     </nav>
     <div class="sidebar-logout">
+          <!-- Language Toggle -->
+          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
+            <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <button class="lang-btn" data-lang="vi"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127475;&#127483; VI
+              </button>
+              <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+              <button class="lang-btn" data-lang="en"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127468;&#127463; EN
+              </button>
+            </div>
+          </div>
         <form action="/logout" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
@@ -172,7 +191,6 @@
                                     th:text="${r.reason != null ? #strings.abbreviate(r.reason, 50) : ''}"></td>
                                 <td>
                                     <span class="status-badge"
-                                          th:classappend="${r.status.name() == 'PENDING' ? ' badge-p' : (r.status.name() == 'APPROVED' ? ' badge-a' : ' badge-r')}"
                                           th:text="${r.status.name() == 'PENDING' ? '⏳ Chờ duyệt' : (r.status.name() == 'APPROVED' ? '✅ Đã duyệt' : '❌ Từ chối')}">
                                     </span>
                                     <div th:if="${r.rejectionReason != null}"
@@ -188,5 +206,6 @@
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/lang-toggle.js}"></script>
 </body>
 </html>

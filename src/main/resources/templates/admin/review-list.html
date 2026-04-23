@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
   <meta charset="UTF-8"/>
@@ -21,6 +21,11 @@
     .review-card { border-radius: 12px; border: none; transition: transform 0.2s, box-shadow 0.2s; }
     .review-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important; }
     .progress { height: 8px; border-radius: 4px; }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
+      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
+      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
   </style>
 </head>
 <body>
@@ -42,6 +47,20 @@
       <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
       <a th:href="@{/admin/reviews}" class="active"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
       <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+          <!-- Language Toggle -->
+          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
+            <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <button class="lang-btn" data-lang="vi"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127475;&#127483; VI
+              </button>
+              <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+              <button class="lang-btn" data-lang="en"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127468;&#127463; EN
+              </button>
+            </div>
+          </div>
       <form th:action="@{/logout}" method="post" class="px-3 mt-4">
         <button type="submit" class="btn btn-outline-light btn-sm w-100">
           <i class="bi bi-box-arrow-right"></i> Đăng xuất
@@ -145,7 +164,6 @@
                   </td>
                   <td class="text-center">
                     <span class="badge"
-                          th:classappend="${r.status.name() == 'APPROVED' ? 'bg-success' : (r.status.name() == 'SUBMITTED' ? 'bg-primary' : 'bg-secondary')}"
                           th:text="${r.status.label}">Draft</span>
                   </td>
                   <td class="text-center">
@@ -179,5 +197,6 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/lang-toggle.js}"></script>
 </body>
 </html>

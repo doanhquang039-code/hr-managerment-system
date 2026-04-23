@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -88,6 +88,11 @@
         .radar-card h6 { font-weight: 700; color: #0f172a; margin-bottom: 4px; }
 
         @media (max-width: 1200px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } }
+
+      /* ===== LANGUAGE TOGGLE ===== */
+      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
+      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
+      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
     </style>
 </head>
 <body>
@@ -138,6 +143,20 @@
         <a href="/videos"><i class="bi bi-play-circle"></i> Video đào tạo</a>
     </nav>
     <div class="sidebar-logout">
+          <!-- Language Toggle -->
+          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
+            <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
+              <button class="lang-btn" data-lang="vi"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127475;&#127483; VI
+              </button>
+              <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+              <button class="lang-btn" data-lang="en"
+                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
+                &#127468;&#127463; EN
+              </button>
+            </div>
+          </div>
         <form action="/logout" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
@@ -335,5 +354,6 @@
         });
     }
 </script>
+<script th:src="@{/js/lang-toggle.js}"></script>
 </body>
 </html>
