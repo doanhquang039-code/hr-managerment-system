@@ -78,14 +78,20 @@ public class VideoController {
 
         try {
             User uploader = authUserHelper.getCurrentUser(auth);
+            System.out.println(">>> Uploader: " + (uploader != null ? uploader.getUsername() : "NULL"));
+            System.out.println(">>> ContentType: " + file.getContentType() + " | Size: " + file.getSize());
             videoService.uploadVideo(file, title.trim(), description, category, tags, uploader);
             ra.addFlashAttribute("success", "Upload video \"" + title + "\" thành công!");
             return "redirect:/admin/videos";
         } catch (IOException e) {
+            System.err.println(">>> IOException khi upload: " + e.getMessage());
+            e.printStackTrace();
             ra.addFlashAttribute("error", "Lỗi upload Cloudinary: " + e.getMessage());
             return "redirect:/admin/videos/upload";
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            System.err.println(">>> Exception khi upload: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+            ra.addFlashAttribute("error", "Lỗi: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             return "redirect:/admin/videos/upload";
         }
     }

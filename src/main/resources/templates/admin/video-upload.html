@@ -206,8 +206,12 @@
         dropZone.classList.remove('dragover');
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-            document.getElementById('fileInput').files = files;
-            previewFile(document.getElementById('fileInput'));
+            // Dùng DataTransfer để gán files vào input (FileList là read-only)
+            const dt = new DataTransfer();
+            dt.items.add(files[0]);
+            const fileInput = document.getElementById('fileInput');
+            fileInput.files = dt.files;
+            previewFile(fileInput);
         }
     });
 
