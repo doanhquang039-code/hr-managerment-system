@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hợp Đồng Lao Động - HRMS Admin</title>
+    <title>H?p �?ng Lao �?ng - HRMS Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -82,21 +82,22 @@
     <div class="row">
         <!-- Sidebar -->
         <nav class="col-md-2 d-none d-md-block sidebar shadow">
-            <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+            <div class="sidebar-logo">? HRMS ADMIN</div>
             <hr style="border-color:rgba(255,255,255,.15)"/>
             <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
-            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+            <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph�ng ban</a>
+            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch?c v?</a>
             <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
-            <a th:href="@{/admin/contracts}" class="active"><i class="bi bi-file-text"></i> Hợp đồng</a>
-            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
-            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
-            <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
-            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
-            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+            <a th:href="@{/admin/contracts}" class="active"><i class="bi bi-file-text"></i> H?p d?ng</a>
+            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B?ng luong</a>
+            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
+            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch?m c�ng</a>
+            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> C�ng vi?c</a>
+            <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Ph�n c�ng</a>
+            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> ��nh gi� KPI</a>
+            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -113,7 +114,7 @@
           </div>
             <form th:action="@{/logout}" method="post" class="px-3 mt-4">
                 <button type="submit" class="btn btn-outline-light btn-sm w-100">
-                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    <i class="bi bi-box-arrow-right"></i> �ang xu?t
                 </button>
             </form>
         </nav>
@@ -124,8 +125,8 @@
             <nav aria-label="breadcrumb" class="mb-3">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" style="color:#11998e;text-decoration:none;">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/admin/contracts}" style="color:#11998e;text-decoration:none;">Hợp đồng</a></li>
-                    <li class="breadcrumb-item active" th:text="${contract.id != null ? 'Chỉnh sửa hợp đồng' : 'Thêm hợp đồng mới'}">Thêm mới</li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/contracts}" style="color:#11998e;text-decoration:none;">H?p d?ng</a></li>
+                    <li class="breadcrumb-item active" th:text="${contract.id != null ? 'Ch?nh s?a h?p d?ng' : 'Th�m h?p d?ng m?i'}">Th�m m?i</li>
                 </ol>
             </nav>
 
@@ -135,88 +136,88 @@
                         <div class="form-card-header">
                             <h4>
                                 <i class="bi bi-file-earmark-text me-2"></i>
-                                <span th:text="${contract.id != null ? 'Chỉnh Sửa Hợp Đồng' : 'Ký Hợp Đồng Mới'}">Ký Hợp Đồng Mới</span>
+                                <span th:text="${contract.id != null ? 'Ch?nh S?a H?p �?ng' : 'K� H?p �?ng M?i'}">K� H?p �?ng M?i</span>
                             </h4>
-                            <p>Quản lý hợp đồng lao động giữa công ty và nhân viên</p>
+                            <p>Qu?n l� h?p d?ng lao d?ng gi?a c�ng ty v� nh�n vi�n</p>
                         </div>
                         <div class="form-card-body">
                             <form th:action="@{/admin/contracts/save}" th:object="${contract}" method="post">
                                 <input type="hidden" th:field="*{id}"/>
 
-                                <!-- Section 1: Nhân viên -->
+                                <!-- Section 1: Nh�n vi�n -->
                                 <div class="section-divider">
-                                    <i class="bi bi-person-badge"></i> Thông Tin Nhân Viên
+                                    <i class="bi bi-person-badge"></i> Th�ng Tin Nh�n Vi�n
                                 </div>
 
                                 <div class="mb-4">
                                     <label class="form-label">
-                                        <i class="bi bi-person me-1 text-success"></i>Nhân viên ký hợp đồng
+                                        <i class="bi bi-person me-1 text-success"></i>Nh�n vi�n k� h?p d?ng
                                     </label>
                                     <select class="form-select" th:field="*{user.id}" required>
-                                        <option value="">-- Chọn nhân viên --</option>
+                                        <option value="">-- Ch?n nh�n vi�n --</option>
                                         <option th:each="u : ${users}"
                                                 th:value="${u.id}"
-                                                th:text="${u.fullName + ' — ' + (u.position != null ? u.position.positionName : 'Chưa có chức vụ') + ' | ' + (u.department != null ? u.department.departmentName : 'Chưa gán PB')}">
+                                                th:text="${u.fullName + ' � ' + (u.position != null ? u.position.positionName : 'Chua c� ch?c v?') + ' | ' + (u.department != null ? u.department.departmentName : 'Chua g�n PB')}">
                                         </option>
                                     </select>
                                 </div>
 
-                                <!-- Section 2: Loại hợp đồng -->
+                                <!-- Section 2: Lo?i h?p d?ng -->
                                 <div class="section-divider">
-                                    <i class="bi bi-files"></i> Loại Hợp Đồng
+                                    <i class="bi bi-files"></i> Lo?i H?p �?ng
                                 </div>
 
                                 <div class="mb-4">
-                                    <label class="form-label">Chọn loại hợp đồng</label>
+                                    <label class="form-label">Ch?n lo?i h?p d?ng</label>
                                     <div class="contract-types" id="contractTypeBtns">
-                                        <button type="button" class="contract-type-btn" onclick="setType('Thử việc')">📋 Thử việc</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('Chính thức')">✅ Chính thức</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('Bán thời gian')">⏰ Bán thời gian</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('Thời vụ')">🌱 Thời vụ</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('CTV')">🤝 Cộng tác viên</button>
+                                        <button type="button" class="contract-type-btn" onclick="setType('Th? vi?c')">?? Th? vi?c</button>
+                                        <button type="button" class="contract-type-btn" onclick="setType('Ch�nh th?c')">? Ch�nh th?c</button>
+                                        <button type="button" class="contract-type-btn" onclick="setType('B�n th?i gian')">? B�n th?i gian</button>
+                                        <button type="button" class="contract-type-btn" onclick="setType('Th?i v?')">?? Th?i v?</button>
+                                        <button type="button" class="contract-type-btn" onclick="setType('CTV')">?? C?ng t�c vi�n</button>
                                     </div>
                                     <input type="text" class="form-control mt-2" th:field="*{contractType}"
-                                           id="contractTypeInput" placeholder="Hoặc nhập loại hợp đồng..." required/>
+                                           id="contractTypeInput" placeholder="Ho?c nh?p lo?i h?p d?ng..." required/>
                                 </div>
 
-                                <!-- Section 3: Thời hạn -->
+                                <!-- Section 3: Th?i h?n -->
                                 <div class="section-divider">
-                                    <i class="bi bi-calendar-range"></i> Thời Hạn Hợp Đồng
+                                    <i class="bi bi-calendar-range"></i> Th?i H?n H?p �?ng
                                 </div>
 
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">
-                                            <i class="bi bi-calendar-check me-1 text-success"></i>Ngày ký
+                                            <i class="bi bi-calendar-check me-1 text-success"></i>Ng�y k�
                                         </label>
                                         <input type="date" class="form-control" th:field="*{signDate}" required/>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">
-                                            <i class="bi bi-calendar-x me-1 text-danger"></i>Ngày hết hạn
-                                            <span class="text-muted fw-normal">(để trống = không xác định)</span>
+                                            <i class="bi bi-calendar-x me-1 text-danger"></i>Ng�y h?t h?n
+                                            <span class="text-muted fw-normal">(d? tr?ng = kh�ng x�c d?nh)</span>
                                         </label>
                                         <input type="date" class="form-control" th:field="*{expiryDate}"/>
                                     </div>
                                 </div>
 
-                                <!-- Section 4: Lương -->
+                                <!-- Section 4: Luong -->
                                 <div class="section-divider">
-                                    <i class="bi bi-cash-coin"></i> Mức Lương Hợp Đồng
+                                    <i class="bi bi-cash-coin"></i> M?c Luong H?p �?ng
                                 </div>
 
                                 <div class="mb-4">
                                     <label class="form-label">
-                                        <i class="bi bi-currency-dollar me-1 text-warning"></i>Lương cơ bản (VNĐ)
+                                        <i class="bi bi-currency-dollar me-1 text-warning"></i>Luong co b?n (VN�)
                                     </label>
                                     <div class="input-group">
-                                        <span class="input-group-text">₫</span>
+                                        <span class="input-group-text">?</span>
                                         <input type="number" class="form-control" th:field="*{baseSalaryOnContract}"
-                                               placeholder="Ví dụ: 15000000" min="0" step="500000"/>
+                                               placeholder="V� d?: 15000000" min="0" step="500000"/>
                                     </div>
                                     <div class="salary-hint">
                                         <i class="bi bi-info-circle me-1"></i>
-                                        Mức lương này dùng để làm cơ sở tính bảng lương hàng tháng
+                                        M?c luong n�y d�ng d? l�m co s? t�nh b?ng luong h�ng th�ng
                                     </div>
                                 </div>
 
@@ -224,10 +225,10 @@
                                 <div class="d-flex gap-3 pt-2">
                                     <button type="submit" class="btn-submit">
                                         <i class="bi bi-check-circle me-2"></i>
-                                        <span th:text="${contract.id != null ? 'Cập nhật hợp đồng' : 'Ký hợp đồng'}">Ký hợp đồng</span>
+                                        <span th:text="${contract.id != null ? 'C?p nh?t h?p d?ng' : 'K� h?p d?ng'}">K� h?p d?ng</span>
                                     </button>
                                     <a th:href="@{/admin/contracts}" class="btn btn-outline-secondary btn-cancel">
-                                        <i class="bi bi-arrow-left me-1"></i>Quay lại
+                                        <i class="bi bi-arrow-left me-1"></i>Quay l?i
                                     </a>
                                 </div>
                             </form>

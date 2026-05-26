@@ -5,14 +5,16 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.security.SensitiveStringCryptoConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 @Entity
 @Table(name = "user")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor  // Cần thiết cho JPA
 @AllArgsConstructor
 public class User {

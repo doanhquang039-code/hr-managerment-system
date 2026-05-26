@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -53,14 +53,15 @@
 </head>
 <body>
 <div class="sidebar">
-    <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+    <div class="sidebar-logo">? HRMS ADMIN</div>
     <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+    <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
     <hr/>
-    <a th:href="@{/admin/videos}"><i class="bi bi-collection-play"></i> Video đào tạo</a>
+    <a th:href="@{/admin/videos}"><i class="bi bi-collection-play"></i> Video d�o t?o</a>
     <a th:href="@{/admin/cache}"><i class="bi bi-lightning-charge"></i> Cache &amp; Email</a>
     <a th:href="@{/admin/cloud}" class="active"><i class="bi bi-cloud"></i> Cloud Storage</a>
-    <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nhật ký</a>
+    <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nh?t k�</a>
     <hr/>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
@@ -78,14 +79,14 @@
           </div>
     <form th:action="@{/logout}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> �ang xu?t</button>
     </form>
 </div>
 
 <div class="main">
     <div class="page-header">
         <h1><i class="bi bi-cloud me-2 text-warning"></i>Cloud Storage Management</h1>
-        <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Quản lý AWS S3, Google Drive, Firebase FCM</div>
+        <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Qu?n l� AWS S3, Google Drive, Firebase FCM</div>
     </div>
 
     <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
@@ -101,10 +102,10 @@
     <div class="service-grid">
         <!-- Cloudinary -->
         <div class="service-card online">
-            <div class="service-icon">☁️</div>
+            <div class="service-icon">??</div>
             <div class="service-name">Cloudinary</div>
-            <div class="service-desc">Lưu trữ ảnh, video đào tạo, avatar nhân viên</div>
-            <div class="status-pill pill-online">✅ Active</div>
+            <div class="service-desc">Luu tr? ?nh, video d�o t?o, avatar nh�n vi�n</div>
+            <div class="status-pill pill-online">? Active</div>
             <div style="margin-top:12px;font-size:0.78rem;color:#64748b;">
                 Cloud: <code>dn4uflhrm</code>
             </div>
@@ -112,43 +113,43 @@
 
         <!-- AWS S3 -->
         <div class="service-card">
-            <div class="service-icon">🪣</div>
+            <div class="service-icon">??</div>
             <div class="service-name">AWS S3</div>
-            <div class="service-desc">Backup báo cáo, payslip PDF, audit logs dài hạn</div>
+            <div class="service-desc">Backup b�o c�o, payslip PDF, audit logs d�i h?n</div>
             <div class="status-pill"
-                 th:text="${cloudStatus['s3'] == 'online' ? '✅ Online' : (cloudStatus['s3'] == 'disabled' ? '⚪ Disabled' : '❌ Error')}">
+                 th:text="${cloudStatus['s3'] == 'online' ? '? Online' : (cloudStatus['s3'] == 'disabled' ? '? Disabled' : '? Error')}">
             </div>
             <div th:if="${cloudStatus['s3'] == 'disabled'}"
                  style="margin-top:10px;font-size:0.78rem;color:#94a3b8;">
-                Set <code>aws.s3.enabled=true</code> để bật
+                Set <code>aws.s3.enabled=true</code> d? b?t
             </div>
         </div>
 
         <!-- Google Drive -->
         <div class="service-card">
-            <div class="service-icon">📁</div>
+            <div class="service-icon">??</div>
             <div class="service-name">Google Drive</div>
-            <div class="service-desc">Sync tài liệu nhân viên, hợp đồng, báo cáo</div>
+            <div class="service-desc">Sync t�i li?u nh�n vi�n, h?p d?ng, b�o c�o</div>
             <div class="status-pill"
-                 th:text="${cloudStatus['googleDrive'] == 'online' ? '✅ Online' : (cloudStatus['googleDrive'] == 'disabled' ? '⚪ Disabled' : '❌ Error')}">
+                 th:text="${cloudStatus['googleDrive'] == 'online' ? '? Online' : (cloudStatus['googleDrive'] == 'disabled' ? '? Disabled' : '? Error')}">
             </div>
             <div th:if="${cloudStatus['googleDrive'] == 'disabled'}"
                  style="margin-top:10px;font-size:0.78rem;color:#94a3b8;">
-                Set <code>google.drive.enabled=true</code> để bật
+                Set <code>google.drive.enabled=true</code> d? b?t
             </div>
         </div>
 
         <!-- Firebase FCM -->
         <div class="service-card">
-            <div class="service-icon">🔔</div>
+            <div class="service-icon">??</div>
             <div class="service-name">Firebase FCM</div>
             <div class="service-desc">Push notifications realtime cho mobile/web</div>
             <div class="status-pill"
-                 th:text="${cloudStatus['firebase'] == 'online' ? '✅ Online' : (cloudStatus['firebase'] == 'disabled' ? '⚪ Disabled' : '❌ Error')}">
+                 th:text="${cloudStatus['firebase'] == 'online' ? '? Online' : (cloudStatus['firebase'] == 'disabled' ? '? Disabled' : '? Error')}">
             </div>
             <div th:if="${cloudStatus['firebase'] == 'disabled'}"
                  style="margin-top:10px;font-size:0.78rem;color:#94a3b8;">
-                Set <code>firebase.enabled=true</code> để bật
+                Set <code>firebase.enabled=true</code> d? b?t
             </div>
         </div>
     </div>
@@ -163,12 +164,12 @@
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <div class="row g-2 align-items-end">
                         <div class="col-4">
-                            <label style="font-size:0.8rem;font-weight:600;color:#64748b;">Tháng</label>
+                            <label style="font-size:0.8rem;font-weight:600;color:#64748b;">Th�ng</label>
                             <input type="number" name="month" class="form-control form-control-sm"
                                    min="1" max="12" th:value="${#temporals.monthValue(#temporals.createNow())}"/>
                         </div>
                         <div class="col-4">
-                            <label style="font-size:0.8rem;font-weight:600;color:#64748b;">Năm</label>
+                            <label style="font-size:0.8rem;font-weight:600;color:#64748b;">Nam</label>
                             <input type="number" name="year" class="form-control form-control-sm"
                                    th:value="${#temporals.year(#temporals.createNow())}"/>
                         </div>
@@ -183,7 +184,7 @@
 
                 <!-- S3 Files List -->
                 <div th:if="${s3Reports != null and !#lists.isEmpty(s3Reports)}">
-                    <div style="font-size:0.8rem;font-weight:600;color:#64748b;margin-bottom:8px;">📄 Reports trên S3</div>
+                    <div style="font-size:0.8rem;font-weight:600;color:#64748b;margin-bottom:8px;">?? Reports tr�n S3</div>
                     <div th:each="file : ${s3Reports}" class="file-row">
                         <span class="file-name" th:text="${file}"></span>
                         <form th:action="@{/admin/cloud/s3/delete}" method="post" style="display:inline;">
@@ -191,19 +192,19 @@
                             <input type="hidden" name="key" th:value="${file}"/>
                             <button type="submit" class="btn-sm-action"
                                     style="background:#fee2e2;color:#dc2626;border-color:#fecaca;"
-                                    onclick="return confirm('Xóa file này?')">🗑️</button>
+                                    onclick="return confirm('X�a file n�y?')">???</button>
                         </form>
                     </div>
                 </div>
 
                 <div th:if="${cloudStatus['s3'] == 'disabled'}"
                      style="background:#f8fafc;border-radius:10px;padding:16px;font-size:0.82rem;color:#64748b;">
-                    <b>Cấu hình AWS S3:</b>
+                    <b>C?u h�nh AWS S3:</b>
                     <ol style="margin:8px 0 0;padding-left:16px;">
-                        <li>Tạo S3 bucket trên AWS Console</li>
-                        <li>Tạo IAM user với quyền S3</li>
+                        <li>T?o S3 bucket tr�n AWS Console</li>
+                        <li>T?o IAM user v?i quy?n S3</li>
                         <li>Set <code>aws.s3.enabled=true</code></li>
-                        <li>Set <code>aws.s3.access-key</code> và <code>aws.s3.secret-key</code></li>
+                        <li>Set <code>aws.s3.access-key</code> v� <code>aws.s3.secret-key</code></li>
                         <li>Set <code>aws.s3.bucket=your-bucket-name</code></li>
                     </ol>
                 </div>
@@ -213,24 +214,24 @@
         <!-- Firebase + Drive Setup Guide -->
         <div class="col-lg-6">
             <div class="section-card">
-                <div class="section-title"><i class="bi bi-gear text-primary"></i>Hướng dẫn cấu hình</div>
+                <div class="section-title"><i class="bi bi-gear text-primary"></i>Hu?ng d?n c?u h�nh</div>
 
                 <!-- Firebase -->
                 <div style="margin-bottom:16px;">
                     <div style="font-weight:700;font-size:0.88rem;color:#0f172a;margin-bottom:8px;">
-                        🔔 Firebase FCM
+                        ?? Firebase FCM
                     </div>
                     <div class="config-box">
                         <div class="config-item">
-                            <span class="config-key">1. Tạo project</span>
+                            <span class="config-key">1. T?o project</span>
                             <a href="https://console.firebase.google.com" target="_blank" style="font-size:0.78rem;color:#6366f1;">console.firebase.google.com</a>
                         </div>
                         <div class="config-item">
                             <span class="config-key">2. Download service account</span>
-                            <span class="config-val">Project Settings → Service Accounts</span>
+                            <span class="config-val">Project Settings ? Service Accounts</span>
                         </div>
                         <div class="config-item">
-                            <span class="config-key">3. Đặt file JSON vào</span>
+                            <span class="config-key">3. �?t file JSON v�o</span>
                             <span class="config-val">src/main/resources/</span>
                         </div>
                         <div class="config-item">
@@ -243,7 +244,7 @@
                 <!-- Google Drive -->
                 <div>
                     <div style="font-weight:700;font-size:0.88rem;color:#0f172a;margin-bottom:8px;">
-                        📁 Google Drive
+                        ?? Google Drive
                     </div>
                     <div class="config-box">
                         <div class="config-item">
@@ -251,12 +252,12 @@
                             <a href="https://console.cloud.google.com" target="_blank" style="font-size:0.78rem;color:#6366f1;">console.cloud.google.com</a>
                         </div>
                         <div class="config-item">
-                            <span class="config-key">2. Tạo Service Account</span>
-                            <span class="config-val">IAM → Service Accounts</span>
+                            <span class="config-key">2. T?o Service Account</span>
+                            <span class="config-val">IAM ? Service Accounts</span>
                         </div>
                         <div class="config-item">
-                            <span class="config-key">3. Share folder với SA email</span>
-                            <span class="config-val">Google Drive → Share</span>
+                            <span class="config-key">3. Share folder v?i SA email</span>
+                            <span class="config-val">Google Drive ? Share</span>
                         </div>
                         <div class="config-item">
                             <span class="config-key">4. Set config</span>

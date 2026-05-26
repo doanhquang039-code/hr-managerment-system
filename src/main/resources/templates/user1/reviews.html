@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đánh Giá KPI Của Tôi - HRMS</title>
+    <title>��nh Gi� KPI C?a T�i - HRMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -11,7 +11,7 @@
         * { font-family: 'Inter', sans-serif; }
         body { background: #f0f4f8; min-height: 100vh; margin: 0; }
 
-        /* SIDEBAR — same as dashboard */
+        /* SIDEBAR � same as dashboard */
         .sidebar { width: 260px; min-height: 100vh; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); position: fixed; left: 0; top: 0; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
         .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
         .sidebar-brand .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
@@ -22,7 +22,7 @@
         .sidebar nav a:hover { color: white; background: rgba(255,255,255,0.06); border-left-color: #6366f1; }
         .sidebar nav a.active { color: white; background: rgba(99,102,241,0.15); border-left-color: #6366f1; }
         .sidebar nav a i { font-size: 1rem; width: 20px; }
-        .sidebar-logout { padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); position: absolute; bottom: 0; width: 100%; }
+        .sidebar-logout { padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); }
         .notif-badge { background: #ef4444; color: white; border-radius: 10px; font-size: 0.65rem; font-weight: 700; padding: 1px 6px; margin-left: auto; }
 
         /* MAIN */
@@ -100,7 +100,7 @@
 <!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-brand">
-        <div class="brand-icon">⚡</div>
+        <div class="brand-icon">?</div>
         <div>
             <div class="brand-name">HRMS</div>
             <div class="brand-sub">HR Platform</div>
@@ -112,41 +112,41 @@
             <span th:text="${#strings.substring(user.fullName,0,1)}">N</span>
         </div>
         <div>
-            <div style="color:white;font-weight:600;font-size:0.85rem;" th:text="${user.fullName}">Nhân viên</div>
+            <div style="color:white;font-weight:600;font-size:0.85rem;" th:text="${user.fullName}">Nh�n vi�n</div>
             <div style="color:#94a3b8;font-size:0.72rem;" th:text="${user.role}">EMPLOYEE</div>
         </div>
     </div>
 
-        <div class="sidebar-section-label">Cá nhân</div>
+        <div class="sidebar-section-label">C� nh�n</div>
     <nav>
         <a href="/user1/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
-        <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca làm việc</a>
-        <a href="/user/leaves"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> Làm thêm giờ</a>
-        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phiếu lương</a>
+        <a href="/user1/profile"><i class="bi bi-person-circle"></i> H? so c� nh�n</a>
+        <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Ch?m c�ng</a>
+        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca l�m vi?c</a>
+        <a href="/user/leaves"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
+        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> L�m th�m gi?</a>
+        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phi?u luong</a>
     </nav>
-    <div class="sidebar-section-label">Công việc</div>
+    <div class="sidebar-section-label">C�ng vi?c</div>
     <nav>
-        <a href="/user1/tasks"><i class="bi bi-list-task"></i> Công việc của tôi</a>
+        <a href="/user1/tasks"><i class="bi bi-list-task"></i> C�ng vi?c c?a t�i</a>
         <a href="/user1/kpi"><i class="bi bi-bullseye"></i> KPI Goals</a>
-        <a href="/user1/reviews" class="active"><i class="bi bi-star-half"></i> Đánh giá</a>
-        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> Kỹ năng</a>
+        <a href="/user1/reviews" class="active"><i class="bi bi-star-half"></i> ��nh gi�</a>
+        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> K? nang</a>
     </nav>
-    <div class="sidebar-section-label">Tài chính</div>
+    <div class="sidebar-section-label">T�i ch�nh</div>
     <nav>
-        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi phí</a>
-        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> Tài liệu</a>
-        <a href="/user1/my-assets"><i class="bi bi-pc-display"></i> Tài sản</a>
+        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi ph�</a>
+        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> T�i li?u</a>
+        <a href="/user1/my-assets"><i class="bi bi-pc-display"></i> T�i s?n</a>
     </nav>
-    <div class="sidebar-section-label">Hỗ trợ</div>
+    <div class="sidebar-section-label">H? tr?</div>
     <nav>
-        <a href="/user1/announcements"><i class="bi bi-megaphone"></i> Thông báo công ty</a>
-        <a href="/user1/chatbot"><i class="bi bi-chat-dots"></i> Trợ lý HR</a>
-        <a href="/videos"><i class="bi bi-play-circle"></i> Video đào tạo</a>
+        <a href="/user1/announcements"><i class="bi bi-megaphone"></i> Th�ng b�o c�ng ty</a>
+        <a href="/user1/chatbot"><i class="bi bi-chat-dots"></i> Tr? l� HR</a>
+        <a href="/videos"><i class="bi bi-play-circle"></i> Video d�o t?o</a>
         <a href="/notifications">
-            <i class="bi bi-bell"></i> Thông báo
+            <i class="bi bi-bell"></i> Th�ng b�o
             <span class="notif-badge"
                   th:if="${unreadNotifications != null and unreadNotifications > 0}"
                   th:text="${unreadNotifications}">0</span>
@@ -171,7 +171,7 @@
         <form action="/logout" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
-                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                <i class="bi bi-box-arrow-right"></i> �ang xu?t
             </button>
         </form>
     </div>
@@ -181,16 +181,16 @@
 <div class="main-content">
     <div class="topbar">
         <div>
-            <h1>⭐ Đánh Giá KPI Của Tôi</h1>
-            <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Theo dõi hiệu suất và kết quả theo từng kỳ đánh giá</div>
+            <h1>? ��nh Gi� KPI C?a T�i</h1>
+            <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Theo d�i hi?u su?t v� k?t qu? theo t?ng k? d�nh gi�</div>
         </div>
     </div>
 
     <!-- EMPTY STATE -->
     <div th:if="${#lists.isEmpty(reviews)}" class="empty-state">
-        <span class="emoji">⭐</span>
-        <h5 style="color:#475569;font-weight:700;">Chưa có đánh giá nào</h5>
-        <p style="font-size:0.88rem;margin-top:8px;">Các đánh giá KPI của bạn sẽ hiển thị tại đây sau khi quản lý hoàn thành đánh giá.</p>
+        <span class="emoji">?</span>
+        <h5 style="color:#475569;font-weight:700;">Chua c� d�nh gi� n�o</h5>
+        <p style="font-size:0.88rem;margin-top:8px;">C�c d�nh gi� KPI c?a b?n s? hi?n th? t?i d�y sau khi qu?n l� ho�n th�nh d�nh gi�.</p>
     </div>
 
     <!-- CONTENT -->
@@ -198,31 +198,31 @@
         <!-- Summary Cards -->
         <div class="summary-grid">
             <div class="sum-card">
-                <div class="icon" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">📊</div>
-                <div class="sum-label">Tổng lần đánh giá</div>
+                <div class="icon" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">??</div>
+                <div class="sum-label">T?ng l?n d�nh gi�</div>
                 <div class="sum-val" th:text="${reviews.size()}">0</div>
-                <div class="sum-sub">kỳ được ghi nhận</div>
+                <div class="sum-sub">k? du?c ghi nh?n</div>
             </div>
             <div class="sum-card">
-                <div class="icon" style="background: linear-gradient(135deg,#f59e0b,#fbbf24);">⭐</div>
-                <div class="sum-label">Điểm trung bình</div>
+                <div class="icon" style="background: linear-gradient(135deg,#f59e0b,#fbbf24);">?</div>
+                <div class="sum-label">�i?m trung b�nh</div>
                 <div class="sum-val"
                      th:text="${#numbers.formatDecimal(reviews.stream().filter(r -> r.overallScore != null).mapToDouble(r -> r.overallScore.doubleValue()).average().orElse(0), 1, 'POINT', 1, 'COMMA')}">0</div>
                 <div class="sum-sub">overall score</div>
             </div>
             <div class="sum-card">
-                <div class="icon" style="background: linear-gradient(135deg,#10b981,#34d399);">🏆</div>
-                <div class="sum-label">Điểm KPI cao nhất</div>
+                <div class="icon" style="background: linear-gradient(135deg,#10b981,#34d399);">??</div>
+                <div class="sum-label">�i?m KPI cao nh?t</div>
                 <div class="sum-val"
                      th:text="${reviews.stream().filter(r -> r.overallScore != null).mapToDouble(r -> r.overallScore.doubleValue()).max().orElse(0)}">0</div>
-                <div class="sum-sub">điểm tốt nhất đạt được</div>
+                <div class="sum-sub">di?m t?t nh?t d?t du?c</div>
             </div>
             <div class="sum-card">
-                <div class="icon" style="background: linear-gradient(135deg,#06b6d4,#22d3ee);">✅</div>
-                <div class="sum-label">Đã được duyệt</div>
+                <div class="icon" style="background: linear-gradient(135deg,#06b6d4,#22d3ee);">?</div>
+                <div class="sum-label">�� du?c duy?t</div>
                 <div class="sum-val"
                      th:text="${reviews.stream().filter(r -> r.status != null and r.status.name() == 'APPROVED').count()}">0</div>
-                <div class="sum-sub">kỳ đánh giá hoàn tất</div>
+                <div class="sum-sub">k? d�nh gi� ho�n t?t</div>
             </div>
         </div>
 
@@ -230,9 +230,9 @@
         <div class="row g-4 mb-4" th:if="${reviews.size() > 0}">
             <div class="col-lg-4">
                 <div class="radar-card h-100">
-                    <h6><i class="bi bi-diagram-3 me-2 text-primary"></i>Biểu Đồ Đánh Giá Gần Nhất</h6>
+                    <h6><i class="bi bi-diagram-3 me-2 text-primary"></i>Bi?u �? ��nh Gi� G?n Nh?t</h6>
                     <div style="color:#94a3b8;font-size:0.78rem;margin-bottom:12px;"
-                         th:text="'Kỳ: ' + ${reviews[0].reviewPeriod}">Kỳ</div>
+                         th:text="'K?: ' + ${reviews[0].reviewPeriod}">K?</div>
                     <canvas id="radarChart" style="max-height:260px;"></canvas>
                     <div class="mt-3 text-center">
                         <span style="font-size:2rem;font-weight:900;"
@@ -272,7 +272,7 @@
 
                                 <!-- Score bars -->
                                 <div class="score-row">
-                                    <span class="score-name">🎯 KPI</span>
+                                    <span class="score-name">?? KPI</span>
                                     <div class="score-bar-bg">
                                         <div class="score-bar-fill" style="background: linear-gradient(90deg,#6366f1,#8b5cf6);"
                                              th:style="'width:' + ${r.kpiScore != null ? r.kpiScore : 0} + '%; background: linear-gradient(90deg,#6366f1,#8b5cf6);'"></div>
@@ -280,7 +280,7 @@
                                     <span class="score-num" th:text="${r.kpiScore != null ? r.kpiScore : '-'}">0</span>
                                 </div>
                                 <div class="score-row">
-                                    <span class="score-name">😊 Thái độ</span>
+                                    <span class="score-name">?? Th�i d?</span>
                                     <div class="score-bar-bg">
                                         <div class="score-bar-fill"
                                              th:style="'width:' + ${r.attitudeScore != null ? r.attitudeScore : 0} + '%; background: linear-gradient(90deg,#06b6d4,#22d3ee);'"></div>
@@ -288,7 +288,7 @@
                                     <span class="score-num" th:text="${r.attitudeScore != null ? r.attitudeScore : '-'}">0</span>
                                 </div>
                                 <div class="score-row">
-                                    <span class="score-name">🤝 Team</span>
+                                    <span class="score-name">?? Team</span>
                                     <div class="score-bar-bg">
                                         <div class="score-bar-fill"
                                              th:style="'width:' + ${r.teamworkScore != null ? r.teamworkScore : 0} + '%; background: linear-gradient(90deg,#10b981,#34d399);'"></div>
@@ -300,17 +300,17 @@
                             <!-- Feedback -->
                             <div style="padding: 0 20px 16px;">
                                 <div class="feedback-box" th:if="${r.strengths != null and !r.strengths.isEmpty()}">
-                                    <div class="fb-label" style="color:#10b981;">✅ Điểm mạnh</div>
+                                    <div class="fb-label" style="color:#10b981;">? �i?m m?nh</div>
                                     <div class="fb-text" th:text="${r.strengths}"></div>
                                 </div>
                                 <div class="feedback-box" th:if="${r.improvements != null and !r.improvements.isEmpty()}" style="margin-top:8px;">
-                                    <div class="fb-label" style="color:#f59e0b;">📈 Cần cải thiện</div>
+                                    <div class="fb-label" style="color:#f59e0b;">?? C?n c?i thi?n</div>
                                     <div class="fb-text" th:text="${r.improvements}"></div>
                                 </div>
                                 <div class="reviewer-row" th:if="${r.reviewer != null}">
                                     <div class="rev-avatar" th:text="${#strings.substring(r.reviewer.fullName, 0, 1)}">R</div>
                                     <div class="rev-name">
-                                        Đánh giá bởi: <strong th:text="${r.reviewer.fullName}"></strong>
+                                        ��nh gi� b?i: <strong th:text="${r.reviewer.fullName}"></strong>
                                     </div>
                                 </div>
                             </div>
@@ -335,9 +335,9 @@
         new Chart(radarEl, {
             type: 'radar',
             data: {
-                labels: ['🎯 KPI', '😊 Thái độ', '🤝 Teamwork'],
+                labels: ['?? KPI', '?? Th�i d?', '?? Teamwork'],
                 datasets: [{
-                    label: 'Điểm của bạn',
+                    label: '�i?m c?a b?n',
                     data: [kpi, attitude, teamwork],
                     backgroundColor: 'rgba(99,102,241,0.15)',
                     borderColor: '#6366f1',

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Báo Cáo Tổng Hợp - HRMS Admin</title>
+    <title>B�o C�o T?ng H?p - HRMS Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -64,23 +64,24 @@
     <div class="row">
         <!-- Sidebar -->
         <nav class="col-md-2 d-none d-md-block sidebar shadow">
-            <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+            <div class="sidebar-logo">? HRMS ADMIN</div>
             <hr style="border-color:rgba(255,255,255,.15)"/>
             <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
-            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+            <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph�ng ban</a>
+            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch?c v?</a>
             <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
-            <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
-            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
-            <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh toán</a>
-            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
-            <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
-            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
-            <a th:href="@{/admin/reports}" class="active"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
-            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+            <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> H?p d?ng</a>
+            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B?ng luong</a>
+            <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh to�n</a>
+            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
+            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch?m c�ng</a>
+            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> C�ng vi?c</a>
+            <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Ph�n c�ng</a>
+            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> ��nh gi� KPI</a>
+            <a th:href="@{/admin/reports}" class="active"><i class="bi bi-bar-chart-line"></i> B�o c�o</a>
+            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -97,7 +98,7 @@
           </div>
             <form th:action="@{/logout}" method="post" class="px-3 mt-4">
                 <button type="submit" class="btn btn-outline-light btn-sm w-100">
-                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    <i class="bi bi-box-arrow-right"></i> �ang xu?t
                 </button>
             </form>
         </nav>
@@ -107,9 +108,9 @@
             <!-- Header -->
             <div class="page-header">
                 <div>
-                    <h1><i class="bi bi-bar-chart-line me-2 text-primary"></i>Báo Cáo Tổng Hợp</h1>
+                    <h1><i class="bi bi-bar-chart-line me-2 text-primary"></i>B�o C�o T?ng H?p</h1>
                     <div class="text-muted" style="font-size:0.85rem;margin-top:4px;">
-                        Phân tích toàn diện hoạt động nhân sự
+                        Ph�n t�ch to�n di?n ho?t d?ng nh�n s?
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-3">
@@ -118,7 +119,7 @@
                         <span th:text="${today}">01/01/2025</span>
                     </div>
                     <button class="btn btn-primary btn-sm" onclick="window.print()">
-                        <i class="bi bi-printer me-1"></i>In báo cáo
+                        <i class="bi bi-printer me-1"></i>In b�o c�o
                     </button>
                 </div>
             </div>
@@ -127,35 +128,35 @@
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
                     <div class="kpi-card">
-                        <div class="kpi-icon" style="background: linear-gradient(135deg,#6366f1,#8b5cf6)">👥</div>
-                        <div class="kpi-label">Tổng nhân viên</div>
+                        <div class="kpi-icon" style="background: linear-gradient(135deg,#6366f1,#8b5cf6)">??</div>
+                        <div class="kpi-label">T?ng nh�n vi�n</div>
                         <div class="kpi-value" th:text="${totalEmployees}">0</div>
-                        <div class="kpi-sub">đang làm việc</div>
+                        <div class="kpi-sub">dang l�m vi?c</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="kpi-card">
-                        <div class="kpi-icon" style="background: linear-gradient(135deg,#f59e0b,#fbbf24)">⭐</div>
-                        <div class="kpi-label">Điểm KPI trung bình</div>
+                        <div class="kpi-icon" style="background: linear-gradient(135deg,#f59e0b,#fbbf24)">?</div>
+                        <div class="kpi-label">�i?m KPI trung b�nh</div>
                         <div class="kpi-value" th:text="${avgKpiScore}">0</div>
-                        <div class="kpi-sub">trên thang 100</div>
+                        <div class="kpi-sub">tr�n thang 100</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="kpi-card">
-                        <div class="kpi-icon" style="background: linear-gradient(135deg,#10b981,#34d399)">💰</div>
-                        <div class="kpi-label">Quỹ lương tháng này</div>
+                        <div class="kpi-icon" style="background: linear-gradient(135deg,#10b981,#34d399)">??</div>
+                        <div class="kpi-label">Qu? luong th�ng n�y</div>
                         <div class="kpi-value" style="font-size:1.3rem;"
-                             th:text="${#numbers.formatDecimal(totalPayrollThisMonth,1,'COMMA',0,'POINT') + ' ₫'}">--</div>
-                        <div class="kpi-sub" th:text="'Tháng ' + ${currentMonthYear}">Tháng</div>
+                             th:text="${#numbers.formatDecimal(totalPayrollThisMonth,1,'COMMA',0,'POINT') + ' ?'}">--</div>
+                        <div class="kpi-sub" th:text="'Th�ng ' + ${currentMonthYear}">Th�ng</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="kpi-card">
-                        <div class="kpi-icon" style="background: linear-gradient(135deg,#ef4444,#f87171)">📅</div>
-                        <div class="kpi-label">Đơn nghỉ phép tháng này</div>
+                        <div class="kpi-icon" style="background: linear-gradient(135deg,#ef4444,#f87171)">??</div>
+                        <div class="kpi-label">�on ngh? ph�p th�ng n�y</div>
                         <div class="kpi-value" th:text="${leaveThisMonth}">0</div>
-                        <div class="kpi-sub">lượt nghỉ được đăng ký</div>
+                        <div class="kpi-sub">lu?t ngh? du?c dang k�</div>
                     </div>
                 </div>
             </div>
@@ -167,11 +168,11 @@
                     <div class="chart-card h-100">
                         <div class="chart-header">
                             <div>
-                                <h6><i class="bi bi-graph-up me-2 text-primary"></i>Xu Hướng Chấm Công 6 Tháng</h6>
-                                <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">Số lượt chấm công theo trạng thái</div>
+                                <h6><i class="bi bi-graph-up me-2 text-primary"></i>Xu Hu?ng Ch?m C�ng 6 Th�ng</h6>
+                                <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">S? lu?t ch?m c�ng theo tr?ng th�i</div>
                             </div>
                             <a th:href="@{/admin/attendance}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-arrow-right me-1"></i>Chi tiết
+                                <i class="bi bi-arrow-right me-1"></i>Chi ti?t
                             </a>
                         </div>
                         <div class="chart-body">
@@ -184,17 +185,17 @@
                 <div class="col-lg-4">
                     <div class="chart-card h-100">
                         <div class="chart-header">
-                            <h6><i class="bi bi-pie-chart me-2 text-warning"></i>Phân Phối Điểm KPI</h6>
+                            <h6><i class="bi bi-pie-chart me-2 text-warning"></i>Ph�n Ph?i �i?m KPI</h6>
                         </div>
                         <div class="chart-body d-flex flex-column align-items-center">
                             <canvas id="kpiChart" style="max-height: 200px;"></canvas>
                             <div class="mt-3 w-100">
                                 <div class="d-flex justify-content-between" style="font-size:0.76rem;color:#64748b;">
-                                    <span>🔴 Yếu</span>
-                                    <span>🟠 Trung bình</span>
-                                    <span>🟡 Khá</span>
-                                    <span>🟢 Tốt</span>
-                                    <span>✨ Xuất sắc</span>
+                                    <span>?? Y?u</span>
+                                    <span>?? Trung b�nh</span>
+                                    <span>?? Kh�</span>
+                                    <span>?? T?t</span>
+                                    <span>? Xu?t s?c</span>
                                 </div>
                             </div>
                         </div>
@@ -209,10 +210,10 @@
                     <div class="chart-card h-100">
                         <div class="chart-header">
                             <div>
-                                <h6><i class="bi bi-bar-chart me-2 text-success"></i>Quỹ Lương Trung Bình Theo Phòng Ban</h6>
-                                <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">Đơn vị: triệu đồng</div>
+                                <h6><i class="bi bi-bar-chart me-2 text-success"></i>Qu? Luong Trung B�nh Theo Ph�ng Ban</h6>
+                                <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">�on v?: tri?u d?ng</div>
                             </div>
-                            <a th:href="@{/admin/payroll}" class="btn btn-sm btn-outline-success">Chi tiết →</a>
+                            <a th:href="@{/admin/payroll}" class="btn btn-sm btn-outline-success">Chi ti?t ?</a>
                         </div>
                         <div class="chart-body">
                             <canvas id="payrollChart" height="220"></canvas>
@@ -224,13 +225,13 @@
                 <div class="col-lg-5">
                     <div class="chart-card h-100">
                         <div class="chart-header">
-                            <h6>🏆 Top Nhân Viên KPI Cao Nhất</h6>
-                            <a th:href="@{/admin/reviews}" class="btn btn-sm btn-outline-warning">Xem tất cả</a>
+                            <h6>?? Top Nh�n Vi�n KPI Cao Nh?t</h6>
+                            <a th:href="@{/admin/reviews}" class="btn btn-sm btn-outline-warning">Xem t?t c?</a>
                         </div>
                         <div class="chart-body">
                             <div th:if="${#lists.isEmpty(topPerformers)}" style="text-align:center;color:#94a3b8;padding:30px 0;">
                                 <i class="bi bi-inbox" style="font-size:2rem;display:block;margin-bottom:8px;"></i>
-                                Chưa có dữ liệu đánh giá
+                                Chua c� d? li?u d�nh gi�
                             </div>
                             <div th:each="r, stat : ${topPerformers}" class="performer-item">
                                 <!-- Rank -->
@@ -239,9 +240,9 @@
                                 </div>
                                 <!-- Info -->
                                 <div class="flex-grow-1">
-                                    <div class="performer-name" th:text="${r.user.fullName}">Tên</div>
+                                    <div class="performer-name" th:text="${r.user.fullName}">T�n</div>
                                     <div class="performer-dept"
-                                         th:text="${r.user.department != null ? r.user.department.departmentName : 'N/A'}">Phòng ban</div>
+                                         th:text="${r.user.department != null ? r.user.department.departmentName : 'N/A'}">Ph�ng ban</div>
                                     <div class="score-bar">
                                         <div class="score-fill"
                                              th:style="'width:' + ${r.overallScore} + '%; background: linear-gradient(90deg,' + (r.overallScore.doubleValue() >= 90 ? '#10b981,#34d399' : (r.overallScore.doubleValue() >= 75 ? '#6366f1,#8b5cf6' : (r.overallScore.doubleValue() >= 60 ? '#06b6d4,#22d3ee' : '#f59e0b,#fbbf24'))) + ')'">
@@ -251,7 +252,7 @@
                                 <!-- Score -->
                                 <span class="score-badge"
                                       th:style="${r.ratingColor == 'success' ? 'background:#d1fae5;color:#065f46;' : (r.ratingColor == 'primary' ? 'background:#ede9fe;color:#5b21b6;' : (r.ratingColor == 'info' ? 'background:#dbeafe;color:#1e40af;' : 'background:#fff7ed;color:#c2410c;'))}"
-                                      th:text="${r.overallScore + ' đ'}">0</span>
+                                      th:text="${r.overallScore + ' d'}">0</span>
                             </div>
                         </div>
                     </div>
@@ -276,17 +277,17 @@
             labels: mLabels,
             datasets: [
                 {
-                    label: '✅ Đúng giờ', data: mPresent,
+                    label: '? ��ng gi?', data: mPresent,
                     borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.08)',
                     borderWidth: 3, tension: 0.4, pointRadius: 5, fill: true
                 },
                 {
-                    label: '⏰ Đi trễ', data: mLate,
+                    label: '? �i tr?', data: mLate,
                     borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.06)',
                     borderWidth: 2, tension: 0.4, pointRadius: 4, fill: true
                 },
                 {
-                    label: '❌ Vắng', data: mAbsent,
+                    label: '? V?ng', data: mAbsent,
                     borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.06)',
                     borderWidth: 2, tension: 0.4, pointRadius: 4, fill: true
                 }
@@ -307,7 +308,7 @@
     new Chart(document.getElementById('kpiChart'), {
         type: 'doughnut',
         data: {
-            labels: ['Yếu (<50)', 'Trung bình (50-60)', 'Khá (60-75)', 'Tốt (75-90)', 'Xuất sắc (≥90)'],
+            labels: ['Y?u (<50)', 'Trung b�nh (50-60)', 'Kh� (60-75)', 'T?t (75-90)', 'Xu?t s?c (=90)'],
             datasets: [{ data: kpiData,
                 backgroundColor: ['#ef4444','#f97316','#f59e0b','#6366f1','#10b981'],
                 borderWidth: 2, borderColor: '#fff'
@@ -332,7 +333,7 @@
         data: {
             labels: deptNames,
             datasets: [{
-                label: 'Lương trung bình (triệu ₫)',
+                label: 'Luong trung b�nh (tri?u ?)',
                 data: deptSal,
                 backgroundColor: barColors.slice(0, deptNames.length),
                 borderRadius: 8, borderSkipped: false
@@ -344,7 +345,7 @@
                 legend: { display: false },
                 tooltip: {
                     callbacks: {
-                        label: ctx => ` ${ctx.parsed.y.toFixed(1)} triệu ₫ — ${deptCount[ctx.dataIndex]} nhân viên`
+                        label: ctx => ` ${ctx.parsed.y.toFixed(1)} tri?u ? � ${deptCount[ctx.dataIndex]} nh�n vi�n`
                     }
                 }
             },

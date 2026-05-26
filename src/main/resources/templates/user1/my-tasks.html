@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công việc của tôi - HRMS</title>
+    <title>C�ng vi?c c?a t�i - HRMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
         .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: #94a3b8; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
         .sidebar nav a:hover, .sidebar nav a.active { color: white; background: rgba(99,102,241,0.15); border-left-color: #6366f1; }
         .sidebar nav a i { font-size: 1rem; width: 20px; }
-        .sidebar-logout { padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); position: absolute; bottom: 0; width: 100%; }
+        .sidebar-logout { padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); }
         .main-content { margin-left: 260px; padding: 28px 32px; }
         .page-header { margin-bottom: 28px; }
         .page-header h1 { font-size: 1.6rem; font-weight: 700; color: #0f172a; margin: 0; }
@@ -103,7 +103,7 @@
 <!-- SIDEBAR -->
 <div class="sidebar">
     <div class="sidebar-brand">
-        <div class="brand-icon">⚡</div>
+        <div class="brand-icon">?</div>
         <div>
             <div class="brand-name">HRMS</div>
             <div class="brand-sub">HR Platform</div>
@@ -114,40 +114,40 @@
              onerror="this.src='https://ui-avatars.com/api/?name=NV&background=6366f1&color=fff&size=42'"
              th:alt="${user.fullName}" alt="Avatar">
         <div>
-            <div class="sidebar-user-name" th:text="${user.fullName}">Nhân viên</div>
+            <div class="sidebar-user-name" th:text="${user.fullName}">Nh�n vi�n</div>
             <div class="sidebar-user-role" th:text="${user.position != null ? user.position.positionName : user.role}">Employee</div>
         </div>
     </div>
-        <div class="sidebar-section-label">Cá nhân</div>
+        <div class="sidebar-section-label">C� nh�n</div>
     <nav>
         <a href="/user1/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
-        <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca làm việc</a>
-        <a href="/user/leaves"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> Làm thêm giờ</a>
-        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phiếu lương</a>
+        <a href="/user1/profile"><i class="bi bi-person-circle"></i> H? so c� nh�n</a>
+        <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Ch?m c�ng</a>
+        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca l�m vi?c</a>
+        <a href="/user/leaves"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
+        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> L�m th�m gi?</a>
+        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phi?u luong</a>
     </nav>
-    <div class="sidebar-section-label">Công việc</div>
+    <div class="sidebar-section-label">C�ng vi?c</div>
     <nav>
-        <a href="/user1/tasks" class="active"><i class="bi bi-list-task"></i> Công việc của tôi</a>
+        <a href="/user1/tasks" class="active"><i class="bi bi-list-task"></i> C�ng vi?c c?a t�i</a>
         <a href="/user1/kpi"><i class="bi bi-bullseye"></i> KPI Goals</a>
-        <a href="/user1/reviews"><i class="bi bi-star-half"></i> Đánh giá</a>
-        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> Kỹ năng</a>
+        <a href="/user1/reviews"><i class="bi bi-star-half"></i> ��nh gi�</a>
+        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> K? nang</a>
     </nav>
-    <div class="sidebar-section-label">Tài chính</div>
+    <div class="sidebar-section-label">T�i ch�nh</div>
     <nav>
-        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi phí</a>
-        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> Tài liệu</a>
-        <a href="/user1/my-assets"><i class="bi bi-pc-display"></i> Tài sản</a>
+        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi ph�</a>
+        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> T�i li?u</a>
+        <a href="/user1/my-assets"><i class="bi bi-pc-display"></i> T�i s?n</a>
     </nav>
-    <div class="sidebar-section-label">Hỗ trợ</div>
+    <div class="sidebar-section-label">H? tr?</div>
     <nav>
-        <a href="/user1/announcements"><i class="bi bi-megaphone"></i> Thông báo công ty</a>
-        <a href="/user1/chatbot"><i class="bi bi-chat-dots"></i> Trợ lý HR</a>
-        <a href="/videos"><i class="bi bi-play-circle"></i> Video đào tạo</a>
+        <a href="/user1/announcements"><i class="bi bi-megaphone"></i> Th�ng b�o c�ng ty</a>
+        <a href="/user1/chatbot"><i class="bi bi-chat-dots"></i> Tr? l� HR</a>
+        <a href="/videos"><i class="bi bi-play-circle"></i> Video d�o t?o</a>
         <a href="/notifications">
-            <i class="bi bi-bell"></i> Thông báo
+            <i class="bi bi-bell"></i> Th�ng b�o
             <span class="notif-badge"
                   th:if="${unreadNotifications != null and unreadNotifications > 0}"
                   th:text="${unreadNotifications}">0</span>
@@ -172,7 +172,7 @@
         <form action="/logout" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
-                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                <i class="bi bi-box-arrow-right"></i> �ang xu?t
             </button>
         </form>
     </div>
@@ -181,44 +181,44 @@
 <!-- MAIN -->
 <div class="main-content">
     <div class="page-header">
-        <h1>📝 Công việc của tôi</h1>
-        <p>Danh sách công việc được giao và trạng thái thực hiện</p>
+        <h1>?? C�ng vi?c c?a t�i</h1>
+        <p>Danh s�ch c�ng vi?c du?c giao v� tr?ng th�i th?c hi?n</p>
     </div>
 
     <!-- Stats Bar -->
     <div class="stats-bar">
         <div class="stat-pill">
             <div class="sp-val" th:text="${totalTasks}">0</div>
-            <div class="sp-lbl">Tổng công việc</div>
+            <div class="sp-lbl">T?ng c�ng vi?c</div>
         </div>
         <div class="stat-pill" style="border-top: 3px solid #f59e0b;">
             <div class="sp-val" style="color:#f59e0b;" th:text="${pendingCount}">0</div>
-            <div class="sp-lbl">Chờ xử lý</div>
+            <div class="sp-lbl">Ch? x? l�</div>
         </div>
         <div class="stat-pill" style="border-top: 3px solid #6366f1;">
             <div class="sp-val" style="color:#6366f1;" th:text="${inProgressCount}">0</div>
-            <div class="sp-lbl">Đang làm</div>
+            <div class="sp-lbl">�ang l�m</div>
         </div>
         <div class="stat-pill" style="border-top: 3px solid #10b981;">
             <div class="sp-val" style="color:#10b981;" th:text="${doneCount}">0</div>
-            <div class="sp-lbl">Hoàn thành</div>
+            <div class="sp-lbl">Ho�n th�nh</div>
         </div>
     </div>
 
     <!-- Filter -->
     <div class="filter-bar">
-        <span style="font-size:0.82rem;font-weight:600;color:#64748b;">Lọc:</span>
-        <a href="/user1/tasks" th:class="${filter == null ? 'filter-chip active' : 'filter-chip'}">Tất cả</a>
-        <a href="/user1/tasks?filter=PENDING" th:class="${filter == 'PENDING' ? 'filter-chip active' : 'filter-chip'}">⏳ Chờ xử lý</a>
-        <a href="/user1/tasks?filter=IN_PROGRESS" th:class="${filter == 'IN_PROGRESS' ? 'filter-chip active' : 'filter-chip'}">🔵 Đang làm</a>
-        <a href="/user1/tasks?filter=COMPLETED" th:class="${filter == 'COMPLETED' ? 'filter-chip active' : 'filter-chip'}">✅ Hoàn thành</a>
+        <span style="font-size:0.82rem;font-weight:600;color:#64748b;">L?c:</span>
+        <a href="/user1/tasks" th:class="${filter == null ? 'filter-chip active' : 'filter-chip'}">T?t c?</a>
+        <a href="/user1/tasks?filter=PENDING" th:class="${filter == 'PENDING' ? 'filter-chip active' : 'filter-chip'}">? Ch? x? l�</a>
+        <a href="/user1/tasks?filter=IN_PROGRESS" th:class="${filter == 'IN_PROGRESS' ? 'filter-chip active' : 'filter-chip'}">?? �ang l�m</a>
+        <a href="/user1/tasks?filter=COMPLETED" th:class="${filter == 'COMPLETED' ? 'filter-chip active' : 'filter-chip'}">? Ho�n th�nh</a>
     </div>
 
     <!-- Task List -->
     <div th:if="${#lists.isEmpty(myTasks)}" class="empty-state">
         <i class="bi bi-inbox"></i>
-        <div style="font-size:1rem;font-weight:600;color:#64748b;">Không có công việc nào</div>
-        <div style="font-size:0.85rem;margin-top:4px;">Chưa có công việc được giao hoặc không phù hợp bộ lọc</div>
+        <div style="font-size:1rem;font-weight:600;color:#64748b;">Kh�ng c� c�ng vi?c n�o</div>
+        <div style="font-size:0.85rem;margin-top:4px;">Chua c� c�ng vi?c du?c giao ho?c kh�ng ph� h?p b? l?c</div>
     </div>
 
     <div th:each="a : ${myTasks}"
@@ -226,25 +226,25 @@
 
         <div th:switch="${a.status.name()}"
              th:class="'task-status-icon ' + ${a.status.name().toLowerCase()}">
-            <span th:case="'PENDING'">⏳</span>
-            <span th:case="'IN_PROGRESS'">🔵</span>
-            <span th:case="'COMPLETED'">✅</span>
-            <span th:case="'CANCELED'">❌</span>
-            <span th:case="*">📋</span>
+            <span th:case="'PENDING'">?</span>
+            <span th:case="'IN_PROGRESS'">??</span>
+            <span th:case="'COMPLETED'">?</span>
+            <span th:case="'CANCELED'">?</span>
+            <span th:case="*">??</span>
         </div>
 
         <div style="flex:1;">
-            <div class="task-name" th:text="${a.task.taskName}">Tên công việc</div>
-            <div class="task-desc" th:text="${a.task.description != null ? a.task.description : 'Không có mô tả'}">Mô tả</div>
+            <div class="task-name" th:text="${a.task.taskName}">T�n c�ng vi?c</div>
+            <div class="task-desc" th:text="${a.task.description != null ? a.task.description : 'Kh�ng c� m� t?'}">M� t?</div>
             <div class="task-meta">
-                <div class="task-meta-item"><i class="bi bi-tag"></i> <span th:text="${a.task.taskType}">Loại</span></div>
-                <div class="task-meta-item"><i class="bi bi-calendar3"></i> Ngày giao: <span th:text="${a.assignedDate}">01/01</span></div>
+                <div class="task-meta-item"><i class="bi bi-tag"></i> <span th:text="${a.task.taskType}">Lo?i</span></div>
+                <div class="task-meta-item"><i class="bi bi-calendar3"></i> Ng�y giao: <span th:text="${a.assignedDate}">01/01</span></div>
                 <div class="task-meta-item" th:if="${a.task.startDate != null or a.task.endDate != null}">
                     <i class="bi bi-calendar-range"></i>
-                    Hạn task:
+                    H?n task:
                     <span th:text="${(a.task.startDate != null ? #temporals.format(a.task.startDate, 'dd/MM/yyyy') : '---') + ' - ' + (a.task.endDate != null ? #temporals.format(a.task.endDate, 'dd/MM/yyyy') : '---')}">01/01 - 02/01</span>
                 </div>
-                <div class="task-meta-item" th:if="${a.actualHours != null}"><i class="bi bi-clock"></i> Giờ thực tế: <span th:text="${a.actualHours} + 'h'">0h</span></div>
+                <div class="task-meta-item" th:if="${a.actualHours != null}"><i class="bi bi-clock"></i> Gi? th?c t?: <span th:text="${a.actualHours} + 'h'">0h</span></div>
             </div>
         </div>
 
@@ -256,9 +256,9 @@
                 <form th:action="@{'/user1/tasks/' + ${a.id} + '/update-status'}" method="post" style="margin-top:8px;">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <select name="status" class="status-select" onchange="this.form.submit()">
-                        <option value="">Cập nhật trạng thái</option>
-                        <option value="IN_PROGRESS" th:selected="${a.status.name() == 'IN_PROGRESS'}">🔵 Đang làm</option>
-                        <option value="COMPLETED">✅ Hoàn thành</option>
+                        <option value="">C?p nh?t tr?ng th�i</option>
+                        <option value="IN_PROGRESS" th:selected="${a.status.name() == 'IN_PROGRESS'}">?? �ang l�m</option>
+                        <option value="COMPLETED">? Ho�n th�nh</option>
                     </select>
                 </form>
             </div>

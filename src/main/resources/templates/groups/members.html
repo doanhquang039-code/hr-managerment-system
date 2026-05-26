@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Members - HRMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background:#f6f8fb; }
+        .shell { max-width:1040px; margin:0 auto; padding:2rem 1rem; }
+        .panel { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 10px 28px rgba(15,23,42,.06); overflow:hidden; }
+    </style>
+</head>
+<body>
+<main class="shell">
+    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Group members</h1>
+            <p class="text-muted mb-0" th:text="${group.name}">HR Collaboration Group</p>
+        </div>
+        <a th:href="${groupBasePath}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+
+    <section class="panel">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Department</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${group.members}">
+                <td class="fw-semibold" th:text="${member.fullName}">Member</td>
+                <td th:text="${member.email != null ? member.email : member.username}">email</td>
+                <td><span class="badge bg-primary-subtle text-primary" th:text="${member.role != null ? member.role.name() : 'NO_ROLE'}">USER</span></td>
+                <td th:text="${member.department != null ? member.department.departmentName : 'Unassigned'}">Department</td>
+            </tr>
+            <tr th:if="${group.members.isEmpty()}">
+                <td colspan="4" class="text-center text-muted py-4">No members selected yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+</body>
+</html>

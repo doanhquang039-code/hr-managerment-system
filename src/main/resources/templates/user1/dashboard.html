@@ -24,7 +24,7 @@
             left: 0; top: 0;
             z-index: 100;
             padding-top: 0;
-            padding-bottom: 120px; /* Space for logout button */
+            padding-bottom: 18px;
             box-shadow: 4px 0 20px rgba(0,0,0,0.3);
             overflow-y: auto; /* Enable scrolling */
             overflow-x: hidden;
@@ -91,9 +91,18 @@
         }
         .sidebar nav a i { font-size: 1rem; width: 20px; }
         .sidebar-logout {
-            padding: 20px; margin-top: auto;
+            padding: 14px 20px 4px;
+            margin-top: 10px;
             border-top: 1px solid rgba(255,255,255,0.08);
-            position: absolute; bottom: 0; width: 100%;
+            width: 100%;
+        }
+        .sidebar-logout .lang-toggle-wrap {
+            padding: 0 0 12px !important;
+            border-top: 0 !important;
+            margin-top: 0 !important;
+        }
+        .sidebar-logout form {
+            margin: 0;
         }
         .notif-badge {
             background: #ef4444; color: white; border-radius: 10px;
@@ -298,6 +307,8 @@
 
         <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
 
+        <a href="/user1/groups"><i class="bi bi-diagram-3"></i> Nhóm của tôi</a>
+
         <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Chấm công</a>
 
         <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca làm việc</a>
@@ -404,7 +415,7 @@
 
     <div class="sidebar-logout">
           <!-- Language Toggle -->
-          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
+          <div class="lang-toggle-wrap">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
               <button class="lang-btn" data-lang="vi"
                       style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">

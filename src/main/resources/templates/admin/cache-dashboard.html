@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -48,18 +48,19 @@
 </head>
 <body>
 <div class="sidebar">
-    <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+    <div class="sidebar-logo">? HRMS ADMIN</div>
     <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+    <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
     <hr/>
-    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
-    <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
+    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B?ng luong</a>
+    <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
     <a th:href="@{/admin/kpi}"><i class="bi bi-bullseye"></i> KPI Goals</a>
-    <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi phí</a>
-    <a th:href="@{/admin/videos}"><i class="bi bi-collection-play"></i> Video đào tạo</a>
+    <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi ph�</a>
+    <a th:href="@{/admin/videos}"><i class="bi bi-collection-play"></i> Video d�o t?o</a>
     <hr/>
     <a th:href="@{/admin/cache}" class="active"><i class="bi bi-lightning-charge"></i> Cache & Email</a>
-    <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nhật ký</a>
+    <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nh?t k�</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -76,14 +77,14 @@
           </div>
     <form th:action="@{/logout}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> �ang xu?t</button>
     </form>
 </div>
 
 <div class="main">
     <div class="page-header">
         <h1><i class="bi bi-lightning-charge me-2 text-warning"></i>Cache & Email Management</h1>
-        <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Quản lý Redis cache và cấu hình email provider</div>
+        <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Qu?n l� Redis cache v� c?u h�nh email provider</div>
     </div>
 
     <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
@@ -147,7 +148,7 @@
 
                     <!-- Evict buttons -->
                     <div style="border-top:1px solid #f1f5f9;padding-top:16px;">
-                        <div style="font-size:0.82rem;font-weight:600;color:#64748b;margin-bottom:10px;">Xóa cache theo nhóm:</div>
+                        <div style="font-size:0.82rem;font-weight:600;color:#64748b;margin-bottom:10px;">X�a cache theo nh�m:</div>
                         <div class="d-flex gap-2 flex-wrap">
                             <form th:action="@{/admin/cache/evict}" method="post" style="display:inline;">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
@@ -173,8 +174,8 @@
                             <form th:action="@{/admin/cache/evict-all}" method="post" style="display:inline;">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                 <button type="submit" class="evict-btn" style="background:#fee2e2;color:#dc2626;"
-                                        onclick="return confirm('Xóa toàn bộ cache?')">
-                                    <i class="bi bi-trash-fill me-1"></i>Xóa tất cả
+                                        onclick="return confirm('X�a to�n b? cache?')">
+                                    <i class="bi bi-trash-fill me-1"></i>X�a t?t c?
                                 </button>
                             </form>
                         </div>
@@ -183,10 +184,10 @@
 
                 <div th:unless="${redisOnline}"
                      style="background:#fff7ed;border-radius:12px;padding:16px;border-left:4px solid #f59e0b;">
-                    <div style="font-weight:600;color:#92400e;margin-bottom:6px;">⚠️ Redis không kết nối được</div>
+                    <div style="font-weight:600;color:#92400e;margin-bottom:6px;">?? Redis kh�ng k?t n?i du?c</div>
                     <div style="font-size:0.85rem;color:#78350f;" th:text="${redisError}"></div>
                     <div style="font-size:0.82rem;color:#92400e;margin-top:8px;">
-                        App vẫn hoạt động bình thường — cache bị disable, mọi request đọc trực tiếp từ DB.
+                        App v?n ho?t d?ng b�nh thu?ng � cache b? disable, m?i request d?c tr?c ti?p t? DB.
                     </div>
                 </div>
             </div>
@@ -203,11 +204,11 @@
 
                 <div th:if="${emailProvider == 'Gmail SMTP'}"
                      style="background:#fff7ed;border-radius:10px;padding:12px;font-size:0.82rem;color:#92400e;border-left:3px solid #f59e0b;">
-                    <b>⚠️ Đang dùng Gmail SMTP</b><br/>
-                    Giới hạn 500 email/ngày. Để scale, hãy cấu hình SendGrid:
+                    <b>?? �ang d�ng Gmail SMTP</b><br/>
+                    Gi?i h?n 500 email/ng�y. �? scale, h�y c?u h�nh SendGrid:
                     <ol style="margin:8px 0 0;padding-left:16px;">
-                        <li>Đăng ký tại <a href="https://sendgrid.com" target="_blank">sendgrid.com</a></li>
-                        <li>Tạo API Key</li>
+                        <li>�ang k� t?i <a href="https://sendgrid.com" target="_blank">sendgrid.com</a></li>
+                        <li>T?o API Key</li>
                         <li>Set <code>sendgrid.enabled=true</code></li>
                         <li>Set <code>sendgrid.api-key=SG.xxx</code></li>
                     </ol>
@@ -215,9 +216,9 @@
 
                 <div th:if="${emailProvider == 'SendGrid'}"
                      style="background:#d1fae5;border-radius:10px;padding:12px;font-size:0.82rem;color:#065f46;border-left:3px solid #10b981;">
-                    ✅ <b>SendGrid đang hoạt động</b><br/>
-                    Email được gửi qua SendGrid với template HTML đẹp.
-                    Hỗ trợ bulk email, tracking open/click.
+                    ? <b>SendGrid dang ho?t d?ng</b><br/>
+                    Email du?c g?i qua SendGrid v?i template HTML d?p.
+                    H? tr? bulk email, tracking open/click.
                 </div>
             </div>
 
@@ -227,23 +228,23 @@
                 <table style="width:100%;font-size:0.82rem;">
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:6px 0;color:#64748b;">Dashboard stats</td>
-                        <td style="padding:6px 0;font-weight:600;text-align:right;">5 phút</td>
+                        <td style="padding:6px 0;font-weight:600;text-align:right;">5 ph�t</td>
                     </tr>
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:6px 0;color:#64748b;">Users list</td>
-                        <td style="padding:6px 0;font-weight:600;text-align:right;">15 phút</td>
+                        <td style="padding:6px 0;font-weight:600;text-align:right;">15 ph�t</td>
                     </tr>
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:6px 0;color:#64748b;">Departments</td>
-                        <td style="padding:6px 0;font-weight:600;text-align:right;">30 phút</td>
+                        <td style="padding:6px 0;font-weight:600;text-align:right;">30 ph�t</td>
                     </tr>
                     <tr style="border-bottom:1px solid #f1f5f9;">
                         <td style="padding:6px 0;color:#64748b;">Video library</td>
-                        <td style="padding:6px 0;font-weight:600;text-align:right;">20 phút</td>
+                        <td style="padding:6px 0;font-weight:600;text-align:right;">20 ph�t</td>
                     </tr>
                     <tr>
                         <td style="padding:6px 0;color:#64748b;">KPI Goals</td>
-                        <td style="padding:6px 0;font-weight:600;text-align:right;">10 phút</td>
+                        <td style="padding:6px 0;font-weight:600;text-align:right;">10 ph�t</td>
                     </tr>
                 </table>
             </div>
@@ -255,15 +256,15 @@
                      style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f1f5f9;">
                     <span style="font-size:0.82rem;color:#374151;font-weight:600;" th:text="${entry.key}"></span>
                     <span th:if="${entry.value == 'online'}"
-                          style="background:#d1fae5;color:#065f46;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">✅ Online</span>
+                          style="background:#d1fae5;color:#065f46;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">? Online</span>
                     <span th:if="${entry.value == 'disabled'}"
-                          style="background:#f1f5f9;color:#64748b;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">⚪ Disabled</span>
+                          style="background:#f1f5f9;color:#64748b;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">? Disabled</span>
                     <span th:if="${entry.value == 'error'}"
-                          style="background:#fee2e2;color:#991b1b;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">❌ Error</span>
+                          style="background:#fee2e2;color:#991b1b;padding:2px 10px;border-radius:20px;font-size:0.72rem;font-weight:700;">? Error</span>
                 </div>
                 <div th:if="${#lists.isEmpty(enabledCloudServices)}"
                      style="font-size:0.8rem;color:#94a3b8;margin-top:8px;">
-                    Chưa có cloud service nào được bật. Cấu hình trong application.properties.
+                    Chua c� cloud service n�o du?c b?t. C?u h�nh trong application.properties.
                 </div>
             </div>
         </div>

@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giao Công Việc - HRMS Admin</title>
+    <title>Giao C�ng Vi?c - HRMS Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -80,21 +80,22 @@
     <div class="row">
         <!-- Sidebar -->
         <nav class="col-md-2 d-none d-md-block sidebar shadow">
-            <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+            <div class="sidebar-logo">? HRMS ADMIN</div>
             <hr style="border-color:rgba(255,255,255,.15)"/>
             <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
-            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+            <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph�ng ban</a>
+            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch?c v?</a>
             <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
-            <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
-            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
-            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
-            <a th:href="@{/admin/assignments}" class="active"><i class="bi bi-person-check"></i> Phân công</a>
-            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
-            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+            <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> H?p d?ng</a>
+            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B?ng luong</a>
+            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
+            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch?m c�ng</a>
+            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> C�ng vi?c</a>
+            <a th:href="@{/admin/assignments}" class="active"><i class="bi bi-person-check"></i> Ph�n c�ng</a>
+            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> ��nh gi� KPI</a>
+            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -111,7 +112,7 @@
           </div>
             <form th:action="@{/logout}" method="post" class="px-3 mt-4">
                 <button type="submit" class="btn btn-outline-light btn-sm w-100">
-                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    <i class="bi bi-box-arrow-right"></i> �ang xu?t
                 </button>
             </form>
         </nav>
@@ -122,8 +123,8 @@
             <nav aria-label="breadcrumb" class="mb-3">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" style="color:#667eea;text-decoration:none;">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/admin/assignments}" style="color:#667eea;text-decoration:none;">Phân công</a></li>
-                    <li class="breadcrumb-item active">Giao việc mới</li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/assignments}" style="color:#667eea;text-decoration:none;">Ph�n c�ng</a></li>
+                    <li class="breadcrumb-item active">Giao vi?c m?i</li>
                 </ol>
             </nav>
 
@@ -131,8 +132,8 @@
                 <div class="col-lg-8">
                     <div class="form-card shadow-sm">
                         <div class="form-card-header">
-                            <h4><i class="bi bi-person-check me-2"></i>Giao Công Việc Mới</h4>
-                            <p>Phân công nhiệm vụ cho nhân viên và theo dõi tiến độ</p>
+                            <h4><i class="bi bi-person-check me-2"></i>Giao C�ng Vi?c M?i</h4>
+                            <p>Ph�n c�ng nhi?m v? cho nh�n vi�n v� theo d�i ti?n d?</p>
                         </div>
                         <div class="form-card-body">
                             <form th:action="@{/admin/assignments/save}" th:object="${assignment}" method="post">
@@ -141,14 +142,14 @@
                                 <!-- Select Employee -->
                                 <div class="mb-4">
                                     <label class="form-label">
-                                        <i class="bi bi-person me-1 text-primary"></i>Nhân viên được giao
+                                        <i class="bi bi-person me-1 text-primary"></i>Nh�n vi�n du?c giao
                                     </label>
                                     <div class="user-select-wrapper">
                                         <select class="form-select" th:field="*{user.id}" id="userSelect" required>
-                                            <option value="">-- Chọn nhân viên --</option>
+                                            <option value="">-- Ch?n nh�n vi�n --</option>
                                             <option th:each="u : ${users}"
                                                     th:value="${u.id}"
-                                                    th:text="${u.fullName + ' (' + (u.department != null ? u.department.departmentName : 'Chưa gán phòng ban') + ')'}"
+                                                    th:text="${u.fullName + ' (' + (u.department != null ? u.department.departmentName : 'Chua g�n ph�ng ban') + ')'}"
                                                     th:data-name="${u.fullName}">
                                             </option>
                                         </select>
@@ -158,10 +159,10 @@
                                 <!-- Select Task -->
                                 <div class="mb-4">
                                     <label class="form-label">
-                                        <i class="bi bi-list-task me-1 text-success"></i>Công việc
+                                        <i class="bi bi-list-task me-1 text-success"></i>C�ng vi?c
                                     </label>
                                     <select class="form-select" th:field="*{task.id}" id="taskSelect" required>
-                                        <option value="">-- Chọn công việc --</option>
+                                        <option value="">-- Ch?n c�ng vi?c --</option>
                                         <option th:each="t : ${tasks}"
                                                 th:value="${t.id}"
                                                 th:text="${t.taskName}"
@@ -176,19 +177,19 @@
                                     <div class="task-preview" id="taskPreview">
                                         <div class="row g-3">
                                             <div class="col-4">
-                                                <div class="label">Loại công việc</div>
+                                                <div class="label">Lo?i c�ng vi?c</div>
                                                 <div class="value" id="prev-type">-</div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="label">Thưởng cơ bản</div>
+                                                <div class="label">Thu?ng co b?n</div>
                                                 <div class="value" id="prev-reward">-</div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="label">Thời gian</div>
+                                                <div class="label">Th?i gian</div>
                                                 <div class="value" id="prev-date-range">-</div>
                                             </div>
                                             <div class="col-12" id="prev-desc-wrap">
-                                                <div class="label">Mô tả</div>
+                                                <div class="label">M� t?</div>
                                                 <div class="value" id="prev-desc">-</div>
                                             </div>
                                         </div>
@@ -199,17 +200,17 @@
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">
-                                            <i class="bi bi-calendar3 me-1 text-warning"></i>Ngày giao
+                                            <i class="bi bi-calendar3 me-1 text-warning"></i>Ng�y giao
                                         </label>
                                         <input type="date" class="form-control" th:field="*{assignedDate}" required/>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">
-                                            <i class="bi bi-activity me-1 text-info"></i>Trạng thái ban đầu
+                                            <i class="bi bi-activity me-1 text-info"></i>Tr?ng th�i ban d?u
                                         </label>
                                         <select class="form-select" th:field="*{status}">
-                                            <option value="PENDING">⏳ Chờ thực hiện</option>
-                                            <option value="IN_PROGRESS">🚀 Đang thực hiện</option>
+                                            <option value="PENDING">? Ch? th?c hi?n</option>
+                                            <option value="IN_PROGRESS">?? �ang th?c hi?n</option>
                                         </select>
                                     </div>
                                 </div>
@@ -217,13 +218,13 @@
                                 <!-- Actual Hours (optional) -->
                                 <div class="mb-4">
                                     <label class="form-label">
-                                        <i class="bi bi-clock me-1 text-secondary"></i>Số giờ dự kiến
-                                        <span class="text-muted fw-normal">(tuỳ chọn)</span>
+                                        <i class="bi bi-clock me-1 text-secondary"></i>S? gi? d? ki?n
+                                        <span class="text-muted fw-normal">(tu? ch?n)</span>
                                     </label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-hourglass"></i></span>
                                         <input type="number" class="form-control" th:field="*{actualHours}"
-                                               placeholder="Ví dụ: 8" min="0" step="0.5"
+                                               placeholder="V� d?: 8" min="0" step="0.5"
                                                style="border-radius: 0 10px 10px 0;"/>
                                     </div>
                                 </div>
@@ -231,10 +232,10 @@
                                 <!-- Buttons -->
                                 <div class="d-flex gap-3 pt-2">
                                     <button type="submit" class="btn-submit">
-                                        <i class="bi bi-send me-2"></i>Giao việc ngay
+                                        <i class="bi bi-send me-2"></i>Giao vi?c ngay
                                     </button>
                                     <a th:href="@{/admin/assignments}" class="btn btn-outline-secondary btn-cancel">
-                                        <i class="bi bi-arrow-left me-1"></i>Quay lại
+                                        <i class="bi bi-arrow-left me-1"></i>Quay l?i
                                     </a>
                                 </div>
                             </form>
@@ -262,13 +263,13 @@
             const reward = parseFloat(selected.getAttribute('data-reward') || 0);
             document.getElementById('prev-type').textContent = selected.getAttribute('data-type') || '-';
             document.getElementById('prev-reward').textContent = reward > 0
-                ? new Intl.NumberFormat('vi-VN').format(reward) + ' ₫'
-                : 'Không có thưởng';
+                ? new Intl.NumberFormat('vi-VN').format(reward) + ' ?'
+                : 'Kh�ng c� thu?ng';
             const startDate = selected.getAttribute('data-start') || '---';
             const endDate = selected.getAttribute('data-end') || '---';
             document.getElementById('prev-date-range').textContent = startDate + ' - ' + endDate;
             const desc = selected.getAttribute('data-desc');
-            document.getElementById('prev-desc').textContent = desc || 'Không có mô tả';
+            document.getElementById('prev-desc').textContent = desc || 'Kh�ng c� m� t?';
             document.getElementById('prev-desc-wrap').style.display = desc ? 'block' : 'none';
             preview.style.display = 'block';
         } else {

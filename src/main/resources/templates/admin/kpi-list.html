@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý KPI - HRMS Admin</title>
+    <title>Qu?n L� KPI - HRMS Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -51,24 +51,25 @@
 </head>
 <body>
 <div class="sidebar">
-    <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+    <div class="sidebar-logo">? HRMS ADMIN</div>
     <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-    <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
-    <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+    <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+    <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph�ng ban</a>
+    <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch?c v?</a>
     <hr/>
-    <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
-    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
-    <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-    <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+    <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> H?p d?ng</a>
+    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B?ng luong</a>
+    <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh? ph�p</a>
+    <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch?m c�ng</a>
     <a th:href="@{/admin/kpi}" class="active"><i class="bi bi-bullseye"></i> KPI Goals</a>
-    <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi phí</a>
-    <a th:href="@{/admin/skills}"><i class="bi bi-mortarboard"></i> Kỹ năng</a>
-    <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
-    <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá</a>
-    <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
+    <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi ph�</a>
+    <a th:href="@{/admin/skills}"><i class="bi bi-mortarboard"></i> K? nang</a>
+    <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> C�ng vi?c</a>
+    <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> ��nh gi�</a>
+    <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> B�o c�o</a>
     <hr/>
-    <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+    <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -85,18 +86,18 @@
           </div>
     <form th:action="@{/logout}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> �ang xu?t</button>
     </form>
 </div>
 
 <div class="main">
     <div class="page-header">
         <div>
-            <h1><i class="bi bi-bullseye me-2 text-warning"></i>Quản Lý KPI Goals</h1>
-            <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Theo dõi và quản lý mục tiêu KPI nhân viên</div>
+            <h1><i class="bi bi-bullseye me-2 text-warning"></i>Qu?n L� KPI Goals</h1>
+            <div style="color:#64748b;font-size:0.85rem;margin-top:4px;">Theo d�i v� qu?n l� m?c ti�u KPI nh�n vi�n</div>
         </div>
         <a th:href="@{/admin/kpi/add}" class="btn btn-warning text-dark fw-bold">
-            <i class="bi bi-plus-lg me-1"></i>Tạo KPI Goal
+            <i class="bi bi-plus-lg me-1"></i>T?o KPI Goal
         </a>
     </div>
 
@@ -109,31 +110,31 @@
     <!-- Stats -->
     <div class="stat-row">
         <div class="stat-pill" style="border-color:#a7f3d0;">
-            <div class="sp-icon" style="background:#d1fae5;">🎯</div>
+            <div class="sp-icon" style="background:#d1fae5;">??</div>
             <div>
                 <div class="sp-val" style="color:#10b981;" th:text="${countActive}">0</div>
-                <div class="sp-lbl" style="color:#10b981;">Đang active</div>
+                <div class="sp-lbl" style="color:#10b981;">�ang active</div>
             </div>
         </div>
         <div class="stat-pill" style="border-color:#bfdbfe;">
-            <div class="sp-icon" style="background:#dbeafe;">✅</div>
+            <div class="sp-icon" style="background:#dbeafe;">?</div>
             <div>
                 <div class="sp-val" style="color:#3b82f6;" th:text="${countCompleted}">0</div>
-                <div class="sp-lbl" style="color:#3b82f6;">Hoàn thành</div>
+                <div class="sp-lbl" style="color:#3b82f6;">Ho�n th�nh</div>
             </div>
         </div>
         <div class="stat-pill" style="border-color:#fecaca;">
-            <div class="sp-icon" style="background:#fee2e2;">❌</div>
+            <div class="sp-icon" style="background:#fee2e2;">?</div>
             <div>
                 <div class="sp-val" style="color:#ef4444;" th:text="${countCancelled}">0</div>
-                <div class="sp-lbl" style="color:#ef4444;">Đã hủy</div>
+                <div class="sp-lbl" style="color:#ef4444;">�� h?y</div>
             </div>
         </div>
         <div class="stat-pill" style="border-color:#e2e8f0;">
-            <div class="sp-icon" style="background:#f1f5f9;">📋</div>
+            <div class="sp-icon" style="background:#f1f5f9;">??</div>
             <div>
                 <div class="sp-val" style="color:#0f172a;" th:text="${goals.size()}">0</div>
-                <div class="sp-lbl" style="color:#64748b;">Tổng cộng</div>
+                <div class="sp-lbl" style="color:#64748b;">T?ng c?ng</div>
             </div>
         </div>
     </div>
@@ -143,24 +144,24 @@
         <form th:action="@{/admin/kpi}" method="get">
             <div class="row g-2 align-items-end">
                 <div class="col-md-3">
-                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Nhân viên</label>
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Nh�n vi�n</label>
                     <select name="userId" class="form-select form-select-sm">
-                        <option value="">-- Tất cả --</option>
+                        <option value="">-- T?t c? --</option>
                         <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName}"
                                 th:selected="${u.id == selectedUserId}"></option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Trạng thái</label>
+                    <label style="font-size:0.8rem;color:#64748b;font-weight:600;" class="form-label">Tr?ng th�i</label>
                     <select name="status" class="form-select form-select-sm">
-                        <option value="">-- Tất cả --</option>
+                        <option value="">-- T?t c? --</option>
                         <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.name()}"
                                 th:selected="${s.name() == selectedStatus}"></option>
                     </select>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-warning btn-sm text-dark w-100 fw-bold">
-                        <i class="bi bi-search me-1"></i>Lọc
+                        <i class="bi bi-search me-1"></i>L?c
                     </button>
                 </div>
                 <div class="col-md-2">
@@ -173,27 +174,27 @@
     <!-- Table -->
     <div class="table-card">
         <div class="tc-head">
-            <h6><i class="bi bi-list-ul me-2"></i>Danh Sách KPI Goals</h6>
-            <span style="font-size:0.8rem;color:#94a3b8;" th:text="${goals.size()} + ' mục tiêu'"></span>
+            <h6><i class="bi bi-list-ul me-2"></i>Danh S�ch KPI Goals</h6>
+            <span style="font-size:0.8rem;color:#94a3b8;" th:text="${goals.size()} + ' m?c ti�u'"></span>
         </div>
         <div class="table-responsive">
             <table class="table data-table mb-0 hrms-dt" data-page-size="15">
                 <thead>
                     <tr>
-                        <th>Nhân viên</th>
-                        <th>Mục tiêu</th>
-                        <th>Danh mục</th>
-                        <th>Tiến độ</th>
-                        <th>Thời hạn</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
+                        <th>Nh�n vi�n</th>
+                        <th>M?c ti�u</th>
+                        <th>Danh m?c</th>
+                        <th>Ti?n d?</th>
+                        <th>Th?i h?n</th>
+                        <th>Tr?ng th�i</th>
+                        <th>Thao t�c</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:if="${#lists.isEmpty(goals)}">
                         <td colspan="7" style="text-align:center;padding:40px;color:#94a3b8;">
                             <i class="bi bi-inbox" style="font-size:2.5rem;display:block;margin-bottom:12px;"></i>
-                            Không có KPI Goal nào
+                            Kh�ng c� KPI Goal n�o
                         </td>
                     </tr>
                     <tr th:each="g : ${goals}">
@@ -228,16 +229,16 @@
                         </td>
                         <td>
                             <span class="status-badge"
-                                  th:text="${g.status.name() == 'ACTIVE' ? '🟢 Active' : (g.status.name() == 'COMPLETED' ? '✅ Hoàn thành' : '❌ Đã hủy')}">
+                                  th:text="${g.status.name() == 'ACTIVE' ? '?? Active' : (g.status.name() == 'COMPLETED' ? '? Ho�n th�nh' : '? �� h?y')}">
                             </span>
                         </td>
                         <td>
                             <div class="d-flex gap-1 flex-wrap">
                                 <a th:href="@{/admin/kpi/edit/{id}(id=${g.id})}"
-                                   class="btn-sm-action" style="background:#ede9fe;color:#7c3aed;border-color:#ddd6fe;">✏️</a>
+                                   class="btn-sm-action" style="background:#ede9fe;color:#7c3aed;border-color:#ddd6fe;">??</a>
                                 <a th:href="@{/admin/kpi/delete/{id}(id=${g.id})}"
-                                   onclick="return confirm('Xóa KPI Goal này?')"
-                                   class="btn-sm-action" style="background:#fee2e2;color:#dc2626;border-color:#fecaca;">🗑️</a>
+                                   onclick="return confirm('X�a KPI Goal n�y?')"
+                                   class="btn-sm-action" style="background:#fee2e2;color:#dc2626;border-color:#fecaca;">???</a>
                             </div>
                         </td>
                     </tr>

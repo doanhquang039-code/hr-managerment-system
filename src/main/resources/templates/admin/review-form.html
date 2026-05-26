@@ -1,8 +1,8 @@
-﻿<!doctype html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
-  <title>Form Đánh Giá KPI - HRMS Admin</title>
+  <title>Form ��nh Gi� KPI - HRMS Admin</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -26,12 +26,13 @@
 <div class="container-fluid">
   <div class="row">
     <nav class="col-md-2 d-none d-md-block sidebar shadow">
-      <div class="sidebar-logo">⚡ HRMS ADMIN</div>
+      <div class="sidebar-logo">? HRMS ADMIN</div>
       <hr style="border-color: rgba(255,255,255,0.15)"/>
       <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-      <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-      <a th:href="@{/admin/reviews}" class="active"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
-      <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+      <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+      <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+      <a th:href="@{/admin/reviews}" class="active"><i class="bi bi-star-half"></i> ��nh gi� KPI</a>
+      <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -48,7 +49,7 @@
           </div>
       <form th:action="@{/logout}" method="post" class="px-3 mt-4">
         <button type="submit" class="btn btn-outline-light btn-sm w-100">
-          <i class="bi bi-box-arrow-right"></i> Đăng xuất
+          <i class="bi bi-box-arrow-right"></i> �ang xu?t
         </button>
       </form>
     </nav>
@@ -58,11 +59,11 @@
         <div>
           <h1 class="h3 mb-0">
             <i class="bi bi-star-half text-warning me-2"></i>
-            <span th:text="${review.id == null ? 'Thêm Đánh Giá KPI' : 'Chỉnh Sửa Đánh Giá KPI'}"></span>
+            <span th:text="${review.id == null ? 'Th�m ��nh Gi� KPI' : 'Ch?nh S?a ��nh Gi� KPI'}"></span>
           </h1>
         </div>
         <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary">
-          <i class="bi bi-arrow-left me-1"></i> Quay lại
+          <i class="bi bi-arrow-left me-1"></i> Quay l?i
         </a>
       </div>
 
@@ -73,30 +74,30 @@
           <div class="col-md-8">
             <div class="card border-0 shadow-sm mb-4">
               <div class="card-header bg-white border-0 pt-4 pb-2">
-                <h5 class="mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>Thông tin đánh giá</h5>
+                <h5 class="mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>Th�ng tin d�nh gi�</h5>
               </div>
               <div class="card-body">
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Nhân viên <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">Nh�n vi�n <span class="text-danger">*</span></label>
                     <select th:field="*{user.id}" class="form-select" required>
-                      <option value="">-- Chọn nhân viên --</option>
+                      <option value="">-- Ch?n nh�n vi�n --</option>
                       <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName + ' (' + u.username + ')'}"></option>
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Kỳ đánh giá <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">K? d�nh gi� <span class="text-danger">*</span></label>
                     <select th:field="*{reviewPeriod}" class="form-select" required>
-                      <option value="">-- Chọn kỳ --</option>
+                      <option value="">-- Ch?n k? --</option>
                       <option th:each="p : ${periods}" th:value="${p}" th:text="${p}"></option>
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Ngày đánh giá</label>
+                    <label class="form-label fw-semibold">Ng�y d�nh gi�</label>
                     <input type="date" th:field="*{reviewDate}" class="form-control"/>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Trạng thái</label>
+                    <label class="form-label fw-semibold">Tr?ng th�i</label>
                     <select th:field="*{status}" class="form-select">
                       <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"></option>
                     </select>
@@ -108,13 +109,13 @@
             <!-- Scoring -->
             <div class="card border-0 shadow-sm mb-4">
               <div class="card-header bg-white border-0 pt-4 pb-2">
-                <h5 class="mb-0"><i class="bi bi-bar-chart me-2 text-success"></i>Điểm đánh giá (0-100)</h5>
+                <h5 class="mb-0"><i class="bi bi-bar-chart me-2 text-success"></i>�i?m d�nh gi� (0-100)</h5>
               </div>
               <div class="card-body">
                 <!-- KPI Score -->
                 <div class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="form-label fw-semibold mb-0">🎯 Chỉ số KPI</label>
+                    <label class="form-label fw-semibold mb-0">?? Ch? s? KPI</label>
                     <span id="kpiVal" class="badge bg-primary px-3"></span>
                   </div>
                   <input type="range" class="form-range" min="0" max="100" step="1"
@@ -125,7 +126,7 @@
                 <!-- Attitude -->
                 <div class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="form-label fw-semibold mb-0">😊 Thái độ làm việc</label>
+                    <label class="form-label fw-semibold mb-0">?? Th�i d? l�m vi?c</label>
                     <span id="attVal" class="badge bg-info px-3"></span>
                   </div>
                   <input type="range" class="form-range" min="0" max="100" step="1"
@@ -136,7 +137,7 @@
                 <!-- Teamwork -->
                 <div class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="form-label fw-semibold mb-0">🤝 Làm việc nhóm</label>
+                    <label class="form-label fw-semibold mb-0">?? L�m vi?c nh�m</label>
                     <span id="twVal" class="badge bg-success px-3"></span>
                   </div>
                   <input type="range" class="form-range" min="0" max="100" step="1"
@@ -150,20 +151,20 @@
             <!-- Comments -->
             <div class="card border-0 shadow-sm mb-4">
               <div class="card-header bg-white border-0 pt-4 pb-2">
-                <h5 class="mb-0"><i class="bi bi-chat-text me-2 text-warning"></i>Nhận xét chi tiết</h5>
+                <h5 class="mb-0"><i class="bi bi-chat-text me-2 text-warning"></i>Nh?n x�t chi ti?t</h5>
               </div>
               <div class="card-body">
                 <div class="mb-3">
-                  <label class="form-label fw-semibold">✅ Điểm mạnh</label>
-                  <textarea th:field="*{strengths}" class="form-control" rows="3" placeholder="Những điểm nổi bật của nhân viên..."></textarea>
+                  <label class="form-label fw-semibold">? �i?m m?nh</label>
+                  <textarea th:field="*{strengths}" class="form-control" rows="3" placeholder="Nh?ng di?m n?i b?t c?a nh�n vi�n..."></textarea>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label fw-semibold">📈 Cần cải thiện</label>
-                  <textarea th:field="*{improvements}" class="form-control" rows="3" placeholder="Những điểm cần cải thiện..."></textarea>
+                  <label class="form-label fw-semibold">?? C?n c?i thi?n</label>
+                  <textarea th:field="*{improvements}" class="form-control" rows="3" placeholder="Nh?ng di?m c?n c?i thi?n..."></textarea>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label fw-semibold">💬 Ghi chú khác</label>
-                  <textarea th:field="*{comments}" class="form-control" rows="2" placeholder="Các ghi chú bổ sung..."></textarea>
+                  <label class="form-label fw-semibold">?? Ghi ch� kh�c</label>
+                  <textarea th:field="*{comments}" class="form-control" rows="2" placeholder="C�c ghi ch� b? sung..."></textarea>
                 </div>
               </div>
             </div>
@@ -173,13 +174,13 @@
           <div class="col-md-4">
             <div class="card border-0 shadow-sm mb-4" style="position: sticky; top: 20px;">
               <div class="card-body text-center py-5">
-                <h6 class="text-muted text-uppercase fw-bold mb-3">Điểm tổng hợp</h6>
+                <h6 class="text-muted text-uppercase fw-bold mb-3">�i?m t?ng h?p</h6>
                 <div class="score-display" id="overallDisplay">--</div>
                 <div class="mt-2 mb-4" id="ratingLabel" style="font-size:1.1rem; font-weight:600;">---</div>
                 <div class="progress mb-3" style="height: 12px; border-radius: 6px;">
                   <div class="progress-bar" id="overallBar" role="progressbar" style="width: 0%; transition: width 0.4s;"></div>
                 </div>
-                <p class="text-muted small">Điểm tổng = trung bình của 3 tiêu chí</p>
+                <p class="text-muted small">�i?m t?ng = trung b�nh c?a 3 ti�u ch�</p>
               </div>
             </div>
           </div>
@@ -187,9 +188,9 @@
 
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary px-4">
-            <i class="bi bi-save me-1"></i> Lưu đánh giá
+            <i class="bi bi-save me-1"></i> Luu d�nh gi�
           </button>
-          <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary px-4">Huỷ</a>
+          <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary px-4">Hu?</a>
         </div>
       </form>
     </main>
@@ -206,12 +207,12 @@
     document.getElementById('overallDisplay').textContent = overall;
     document.getElementById('overallBar').style.width = overall + '%';
 
-    let label = 'Yếu', color = 'bg-danger';
-    if (overall >= 90) { label = '🏆 Xuất sắc'; color = 'bg-success'; }
-    else if (overall >= 75) { label = '⭐ Tốt'; color = 'bg-primary'; }
-    else if (overall >= 60) { label = '👍 Khá'; color = 'bg-info'; }
-    else if (overall >= 50) { label = '📊 Trung bình'; color = 'bg-warning'; }
-    else { label = '❌ Yếu'; color = 'bg-danger'; }
+    let label = 'Y?u', color = 'bg-danger';
+    if (overall >= 90) { label = '?? Xu?t s?c'; color = 'bg-success'; }
+    else if (overall >= 75) { label = '? T?t'; color = 'bg-primary'; }
+    else if (overall >= 60) { label = '?? Kh�'; color = 'bg-info'; }
+    else if (overall >= 50) { label = '?? Trung b�nh'; color = 'bg-warning'; }
+    else { label = '? Y?u'; color = 'bg-danger'; }
 
     document.getElementById('ratingLabel').textContent = label;
     const bar = document.getElementById('overallBar');

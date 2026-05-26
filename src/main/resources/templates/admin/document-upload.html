@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Tài Liệu - HRMS</title>
+    <title>Upload T�i Li?u - HRMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,9 +35,10 @@
 </head>
 <body>
 <div class="sidebar">
-    <div class="sidebar-logo">⚡ HRMS ADMIN</div>
-    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-    <a th:href="@{/admin/documents}" class="active"><i class="bi bi-folder2-open"></i> Tài liệu</a>
+    <div class="sidebar-logo">? HRMS ADMIN</div>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh�n vi�n</a>
+    <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+    <a th:href="@{/admin/documents}" class="active"><i class="bi bi-folder2-open"></i> T�i li?u</a>
     <hr/>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
@@ -55,70 +56,70 @@
           </div>
     <form th:action="@{/logout}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Đăng xuất</button>
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> �ang xu?t</button>
     </form>
 </div>
 
 <div class="main">
     <div class="mb-3">
         <a th:href="@{/admin/documents}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i>Quay lại
+            <i class="bi bi-arrow-left me-1"></i>Quay l?i
         </a>
     </div>
 
     <div class="form-card">
         <div class="form-card-header">
-            <h5><i class="bi bi-cloud-upload me-2"></i>Upload Tài Liệu Nhân Viên</h5>
-            <div style="opacity:0.85;font-size:0.85rem;margin-top:4px;">Lưu trữ trên Cloudinary + tự động sync Google Drive</div>
+            <h5><i class="bi bi-cloud-upload me-2"></i>Upload T�i Li?u Nh�n Vi�n</h5>
+            <div style="opacity:0.85;font-size:0.85rem;margin-top:4px;">Luu tr? tr�n Cloudinary + t? d?ng sync Google Drive</div>
         </div>
         <div class="form-card-body">
             <div class="cloud-info">
                 <i class="bi bi-cloud-check me-2"></i>
-                <b>Multi-cloud storage:</b> File được upload lên <b>Cloudinary</b> (CDN toàn cầu) và tự động sync lên <b>Google Drive</b> nếu đã cấu hình.
+                <b>Multi-cloud storage:</b> File du?c upload l�n <b>Cloudinary</b> (CDN to�n c?u) v� t? d?ng sync l�n <b>Google Drive</b> n?u d� c?u h�nh.
             </div>
 
             <form th:action="@{/admin/documents/upload}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Nhân viên <span class="text-danger">*</span></label>
+                        <label class="form-label">Nh�n vi�n <span class="text-danger">*</span></label>
                         <select name="userId" class="form-select" required>
-                            <option value="">-- Chọn nhân viên --</option>
+                            <option value="">-- Ch?n nh�n vi�n --</option>
                             <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName}"></option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Loại tài liệu <span class="text-danger">*</span></label>
+                        <label class="form-label">Lo?i t�i li?u <span class="text-danger">*</span></label>
                         <select name="documentType" class="form-select" required>
-                            <option value="">-- Chọn loại --</option>
+                            <option value="">-- Ch?n lo?i --</option>
                             <option th:each="t : ${docTypes}" th:value="${t.name()}" th:text="${t.displayName}"></option>
                         </select>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Tên tài liệu <span class="text-danger">*</span></label>
+                        <label class="form-label">T�n t�i li?u <span class="text-danger">*</span></label>
                         <input type="text" name="documentName" class="form-control" required
-                               placeholder="VD: CCCD Nguyễn Văn A, Bằng Đại học..."/>
+                               placeholder="VD: CCCD Nguy?n Van A, B?ng �?i h?c..."/>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ngày hết hạn</label>
+                        <label class="form-label">Ng�y h?t h?n</label>
                         <input type="date" name="expiryDate" class="form-control"/>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">File <span class="text-danger">*</span></label>
                         <input type="file" name="file" class="form-control" required
                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"/>
-                        <div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">PDF, JPG, PNG, DOC — tối đa 10MB</div>
+                        <div style="font-size:0.75rem;color:#94a3b8;margin-top:4px;">PDF, JPG, PNG, DOC � t?i da 10MB</div>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Mô tả</label>
+                        <label class="form-label">M� t?</label>
                         <textarea name="description" class="form-control" rows="2"
-                                  placeholder="Ghi chú thêm về tài liệu..."></textarea>
+                                  placeholder="Ghi ch� th�m v? t�i li?u..."></textarea>
                     </div>
                     <div class="col-12 d-flex gap-2 mt-2">
                         <button type="submit" class="btn-save btn">
-                            <i class="bi bi-cloud-upload me-2"></i>Upload tài liệu
+                            <i class="bi bi-cloud-upload me-2"></i>Upload t�i li?u
                         </button>
-                        <a th:href="@{/admin/documents}" class="btn btn-outline-secondary">Hủy</a>
+                        <a th:href="@{/admin/documents}" class="btn btn-outline-secondary">H?y</a>
                     </div>
                 </div>
             </form>
