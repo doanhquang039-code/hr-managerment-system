@@ -126,19 +126,7 @@ public class User1Controller {
     public String profile(Authentication authentication, Model model) {
         User user = getCurrentUser(authentication);
         if (user == null) return "redirect:/login?error=user_not_found";
-
-        int month = LocalDate.now().getMonthValue();
-        int year  = LocalDate.now().getYear();
-        long attendanceDays = attendanceRepository.findByUserAndYearAndMonth(user, year, month).size();
-        long totalLeaves    = leaveRepository.findByUser(user).size();
-        long totalTasks     = taskAssignmentRepository.findByUser(user).size();
-
-        model.addAttribute("user", user);
-        model.addAttribute("attendanceDays", attendanceDays);
-        model.addAttribute("totalLeaves", totalLeaves);
-        model.addAttribute("totalTasks", totalTasks);
-        model.addAttribute("unreadNotifications", notificationService.countUnread(user));
-        return "user1/profile";
+        return "redirect:/profile";
     }
 
     @PostMapping("/profile/update-avatar")
@@ -150,13 +138,13 @@ public class User1Controller {
 
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("successMsg", "Vui lòng chọn ảnh!");
-            return "redirect:/user1/profile";
+            return "redirect:/profile";
         }
 
         String ct = file.getContentType();
         if (ct == null || !ct.startsWith("image/")) {
             redirectAttributes.addFlashAttribute("successMsg", "❌ Chỉ chấp nhận file ảnh!");
-            return "redirect:/user1/profile";
+            return "redirect:/profile";
         }
 
         try {
@@ -168,7 +156,7 @@ public class User1Controller {
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("successMsg", "❌ Lỗi upload: " + e.getMessage());
         }
-        return "redirect:/user1/profile";
+        return "redirect:/profile";
     }
 
     @PostMapping("/profile/change-password")
@@ -182,21 +170,21 @@ public class User1Controller {
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu hiện tại không đúng!");
-            return "redirect:/user1/profile";
+            return "redirect:/profile";
         }
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu mới và xác nhận không khớp!");
-            return "redirect:/user1/profile";
+            return "redirect:/profile";
         }
         if (newPassword.length() < 6) {
             redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu mới phải có ít nhất 6 ký tự!");
-            return "redirect:/user1/profile";
+            return "redirect:/profile";
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("successMsg", "✅ Đổi mật khẩu thành công!");
-        return "redirect:/user1/profile";
+        return "redirect:/profile";
     }
 
     @PostMapping("/profile/update-info")
@@ -210,8 +198,6 @@ public class User1Controller {
         User user = getCurrentUser(authentication);
         if (user == null) return "redirect:/login";
 
-        if (fullName != null && !fullName.isBlank()) user.setFullName(fullName.trim());
-        if (email != null && !email.isBlank()) user.setEmail(email.trim());
         if (phoneNumber != null) user.setPhoneNumber(phoneNumber.trim());
         if (address != null) user.setAddress(address.trim());
         if (dateOfBirth != null && !dateOfBirth.isBlank()) {
@@ -222,7 +208,7 @@ public class User1Controller {
 
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("successMsg", "✅ Cập nhật thông tin thành công!");
-        return "redirect:/user1/profile";
+        return "redirect:/profile";
     }
 
     // ==================== PAYROLL ====================

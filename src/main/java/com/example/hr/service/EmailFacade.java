@@ -98,6 +98,34 @@ public class EmailFacade {
         }
     }
 
+    // ---- Password reset ----
+    public boolean sendPasswordReset(String email, String name, String resetLink) {
+        try {
+            if (hasSendGrid()) {
+                sendGridService.sendPasswordResetEmail(email, name, resetLink);
+            } else {
+                gmailService.sendResetPasswordEmail(email, name, resetLink);
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("Password reset email failed for {}: {}", email, e.getMessage());
+            return false;
+        }
+    }
+
+    public void sendPasswordChanged(String email, String name) {
+        String message = "Your HRMS password was changed. If this was not you, contact HR or an administrator immediately.";
+        try {
+            if (hasSendGrid()) {
+                sendGridService.sendAnnouncementEmail(email, name, "Password changed", message);
+            } else {
+                gmailService.sendNotificationEmail(email, name, "HRMS password changed", message);
+            }
+        } catch (Exception e) {
+            log.error("Password changed notification failed for {}: {}", email, e.getMessage());
+        }
+    }
+
     public String getProvider() {
         return hasSendGrid() ? "SendGrid" : "Gmail SMTP";
     }

@@ -7,23 +7,46 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background:#f6f8fb; }
-        .shell { max-width:1120px; margin:0 auto; padding:2rem 1rem; }
-        .panel { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 10px 28px rgba(15,23,42,.06); }
-        .feature { display:flex; align-items:flex-start; gap:.85rem; padding:1rem; border:1px solid #e5e7eb; border-radius:10px; background:#f8fafc; height:100%; }
+        body { background:#f6f8fb; color:#111827; }
+        .shell { max-width:1180px; margin:0 auto; padding:2rem 1rem 3rem; }
+        .panel { background:#fff; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 10px 28px rgba(15,23,42,.06); }
+        .metric { border:1px solid #e5e7eb; border-radius:8px; padding:1rem; background:#fff; min-height:108px; }
+        .metric .icon { width:38px; height:38px; display:grid; place-items:center; border-radius:8px; background:#eff6ff; color:#2563eb; font-size:1.2rem; }
+        .feature { display:flex; align-items:flex-start; gap:.85rem; padding:1rem; border:1px solid #e5e7eb; border-radius:8px; background:#f8fafc; height:100%; }
         .feature i { font-size:1.35rem; color:#2563eb; }
+        .feature.locked { background:#fff; color:#6b7280; }
+        .feature.locked i { color:#9ca3af; }
+        .member-avatar { width:38px; height:38px; border-radius:50%; background:#e0f2fe; color:#0369a1; display:grid; place-items:center; font-weight:700; }
+        .quick-action { display:flex; align-items:center; gap:.8rem; padding:.95rem; border:1px solid #e5e7eb; border-radius:8px; color:#111827; text-decoration:none; background:#fff; height:100%; }
+        .quick-action:hover { border-color:#93c5fd; background:#f8fafc; color:#111827; }
+        .quick-action .icon { width:36px; height:36px; display:grid; place-items:center; border-radius:8px; background:#ecfdf5; color:#047857; font-size:1.1rem; flex:0 0 auto; }
+        .post-item, .task-item { border:1px solid #e5e7eb; border-radius:8px; padding:1rem; background:#fff; }
+        .post-meta { color:#6b7280; font-size:.85rem; }
+        .task-status { min-width:96px; text-align:center; }
+        .compact-select { max-width:150px; }
+        @media (max-width: 767px) {
+            .shell { padding:1rem; }
+            .header-actions { width:100%; }
+            .header-actions .btn { flex:1; }
+        }
     </style>
 </head>
 <body>
 <main class="shell">
-    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
+            <div class="text-uppercase text-primary fw-semibold small mb-1">Group Workspace</div>
             <h1 class="h3 mb-1" th:text="${group.name}">HR Collaboration Group</h1>
             <p class="text-muted mb-0" th:text="${group.description}">Shared group for selected users across all roles.</p>
         </div>
-        <a th:href="@{/home}" class="btn btn-outline-secondary">
-            <i class="bi bi-house me-1"></i> Home
-        </a>
+        <div class="d-flex gap-2 header-actions">
+            <a th:if="${canUseMembers}" th:href="${groupBasePath + '/members'}" class="btn btn-primary">
+                <i class="bi bi-people me-1"></i> Members
+            </a>
+            <a th:href="@{/home}" class="btn btn-outline-secondary">
+                <i class="bi bi-house me-1"></i> Home
+            </a>
+        </div>
     </div>
 
     <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
@@ -32,56 +55,312 @@
         <div class="d-flex align-items-start gap-3">
             <i class="bi bi-shield-lock text-warning" style="font-size:2rem;"></i>
             <div>
-                <h2 class="h5 mb-2">Bạn chưa được cấp quyền group</h2>
-                <p class="text-muted mb-0">Admin cần tick role USER trong Role permissions hoặc tick riêng tài khoản của bạn trong Member exceptions.</p>
+                <h2 class="h5 mb-2">You do not have group access yet</h2>
+                <p class="text-muted mb-0">Ask an admin to enable your role or add your account as a member exception.</p>
             </div>
         </div>
     </section>
 
-    <section class="panel p-4 mb-4" th:if="${hasGroupAccess != false}">
-        <div class="row g-3">
-            <div class="col-md-4" th:if="${canUseDashboard}">
-                <a th:href="${groupBasePath}" class="feature text-decoration-none text-dark">
-                    <i class="bi bi-kanban"></i>
-                    <span>
-                        <span class="fw-semibold d-block">Dashboard</span>
-                        <span class="small text-muted">Shared group landing page.</span>
-                    </span>
-                </a>
-            </div>
-            <div class="col-md-4" th:if="${canUseMembers}">
-                <a th:href="${groupBasePath + '/members'}" class="feature text-decoration-none text-dark">
-                    <i class="bi bi-people"></i>
-                    <span>
-                        <span class="fw-semibold d-block">Members</span>
-                        <span class="small text-muted">View users selected by admin.</span>
-                    </span>
-                </a>
-            </div>
-            <div class="col-md-4" th:if="${canUseNotes}">
-                <div class="feature">
-                    <i class="bi bi-journal-plus"></i>
-                    <span>
-                        <span class="fw-semibold d-block">Notes</span>
-                        <span class="small text-muted">Submit short group updates.</span>
-                    </span>
+    <div th:if="${hasGroupAccess != false}">
+        <section class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="metric">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="text-muted small">Selected members</span>
+                        <span class="icon"><i class="bi bi-people"></i></span>
+                    </div>
+                    <div class="h3 mb-0" th:text="${group.members.size()}">0</div>
+                    <div class="small text-muted">Users added by admin</div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="panel p-4" th:if="${canUseNotes}">
-        <h2 class="h5 mb-3">Group note</h2>
-        <form th:action="${groupBasePath + '/notes'}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-            <div class="input-group">
-                <input type="text" name="note" class="form-control" required maxlength="200" placeholder="Write a short update">
-                <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-send me-1"></i> Send
-                </button>
+            <div class="col-md-4">
+                <div class="metric">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="text-muted small">Enabled features</span>
+                        <span class="icon"><i class="bi bi-grid-1x2"></i></span>
+                    </div>
+                    <div class="h3 mb-0" th:text="${group.features.size()}">0</div>
+                    <div class="small text-muted">Dashboard, members, notes</div>
+                </div>
             </div>
-        </form>
-    </section>
+            <div class="col-md-4">
+                <div class="metric">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="text-muted small">Role permissions</span>
+                        <span class="icon"><i class="bi bi-shield-check"></i></span>
+                    </div>
+                    <div class="h3 mb-0" th:text="${group.rolePermissions.size()}">0</div>
+                    <div class="small text-muted">Rules configured by admin</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel p-4 mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div>
+                    <h2 class="h5 mb-1">Available tools</h2>
+                    <p class="text-muted mb-0 small">Locked tools require more permissions in Group Management.</p>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a th:if="${canUseDashboard}" th:href="${groupBasePath}" class="feature text-decoration-none text-dark">
+                        <i class="bi bi-kanban"></i>
+                        <span>
+                            <span class="fw-semibold d-block">Dashboard</span>
+                            <span class="small text-muted">Overview, permissions and group activity.</span>
+                        </span>
+                    </a>
+                    <div th:unless="${canUseDashboard}" class="feature locked">
+                        <i class="bi bi-lock"></i>
+                        <span>
+                            <span class="fw-semibold d-block">Dashboard</span>
+                            <span class="small">Not enabled for your role.</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a th:if="${canUseMembers}" th:href="${groupBasePath + '/members'}" class="feature text-decoration-none text-dark">
+                        <i class="bi bi-people"></i>
+                        <span>
+                            <span class="fw-semibold d-block">Members</span>
+                            <span class="small text-muted">View selected users and departments.</span>
+                        </span>
+                    </a>
+                    <div th:unless="${canUseMembers}" class="feature locked">
+                        <i class="bi bi-lock"></i>
+                        <span>
+                            <span class="fw-semibold d-block">Members</span>
+                            <span class="small">Not enabled for your role.</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <a th:if="${canUseNotes}" href="#group-note" class="feature text-decoration-none text-dark">
+                        <i class="bi bi-journal-plus"></i>
+                        <span>
+                            <span class="fw-semibold d-block">Notes</span>
+                            <span class="small text-muted">Submit short group updates.</span>
+                        </span>
+                    </a>
+                    <div th:unless="${canUseNotes}" class="feature locked">
+                        <i class="bi bi-lock"></i>
+                        <span>
+                            <span class="fw-semibold d-block">Notes</span>
+                            <span class="small">Not enabled for your role.</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel p-4 mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div>
+                    <h2 class="h5 mb-1">Group functions</h2>
+                    <p class="text-muted mb-0 small">Shortcuts for common HR group work.</p>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <a href="/user1/my-tasks" class="quick-action">
+                        <span class="icon"><i class="bi bi-check2-square"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Tasks</span>
+                            <span class="small text-muted">Assigned work</span>
+                        </span>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="/user1/leave-request" class="quick-action">
+                        <span class="icon"><i class="bi bi-calendar2-check"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Leave</span>
+                            <span class="small text-muted">Leave requests</span>
+                        </span>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="/user1/documents" class="quick-action">
+                        <span class="icon"><i class="bi bi-folder2-open"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Documents</span>
+                            <span class="small text-muted">Employee files</span>
+                        </span>
+                    </a>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a href="/user1/announcements" class="quick-action">
+                        <span class="icon"><i class="bi bi-megaphone"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Announcements</span>
+                            <span class="small text-muted">Company updates</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="panel p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h5 mb-0">Member preview</h2>
+                        <a th:if="${canUseMembers}" th:href="${groupBasePath + '/members'}" class="btn btn-sm btn-outline-primary">
+                            View all
+                        </a>
+                    </div>
+                    <div th:if="${group.members.isEmpty()}" class="text-center text-muted py-4">
+                        <i class="bi bi-person-plus d-block mb-2" style="font-size:2rem;"></i>
+                        No members have been selected yet.
+                    </div>
+                    <div class="vstack gap-3" th:unless="${group.members.isEmpty()}">
+                        <div class="d-flex align-items-center gap-3" th:each="member, iterStat : ${group.members}" th:if="${iterStat.index < 5}">
+                            <div class="member-avatar" th:text="${#strings.substring(!#strings.isEmpty(member.fullName) ? member.fullName : member.username, 0, 1)}">M</div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold" th:text="${!#strings.isEmpty(member.fullName) ? member.fullName : member.username}">Member</div>
+                                <div class="small text-muted" th:text="${member.department != null ? member.department.departmentName : 'Unassigned department'}">Department</div>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary" th:text="${member.role != null ? member.role.name() : 'NO_ROLE'}">USER</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div id="group-note" class="panel p-4 h-100" th:if="${canUseNotes}">
+                    <h2 class="h5 mb-3">Post update</h2>
+                    <form th:action="${groupBasePath + '/notes'}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div class="mb-3">
+                            <textarea name="note" class="form-control" required maxlength="500" rows="3" placeholder="Share a short group update"></textarea>
+                        </div>
+                        <button class="btn btn-primary w-100" type="submit">
+                            <i class="bi bi-send me-1"></i> Post to group
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="row g-4">
+            <div class="col-lg-7">
+                <div class="panel p-4 h-100">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                        <div>
+                            <h2 class="h5 mb-1">Group tasks</h2>
+                            <p class="text-muted small mb-0">Create shared tasks for selected group members.</p>
+                        </div>
+                    </div>
+
+                    <form th:if="${canUseDashboard}" th:action="${groupBasePath + '/tasks'}" method="post" class="row g-2 mb-4">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div class="col-md-5">
+                            <input type="text" name="title" class="form-control" maxlength="160" required placeholder="Task title">
+                        </div>
+                        <div class="col-md-3">
+                            <select name="assigneeId" class="form-select">
+                                <option value="">Unassigned</option>
+                                <option th:each="member : ${group.members}" th:value="${member.id}" th:text="${!#strings.isEmpty(member.fullName) ? member.fullName : member.username}">Member</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="dueDate" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary w-100" type="submit">
+                                <i class="bi bi-plus-lg"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div th:if="${groupTasks == null || groupTasks.isEmpty()}" class="text-center text-muted py-4">
+                        <i class="bi bi-check2-square d-block mb-2" style="font-size:2rem;"></i>
+                        No group tasks yet.
+                    </div>
+
+                    <div class="vstack gap-3" th:unless="${groupTasks == null || groupTasks.isEmpty()}">
+                        <div class="task-item" th:each="task : ${groupTasks}">
+                            <div class="d-flex flex-wrap justify-content-between gap-3">
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold" th:text="${task.title}">Task title</div>
+                                    <div class="small text-muted mt-1">
+                                        <span th:text="${task.assignee != null ? (!#strings.isEmpty(task.assignee.fullName) ? task.assignee.fullName : task.assignee.username) : 'Unassigned'}">Assignee</span>
+                                        <span th:if="${task.dueDate != null}"> · Due <span th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy')}">27/05/2026</span></span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge task-status"
+                                          th:classappend="${task.status == 'DONE' ? ' bg-success' : (task.status == 'IN_PROGRESS' ? ' bg-warning text-dark' : ' bg-secondary')}"
+                                          th:text="${task.status == 'IN_PROGRESS' ? 'IN PROGRESS' : task.status}">TODO</span>
+                                    <form th:if="${canUseDashboard}" th:action="${groupBasePath + '/tasks/' + task.id + '/status'}" method="post" class="d-flex gap-2">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <select name="status" class="form-select form-select-sm compact-select">
+                                            <option value="TODO" th:selected="${task.status == 'TODO'}">Todo</option>
+                                            <option value="IN_PROGRESS" th:selected="${task.status == 'IN_PROGRESS'}">In progress</option>
+                                            <option value="DONE" th:selected="${task.status == 'DONE'}">Done</option>
+                                        </select>
+                                        <button class="btn btn-sm btn-outline-primary" type="submit">
+                                            <i class="bi bi-check2"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="panel p-4 mb-4">
+                    <h2 class="h5 mb-3">Group feed</h2>
+                    <div th:if="${groupPosts == null || groupPosts.isEmpty()}" class="text-center text-muted py-4">
+                        <i class="bi bi-chat-square-text d-block mb-2" style="font-size:2rem;"></i>
+                        No group updates yet.
+                    </div>
+                    <div class="vstack gap-3" th:unless="${groupPosts == null || groupPosts.isEmpty()}">
+                        <div class="post-item" th:each="post : ${groupPosts}">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="member-avatar" th:text="${#strings.substring(!#strings.isEmpty(post.author.fullName) ? post.author.fullName : post.author.username, 0, 1)}">A</div>
+                                <div>
+                                    <div class="fw-semibold" th:text="${!#strings.isEmpty(post.author.fullName) ? post.author.fullName : post.author.username}">Author</div>
+                                    <div class="post-meta" th:text="${#temporals.format(post.createdAt, 'dd/MM/yyyy HH:mm')}">27/05/2026 10:00</div>
+                                </div>
+                            </div>
+                            <div th:text="${post.content}">Group update content</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel p-4">
+                    <h2 class="h5 mb-3">Permission summary</h2>
+                    <div class="vstack gap-3">
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="bi bi-kanban text-primary"></i>
+                            <div>
+                                <div class="fw-semibold">Dashboard</div>
+                                <div class="small text-muted" th:text="${canUseDashboard ? 'Enabled for your account.' : 'Locked by admin.'}">Enabled</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="bi bi-people text-primary"></i>
+                            <div>
+                                <div class="fw-semibold">Members</div>
+                                <div class="small text-muted" th:text="${canUseMembers ? 'Enabled for your account.' : 'Locked by admin.'}">Locked</div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 align-items-start">
+                            <i class="bi bi-journal-plus text-primary"></i>
+                            <div>
+                                <div class="fw-semibold">Notes</div>
+                                <div class="small text-muted" th:text="${canUseNotes ? 'Enabled for your account.' : 'Locked by admin.'}">Locked</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
 </main>
 </body>
 </html>

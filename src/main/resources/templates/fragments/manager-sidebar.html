@@ -21,6 +21,11 @@
                 position: sticky;
                 top: 0;
             }
+            .manager-sidebar .sidebar-logout {
+                padding: 14px 18px 18px;
+                margin-top: 16px;
+                border-top: 1px solid rgba(255,255,255,0.1);
+            }
             
             /* Premium global overrides for manager pages */
             .card { border: none !important; border-radius: 16px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.04) !important; transition: transform 0.2s; overflow: hidden; background: white; }
@@ -150,6 +155,14 @@
                     </a>
                 </li>
             </ul>
+            <div class="sidebar-logout">
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
+                        <i class="bi bi-box-arrow-right me-1"></i> Đăng xuất
+                    </button>
+                </form>
+            </div>
         </div>
         <script th:src="@{/js/role-polish.js}"></script>
         <script th:src="@{/js/chatbot-widget.js}"></script>

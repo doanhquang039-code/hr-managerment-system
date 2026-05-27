@@ -273,9 +273,31 @@
       .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
       .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
       .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
+      .user-settings-fab {
+          position: fixed;
+          right: 24px;
+          bottom: 24px;
+          z-index: 10020;
+          width: 54px;
+          height: 54px;
+          border: 0;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #f59e0b, #f97316);
+          color: #fff;
+          box-shadow: 0 16px 34px rgba(249, 115, 22, 0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          transition: transform .18s ease, box-shadow .18s ease;
+      }
+      .user-settings-fab:hover {
+          transform: translateY(-2px) rotate(20deg);
+          box-shadow: 0 18px 40px rgba(249, 115, 22, 0.48);
+      }
     </style>
 </head>
-<body>
+<body data-settings-scope="user-dashboard">
 
 <!-- SIDEBAR -->
 <div class="sidebar">
@@ -305,7 +327,7 @@
 
         <a href="/user1/dashboard" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
 
-        <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
+        <a href="/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
 
         <a href="/user1/groups"><i class="bi bi-diagram-3"></i> Nhóm của tôi</a>
 
@@ -414,6 +436,12 @@
 
 
     <div class="sidebar-logout">
+        <button type="button"
+                onclick="window.HRMS && HRMS.settings && HRMS.settings.openPanel()"
+                class="btn btn-outline-light btn-sm w-100 mb-2"
+                style="border-radius:10px;">
+            <i class="bi bi-gear"></i> Cài đặt
+        </button>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap">
             <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
@@ -679,7 +707,7 @@
                             </a>
                         </div>
                         <div class="col-6">
-                            <a href="/user1/profile" class="quick-btn">
+                            <a href="/profile" class="quick-btn">
                                 <div class="q-icon" style="background:linear-gradient(135deg,#06b6d4,#22d3ee);">👤</div>
                                 Hồ sơ
                             </a>
@@ -692,6 +720,14 @@
     </div>
 </div>
 
+<button type="button"
+        class="user-settings-fab"
+        title="Cài đặt dashboard USER"
+        aria-label="Cài đặt dashboard USER"
+        onclick="window.HRMS && HRMS.settings && HRMS.settings.openPanel()">
+    <i class="bi bi-gear-fill"></i>
+</button>
+
 <script>
 // Live clock
 function updateClock() {
@@ -703,7 +739,7 @@ updateClock();
 setInterval(updateClock, 1000);
 </script>
 <script th:src="@{/js/lang-toggle.js}"></script>
-<script th:src="@{/js/hrms-settings.js}"></script>
+<script th:src="@{/js/hrms-settings.js(v=20260527)}"></script>
 <script th:src="@{/js/hrms-notifications.js}"></script>
 <script th:src="@{/js/hrms-ui.js}"></script>
 <script th:src="@{/js/hrms-datatable.js}"></script>

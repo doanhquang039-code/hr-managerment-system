@@ -43,6 +43,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/index.html", "/login", "/login/**",
+                    "/forgot-password", "/reset-password",
                     "/css/**", "/js/**", "/images/**",
                     "/oauth2/**", "/login/oauth2/code/**",
                     "/admin/payments/callback/**", "/admin/payments/ipn/**",
@@ -93,7 +94,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID")

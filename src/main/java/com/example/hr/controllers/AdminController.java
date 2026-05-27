@@ -22,6 +22,7 @@ import com.example.hr.repository.PerformanceReviewRepository;
 import com.example.hr.repository.TaskRepository;
 import com.example.hr.repository.UserRepository;
 import com.example.hr.service.PaymentService;
+import com.example.hr.service.PasswordResetService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -43,6 +44,7 @@ public class AdminController {
     @Autowired private AttendanceRepository attendanceRepository;
     @Autowired private PayrollRepository payrollRepository;
     @Autowired private PerformanceReviewRepository reviewRepository;
+    @Autowired private PasswordResetService passwordResetService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -61,6 +63,7 @@ public class AdminController {
         model.addAttribute("pendingLeaves",    pendingLeaves);
         model.addAttribute("totalTasks",       totalTasks);
         model.addAttribute("totalReviews",     totalReviews);
+        model.addAttribute("pendingResetRequests", passwordResetService.countPendingRequests());
         model.addAttribute("today", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         // === CHART 1: Chấm công 7 ngày gần nhất ===

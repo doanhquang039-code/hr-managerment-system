@@ -101,6 +101,22 @@ public class SendGridEmailService {
     }
 
     /** Bulk gửi email cho nhiều người */
+    public void sendPasswordResetEmail(String toEmail, String fullName, String resetLink) {
+        String subject = "HRMS password reset";
+        String html = baseTemplate("Password reset", """
+            <h2 style="color:#6366f1;">Password reset request</h2>
+            <p>Hello <b>%s</b>,</p>
+            <p>We received a request to reset your HRMS password.</p>
+            <p>
+              <a href="%s" style="display:inline-block;background:#4f46e5;color:white;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700;">
+                Reset password
+              </a>
+            </p>
+            <p>This link expires in 15 minutes. If you did not request it, ignore this email.</p>
+            """.formatted(fullName, resetLink));
+        send(toEmail, fullName, subject, html);
+    }
+
     public void sendBulkEmail(java.util.List<String[]> recipients,
                                String subject, String htmlTemplate) {
         // recipients: List of [email, name]

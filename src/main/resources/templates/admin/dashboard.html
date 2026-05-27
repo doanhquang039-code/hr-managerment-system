@@ -64,6 +64,10 @@
           <a th:href="@{/admin/dashboard}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
           <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
           <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
+          <a th:href="@{/admin/password-reset-requests}">
+            <i class="bi bi-shield-lock"></i> Password resets
+            <span class="badge bg-danger ms-auto" th:if="${pendingResetRequests > 0}" th:text="${pendingResetRequests}">0</span>
+          </a>
           <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
           <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
@@ -314,6 +318,10 @@
                   </a>
                   <a th:href="@{/admin/assignments/add}" class="btn btn-outline-dark w-100 text-start">
                     <i class="bi bi-person-check me-2"></i>Giao việc mới
+                  </a>
+                  <a th:href="@{/admin/password-reset-requests}" class="btn btn-outline-danger w-100 text-start">
+                    <i class="bi bi-shield-lock me-2"></i>Password reset requests
+                    <span class="badge bg-danger float-end" th:if="${pendingResetRequests > 0}" th:text="${pendingResetRequests}">0</span>
                   </a>
                 </div>
               </div>

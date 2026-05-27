@@ -80,6 +80,21 @@
         text-align: center;
         user-select: none;
       }
+      .password-wrap { position: relative; }
+      .password-wrap .form-control { padding-right: 48px; }
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 0;
+        background: transparent;
+        color: #5b6472;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+      }
+      .password-toggle:hover { background: #f1f5f9; color: #111827; }
     </style>
   </head>
 
@@ -121,6 +136,8 @@
         Đăng ký thành công. Mời bạn đăng nhập.
       </div>
 
+      <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
+
       <form th:action="@{/login}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
@@ -138,7 +155,9 @@
 
         <div class="mb-3">
           <label class="form-label fw-semibold">Mật khẩu</label>
+          <div class="password-wrap">
           <input
+            id="loginPassword"
             type="password"
             name="password"
             class="form-control"
@@ -146,6 +165,13 @@
             required
             autocomplete="current-password"
           />
+          <button class="password-toggle" type="button" aria-label="Show password" onclick="togglePasswordVisibility()">
+            <i id="passwordEyeIcon" class="fas fa-eye"></i>
+          </button>
+          </div>
+          <div class="text-end mt-2">
+            <a th:href="@{/forgot-password}" class="small text-decoration-none">Forgot password?</a>
+          </div>
         </div>
 
         <div class="mb-4" th:if="${verificationEnabled}">
@@ -193,5 +219,14 @@
         </div>
       </div>
     </div>
+    <script>
+      function togglePasswordVisibility() {
+        const input = document.getElementById('loginPassword');
+        const icon = document.getElementById('passwordEyeIcon');
+        const showing = input.type === 'text';
+        input.type = showing ? 'password' : 'text';
+        icon.className = showing ? 'fas fa-eye' : 'fas fa-eye-slash';
+      }
+    </script>
   </body>
 </html>

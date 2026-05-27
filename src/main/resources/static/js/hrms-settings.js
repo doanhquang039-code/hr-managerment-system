@@ -268,11 +268,19 @@
   ];
 
   // ==================== STORAGE ====================
+  function getScope() {
+    var rawScope = (document.body && document.body.getAttribute('data-settings-scope')) || 'global';
+    return String(rawScope).replace(/[^a-zA-Z0-9_-]/g, '') || 'global';
+  }
+  function getStorageKey(key) {
+    var scope = getScope();
+    return scope === 'global' ? 'hrms_' + key : 'hrms_' + scope + '_' + key;
+  }
   function getSetting(key, def) {
-    try { return localStorage.getItem('hrms_' + key) || def; } catch(e) { return def; }
+    try { return localStorage.getItem(getStorageKey(key)) || def; } catch(e) { return def; }
   }
   function setSetting(key, val) {
-    try { localStorage.setItem('hrms_' + key, val); } catch(e) {}
+    try { localStorage.setItem(getStorageKey(key), val); } catch(e) {}
   }
 
   // ==================== TRANSLATION ====================
@@ -539,6 +547,75 @@
     }
   };
 
+  Object.assign(UI_TEXT.vi, {
+    'settings.panel.title': 'Cài đặt',
+    'settings.panel.language': 'Ngôn ngữ',
+    'settings.panel.background': 'Giao diện nền',
+    'settings.panel.brightness': 'Độ sáng',
+    'settings.panel.fontSize': 'Cỡ chữ',
+    'settings.panel.compactMode': 'Chế độ gọn',
+    'settings.panel.compactDesc': 'Giảm khoảng cách hiển thị',
+    'settings.lang.vi': 'Tiếng Việt',
+    'settings.lang.zh': '中文',
+    'settings.lang.ja': '日本語',
+    'settings.lang.ko': '한국어',
+    'settings.font.small': 'Nhỏ',
+    'settings.font.medium': 'Vừa',
+    'settings.font.large': 'Lớn',
+    'admin.settings.title': 'Cài đặt hệ thống',
+    'admin.settings.hero.badge': 'Trung tâm điều khiển Admin',
+    'admin.settings.hero.desc': 'Quản lý cấu hình vận hành, bảo mật đăng nhập và các tham số HRMS.',
+    'admin.settings.viewLogin': 'Xem trang đăng nhập',
+    'admin.settings.total': 'Tổng cấu hình',
+    'admin.settings.loginVerification': 'Mã xác nhận đăng nhập',
+    'admin.settings.codeLengthMetric': 'Ký tự trong mã xác nhận',
+    'admin.settings.loginSecurity': 'Bảo mật đăng nhập',
+    'admin.settings.loginSecurityDesc': 'Các thay đổi ở đây áp dụng ngay cho form login.',
+    'admin.settings.loginSectionTag': 'Đăng nhập',
+    'admin.settings.verificationCode': 'Mã xác nhận',
+    'admin.settings.enabled': 'Bật',
+    'admin.settings.disabled': 'Tắt',
+    'admin.settings.enabledHint': 'Nên bật để giảm đăng nhập tự động.',
+    'admin.settings.codeLength': 'Độ dài mã',
+    'admin.settings.codeLengthHint': 'Giới hạn hợp lệ: 4 đến 8 ký tự.',
+    'admin.settings.charset': 'Bộ ký tự sinh mã',
+    'admin.settings.charsetHint': 'Đã bỏ các ký tự dễ nhầm như I, O, 0, 1 trong mặc định.',
+    'admin.settings.loginPreview': 'Xem trước đăng nhập',
+    'admin.settings.sampleCode': 'Mã mẫu',
+    'admin.settings.previewHint': 'Admin có thể tắt mã xác nhận khi demo nội bộ, nhưng môi trường thật nên bật.',
+    'admin.settings.saveLogin': 'Lưu cài đặt đăng nhập',
+    'admin.settings.configList': 'Danh sách cài đặt',
+    'admin.settings.configKey': 'Khóa cài đặt',
+    'admin.settings.configValue': 'Giá trị',
+    'admin.settings.description': 'Mô tả',
+    'admin.settings.valuePlaceholder': 'Nhập giá trị...',
+    'admin.settings.noConfig': 'Chưa có cài đặt',
+    'admin.settings.saveAll': 'Lưu tất cả thay đổi',
+    'admin.settings.addNew': 'Thêm cài đặt mới',
+    'admin.settings.addKeyPlaceholder': 'Ví dụ: MAX_FILE_SIZE',
+    'admin.settings.addValuePlaceholder': 'Ví dụ: 10MB',
+    'admin.settings.addDescPlaceholder': 'Kích thước file tối đa',
+    'nav.loginSettings': 'Cài đặt đăng nhập'
+  });
+
+  Object.assign(UI_TEXT.vi, {
+    'settings.panel.title': 'C\u00e0i \u0111\u1eb7t',
+    'settings.panel.language': 'Ng\u00f4n ng\u1eef',
+    'settings.panel.background': 'Giao di\u1ec7n n\u1ec1n',
+    'settings.panel.brightness': '\u0110\u1ed9 s\u00e1ng',
+    'settings.panel.fontSize': 'C\u1ee1 ch\u1eef',
+    'settings.panel.compactMode': 'Ch\u1ebf \u0111\u1ed9 g\u1ecdn',
+    'settings.panel.compactDesc': 'Gi\u1ea3m kho\u1ea3ng c\u00e1ch hi\u1ec3n th\u1ecb',
+    'settings.lang.vi': 'Ti\u1ebfng Vi\u1ec7t',
+    'settings.lang.zh': '\u4e2d\u6587',
+    'settings.lang.ja': '\u65e5\u672c\u8a9e',
+    'settings.lang.ko': '\ud55c\uad6d\uc5b4',
+    'settings.font.small': 'Nh\u1ecf',
+    'settings.font.medium': 'V\u1eeba',
+    'settings.font.large': 'L\u1edbn',
+    'nav.loginSettings': 'C\u00e0i \u0111\u1eb7t \u0111\u0103ng nh\u1eadp'
+  });
+
   function uiText(lang, key) {
     return (UI_TEXT[lang] && UI_TEXT[lang][key]) || UI_TEXT.vi[key] || key;
   }
@@ -591,6 +668,89 @@
         if (ph.indexOf(keys[i]) !== -1) ph = ph.split(keys[i]).join(dict[keys[i]]);
       }
       el.setAttribute('placeholder', ph);
+    });
+  }
+
+  function fixVietnameseMojibake() {
+    var replacements = {
+      'H? so cá nhân': 'Hồ sơ cá nhân',
+      'Ch?m công': 'Chấm công',
+      'Ca làm vi?c': 'Ca làm việc',
+      'Ngh? phép': 'Nghỉ phép',
+      'Làm thêm gi?': 'Làm thêm giờ',
+      'Phi?u luong': 'Phiếu lương',
+      'Công vi?c': 'Công việc',
+      'c?a tôi': 'của tôi',
+      'K? nang': 'Kỹ năng',
+      'Tài li?u': 'Tài liệu',
+      'Tài s?n': 'Tài sản',
+      'H? tr?': 'Hỗ trợ',
+      'Tr? lý HR': 'Trợ lý HR',
+      'dào t?o': 'đào tạo',
+      'Ðang xu?t': 'Đăng xuất',
+      'L?ch s?': 'Lịch sử',
+      'T?ng phi?u luong': 'Tổng phiếu lương',
+      'Luong th?c nh?n g?n nh?t': 'Lương thực nhận gần nhất',
+      'Chua có': 'Chưa có',
+      'B? ph?n nhân s?': 'Bộ phận nhân sự',
+      'chua t?o': 'chưa tạo',
+      'cho b?n': 'cho bạn',
+      'liên h?': 'liên hệ',
+      'du?c h? tr?': 'được hỗ trợ',
+      'Nam ': 'Năm ',
+      'Danh sách công vi?c du?c giao': 'Danh sách công việc được giao',
+      'tr?ng thái th?c hi?n': 'trạng thái thực hiện',
+      'T?ng công vi?c': 'Tổng công việc',
+      'Ch? x? lý': 'Chờ xử lý',
+      'Ðang làm': 'Đang làm',
+      'Ðánh giá': 'Đánh giá',
+      'Ðánh Giá KPI C?a Tôi': 'Đánh giá KPI của tôi',
+      'Theo dõi hi?u su?t': 'Theo dõi hiệu suất',
+      'k?t qu?': 'kết quả',
+      't?ng k? dánh giá': 'từng kỳ đánh giá',
+      'Chua có dánh giá nào': 'Chưa có đánh giá nào',
+      'Các dánh giá KPI c?a b?n s? hi?n th? t?i dây': 'Các đánh giá KPI của bạn sẽ hiển thị tại đây',
+      'qu?n lý hoàn thành dánh giá': 'quản lý hoàn thành đánh giá',
+      'T?ng l?n dánh giá': 'Tổng lần đánh giá',
+      'k? du?c ghi nh?n': 'kỳ được ghi nhận',
+      'Ði?m trung bình': 'Điểm trung bình',
+      'Ði?m KPI cao nh?t': 'Điểm KPI cao nhất',
+      'di?m t?t nh?t d?t du?c': 'điểm tốt nhất đạt được',
+      'Ðã du?c duy?t': 'Đã được duyệt',
+      'k? dánh giá hoàn t?t': 'kỳ đánh giá hoàn tất',
+      'Bi?u Ð? Ðánh Giá G?n Nh?t': 'Biểu đồ đánh giá gần nhất',
+      'K?:': 'Kỳ:',
+      'Thái d?': 'Thái độ',
+      'Ði?m m?nh': 'Điểm mạnh',
+      'C?n c?i thi?n': 'Cần cải thiện',
+      'Ðánh giá b?i': 'Đánh giá bởi'
+    };
+    var keys = Object.keys(replacements);
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    var nodes = [];
+    var node;
+    while ((node = walker.nextNode())) {
+      var parent = node.parentNode;
+      if (parent && parent.nodeName !== 'SCRIPT' && parent.nodeName !== 'STYLE' && node.nodeValue.trim()) {
+        nodes.push(node);
+      }
+    }
+    nodes.forEach(function(textNode) {
+      var value = textNode.nodeValue;
+      keys.forEach(function(key) {
+        value = value.split(key).join(replacements[key]);
+      });
+      textNode.nodeValue = value;
+    });
+    document.querySelectorAll('[placeholder], [title]').forEach(function(el) {
+      ['placeholder', 'title'].forEach(function(attr) {
+        var value = el.getAttribute(attr);
+        if (!value) return;
+        keys.forEach(function(key) {
+          value = value.split(key).join(replacements[key]);
+        });
+        el.setAttribute(attr, value);
+      });
     });
   }
 
@@ -668,6 +828,15 @@
     var currentLang = getLang();
     var currentBg = getSetting('bg', 'default');
     var currentBrightness = getSetting('brightness', '1');
+    var settingsScope = getScope();
+    var scopeLabels = {
+      global: 'Admin: ap dung toan he thong',
+      'admin-dashboard': 'Admin: ap dung dashboard admin',
+      'manager-dashboard': 'Chi ap dung dashboard MANAGER',
+      'hiring-dashboard': 'Chi ap dung dashboard HIRING',
+      'user-dashboard': 'Chi ap dung dashboard USER'
+    };
+    var settingsScopeLabel = scopeLabels[settingsScope] || 'Chi ap dung dashboard role nay';
 
     var langFlags = { vi: '🇻🇳', en: '🇬🇧', zh: '🇨🇳', ja: '🇯🇵', ko: '🇰🇷' };
     var langNames = { vi: 'Tiếng Việt', en: 'English', zh: '中文', ja: '日本語', ko: '한국어' };
@@ -695,6 +864,7 @@
           '<button onclick="document.getElementById(\'hrms-settings-panel\').remove()" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;">✕</button>',
         '</div>',
         '<div style="padding:20px;max-height:70vh;overflow-y:auto;">',
+          '<div style="margin-bottom:16px;padding:10px 12px;border-radius:12px;background:rgba(99,102,241,0.14);border:1px solid rgba(99,102,241,0.22);color:#c7d2fe;font-size:0.78rem;font-weight:600;">' + settingsScopeLabel + '</div>',
 
           // Language section
           '<div style="margin-bottom:20px;">',
@@ -789,6 +959,27 @@
 
     document.body.appendChild(panel);
     localizeSettingsPanel(panel, currentLang);
+    cleanSettingsPanelText(panel, currentLang);
+  }
+
+  function cleanSettingsPanelText(panel, lang) {
+    var labels = panel.querySelectorAll('div[style*="text-transform:uppercase"]');
+    if (labels[0]) labels[0].textContent = uiText(lang, 'settings.panel.language');
+    if (labels[1]) labels[1].textContent = uiText(lang, 'settings.panel.background');
+    if (labels[2]) labels[2].textContent = uiText(lang, 'settings.panel.brightness');
+    if (labels[3]) labels[3].textContent = uiText(lang, 'settings.panel.fontSize');
+
+    var compactToggle = panel.querySelector('#hrms-compact-toggle');
+    if (compactToggle) {
+      var compactWrap = compactToggle.closest('div[style*="justify-content:space-between"]');
+      if (compactWrap) {
+        var textBox = compactWrap.firstElementChild;
+        if (textBox && textBox.children.length >= 2) {
+          textBox.children[0].textContent = uiText(lang, 'settings.panel.compactMode');
+          textBox.children[1].textContent = uiText(lang, 'settings.panel.compactDesc');
+        }
+      }
+    }
   }
 
   // ==================== GEAR BUTTON ====================
@@ -834,6 +1025,12 @@
 
   // ==================== INIT ====================
   function init() {
+    fixVietnameseMojibake();
+
+    if (getScope() === 'global' && window.location.pathname.indexOf('/admin') !== 0) {
+      return;
+    }
+
     var lang = getLang();
 
     // Apply saved settings
