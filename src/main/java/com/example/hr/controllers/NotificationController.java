@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/notifications")
+@RequestMapping({"/notifications", "/user1/notifications"})
 public class NotificationController {
 
     @Autowired
@@ -51,7 +51,7 @@ public class NotificationController {
         if (user != null) {
             notificationService.markAllRead(user);
         }
-        return "redirect:/notifications";
+        return "redirect:/user1/notifications";
     }
 
     @GetMapping("/read/{id}")
@@ -60,7 +60,7 @@ public class NotificationController {
         if (user != null) {
             notificationService.markRead(id, user);
         }
-        return "redirect:/notifications";
+        return "redirect:/user1/notifications";
     }
 
     @GetMapping("/count")

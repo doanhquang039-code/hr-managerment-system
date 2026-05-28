@@ -21,14 +21,14 @@ public class EngagementController {
     
     // ===== Social Feed =====
     
-    @GetMapping("/engagement/feed")
+    @GetMapping({"/engagement/feed", "/user1/feed"})
     public String socialFeed(Model model) {
         model.addAttribute("posts", engagementService.getPublicPosts());
         model.addAttribute("trending", engagementService.getTrendingPosts());
         return "user1/social-feed";
     }
     
-    @PostMapping("/engagement/post/create")
+    @PostMapping({"/engagement/post/create", "/user1/post/create"})
     public String createPost(@RequestParam String content,
                             @RequestParam(required = false) String images,
                             @RequestParam(defaultValue = "POST") String type,
@@ -42,7 +42,7 @@ public class EngagementController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/engagement/feed";
+        return "redirect:/user1/feed";
     }
     
     @PostMapping("/engagement/post/{id}/like")
@@ -54,7 +54,7 @@ public class EngagementController {
     
     // ===== Recognition =====
     
-    @GetMapping("/engagement/recognition")
+    @GetMapping({"/engagement/recognition", "/user1/recognition"})
     public String recognitionWall(Model model) {
         model.addAttribute("recognitions", engagementService.getPublicRecognitions());
         return "user1/recognition-wall";
@@ -65,7 +65,7 @@ public class EngagementController {
         return "engagement/give-recognition";
     }
     
-    @PostMapping("/engagement/recognition/give")
+    @PostMapping({"/engagement/recognition/give", "/user1/recognition/give"})
     public String giveRecognition(@RequestParam Integer recipientId,
                                  @RequestParam String type,
                                  @RequestParam String title,
@@ -85,7 +85,7 @@ public class EngagementController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/engagement/recognition";
+        return "redirect:/user1/recognition";
     }
     
     @GetMapping("/engagement/my-points")
@@ -100,20 +100,20 @@ public class EngagementController {
     
     // ===== Surveys =====
     
-    @GetMapping("/engagement/surveys")
+    @GetMapping({"/engagement/surveys", "/user1/surveys"})
     public String surveys(Model model) {
         model.addAttribute("surveys", engagementService.getActiveSurveys());
         return "user1/surveys";
     }
     
-    @GetMapping("/engagement/survey/{id}")
+    @GetMapping({"/engagement/survey/{id}", "/user1/survey/{id}"})
     public String takeSurvey(@PathVariable Integer id, Model model) {
         // Get survey details
         model.addAttribute("surveyId", id);
         return "engagement/take-survey";
     }
     
-    @PostMapping("/engagement/survey/{id}/submit")
+    @PostMapping({"/engagement/survey/{id}/submit", "/user1/survey/{id}/submit"})
     public String submitSurvey(@PathVariable Integer id,
                               @RequestParam String answers,
                               Authentication auth,
@@ -128,12 +128,12 @@ public class EngagementController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/engagement/surveys";
+        return "redirect:/user1/surveys";
     }
     
     // ===== Referrals =====
     
-    @GetMapping("/engagement/referrals")
+    @GetMapping({"/engagement/referrals", "/user1/referrals"})
     public String myReferrals(Authentication auth, Model model) {
         User user = authUserHelper.getCurrentUser(auth);
         model.addAttribute("referrals", engagementService.getUserReferrals(user));

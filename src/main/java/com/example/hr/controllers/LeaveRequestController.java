@@ -187,7 +187,7 @@ public class LeaveRequestController {
 
     // ==================== USER SELF-SERVICE ====================
 
-    @GetMapping("/user/leaves")
+    @GetMapping({"/user/leaves", "/user1/leaves"})
     @PreAuthorize("isAuthenticated()")
     public String userLeaves(Authentication auth, Model model) {
         User currentUser = userRepository.findByUsername(auth.getName())
@@ -198,7 +198,7 @@ public class LeaveRequestController {
         return "user1/leave-request";
     }
 
-    @PostMapping("/user/leaves/submit")
+    @PostMapping({"/user/leaves/submit", "/user1/leaves/submit"})
     @PreAuthorize("isAuthenticated()")
     public String submitLeave(@RequestParam String leaveType,
                               @RequestParam String startDate,
@@ -223,13 +223,13 @@ public class LeaveRequestController {
             currentUser,
             "📅 Đơn xin nghỉ " + leaveType + " từ " + startDate + " đến " + endDate + " đã được gửi, đang chờ duyệt.",
             NotificationType.LEAVE_REQUEST,
-            "/user/leaves"
+            "/user1/leaves"
         );
 
-        return "redirect:/user/leaves";
+        return "redirect:/user1/leaves";
     }
 
-    @GetMapping("/user/leaves/cancel/{id}")
+    @GetMapping({"/user/leaves/cancel/{id}", "/user1/leaves/cancel/{id}"})
     @PreAuthorize("isAuthenticated()")
     public String cancelLeave(@PathVariable Integer id, Authentication auth) {
         User currentUser = userRepository.findByUsername(auth.getName())
@@ -239,6 +239,6 @@ public class LeaveRequestController {
         if (lr.getStatus() == LeaveStatus.PENDING && lr.getUser() != null && lr.getUser().getId().equals(currentUser.getId())) {
             leaveRepository.delete(lr);
         }
-        return "redirect:/user/leaves";
+        return "redirect:/user1/leaves";
     }
 }

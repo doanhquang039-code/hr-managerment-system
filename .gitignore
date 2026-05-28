@@ -32,6 +32,7 @@ build/
 !**/src/test/**/build/
 .env
 google-drive-service-account.json
+.tools/
 ### VS Code ###
 .vscode/
 

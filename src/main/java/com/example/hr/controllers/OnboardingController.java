@@ -22,7 +22,7 @@ public class OnboardingController {
     
     // ===== User Views =====
     
-    @GetMapping("/onboarding/my-checklist")
+    @GetMapping({"/onboarding/my-checklist", "/user1/my-checklist"})
     @PreAuthorize("isAuthenticated()")
     public String myChecklist(Authentication auth, Model model) {
         User user = authUserHelper.getCurrentUser(auth);
@@ -34,7 +34,7 @@ public class OnboardingController {
         return "user1/my-checklist";
     }
     
-    @PostMapping("/onboarding/checklist/{id}/complete")
+    @PostMapping({"/onboarding/checklist/{id}/complete", "/user1/checklist/{id}/complete"})
     @PreAuthorize("isAuthenticated()")
     public String completeItem(@PathVariable Integer id, RedirectAttributes ra) {
         try {
@@ -43,7 +43,7 @@ public class OnboardingController {
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/onboarding/my-checklist";
+        return "redirect:/user1/my-checklist";
     }
     
     // ===== Admin Views =====

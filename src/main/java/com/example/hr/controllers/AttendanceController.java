@@ -93,7 +93,7 @@ public class AttendanceController {
 
     // ==================== USER VIEWS ====================
 
-    @GetMapping("/user/attendance")
+    @GetMapping({"/user/attendance", "/user1/attendance"})
     @PreAuthorize("isAuthenticated()")
     public String userAttendance(@RequestParam(required = false) Integer month,
                                  @RequestParam(required = false) Integer year,
@@ -121,7 +121,7 @@ public class AttendanceController {
         return "user1/attendance";
     }
 
-    @PostMapping("/user/attendance/checkin")
+    @PostMapping({"/user/attendance/checkin", "/user1/attendance/checkin"})
     @PreAuthorize("isAuthenticated()")
     public String checkIn(Authentication auth) {
         User currentUser = authUserHelper.getCurrentUser(auth);
@@ -145,10 +145,10 @@ public class AttendanceController {
 
             attendanceRepository.save(attendance);
         }
-        return "redirect:/user/attendance";
+        return "redirect:/user1/attendance";
     }
 
-    @PostMapping("/user/attendance/checkout")
+    @PostMapping({"/user/attendance/checkout", "/user1/attendance/checkout"})
     @PreAuthorize("isAuthenticated()")
     public String checkOut(Authentication auth) {
         User currentUser = authUserHelper.getCurrentUser(auth);
@@ -171,6 +171,6 @@ public class AttendanceController {
             }
             attendanceRepository.save(attendance);
         }
-        return "redirect:/user/attendance";
+        return "redirect:/user1/attendance";
     }
 }

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar" class="sidebar"
+     style="height:100vh;overflow-y:auto;overflow-x:hidden;padding-bottom:18px;"
+     th:with="sidebarUser=${user != null ? user : currentUser}">
+    <div class="sidebar-brand">
+        <div class="brand-icon">HR</div>
+        <div>
+            <div class="brand-name">HRMS</div>
+            <div class="brand-sub">HR Platform</div>
+        </div>
+    </div>
+
+    <div class="user-card"
+         style="padding:16px 20px;display:flex;align-items:center;gap:12px;background:rgba(99,102,241,0.1);margin:16px 12px;border-radius:12px;"
+         th:if="${sidebarUser != null}">
+        <div class="user-av"
+             style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;flex:0 0 auto;"
+             th:text="${sidebarUser.fullName != null and !#strings.isEmpty(sidebarUser.fullName) ? #strings.substring(sidebarUser.fullName, 0, 1) : 'N'}">N</div>
+        <div>
+            <div style="color:white;font-weight:600;font-size:0.85rem;" th:text="${sidebarUser.fullName ?: 'Nhân viên'}">Nhân viên</div>
+            <div style="color:#94a3b8;font-size:0.72rem;" th:text="${sidebarUser.role ?: 'USER'}">USER</div>
+        </div>
+    </div>
+
+    <div class="sidebar-section-label">Tổng quan</div>
+    <nav>
+        <a href="/user1/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="/user1/groups"><i class="bi bi-diagram-3"></i> Nhóm của tôi</a>
+    </nav>
+
+    <div class="sidebar-section-label">Thông tin cá nhân</div>
+    <nav>
+        <a href="/user1/profile#update-info"><i class="bi bi-pencil-square"></i> Cập nhật thông tin</a>
+        <a href="/user1/profile#change-password"><i class="bi bi-shield-lock"></i> Cập nhật mật khẩu</a>
+        <a href="/user1/profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
+    </nav>
+
+    <div class="sidebar-section-label">Điểm danh</div>
+    <nav>
+        <a href="/user1/attendance"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+        <a href="/user1/attendance"><i class="bi bi-calendar-week"></i> Điểm danh trong tuần</a>
+        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca làm việc</a>
+        <a href="/user1/my-shifts"><i class="bi bi-calendar3"></i> Lịch làm việc</a>
+        <a href="/user1/my-scans"><i class="bi bi-qr-code-scan"></i> QR Check-in</a>
+    </nav>
+
+    <div class="sidebar-section-label">Tiện ích</div>
+    <nav>
+        <a href="/user1/notifications">
+            <i class="bi bi-bell"></i> Thông báo cá nhân
+            <span class="notif-badge"
+                  style="background:#ef4444;color:white;border-radius:10px;font-size:0.62rem;font-weight:700;padding:2px 6px;margin-left:auto;line-height:1.3;"
+                  th:if="${unreadNotifications != null and unreadNotifications > 0}"
+                  th:text="${unreadNotifications}">0</span>
+        </a>
+        <a href="/user1/announcements"><i class="bi bi-megaphone"></i> Thông báo từ Admin</a>
+        <a href="/user1/announcements"><i class="bi bi-newspaper"></i> Bảng tin trong tuần</a>
+        <a href="/user1/chatbot"><i class="bi bi-chat-dots"></i> Trợ lý HR</a>
+    </nav>
+
+    <div class="sidebar-section-label">Chia sẻ thông tin</div>
+    <nav>
+        <a href="/user1/groups?target=manager"><i class="bi bi-person-workspace"></i> Trao đổi với Manager</a>
+        <a href="/user1/groups?target=hiring"><i class="bi bi-people"></i> Trao đổi với Hiring</a>
+        <a href="/user1/groups"><i class="bi bi-chat-square-text"></i> Mạng xã hội nội bộ</a>
+        <a href="/user1/groups"><i class="bi bi-award"></i> Vinh danh</a>
+    </nav>
+
+    <div class="sidebar-section-label">Công việc</div>
+    <nav>
+        <a href="/user1/tasks"><i class="bi bi-list-task"></i> Công việc của tôi</a>
+        <a href="/user1/leaves"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
+        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> Làm thêm giờ</a>
+        <a href="/user1/kpi"><i class="bi bi-bullseye"></i> KPI Goals</a>
+        <a href="/user1/okr-list"><i class="bi bi-graph-up"></i> OKR</a>
+        <a href="/user1/reviews"><i class="bi bi-star-half"></i> Đánh giá</a>
+        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> Kỹ năng</a>
+    </nav>
+
+    <div class="sidebar-section-label">Học tập & Phát triển</div>
+    <nav>
+        <a href="/lms/my-courses"><i class="bi bi-book"></i> Khóa học của tôi</a>
+        <a href="/lms/course-catalog"><i class="bi bi-collection"></i> Danh mục khóa học</a>
+        <a href="/videos"><i class="bi bi-play-circle"></i> Video đào tạo</a>
+    </nav>
+
+    <div class="sidebar-section-label">Tài chính & Tài sản</div>
+    <nav>
+        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phiếu lương</a>
+        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi phí</a>
+        <a href="/user1/expenses"><i class="bi bi-wallet2"></i> Hoàn tiền</a>
+        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> Tài liệu</a>
+        <a href="/user1/my-assets"><i class="bi bi-pc-display"></i> Tài sản</a>
+    </nav>
+
+    <div class="sidebar-section-label">Tương tác</div>
+    <nav>
+        <a href="/user1/referrals"><i class="bi bi-person-hearts"></i> Giới thiệu ứng viên</a>
+        <a href="/user1/surveys"><i class="bi bi-clipboard-data"></i> Khảo sát</a>
+    </nav>
+
+    <div class="sidebar-section-label">Onboarding</div>
+    <nav>
+        <a href="/user1/my-checklist"><i class="bi bi-list-check"></i> Checklist của tôi</a>
+    </nav>
+
+    <div class="sidebar-section-label">Hỗ trợ</div>
+    <nav>
+        <a href="/user1/chatbot"><i class="bi bi-headset"></i> Hỗ trợ nhanh</a>
+    </nav>
+
+    <div class="sidebar-logout">
+        <div class="lang-toggle-wrap" style="padding:8px 0;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;">
+                <button class="lang-btn" data-lang="vi" type="button">&#127475;&#127483; VI</button>
+                <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+                <button class="lang-btn" data-lang="en" type="button">&#127468;&#127463; EN</button>
+            </div>
+        </div>
+        <form action="/logout" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            </button>
+        </form>
+    </div>
+
+    <script>
+        (function () {
+            var current = window.location.pathname + window.location.search + window.location.hash;
+            var pathOnly = window.location.pathname;
+            var best = null;
+            document.querySelectorAll('.sidebar nav a').forEach(function (link) {
+                link.classList.remove('active');
+                var href = link.getAttribute('href') || '';
+                var normalized = href.split('#')[0].split('?')[0];
+                if (href === current || normalized === pathOnly) {
+                    if (!best || href.length > (best.getAttribute('href') || '').length) {
+                        best = link;
+                    }
+                }
+            });
+            if (best) best.classList.add('active');
+        })();
+    </script>
+</div>
+
+<button th:fragment="settingsFab"
+        type="button"
+        id="hrms-gear-btn"
+        class="user-settings-fab"
+        style="position:fixed;right:24px;bottom:24px;z-index:10030;width:54px;height:54px;border:0;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff;box-shadow:0 16px 34px rgba(249,115,22,0.35);display:flex;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer;"
+        title="Cài đặt dashboard USER"
+        aria-label="Cài đặt dashboard USER"
+        onclick="window.HRMS && HRMS.settings && HRMS.settings.openPanel()">
+    <i class="bi bi-gear-fill"></i>
+</button>
+</body>
+</html>

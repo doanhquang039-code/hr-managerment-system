@@ -106,7 +106,7 @@
         </section>
 
         <div>
-            <section class="panel mb-3">
+            <section class="panel mb-3" id="update-info">
                 <div class="panel-title"><i class="bi bi-pencil-square text-primary"></i> Cập nhật thông tin</div>
                 <div class="note" th:if="${!isAdmin}">
                     Role hiện tại chỉ được sửa số điện thoại, địa chỉ và ngày sinh của chính mình.
@@ -114,7 +114,7 @@
                 <div class="note" th:if="${isAdmin}">
                     Admin được sửa thông tin cá nhân rộng hơn của chính tài khoản admin.
                 </div>
-                <form th:action="@{/profile/update-info}" method="post">
+                <form th:action="${profileBaseUrl + '/update-info'}" method="post">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <div class="row g-3">
                         <div class="col-md-6" th:if="${isAdmin}">
@@ -151,10 +151,10 @@
                 </form>
             </section>
 
-            <section class="panel">
+            <section class="panel" id="change-password">
                 <div class="panel-title"><i class="bi bi-key text-primary"></i> Đổi mật khẩu</div>
                 <div th:if="${passwordError}" class="alert alert-danger py-2" th:text="${passwordError}"></div>
-                <form th:action="@{/profile/change-password}" method="post">
+                <form th:action="${profileBaseUrl + '/change-password'}" method="post">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                     <div class="password-wrap mb-3">
                         <label class="form-label">Mật khẩu hiện tại</label>
@@ -177,6 +177,8 @@
         </div>
     </div>
 </main>
+
+<div th:replace="fragments/user-sidebar :: settingsFab"></div>
 
 <script>
 function togglePassword(button) {

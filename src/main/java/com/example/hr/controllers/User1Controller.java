@@ -1,6 +1,7 @@
 package com.example.hr.controllers;
 
 import com.example.hr.enums.TaskStatus;
+import com.example.hr.enums.Role;
 import com.example.hr.models.Payroll;
 import com.example.hr.models.TaskAssignment;
 import com.example.hr.models.User;
@@ -126,7 +127,12 @@ public class User1Controller {
     public String profile(Authentication authentication, Model model) {
         User user = getCurrentUser(authentication);
         if (user == null) return "redirect:/login?error=user_not_found";
-        return "redirect:/profile";
+
+        model.addAttribute("user", user);
+        model.addAttribute("isAdmin", user.getRole() == Role.ADMIN);
+        model.addAttribute("dashboardUrl", "/user1/dashboard");
+        model.addAttribute("profileBaseUrl", "/user1/profile");
+        return "profile";
     }
 
     @PostMapping("/profile/update-avatar")
@@ -138,13 +144,13 @@ public class User1Controller {
 
         if (file.isEmpty()) {
             redirectAttributes.addFlashAttribute("successMsg", "Vui lòng chọn ảnh!");
-            return "redirect:/profile";
+            return "redirect:/user1/profile";
         }
 
         String ct = file.getContentType();
         if (ct == null || !ct.startsWith("image/")) {
             redirectAttributes.addFlashAttribute("successMsg", "❌ Chỉ chấp nhận file ảnh!");
-            return "redirect:/profile";
+            return "redirect:/user1/profile";
         }
 
         try {
@@ -156,7 +162,7 @@ public class User1Controller {
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("successMsg", "❌ Lỗi upload: " + e.getMessage());
         }
-        return "redirect:/profile";
+        return "redirect:/user1/profile";
     }
 
     @PostMapping("/profile/change-password")
@@ -170,21 +176,21 @@ public class User1Controller {
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu hiện tại không đúng!");
-            return "redirect:/profile";
+            return "redirect:/user1/profile";
         }
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu mới và xác nhận không khớp!");
-            return "redirect:/profile";
+            return "redirect:/user1/profile";
         }
         if (newPassword.length() < 6) {
             redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu mới phải có ít nhất 6 ký tự!");
-            return "redirect:/profile";
+            return "redirect:/user1/profile";
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("successMsg", "✅ Đổi mật khẩu thành công!");
-        return "redirect:/profile";
+        return "redirect:/user1/profile";
     }
 
     @PostMapping("/profile/update-info")
@@ -208,7 +214,7 @@ public class User1Controller {
 
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("successMsg", "✅ Cập nhật thông tin thành công!");
-        return "redirect:/profile";
+        return "redirect:/user1/profile";
     }
 
     // ==================== PAYROLL ====================

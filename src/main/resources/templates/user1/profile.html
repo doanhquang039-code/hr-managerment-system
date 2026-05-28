@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H? so cá nhân - HRMS</title>
+    <title>H? so cï¿½ nhï¿½n - HRMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -144,94 +144,18 @@
 <body>
 
 <!-- SIDEBAR -->
-<div class="sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-icon">?</div>
-        <div>
-            <div class="brand-name">HRMS</div>
-            <div class="brand-sub">HR Platform</div>
-        </div>
-    </div>
-    <div class="sidebar-user">
-        <img class="sidebar-user-avatar" th:src="@{'/uploads/' + ${user.profileImage}}"
-             onerror="this.src='https://ui-avatars.com/api/?name=NV&background=6366f1&color=fff&size=42'"
-             th:alt="${user.fullName}" alt="Avatar">
-        <div>
-            <div class="sidebar-user-name" th:text="${user.fullName}">Nhân viên</div>
-            <div class="sidebar-user-role" th:text="${user.position != null ? user.position.positionName : user.role}">Employee</div>
-        </div>
-    </div>
-        <div class="sidebar-section-label">Cá nhân</div>
-    <nav>
-        <a href="/user1/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-        <a href="/user1/profile" class="active"><i class="bi bi-person-circle"></i> H? so cá nhân</a>
-        <a href="/user/attendance"><i class="bi bi-clipboard-check"></i> Ch?m công</a>
-        <a href="/user1/my-shifts"><i class="bi bi-clock"></i> Ca làm vi?c</a>
-        <a href="/user/leaves"><i class="bi bi-calendar-x"></i> Ngh? phép</a>
-        <a href="/user1/overtime"><i class="bi bi-clock-history"></i> Làm thêm gi?</a>
-        <a href="/user1/payroll"><i class="bi bi-cash-coin"></i> Phi?u luong</a>
-    </nav>
-    <div class="sidebar-section-label">Công vi?c</div>
-    <nav>
-        <a href="/user1/tasks"><i class="bi bi-list-task"></i> Công vi?c c?a tôi</a>
-        <a href="/user1/kpi"><i class="bi bi-bullseye"></i> KPI Goals</a>
-        <a href="/user1/reviews"><i class="bi bi-star-half"></i> Ðánh giá</a>
-        <a href="/user1/skills"><i class="bi bi-mortarboard"></i> K? nang</a>
-    </nav>
-    <div class="sidebar-section-label">Tài chính</div>
-    <nav>
-        <a href="/user1/expenses"><i class="bi bi-receipt"></i> Chi phí</a>
-        <a href="/user1/documents"><i class="bi bi-folder2-open"></i> Tài li?u</a>
-        <a href="/user1/my-assets"><i class="bi bi-pc-display"></i> Tài s?n</a>
-    </nav>
-    <div class="sidebar-section-label">H? tr?</div>
-    <nav>
-        <a href="/user1/announcements"><i class="bi bi-megaphone"></i> Thông báo công ty</a>
-        <a href="/user1/chatbot"><i class="bi bi-chat-dots"></i> Tr? lý HR</a>
-        <a href="/videos"><i class="bi bi-play-circle"></i> Video dào t?o</a>
-        <a href="/notifications">
-            <i class="bi bi-bell"></i> Thông báo
-            <span class="notif-badge"
-                  th:if="${unreadNotifications != null and unreadNotifications > 0}"
-                  th:text="${unreadNotifications}">0</span>
-        </a>
-    </nav>
-
-    <div class="sidebar-logout">
-          <!-- Language Toggle -->
-          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
-            <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
-              <button class="lang-btn" data-lang="vi"
-                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-                &#127475;&#127483; VI
-              </button>
-              <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
-              <button class="lang-btn" data-lang="en"
-                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-                &#127468;&#127463; EN
-              </button>
-            </div>
-          </div>
-        <form action="/logout" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
-                <i class="bi bi-box-arrow-right"></i> Ðang xu?t
-            </button>
-        </form>
-    </div>
-</div>
+<div th:replace="fragments/user-sidebar :: sidebar"></div>
 
-<!-- MAIN -->
 <div class="main-content">
     <div class="page-header">
-        <h1>?? H? so cá nhân</h1>
-        <p>Xem và c?p nh?t thông tin cá nhân c?a b?n</p>
+        <h1>?? H? so cï¿½ nhï¿½n</h1>
+        <p>Xem vï¿½ c?p nh?t thï¿½ng tin cï¿½ nhï¿½n c?a b?n</p>
     </div>
 
     <!-- Success alert -->
     <div class="alert-success-custom" th:if="${successMsg != null}">
         <i class="bi bi-check-circle-fill" style="font-size:1.2rem;"></i>
-        <span th:text="${successMsg}">C?p nh?t thành công!</span>
+        <span th:text="${successMsg}">C?p nh?t thï¿½nh cï¿½ng!</span>
     </div>
 
     <!-- HERO BANNER -->
@@ -246,9 +170,9 @@
         <div>
             <div class="hero-name" th:text="${user.fullName}">Nguy?n Van A</div>
             <div class="hero-pos">
-                <th:block th:text="${user.position != null ? user.position.positionName : 'Chua có ch?c v?'}">Developer</th:block>
-                &nbsp;·&nbsp;
-                <th:block th:text="${user.department != null ? user.department.departmentName : 'Chua gán phòng ban'}">IT</th:block>
+                <th:block th:text="${user.position != null ? user.position.positionName : 'Chua cï¿½ ch?c v?'}">Developer</th:block>
+                &nbsp;ï¿½&nbsp;
+                <th:block th:text="${user.department != null ? user.department.departmentName : 'Chua gï¿½n phï¿½ng ban'}">IT</th:block>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-item"><i class="bi bi-envelope"></i> <span th:text="${user.email}">email@co.com</span></div>
@@ -257,32 +181,32 @@
             <div class="stats-strip">
                 <div class="stat-mini">
                     <div class="sm-val" th:text="${attendanceDays}">0</div>
-                    <div class="sm-lbl">Ngày công tháng này</div>
+                    <div class="sm-lbl">Ngï¿½y cï¿½ng thï¿½ng nï¿½y</div>
                 </div>
                 <div class="stat-mini">
                     <div class="sm-val" th:text="${totalLeaves}">0</div>
-                    <div class="sm-lbl">Ðon ngh? phép</div>
+                    <div class="sm-lbl">ï¿½on ngh? phï¿½p</div>
                 </div>
                 <div class="stat-mini">
                     <div class="sm-val" th:text="${totalTasks}">0</div>
-                    <div class="sm-lbl">Công vi?c du?c giao</div>
+                    <div class="sm-lbl">Cï¿½ng vi?c du?c giao</div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row g-4">
-        <!-- Thông tin co b?n (read-only) -->
+        <!-- Thï¿½ng tin co b?n (read-only) -->
         <div class="col-lg-5">
             <div class="card-section">
-                <div class="section-title"><i class="bi bi-person-badge"></i> Thông tin nhân s?</div>
+                <div class="section-title"><i class="bi bi-person-badge"></i> Thï¿½ng tin nhï¿½n s?</div>
                 <div style="display:flex;flex-direction:column;gap:16px;">
                     <div class="info-field">
-                        <label>Tên dang nh?p</label>
+                        <label>Tï¿½n dang nh?p</label>
                         <div class="value"><i class="bi bi-person" style="color:#6366f1;"></i> <span th:text="${user.username}">username</span></div>
                     </div>
                     <div class="info-field">
-                        <label>H? và tên</label>
+                        <label>H? vï¿½ tï¿½n</label>
                         <div class="value"><i class="bi bi-type" style="color:#6366f1;"></i> <span th:text="${user.fullName}">Nguy?n Van A</span></div>
                     </div>
                     <div class="info-field">
@@ -290,21 +214,21 @@
                         <div class="value"><i class="bi bi-envelope" style="color:#6366f1;"></i> <span th:text="${user.email}">email@co.com</span></div>
                     </div>
                     <div class="info-field">
-                        <label>Phòng ban</label>
-                        <div class="value"><i class="bi bi-building" style="color:#6366f1;"></i> <span th:text="${user.department != null ? user.department.departmentName : 'Chua gán'}">IT</span></div>
+                        <label>Phï¿½ng ban</label>
+                        <div class="value"><i class="bi bi-building" style="color:#6366f1;"></i> <span th:text="${user.department != null ? user.department.departmentName : 'Chua gï¿½n'}">IT</span></div>
                     </div>
                     <div class="info-field">
                         <label>Ch?c v?</label>
-                        <div class="value"><i class="bi bi-briefcase" style="color:#6366f1;"></i> <span th:text="${user.position != null ? user.position.positionName : 'Chua gán'}">Developer</span></div>
+                        <div class="value"><i class="bi bi-briefcase" style="color:#6366f1;"></i> <span th:text="${user.position != null ? user.position.positionName : 'Chua gï¿½n'}">Developer</span></div>
                     </div>
                     <div class="info-field">
-                        <label>Vai trò h? th?ng</label>
+                        <label>Vai trï¿½ h? th?ng</label>
                         <div style="margin-top:4px;">
                             <span th:class="'role-badge role-' + ${user.role}" th:text="${user.role}">USER</span>
                         </div>
                     </div>
                     <div class="info-field">
-                        <label>Tr?ng thái</label>
+                        <label>Tr?ng thï¿½i</label>
                         <div style="margin-top:4px;">
                             <span th:class="'status-badge status-' + ${user.status}" th:text="${user.status}">ACTIVE</span>
                         </div>
@@ -315,16 +239,16 @@
 
         <!-- C?p nh?t ?nh d?i di?n -->
         <div class="col-lg-7">
-            <!-- Form s?a thông tin cá nhân -->
+            <!-- Form s?a thï¿½ng tin cï¿½ nhï¿½n -->
             <div class="card-section mb-4">
-                <div class="section-title"><i class="bi bi-pencil-square"></i> C?p nh?t thông tin cá nhân</div>
+                <div class="section-title"><i class="bi bi-pencil-square"></i> C?p nh?t thï¿½ng tin cï¿½ nhï¿½n</div>
                 <form th:action="@{/user1/profile/update-info}" method="post">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <div class="info-grid mb-3">
                         <div class="info-field">
-                            <label>H? và tên</label>
+                            <label>H? vï¿½ tï¿½n</label>
                             <input type="text" name="fullName" class="form-control"
-                                   th:value="${user.fullName}" placeholder="H? và tên d?y d?" required/>
+                                   th:value="${user.fullName}" placeholder="H? vï¿½ tï¿½n d?y d?" required/>
                         </div>
                         <div class="info-field">
                             <label>Email</label>
@@ -337,17 +261,17 @@
                                    th:value="${user.phoneNumber}" placeholder="0912 345 678"/>
                         </div>
                         <div class="info-field">
-                            <label>Ngày sinh</label>
+                            <label>Ngï¿½y sinh</label>
                             <input type="date" name="dateOfBirth" class="form-control"
                                    th:value="${user.dateOfBirth}"/>
                         </div>
                     </div>
                     <div class="info-field mb-3">
-                        <label>Ð?a ch?</label>
+                        <label>ï¿½?a ch?</label>
                         <input type="text" name="address" class="form-control"
-                               th:value="${user.address}" placeholder="S? nhà, du?ng, qu?n, thành ph?..."/>
+                               th:value="${user.address}" placeholder="S? nhï¿½, du?ng, qu?n, thï¿½nh ph?..."/>
                     </div>
-                    <button type="submit" class="btn-save"><i class="bi bi-check-lg me-2"></i>Luu thông tin</button>
+                    <button type="submit" class="btn-save"><i class="bi bi-check-lg me-2"></i>Luu thï¿½ng tin</button>
                 </form>
             </div>
 
@@ -358,7 +282,7 @@
                     <div class="avatar-upload-area mb-3" onclick="document.getElementById('avatarInput').click();">
                         <i class="bi bi-cloud-upload" style="font-size:2rem;color:#6366f1;display:block;margin-bottom:8px;"></i>
                         <div style="font-weight:600;color:#1e293b;font-size:0.9rem;">Nh?n d? ch?n ?nh</div>
-                        <div style="color:#94a3b8;font-size:0.78rem;margin-top:4px;">PNG, JPG — t?i da 5MB</div>
+                        <div style="color:#94a3b8;font-size:0.78rem;margin-top:4px;">PNG, JPG ï¿½ t?i da 5MB</div>
                         <input type="file" id="avatarInput" name="image" style="display:none;" accept="image/*" onchange="previewImage(this)">
                     </div>
                     <div id="preview-wrap" style="display:none;text-align:center;margin-bottom:16px;">
@@ -368,9 +292,9 @@
                 </form>
             </div>
 
-            <!-- Ð?i m?t kh?u -->
+            <!-- ï¿½?i m?t kh?u -->
             <div class="card-section">
-                <div class="section-title"><i class="bi bi-shield-lock"></i> Ð?i m?t kh?u</div>
+                <div class="section-title"><i class="bi bi-shield-lock"></i> ï¿½?i m?t kh?u</div>
                 <form th:action="@{/user1/profile/change-password}" method="post">
                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                     <div style="display:flex;flex-direction:column;gap:14px;">
@@ -380,14 +304,14 @@
                         </div>
                         <div class="info-field">
                             <label>M?t kh?u m?i</label>
-                            <input type="password" name="newPassword" class="form-control" placeholder="T?i thi?u 6 ký t?" required minlength="6">
+                            <input type="password" name="newPassword" class="form-control" placeholder="T?i thi?u 6 kï¿½ t?" required minlength="6">
                         </div>
                         <div class="info-field">
-                            <label>Xác nh?n m?t kh?u m?i</label>
+                            <label>Xï¿½c nh?n m?t kh?u m?i</label>
                             <input type="password" name="confirmPassword" class="form-control" placeholder="Nh?p l?i m?t kh?u m?i" required>
                         </div>
                         <div th:if="${passwordError}" class="alert alert-danger py-2 mb-0 rounded-3 small" th:text="${passwordError}"></div>
-                        <button type="submit" class="btn-save"><i class="bi bi-key-fill"></i> Ð?i m?t kh?u</button>
+                        <button type="submit" class="btn-save"><i class="bi bi-key-fill"></i> ï¿½?i m?t kh?u</button>
                     </div>
                 </form>
             </div>
@@ -395,6 +319,7 @@
     </div>
 </div>
 
+<div th:replace="fragments/user-sidebar :: settingsFab"></div>
 <script>
 function previewImage(input) {
     if (input.files && input.files[0]) {

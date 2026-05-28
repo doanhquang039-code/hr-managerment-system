@@ -40,6 +40,7 @@ public class ProfileController {
         model.addAttribute("user", user);
         model.addAttribute("isAdmin", user.getRole() == Role.ADMIN);
         model.addAttribute("dashboardUrl", dashboardUrl(user.getRole()));
+        model.addAttribute("profileBaseUrl", "/profile");
         return "profile";
     }
 
