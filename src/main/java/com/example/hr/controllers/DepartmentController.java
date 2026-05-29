@@ -45,6 +45,7 @@ public class DepartmentController {
         } else {
             model.addAttribute("departments", departmentService.getAllDepartments());
         }
+        model.addAttribute("allDepartments", departmentService.getAllDepartments());
         model.addAttribute("keyword", keyword);
         return "admin/department-list";
     }

@@ -21,6 +21,13 @@
       .sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
       .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-radius: 0; transition: all .2s; }
       .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,.1); color: white; border-left: 3px solid #667eea; }
+      .nav-parent { justify-content: space-between; cursor: pointer; }
+      .nav-parent .left { display: inline-flex; align-items: center; gap: 10px; }
+      .nav-parent .bi-caret-down-fill { margin-left: auto; color: #cbd5e1; font-size: .68rem; }
+      .submenu { display: none; padding: 2px 0 8px; background: rgba(255,255,255,.03); }
+      .submenu.open { display: block; }
+      .submenu a { padding: 8px 20px 8px 48px; font-size: .84rem; color: #cbd5e1; border-left: 3px solid transparent; }
+      .submenu a:hover, .submenu a.active { color: white; background: rgba(255,255,255,.08); border-left-color: #667eea; }
       .sidebar-logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px; }
       .stat-card {
         border-radius: 16px; padding: 24px; color: white;
@@ -62,24 +69,66 @@
           <div class="sidebar-logo">⚡ HRMS ADMIN</div>
           <hr style="border-color:rgba(255,255,255,.15)"/>
           <a th:href="@{/admin/dashboard}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
-          <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+          <a th:href="@{/profile}"><i class="bi bi-person-circle"></i> Profile</a>
+          <a class="nav-parent" data-submenu-toggle="employee-options">
+            <span class="left"><i class="bi bi-people"></i> Nh&#226;n vi&#234;n</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="employee-options" class="submenu">
+            <a th:href="@{/admin/users(role='MANAGER')}">Qu&#7843;n l&#253;</a>
+            <a th:href="@{/admin/users(role='HIRING')}">Hiring User</a>
+            <a th:href="@{/admin/users(role='USER')}">Nh&#226;n vi&#234;n User</a>
+          </div>
           <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
           <a th:href="@{/admin/password-reset-requests}">
             <i class="bi bi-shield-lock"></i> Password resets
             <span class="badge bg-danger ms-auto" th:if="${pendingResetRequests > 0}" th:text="${pendingResetRequests}">0</span>
           </a>
-          <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
+          <a class="nav-parent" data-submenu-toggle="department-options">
+            <span class="left"><i class="bi bi-building"></i> Phòng ban</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="department-options" class="submenu">
+            <a th:href="@{/admin/departments}">Tất cả phòng ban</a>
+            <a th:each="d : ${departments}" th:href="@{/admin/departments/{id}/members(id=${d.id})}" th:text="${d.departmentName}">Phòng ban</a>
+          </div>
           <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
-          <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
-          <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
+          <a class="nav-parent" data-submenu-toggle="contract-options">
+            <span class="left"><i class="bi bi-file-text"></i> Hợp đồng</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="contract-options" class="submenu">
+            <a th:href="@{/admin/contracts}">Tất cả hợp đồng</a>
+            <a th:href="@{/admin/contracts(contractType='Nhân viên chính thức')}">Nhân viên chính thức</a>
+            <a th:href="@{/admin/contracts(contractType='Nhân viên part-time')}">Nhân viên part-time</a>
+            <a th:href="@{/admin/contracts(contractType='Nhân viên thực tập')}">Nhân viên thực tập</a>
+          </div>
+          <a class="nav-parent" data-submenu-toggle="payroll-options">
+            <span class="left"><i class="bi bi-cash-coin"></i> Bảng lương</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="payroll-options" class="submenu">
+            <a th:href="@{/admin/payroll}">Tất cả phòng ban</a>
+            <a th:each="d : ${departments}" th:href="@{/admin/payroll(departmentId=${d.id})}" th:text="${d.departmentName}">Phòng ban</a>
+          </div>
           <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh toán</a>
           <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
           <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
           <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
           <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
           <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
-          <a th:href="@{/admin/shifts}"><i class="bi bi-clock-history"></i> Ca làm việc</a>
+          <a class="nav-parent" data-submenu-toggle="shift-options">
+            <span class="left"><i class="bi bi-clock-history"></i> Ca làm việc</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="shift-options" class="submenu">
+            <a th:href="@{/admin/shifts}">Tất cả ca</a>
+            <a th:href="@{/admin/shifts(period='morning')}">Ca sáng</a>
+            <a th:href="@{/admin/shifts(period='afternoon')}">Ca chiều</a>
+            <a th:href="@{/admin/shifts(period='evening')}">Ca tối</a>
+            <a th:href="@{/admin/shifts(period='night')}">Ca đêm</a>
+          </div>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
           <a th:href="@{/admin/kpi-goals}"><i class="bi bi-bullseye"></i> Mục tiêu KPI</a>
@@ -92,7 +141,19 @@
           <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Thông báo</a>
           <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
           <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nhật ký</a>
-          <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuyển dụng</a>
+          <a class="nav-parent" data-submenu-toggle="recruitment-options">
+            <span class="left"><i class="bi bi-person-plus"></i> Tuy&#7875;n d&#7909;ng</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="recruitment-options" class="submenu">
+            <a th:href="@{/hiring/postings}">T&#7845;t c&#7843; tin tuy&#7875;n</a>
+            <a th:href="@{/hiring/postings/add}">&#272;&#259;ng tin m&#7899;i</a>
+            <a th:href="@{/hiring/postings(category='FULL_TIME')}">Ch&#237;nh th&#7913;c</a>
+            <a th:href="@{/hiring/postings(category='PART_TIME')}">Part-time</a>
+            <a th:href="@{/hiring/postings(category='INTERN')}">Intern</a>
+            <a th:href="@{/hiring/postings(category='JUNIOR')}">Junior</a>
+            <a th:href="@{/hiring/postings(category='SECURITY')}">B&#7843;o v&#7879;</a>
+          </div>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <!-- NEW FEATURES -->
           <a th:href="@{/admin/courses}"><i class="bi bi-book"></i> LMS - Khóa học</a>
@@ -436,5 +497,13 @@
 <script th:src="@{/js/hrms-datatable.js}"></script>
 <script th:src="@{/js/weather-route-widget.js}"></script>
 <script th:src="@{/js/health-insight-widget.js}"></script>
+<script>
+  document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
+    toggle.addEventListener('click', () => {
+      const menu = document.getElementById(toggle.dataset.submenuToggle);
+      if (menu) menu.classList.toggle('open');
+    });
+  });
+</script>
 </body>
 </html>

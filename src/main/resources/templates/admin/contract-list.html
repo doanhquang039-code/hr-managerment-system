@@ -21,6 +21,13 @@
             padding: 10px 20px; border-left: 3px solid transparent; transition: all .2s; font-size: .86rem;
         }
         .sidebar a:hover, .sidebar a.active { color: white; background: rgba(255,255,255,.07); border-left-color: #f59e0b; }
+        .nav-parent { justify-content: space-between; cursor: pointer; }
+        .nav-parent .left { display: inline-flex; align-items: center; gap: 10px; }
+        .nav-parent .bi-caret-down-fill { margin-left: auto; color: #cbd5e1; font-size: .68rem; }
+        .submenu { display: none; padding: 4px 0 8px; background: rgba(255,255,255,.04); }
+        .submenu.open { display: block; }
+        .submenu a { padding: 9px 20px 9px 48px; font-size: .84rem; border-left: 3px solid transparent; color: #cbd5e1; }
+        .submenu a.active { color: white; background: rgba(245,158,11,.18); border-left-color: #f59e0b; }
         .sidebar hr { border-color: rgba(255,255,255,.1); margin: 10px 16px; }
         .main { margin-left: 248px; padding: 28px 30px 56px; }
         .hero { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-bottom: 22px; }
@@ -96,7 +103,16 @@
     <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
     <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
     <hr>
-    <a th:href="@{/admin/contracts}" class="active"><i class="bi bi-file-text"></i> Hợp đồng</a>
+    <a class="active nav-parent" data-submenu-toggle="contract-options">
+        <span class="left"><i class="bi bi-file-text"></i> Hợp đồng</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="contract-options" class="submenu">
+        <a th:classappend="${selectedContractType == null or selectedContractType == '' ? ' active' : ''}" th:href="@{/admin/contracts}">Tất cả hợp đồng</a>
+        <a th:classappend="${selectedContractType == 'Nhân viên chính thức' ? ' active' : ''}" th:href="@{/admin/contracts(contractType='Nhân viên chính thức')}">Nhân viên chính thức</a>
+        <a th:classappend="${selectedContractType == 'Nhân viên part-time' ? ' active' : ''}" th:href="@{/admin/contracts(contractType='Nhân viên part-time')}">Nhân viên part-time</a>
+        <a th:classappend="${selectedContractType == 'Nhân viên thực tập' ? ' active' : ''}" th:href="@{/admin/contracts(contractType='Nhân viên thực tập')}">Nhân viên thực tập</a>
+    </div>
     <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
     <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh toán</a>
     <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
@@ -169,12 +185,10 @@
                 <div class="col-lg-2 col-md-6">
                     <label class="form-label">Loại hợp đồng</label>
                     <select name="contractType" class="form-select">
-                        <option value="">Tất cả</option>
-                        <option value="Toàn thời gian" th:selected="${selectedContractType == 'Toàn thời gian'}">Toàn thời gian</option>
-                        <option value="Bán thời gian" th:selected="${selectedContractType == 'Bán thời gian'}">Bán thời gian</option>
-                        <option value="Thực tập" th:selected="${selectedContractType == 'Thực tập'}">Thực tập</option>
-                        <option value="Thử việc" th:selected="${selectedContractType == 'Thử việc'}">Thử việc</option>
-                        <option value="Hợp đồng dịch vụ" th:selected="${selectedContractType == 'Hợp đồng dịch vụ'}">Hợp đồng dịch vụ</option>
+                        <option value="">T&#7845;t c&#7843;</option>
+                        <option value="Nhân viên chính thức" th:selected="${selectedContractType == 'Nhân viên chính thức'}">Nh&#226;n vi&#234;n ch&#237;nh th&#7913;c</option>
+                        <option value="Nhân viên part-time" th:selected="${selectedContractType == 'Nhân viên part-time'}">Nh&#226;n vi&#234;n part-time</option>
+                        <option value="Nhân viên thực tập" th:selected="${selectedContractType == 'Nhân viên thực tập'}">Nh&#226;n vi&#234;n th&#7921;c t&#7853;p</option>
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-6">
@@ -256,5 +270,14 @@
 <script th:src="@{/js/hrms-notifications.js}"></script>
 <script th:src="@{/js/hrms-ui.js}"></script>
 <script th:src="@{/js/hrms-datatable.js}"></script>
+<script>
+    document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const menu = document.getElementById(toggle.dataset.submenuToggle);
+            if (menu) menu.classList.toggle('open');
+
+        });
+    });
+</script>
 </body>
 </html>

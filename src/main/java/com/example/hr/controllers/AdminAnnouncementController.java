@@ -48,6 +48,7 @@ public class AdminAnnouncementController {
     public String list(Model model) {
         List<CompanyAnnouncement> items = announcementService.listAllForAdmin();
         model.addAttribute("announcements", items);
+        model.addAttribute("departments", departmentRepository.findAll());
         return "admin/announcement-list";
     }
 

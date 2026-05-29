@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.hr.enums.NotificationType;
 import com.example.hr.enums.PaymentStatus;
+import com.example.hr.enums.UserStatus;
 import com.example.hr.models.Contract;
 import com.example.hr.models.Department;
 import com.example.hr.models.Payroll;
@@ -102,6 +103,7 @@ public class PayrollController {
         List<Department> departments = departmentRepository.findAll();
         model.addAttribute("payrolls", payrolls);
         model.addAttribute("departments", departments);
+        model.addAttribute("activeUsers", userRepository.findByStatus(UserStatus.ACTIVE));
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedMonth", month);
         model.addAttribute("selectedYear", year);
@@ -110,6 +112,11 @@ public class PayrollController {
         model.addAttribute("pendingCount", pendingCount);
         model.addAttribute("totalNetSalary", totalNetSalary);
         return "admin/payroll-list";
+    }
+
+    @PostMapping("/generate")
+    public String generatePayrollFromForm(@RequestParam("userId") Integer userId, Authentication auth) {
+        return generatePayroll(userId, auth);
     }
 
     @PostMapping("/generate/{userId}")

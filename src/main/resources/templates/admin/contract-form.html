@@ -3,258 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H?p Ð?ng Lao Ð?ng - HRMS Admin</title>
+    <title>H&#7907;p &#273;&#7891;ng lao &#273;&#7897;ng - HRMS Admin</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <style>
         * { font-family: 'Inter', sans-serif; }
         body { background: #f0f2f5; }
-        .sidebar {
-            height: 100vh; background: linear-gradient(180deg,#1a1f2e 0%,#2d3748 100%);
-            color: white; padding-top: 20px; position: sticky; top: 0; overflow-y: auto;
-        }
+        .sidebar { height: 100vh; background: linear-gradient(180deg,#1a1f2e 0%,#2d3748 100%); color: white; padding-top: 20px; position: sticky; top: 0; overflow-y: auto; }
         .sidebar a { color: #a0aec0; text-decoration: none; display: flex; align-items: center; gap: 10px; padding: 10px 20px; transition: all .2s; }
         .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,.1); color: white; border-left: 3px solid #11998e; }
+        .nav-parent { justify-content: space-between; cursor: pointer; }
+        .nav-parent .left { display: inline-flex; align-items: center; gap: 10px; }
+        .nav-parent .bi-caret-down-fill { margin-left: auto; color: #cbd5e1; font-size: .68rem; }
+        .submenu { display: none; padding: 4px 0 8px; background: rgba(255,255,255,.04); }
+        .submenu.open { display: block; }
+        .submenu a { padding: 9px 20px 9px 48px; font-size: .84rem; border-left: 3px solid transparent; color: #cbd5e1; }
+        .submenu a.active { color: white; background: rgba(17,153,142,.18); border-left-color: #11998e; }
         .sidebar-logo { font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: white; text-align: center; padding: 12px; }
-
-        .form-card {
-            background: white; border-radius: 20px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-        .form-card-header {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            padding: 28px 32px; color: white;
-        }
+        .form-card { background: white; border-radius: 20px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); overflow: hidden; }
+        .form-card-header { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 28px 32px; color: white; }
         .form-card-header h4 { font-weight: 700; margin: 0; font-size: 1.3rem; }
         .form-card-header p { margin: 6px 0 0; opacity: 0.85; font-size: 0.88rem; }
         .form-card-body { padding: 32px; }
-
         .form-label { font-weight: 600; color: #374151; font-size: 0.88rem; margin-bottom: 6px; }
-        .form-control, .form-select {
-            border-radius: 10px; border: 1.5px solid #e5e7eb;
-            padding: 10px 14px; font-size: 0.9rem; transition: all 0.2s;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #11998e; box-shadow: 0 0 0 3px rgba(17,153,142,0.12);
-        }
+        .form-control, .form-select { border-radius: 10px; border: 1.5px solid #e5e7eb; padding: 10px 14px; font-size: 0.9rem; transition: all 0.2s; }
+        .form-control:focus, .form-select:focus { border-color: #11998e; box-shadow: 0 0 0 3px rgba(17,153,142,0.12); }
         .input-group-text { background: #f9fafb; border: 1.5px solid #e5e7eb; border-right: none; color: #6b7280; }
-        .input-group .form-control { border-radius: 0 10px 10px 0 !important; }
-
-        .section-divider {
-            display: flex; align-items: center; gap: 12px;
-            margin: 28px 0 20px; color: #6b7280; font-size: 0.8rem; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .section-divider::before, .section-divider::after {
-            content: ''; flex: 1; height: 1px; background: #e5e7eb;
-        }
-
-        .btn-submit {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border: none; color: white; padding: 12px 32px;
-            border-radius: 12px; font-weight: 600; font-size: 0.95rem;
-            transition: all 0.2s; cursor: pointer;
-        }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(17,153,142,0.4); color: white; }
-        .btn-cancel { padding: 12px 28px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; }
-
+        .section-divider { display: flex; align-items: center; gap: 12px; margin: 28px 0 20px; color: #6b7280; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+        .btn-submit { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; color: white; padding: 12px 32px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
+        .btn-cancel { padding: 12px 28px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
         .contract-types { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
-        .contract-type-btn {
-            padding: 8px 16px; border-radius: 8px; border: 1.5px solid #e5e7eb;
-            background: white; cursor: pointer; font-size: 0.82rem; font-weight: 600;
-            color: #6b7280; transition: all 0.2s;
-        }
+        .contract-type-btn { padding: 8px 16px; border-radius: 8px; border: 1.5px solid #e5e7eb; background: white; cursor: pointer; font-size: 0.84rem; font-weight: 700; color: #475569; transition: all 0.2s; }
         .contract-type-btn.active, .contract-type-btn:hover { border-color: #11998e; background: #f0fdf4; color: #065f46; }
-
         .salary-hint { font-size: 0.78rem; color: #94a3b8; margin-top: 6px; }
-
-      /* ===== LANGUAGE TOGGLE ===== */
-      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
-      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
-      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
+        .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important; }
     </style>
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
         <nav class="col-md-2 d-none d-md-block sidebar shadow">
-            <div class="sidebar-logo">? HRMS ADMIN</div>
+            <div class="sidebar-logo"><i class="bi bi-shield-check"></i> HRMS ADMIN</div>
             <hr style="border-color:rgba(255,255,255,.15)"/>
             <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+            <a th:href="@{/profile}"><i class="bi bi-person-circle"></i> Profile</a>
+            <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh&#226;n vi&#234;n</a>
             <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
-            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
-            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch?c v?</a>
+            <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph&#242;ng ban</a>
+            <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch&#7913;c v&#7909;</a>
             <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
-            <a th:href="@{/admin/contracts}" class="active"><i class="bi bi-file-text"></i> H?p d?ng</a>
-            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B?ng luong</a>
-            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh? phép</a>
-            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch?m công</a>
-            <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công vi?c</a>
-            <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
-            <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Ðánh giá KPI</a>
-            <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
-          <!-- Language Toggle -->
-          <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
-            <div class="lang-toggle" style="display:flex;align-items:center;gap:6px;justify-content:center;">
-              <button class="lang-btn" data-lang="vi"
-                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-                &#127475;&#127483; VI
-              </button>
-              <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
-              <button class="lang-btn" data-lang="en"
-                      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-                &#127468;&#127463; EN
-              </button>
+            <a class="active nav-parent" data-submenu-toggle="contract-options">
+                <span class="left"><i class="bi bi-file-text"></i> H&#7907;p &#273;&#7891;ng</span>
+                <i class="bi bi-caret-down-fill"></i>
+            </a>
+            <div id="contract-options" class="submenu">
+                <a th:href="@{/admin/contracts}">T&#7845;t c&#7843; h&#7907;p &#273;&#7891;ng</a>
+                <a th:href="@{/admin/contracts(contractType='NhÃ¢n viÃªn chÃ­nh thá»©c')}">Nh&#226;n vi&#234;n ch&#237;nh th&#7913;c</a>
+                <a th:href="@{/admin/contracts(contractType='NhÃ¢n viÃªn part-time')}">Nh&#226;n vi&#234;n part-time</a>
+                <a th:href="@{/admin/contracts(contractType='NhÃ¢n viÃªn thá»±c táº­p')}">Nh&#226;n vi&#234;n th&#7921;c t&#7853;p</a>
             </div>
-          </div>
-            <form th:action="@{/logout}" method="post" class="px-3 mt-4">
-                <button type="submit" class="btn btn-outline-light btn-sm w-100">
-                    <i class="bi bi-box-arrow-right"></i> Ðang xu?t
-                </button>
-            </form>
+            <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B&#7843;ng l&#432;&#417;ng</a>
+            <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh&#7881; ph&#233;p</a>
+            <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch&#7845;m c&#244;ng</a>
+            <a th:href="@{/admin/shifts}"><i class="bi bi-clock-history"></i> Ca l&#224;m vi&#7879;c</a>
+            <form th:action="@{/logout}" method="post" class="px-3 mt-4"><button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> &#272;&#259;ng xu&#7845;t</button></form>
         </nav>
 
-        <!-- Main -->
         <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb" class="mb-3">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" style="color:#11998e;text-decoration:none;">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/admin/contracts}" style="color:#11998e;text-decoration:none;">H?p d?ng</a></li>
-                    <li class="breadcrumb-item active" th:text="${contract.id != null ? 'Ch?nh s?a h?p d?ng' : 'Thêm h?p d?ng m?i'}">Thêm m?i</li>
-                </ol>
-            </nav>
-
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="form-card shadow-sm">
-                        <div class="form-card-header">
-                            <h4>
-                                <i class="bi bi-file-earmark-text me-2"></i>
-                                <span th:text="${contract.id != null ? 'Ch?nh S?a H?p Ð?ng' : 'Ký H?p Ð?ng M?i'}">Ký H?p Ð?ng M?i</span>
-                            </h4>
-                            <p>Qu?n lý h?p d?ng lao d?ng gi?a công ty và nhân viên</p>
-                        </div>
-                        <div class="form-card-body">
-                            <form th:action="@{/admin/contracts/save}" th:object="${contract}" method="post">
-                                <input type="hidden" th:field="*{id}"/>
-
-                                <!-- Section 1: Nhân viên -->
-                                <div class="section-divider">
-                                    <i class="bi bi-person-badge"></i> Thông Tin Nhân Viên
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label">
-                                        <i class="bi bi-person me-1 text-success"></i>Nhân viên ký h?p d?ng
-                                    </label>
-                                    <select class="form-select" th:field="*{user.id}" required>
-                                        <option value="">-- Ch?n nhân viên --</option>
-                                        <option th:each="u : ${users}"
-                                                th:value="${u.id}"
-                                                th:text="${u.fullName + ' — ' + (u.position != null ? u.position.positionName : 'Chua có ch?c v?') + ' | ' + (u.department != null ? u.department.departmentName : 'Chua gán PB')}">
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <!-- Section 2: Lo?i h?p d?ng -->
-                                <div class="section-divider">
-                                    <i class="bi bi-files"></i> Lo?i H?p Ð?ng
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label">Ch?n lo?i h?p d?ng</label>
-                                    <div class="contract-types" id="contractTypeBtns">
-                                        <button type="button" class="contract-type-btn" onclick="setType('Th? vi?c')">?? Th? vi?c</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('Chính th?c')">? Chính th?c</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('Bán th?i gian')">? Bán th?i gian</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('Th?i v?')">?? Th?i v?</button>
-                                        <button type="button" class="contract-type-btn" onclick="setType('CTV')">?? C?ng tác viên</button>
-                                    </div>
-                                    <input type="text" class="form-control mt-2" th:field="*{contractType}"
-                                           id="contractTypeInput" placeholder="Ho?c nh?p lo?i h?p d?ng..." required/>
-                                </div>
-
-                                <!-- Section 3: Th?i h?n -->
-                                <div class="section-divider">
-                                    <i class="bi bi-calendar-range"></i> Th?i H?n H?p Ð?ng
-                                </div>
-
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label">
-                                            <i class="bi bi-calendar-check me-1 text-success"></i>Ngày ký
-                                        </label>
-                                        <input type="date" class="form-control" th:field="*{signDate}" required/>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">
-                                            <i class="bi bi-calendar-x me-1 text-danger"></i>Ngày h?t h?n
-                                            <span class="text-muted fw-normal">(d? tr?ng = không xác d?nh)</span>
-                                        </label>
-                                        <input type="date" class="form-control" th:field="*{expiryDate}"/>
-                                    </div>
-                                </div>
-
-                                <!-- Section 4: Luong -->
-                                <div class="section-divider">
-                                    <i class="bi bi-cash-coin"></i> M?c Luong H?p Ð?ng
-                                </div>
-
-                                <div class="mb-4">
-                                    <label class="form-label">
-                                        <i class="bi bi-currency-dollar me-1 text-warning"></i>Luong co b?n (VNÐ)
-                                    </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">?</span>
-                                        <input type="number" class="form-control" th:field="*{baseSalaryOnContract}"
-                                               placeholder="Ví d?: 15000000" min="0" step="500000"/>
-                                    </div>
-                                    <div class="salary-hint">
-                                        <i class="bi bi-info-circle me-1"></i>
-                                        M?c luong này dùng d? làm co s? tính b?ng luong hàng tháng
-                                    </div>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="d-flex gap-3 pt-2">
-                                    <button type="submit" class="btn-submit">
-                                        <i class="bi bi-check-circle me-2"></i>
-                                        <span th:text="${contract.id != null ? 'C?p nh?t h?p d?ng' : 'Ký h?p d?ng'}">Ký h?p d?ng</span>
-                                    </button>
-                                    <a th:href="@{/admin/contracts}" class="btn btn-outline-secondary btn-cancel">
-                                        <i class="bi bi-arrow-left me-1"></i>Quay l?i
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <nav aria-label="breadcrumb" class="mb-3"><ol class="breadcrumb"><li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" style="color:#11998e;text-decoration:none;">Dashboard</a></li><li class="breadcrumb-item"><a th:href="@{/admin/contracts}" style="color:#11998e;text-decoration:none;">H&#7907;p &#273;&#7891;ng</a></li><li class="breadcrumb-item active" th:text="${contract.id != null ? 'Chinh sua hop dong' : 'Them hop dong moi'}">Them moi</li></ol></nav>
+            <div class="row justify-content-center"><div class="col-lg-8"><div class="form-card shadow-sm">
+                <div class="form-card-header"><h4><i class="bi bi-file-earmark-text me-2"></i><span th:text="${contract.id != null ? 'Chinh sua hop dong' : 'Ky hop dong moi'}">Ky hop dong moi</span></h4><p>Qu&#7843;n l&#253; h&#7907;p &#273;&#7891;ng lao &#273;&#7897;ng gi&#7919;a c&#244;ng ty v&#224; nh&#226;n vi&#234;n</p></div>
+                <div class="form-card-body"><form th:action="@{/admin/contracts/save}" th:object="${contract}" method="post">
+                    <input type="hidden" th:field="*{id}"/>
+                    <div class="section-divider"><i class="bi bi-person-badge"></i> Th&#244;ng tin nh&#226;n vi&#234;n</div>
+                    <div class="mb-4"><label class="form-label"><i class="bi bi-person me-1 text-success"></i>Nh&#226;n vi&#234;n k&#253; h&#7907;p &#273;&#7891;ng</label><select class="form-select" th:field="*{user.id}" required><option value="">-- Ch&#7885;n nh&#226;n vi&#234;n --</option><option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName + ' - ' + (u.position != null ? u.position.positionName : 'Chua co chuc vu') + ' | ' + (u.department != null ? u.department.departmentName : 'Chua gan PB')}"></option></select></div>
+                    <div class="section-divider"><i class="bi bi-files"></i> Lo&#7841;i h&#7907;p &#273;&#7891;ng</div>
+                    <div class="mb-4"><label class="form-label">Ch&#7885;n lo&#7841;i h&#7907;p &#273;&#7891;ng</label><div class="contract-types" id="contractTypeBtns"><button type="button" class="contract-type-btn">Nh&#226;n vi&#234;n ch&#237;nh th&#7913;c</button><button type="button" class="contract-type-btn">Nh&#226;n vi&#234;n part-time</button><button type="button" class="contract-type-btn">Nh&#226;n vi&#234;n th&#7921;c t&#7853;p</button></div><input type="text" class="form-control mt-2" th:field="*{contractType}" id="contractTypeInput" placeholder="Hoac nhap loai hop dong..." required/></div>
+                    <div class="section-divider"><i class="bi bi-calendar-range"></i> Th&#7901;i h&#7841;n h&#7907;p &#273;&#7891;ng</div>
+                    <div class="row g-3 mb-4"><div class="col-md-6"><label class="form-label"><i class="bi bi-calendar-check me-1 text-success"></i>Ng&#224;y k&#253;</label><input type="date" class="form-control" th:field="*{signDate}" required/></div><div class="col-md-6"><label class="form-label"><i class="bi bi-calendar-x me-1 text-danger"></i>Ng&#224;y h&#7871;t h&#7841;n <span class="text-muted fw-normal">(&#273;&#7875; tr&#7889;ng = kh&#244;ng x&#225;c &#273;&#7883;nh)</span></label><input type="date" class="form-control" th:field="*{expiryDate}"/></div></div>
+                    <div class="section-divider"><i class="bi bi-cash-coin"></i> M&#7913;c l&#432;&#417;ng h&#7907;p &#273;&#7891;ng</div>
+                    <div class="mb-4"><label class="form-label"><i class="bi bi-currency-dollar me-1 text-warning"></i>L&#432;&#417;ng c&#417; b&#7843;n (VND)</label><div class="input-group"><span class="input-group-text">VND</span><input type="number" class="form-control" th:field="*{baseSalaryOnContract}" placeholder="Vi du: 15000000" min="0" step="500000"/></div><div class="salary-hint"><i class="bi bi-info-circle me-1"></i>M&#7913;c l&#432;&#417;ng n&#224;y d&#249;ng l&#224;m c&#417; s&#7903; t&#237;nh b&#7843;ng l&#432;&#417;ng h&#224;ng th&#225;ng</div></div>
+                    <div class="d-flex gap-3 pt-2"><button type="submit" class="btn-submit"><i class="bi bi-check-circle me-2"></i><span th:text="${contract.id != null ? 'Cap nhat hop dong' : 'Ky hop dong'}">Ky hop dong</span></button><a th:href="@{/admin/contracts}" class="btn btn-outline-secondary btn-cancel"><i class="bi bi-arrow-left me-1"></i>Quay l&#7841;i</a></div>
+                </form></div>
+            </div></div></div>
         </main>
     </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function setType(type) {
-        document.getElementById('contractTypeInput').value = type;
+    function setContractType(button) {
+        document.getElementById('contractTypeInput').value = button.textContent.trim();
         document.querySelectorAll('.contract-type-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
+        button.classList.add('active');
     }
-
-    // Auto-select the current type button if editing
+    document.querySelectorAll('.contract-type-btn').forEach((button) => button.addEventListener('click', () => setContractType(button)));
     const currentType = document.getElementById('contractTypeInput').value;
-    if (currentType) {
-        document.querySelectorAll('.contract-type-btn').forEach(btn => {
-            if (btn.textContent.trim().includes(currentType)) btn.classList.add('active');
-        });
-    }
+    if (currentType) document.querySelectorAll('.contract-type-btn').forEach(btn => { if (btn.textContent.trim() === currentType) btn.classList.add('active'); });
 </script>
 <script th:src="@{/js/lang-toggle.js}"></script>
 <script th:src="@{/js/hrms-settings.js}"></script>
@@ -262,5 +108,14 @@
 <script th:src="@{/js/hrms-notifications.js}"></script>
 <script th:src="@{/js/hrms-ui.js}"></script>
 <script th:src="@{/js/hrms-datatable.js}"></script>
+<script>
+    document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const menu = document.getElementById(toggle.dataset.submenuToggle);
+            if (menu) menu.classList.toggle('open');
+
+        });
+    });
+</script>
 </body>
 </html>

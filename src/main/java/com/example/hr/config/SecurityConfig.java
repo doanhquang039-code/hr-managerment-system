@@ -39,7 +39,8 @@ public class SecurityConfig {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .ignoringRequestMatchers(
                         "/admin/payments/ipn/momo", "/admin/payment/ipn/momo",
-                        "/admin/payments/ipn/vnpay", "/admin/payment/ipn/vnpay"))
+                        "/admin/payments/ipn/vnpay", "/admin/payment/ipn/vnpay",
+                        "/api/lifestyle/health-insights"))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/index.html", "/login", "/login/**",

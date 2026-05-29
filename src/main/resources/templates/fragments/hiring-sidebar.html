@@ -4,6 +4,14 @@
     <!-- Hiring Sidebar Fragment -->
     <nav th:fragment="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <link rel="stylesheet" th:href="@{/css/chatbot-widget.css}">
+        <style>
+            .hiring-nav-parent { display:flex; align-items:center; justify-content:space-between; cursor:pointer; }
+            .hiring-nav-parent .left { display:inline-flex; align-items:center; }
+            .hiring-submenu { display:none; padding:2px 0 8px; }
+            .hiring-submenu.open { display:block; }
+            .hiring-submenu .nav-link { padding-left:2.7rem; font-size:.88rem; }
+            .hiring-nav-parent .bi-caret-down-fill { font-size:.68rem; color:#94a3b8; }
+        </style>
         <div class="position-sticky pt-3">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -24,9 +32,19 @@
                     </h6>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/hiring/jobs">
-                        <i class="bi bi-briefcase me-2"></i>Job Postings
+                    <a class="nav-link hiring-nav-parent" data-submenu-toggle="hiring-job-options">
+                        <span class="left"><i class="bi bi-briefcase me-2"></i>Job Postings</span>
+                        <i class="bi bi-caret-down-fill"></i>
                     </a>
+                    <div id="hiring-job-options" class="hiring-submenu">
+                        <a class="nav-link" href="/hiring/jobs">Tất cả tin tuyển</a>
+                        <a class="nav-link" href="/hiring/postings/add">Đăng tin mới</a>
+                        <a class="nav-link" href="/hiring/postings?category=FULL_TIME">Chính thức</a>
+                        <a class="nav-link" href="/hiring/postings?category=PART_TIME">Part-time</a>
+                        <a class="nav-link" href="/hiring/postings?category=INTERN">Intern</a>
+                        <a class="nav-link" href="/hiring/postings?category=JUNIOR">Junior</a>
+                        <a class="nav-link" href="/hiring/postings?category=SECURITY">Bảo vệ</a>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/hiring/jobs/create">
@@ -151,7 +169,14 @@
                 </form>
             </div>
         </div>
-        <script th:src="@{/js/chatbot-widget.js}"></script>
+                <script>
+            document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
+                toggle.addEventListener('click', () => {
+                    const menu = document.getElementById(toggle.dataset.submenuToggle);
+                    if (menu) menu.classList.toggle('open');
+                });
+            });
+        </script>        <script th:src="@{/js/chatbot-widget.js}"></script>
     </nav>
 </body>
 </html>

@@ -107,6 +107,7 @@ public class AdminController {
         }
         model.addAttribute("deptNames",  deptNames);
         model.addAttribute("deptCounts", deptCounts);
+        model.addAttribute("departments", depts);
 
         // === CHART 3: Leave statistics ===
         var allLeaves = leaveRepository.findAllWithUser(null);

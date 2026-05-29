@@ -9,8 +9,11 @@
         return null;
     }
 
-    function csrfHeaders() {
+    function csrfHeaders(form) {
         const headers = {};
+        const headerName = form?.dataset?.csrfHeader;
+        const token = form?.dataset?.csrfToken;
+        if (headerName && token) headers[headerName] = token;
         const xsrf = readXsrfCookie();
         if (xsrf) headers["X-XSRF-TOKEN"] = xsrf;
         return headers;
@@ -47,7 +50,7 @@
                     const response = await fetch("/api/lifestyle/health-insights", {
                         method: "POST",
                         credentials: "same-origin",
-                        headers: Object.assign({ "Content-Type": "application/json" }, csrfHeaders()),
+                        headers: Object.assign({ "Content-Type": "application/json" }, csrfHeaders(form)),
                         body: JSON.stringify(payload)
                     });
                     if (!response.ok) throw new Error("health_failed");

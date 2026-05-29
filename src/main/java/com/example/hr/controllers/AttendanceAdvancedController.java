@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -68,15 +70,25 @@ public class AttendanceAdvancedController {
     
     @GetMapping("/admin/shifts")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public String shiftList(Model model) {
-        model.addAttribute("shifts", attendanceService.getActiveShifts());
+    public String shiftList(@RequestParam(name = "period", required = false) String period, Model model) {
+        List<Shift> shifts = attendanceService.getActiveShifts();
+        if (period != null && !period.isBlank()) {
+            shifts = shifts.stream()
+                    .filter(shift -> matchesShiftPeriod(shift, period))
+                    .toList();
+        }
+        model.addAttribute("shifts", shifts);
+        model.addAttribute("selectedPeriod", period);
         return "admin/shift-list";
     }
     
     @GetMapping("/admin/shifts/add")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public String newShiftForm(Model model) {
-        model.addAttribute("shift", new Shift());
+    public String newShiftForm(@RequestParam(name = "period", required = false) String period, Model model) {
+        Shift shift = new Shift();
+        applyPeriodDefaults(shift, period);
+        model.addAttribute("shift", shift);
+        model.addAttribute("selectedPeriod", period);
         return "admin/shift-form";
     }
 
@@ -109,6 +121,67 @@ public class AttendanceAdvancedController {
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/shifts";
+    }
+
+    private boolean matchesShiftPeriod(Shift shift, String period) {
+        if (shift == null) {
+            return false;
+        }
+        String normalized = period.toLowerCase();
+        String name = shift.getName() != null ? shift.getName().toLowerCase() : "";
+        LocalTime start = shift.getStartTime();
+
+        if ("morning".equals(normalized)) {
+            return name.contains("sang") || name.contains("sáng")
+                    || (start != null && !start.isBefore(LocalTime.of(5, 0)) && start.isBefore(LocalTime.of(12, 0)));
+        }
+        if ("afternoon".equals(normalized)) {
+            return name.contains("chieu") || name.contains("chiều")
+                    || (start != null && !start.isBefore(LocalTime.of(12, 0)) && start.isBefore(LocalTime.of(17, 0)));
+        }
+        if ("evening".equals(normalized)) {
+            return name.contains("toi") || name.contains("tối")
+                    || (start != null && !start.isBefore(LocalTime.of(17, 0)) && start.isBefore(LocalTime.of(22, 0)));
+        }
+        if ("night".equals(normalized)) {
+            return name.contains("dem") || name.contains("đêm")
+                    || (start != null && (start.isBefore(LocalTime.of(5, 0)) || !start.isBefore(LocalTime.of(22, 0))));
+        }
+        return true;
+    }
+
+    private void applyPeriodDefaults(Shift shift, String period) {
+        if (period == null || period.isBlank()) {
+            return;
+        }
+        switch (period.toLowerCase()) {
+            case "morning" -> {
+                shift.setName("Ca sáng");
+                shift.setStartTime(LocalTime.of(8, 0));
+                shift.setEndTime(LocalTime.of(12, 0));
+            }
+            case "afternoon" -> {
+                shift.setName("Ca chiều");
+                shift.setStartTime(LocalTime.of(13, 0));
+                shift.setEndTime(LocalTime.of(17, 0));
+            }
+            case "evening" -> {
+                shift.setName("Ca tối");
+                shift.setStartTime(LocalTime.of(18, 0));
+                shift.setEndTime(LocalTime.of(22, 0));
+            }
+            case "night" -> {
+                shift.setName("Ca đêm");
+                shift.setStartTime(LocalTime.of(22, 0));
+                shift.setEndTime(LocalTime.of(6, 0));
+            }
+            default -> {
+                return;
+            }
+        }
+        shift.setGracePeriodMinutes(10);
+        shift.setOvertimeThresholdMinutes(30);
+        shift.setIsActive(true);
     }
     
     // ===== Location Management (Admin) =====

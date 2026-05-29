@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Locale;
 import java.util.List;
 
 @Controller
@@ -132,13 +133,44 @@ public class RecruitmentController {
     }
 
     @GetMapping("/postings")
-    public String listPostings(@RequestParam(required = false) String keyword, Model model) {
+    public String listPostings(@RequestParam(required = false) String keyword,
+                               @RequestParam(required = false) String category,
+                               Model model) {
         List<JobPosting> postings = (keyword != null && !keyword.isBlank())
                 ? jobPostingRepository.findByTitleContainingIgnoreCase(keyword)
                 : jobPostingRepository.findAll();
+        postings = filterPostingsByCategory(postings, category);
         model.addAttribute("postings", postings);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedCategory", category);
         return "hiring/posting-list";
+    }
+
+    private List<JobPosting> filterPostingsByCategory(List<JobPosting> postings, String category) {
+        if (category == null || category.isBlank()) {
+            return postings;
+        }
+        String normalized = category.trim().toUpperCase(Locale.ROOT);
+        return postings.stream()
+                .filter(p -> switch (normalized) {
+                    case "FULL_TIME" -> "FULL_TIME".equalsIgnoreCase(p.getEmploymentType());
+                    case "PART_TIME" -> "PART_TIME".equalsIgnoreCase(p.getEmploymentType());
+                    case "INTERN" -> "INTERNSHIP".equalsIgnoreCase(p.getEmploymentType())
+                            || "INTERN".equalsIgnoreCase(p.getExperienceLevel());
+                    case "JUNIOR" -> "ENTRY".equalsIgnoreCase(p.getExperienceLevel())
+                            || "JUNIOR".equalsIgnoreCase(p.getExperienceLevel());
+                    case "SECURITY" -> containsIgnoreCase(p.getTitle(), "bảo vệ")
+                            || containsIgnoreCase(p.getTitle(), "bao ve")
+                            || (p.getPosition() != null
+                            && (containsIgnoreCase(p.getPosition().getPositionName(), "bảo vệ")
+                            || containsIgnoreCase(p.getPosition().getPositionName(), "bao ve")));
+                    default -> true;
+                })
+                .toList();
+    }
+
+    private boolean containsIgnoreCase(String value, String text) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT));
     }
 
     @GetMapping("/postings/add")
