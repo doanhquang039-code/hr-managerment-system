@@ -2,20 +2,20 @@
     <div class="hrms-health-head">
         <div>
             <div class="hrms-health-kicker">Health insight</div>
-            <h2>Dự đoán sức khỏe làm việc</h2>
+            <h2>D&#7921; &#273;o&#225;n s&#7913;c kh&#7887;e l&#224;m vi&#7879;c</h2>
         </div>
         <i class="bi bi-heart-pulse"></i>
     </div>
     <form class="hrms-health-form" data-health-form
           th:attr="data-csrf-header=${_csrf.headerName},data-csrf-token=${_csrf.token}">
-        <label>Ngủ<input type="number" step="0.5" min="0" max="16" name="sleepHours" value="7"><span>giờ</span></label>
+        <label>Ng&#7911;<input type="number" step="0.5" min="0" max="16" name="sleepHours" value="7"><span>gi&#7901;</span></label>
         <label>Stress<input type="number" min="1" max="10" name="stressLevel" value="4"><span>/10</span></label>
-        <label>Bước<input type="number" min="0" name="steps" value="6000"><span>bước</span></label>
-        <label>Nước<input type="number" step="0.1" min="0" name="waterLiters" value="1.8"><span>lít</span></label>
-        <label>OT<input type="number" step="0.5" min="0" name="overtimeHours" value="0"><span>giờ</span></label>
-        <button type="submit"><i class="bi bi-activity"></i> Phân tích</button>
+        <label>B&#432;&#7899;c<input type="number" min="0" name="steps" value="6000"><span>b&#432;&#7899;c</span></label>
+        <label>N&#432;&#7899;c<input type="number" step="0.1" min="0" name="waterLiters" value="1.8"><span>l&#237;t</span></label>
+        <label>OT<input type="number" step="0.5" min="0" name="overtimeHours" value="0"><span>gi&#7901;</span></label>
+        <button type="submit"><i class="bi bi-activity"></i> Ph&#226;n t&#237;ch</button>
     </form>
     <div class="hrms-health-result" data-health-result>
-        Nhập dữ liệu sinh hoạt trong ngày để nhận cảnh báo tải việc và gợi ý cân bằng.
+        Nh&#7853;p d&#7919; li&#7879;u sinh ho&#7841;t trong ng&#224;y &#273;&#7875; nh&#7853;n c&#7843;nh b&#225;o t&#7843;i vi&#7879;c v&#224; g&#7907;i &#253; c&#226;n b&#7857;ng.
     </div>
 </div>

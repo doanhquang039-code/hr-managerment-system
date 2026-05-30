@@ -10,6 +10,10 @@ import java.util.List;
 public class HealthInsightService {
 
     public HealthInsightResult analyze(User user, HealthInsightInput input) {
+        if (input == null) {
+            input = new HealthInsightInput(null, null, null, null, null, null);
+        }
+
         double score = 100;
         List<String> recommendations = new ArrayList<>();
         List<String> flags = new ArrayList<>();
@@ -32,7 +36,7 @@ public class HealthInsightService {
         if (stress >= 8) {
             score -= 24;
             flags.add("Stress cao");
-            recommendations.add("Trao đổi với quản lý/HR nếu stress kéo dài; chia nhỏ việc và đặt giờ nghỉ ngắn.");
+            recommendations.add("Trao đổi với quản lý hoặc HR nếu stress kéo dài; chia nhỏ việc và đặt giờ nghỉ ngắn.");
         } else if (stress >= 6) {
             score -= 12;
             recommendations.add("Nên nghỉ 5 phút sau mỗi 60-90 phút làm việc tập trung.");
@@ -41,7 +45,7 @@ public class HealthInsightService {
         if (steps < 3000) {
             score -= 14;
             flags.add("Ít vận động");
-            recommendations.add("Đi bộ ngắn trong giờ nghỉ; mục tiêu tối thiểu 5.000-7.000 bước/ngày.");
+            recommendations.add("Đi bộ ngắn trong giờ nghỉ; mục tiêu tham khảo 5.000-7.000 bước mỗi ngày.");
         } else if (steps < 6000) {
             score -= 6;
             recommendations.add("Tăng vận động nhẹ, ví dụ đi cầu thang hoặc đi bộ sau bữa trưa.");
@@ -50,7 +54,7 @@ public class HealthInsightService {
         if (water < 1.2) {
             score -= 10;
             flags.add("Uống ít nước");
-            recommendations.add("Đặt nhắc uống nước; mục tiêu tham khảo 1.5-2 lít/ngày nếu không có chống chỉ định y tế.");
+            recommendations.add("Đặt nhắc uống nước; mục tiêu tham khảo 1.5-2 lít mỗi ngày nếu không có chống chỉ định y tế.");
         }
 
         if (overtime >= 4) {
@@ -68,7 +72,7 @@ public class HealthInsightService {
         } else if ("HIRING".equals(role)) {
             recommendations.add("Lịch phỏng vấn dày dễ gây mệt mỏi; chừa khoảng nghỉ giữa các buổi phỏng vấn.");
         } else if ("ADMIN".equals(role)) {
-            recommendations.add("Admin nên theo dõi xu hướng stress/OT ở cấp hệ thống thay vì chỉ từng cá nhân.");
+            recommendations.add("Admin nên theo dõi xu hướng stress và OT ở cấp hệ thống thay vì chỉ từng cá nhân.");
         }
 
         if (recommendations.isEmpty()) {
@@ -78,7 +82,7 @@ public class HealthInsightService {
         score = Math.max(0, Math.min(100, score));
         String riskLevel = score >= 80 ? "LOW" : score >= 60 ? "MEDIUM" : "HIGH";
         String summary = switch (riskLevel) {
-            case "HIGH" -> "Có dấu hiệu rủi ro sức khỏe/căng thẳng cao. Nên giảm tải và trao đổi với HR/quản lý nếu tình trạng kéo dài.";
+            case "HIGH" -> "Có dấu hiệu rủi ro sức khỏe hoặc căng thẳng cao. Nên giảm tải và trao đổi với HR/quản lý nếu tình trạng kéo dài.";
             case "MEDIUM" -> "Có vài chỉ số cần chú ý. Điều chỉnh ngủ, vận động, nước uống hoặc OT sẽ cải thiện đáng kể.";
             default -> "Chỉ số sinh hoạt đang tương đối ổn.";
         };

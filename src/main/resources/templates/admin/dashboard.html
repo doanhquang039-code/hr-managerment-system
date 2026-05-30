@@ -114,8 +114,16 @@
           </div>
           <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh toán</a>
           <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
-          <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
-          <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
+          <a class="nav-parent" data-submenu-toggle="leave-options">
+            <span class="left"><i class="bi bi-calendar-x"></i> Ngh&#7881; ph&#233;p</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="leave-options" class="submenu">
+            <a th:href="@{/admin/leaves}">T&#7845;t c&#7843; &#273;&#417;n ngh&#7881;</a>
+            <a th:href="@{/admin/leaves(status='PENDING')}">Ch&#7901; duy&#7879;t</a>
+            <a th:href="@{/admin/leaves(status='APPROVED')}">&#272;&#227; duy&#7879;t</a>
+            <a th:href="@{/admin/leaves(status='REJECTED')}">B&#7883; t&#7915; ch&#7889;i</a>
+          </div>          <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
           <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
           <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
           <a class="nav-parent" data-submenu-toggle="shift-options">
@@ -134,8 +142,17 @@
           <a th:href="@{/admin/kpi-goals}"><i class="bi bi-bullseye"></i> Mục tiêu KPI</a>
           <a th:href="@{/admin/skills}"><i class="bi bi-tools"></i> Kỹ năng NV</a>
           <a th:href="@{/admin/training}"><i class="bi bi-mortarboard"></i> Đào tạo</a>
-          <a th:href="@{/admin/videos}"><i class="bi bi-collection-play"></i> Video đào tạo</a>
-          <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
+          <a class="nav-parent" data-submenu-toggle="video-options">
+            <span class="left"><i class="bi bi-collection-play"></i> Video &#273;&#224;o t&#7841;o</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="video-options" class="submenu">
+            <a th:href="@{/admin/videos}">T&#7845;t c&#7843; video</a>
+            <a th:href="@{/admin/videos(category='Onboarding')}">Onboarding</a>
+            <a th:href="@{/admin/videos(category='Kỹ năng mềm')}">K&#7929; n&#259;ng m&#7873;m</a>
+            <a th:href="@{/admin/videos(category='Kỹ thuật')}">K&#7929; thu&#7853;t</a>
+            <a th:href="@{/admin/videos(category='An toàn lao động')}">An to&#224;n lao &#273;&#7897;ng</a>
+          </div>          <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi phí</a>
           <a th:href="@{/admin/assets}"><i class="bi bi-box-seam"></i> Tài sản</a>
           <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Thông báo</a>

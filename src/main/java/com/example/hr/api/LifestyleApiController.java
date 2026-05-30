@@ -27,9 +27,6 @@ public class LifestyleApiController {
     public ResponseEntity<HealthInsightResult> healthInsights(@RequestBody HealthInsightInput input,
                                                               Authentication authentication) {
         User user = authUserHelper.getCurrentUser(authentication);
-        if (user == null) {
-            return ResponseEntity.status(401).build();
-        }
         return ResponseEntity.ok(healthInsightService.analyze(user, input));
     }
 }
