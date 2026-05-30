@@ -1,36 +1,133 @@
-﻿<form th:action="@{/admin/positions/save}" th:object="${position}" method="post">
-    <input type="hidden" th:field="*{id}" />
-
-    <div class="mb-3">
-        <label class="form-label fw-bold">Tên chức vụ</label>
-        <input type="text" th:field="*{positionName}" class="form-control" required />
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${position.id != null ? 'Sửa chức vụ' : 'Thêm chức vụ mới'} + ' - HRMS Admin'">Thêm chức vụ - HRMS Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: Inter, sans-serif; }
+        body { margin: 0; background: linear-gradient(180deg,#eef2f7,#f8fafc); color: #0f172a; }
+        .sidebar { width: 248px; min-height: 100vh; position: fixed; inset: 0 auto 0 0; background: linear-gradient(180deg,#111827,#1f2937 48%,#0f172a); color: white; overflow-y: auto; }
+        .sidebar-logo { font-size: 1rem; font-weight: 800; letter-spacing: 1.5px; text-align: center; padding: 20px 16px 14px; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; color: #94a3b8; text-decoration: none; padding: 10px 20px; border-left: 3px solid transparent; transition: .2s; font-size: .86rem; }
+        .sidebar a:hover, .sidebar a.active { color: white; background: rgba(255,255,255,.07); border-left-color: #a855f7; }
+        .sidebar hr { border-color: rgba(255,255,255,.1); margin: 10px 16px; }
+        .nav-parent { justify-content: space-between; cursor: pointer; }
+        .nav-parent .left { display: inline-flex; align-items: center; gap: 10px; }
+        .nav-parent .bi-caret-down-fill { margin-left: auto; color: #cbd5e1; font-size: .68rem; }
+        .submenu { display: none; padding: 2px 0 8px; background: rgba(255,255,255,.03); }
+        .submenu.open { display: block; }
+        .submenu a { padding: 9px 20px 9px 48px; font-size: .84rem; color: #cbd5e1; }
+        .submenu a.active { color: white; background: rgba(168,85,247,.18); border-left-color: #a855f7; }
+        .main { margin-left: 248px; padding: 28px 30px 64px; }
+        .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+        .page-head h1 { margin: 0; font-size: 1.8rem; font-weight: 800; }
+        .page-sub { color: #64748b; margin-top: 5px; }
+        .layout { display: grid; grid-template-columns: minmax(0,1.4fr) 360px; gap: 20px; align-items: start; }
+        .panel { background: white; border: 1px solid #e2e8f0; border-radius: 22px; box-shadow: 0 16px 36px rgba(15,23,42,.08); overflow: hidden; }
+        .panel-head { padding: 18px 22px; border-bottom: 1px solid #e2e8f0; background: #fafcff; }
+        .panel-head h2 { font-size: 1.05rem; font-weight: 800; margin: 0; }
+        .panel-body { padding: 22px; }
+        .form-label { font-weight: 800; color: #1f2937; }
+        .form-control, .form-select { min-height: 46px; border-radius: 12px; border-color: #dbe3ef; }
+        .form-control:focus, .form-select:focus { border-color: #a855f7; box-shadow: 0 0 0 .2rem rgba(168,85,247,.15); }
+        .hint-card { background: linear-gradient(160deg,#0f172a,#312e81); color: white; border-radius: 22px; padding: 22px; box-shadow: 0 16px 36px rgba(15,23,42,.16); }
+        .hint-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 12px; }
+        .hint-card li { margin-bottom: 10px; color: #e0e7ff; }
+        .action-bar { position: sticky; bottom: 0; z-index: 10; margin-top: 18px; background: rgba(248,250,252,.9); backdrop-filter: blur(12px); border: 1px solid #e2e8f0; border-radius: 18px; padding: 12px; display: flex; justify-content: flex-end; gap: 10px; box-shadow: 0 -8px 24px rgba(15,23,42,.08); }
+        .btn-primary { background: linear-gradient(135deg,#a855f7,#7c3aed); border: none; }
+        .btn { border-radius: 12px; font-weight: 800; min-height: 44px; }
+        @media (max-width: 1199px) { .layout { grid-template-columns: 1fr; } }
+        @media (max-width: 991px) { .sidebar { position: relative; width: 100%; min-height: auto; } .main { margin-left: 0; padding: 20px 16px 56px; } }
+    </style>
+</head>
+<body>
+<aside class="sidebar">
+    <div class="sidebar-logo">&#9889; HRMS ADMIN</div>
+    <hr>
+    <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh&#226;n vi&#234;n</a>
+    <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph&#242;ng ban</a>
+    <a class="active nav-parent" data-submenu-toggle="position-options"><span class="left"><i class="bi bi-briefcase"></i> Ch&#7913;c v&#7909;</span><i class="bi bi-caret-down-fill"></i></a>
+    <div id="position-options" class="submenu open">
+        <a th:href="@{/admin/positions}">T&#7845;t c&#7843; ch&#7913;c v&#7909;</a>
+        <a class="active" th:href="@{/admin/positions/add}">Th&#234;m ch&#7913;c v&#7909; m&#7899;i</a>
+        <a th:each="p : ${allPositions}" th:href="@{/admin/users(positionId=${p.id})}" th:text="${p.positionName}">Ch&#7913;c v&#7909;</a>
     </div>
-
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Cấp độ (Level)</label>
-            <input type="number" th:field="*{jobLevel}" class="form-control" min="1" required />
+    <hr>
+    <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> H&#7907;p &#273;&#7891;ng</a>
+    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B&#7843;ng l&#432;&#417;ng</a>
+    <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> C&#244;ng vi&#7879;c</a>
+    <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Ph&#226;n c&#244;ng</a>
+    <hr>
+    <a th:href="@{/admin/kpi}"><i class="bi bi-bullseye"></i> M&#7909;c ti&#234;u KPI</a>
+    <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Th&#244;ng b&#225;o</a>
+</aside>
+<main class="main">
+    <section class="page-head">
+        <div>
+            <h1><i class="bi bi-briefcase text-primary me-2"></i><span th:text="${position.id != null ? 'Chỉnh sửa chức vụ' : 'Thêm chức vụ mới'}">Thêm chức vụ mới</span></h1>
+            <div class="page-sub">Thi&#7871;t l&#7853;p t&#234;n ch&#7913;c v&#7909;, c&#7845;p b&#7853;c, h&#7879; s&#7889; ph&#7909; c&#7845;p v&#224; l&#7897; tr&#236;nh th&#259;ng ti&#7871;n.</div>
         </div>
-
-        <div class="col-md-6 mb-3">
-            <label class="form-label fw-bold">Hệ số phụ cấp</label>
-            <input type="number" step="0.01" th:field="*{allowanceCoeff}" class="form-control" required />
+        <a th:href="@{/admin/positions}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Quay l&#7841;i</a>
+    </section>
+    <form th:action="@{/admin/positions/save}" th:object="${position}" method="post">
+        <input type="hidden" th:field="*{id}">
+        <div class="layout">
+            <section class="panel">
+                <div class="panel-head"><h2><i class="bi bi-pencil-square me-2 text-primary"></i>Th&#244;ng tin ch&#7913;c v&#7909;</h2></div>
+                <div class="panel-body">
+                    <div class="mb-3">
+                        <label class="form-label">T&#234;n ch&#7913;c v&#7909; <span class="text-danger">*</span></label>
+                        <input type="text" th:field="*{positionName}" class="form-control form-control-lg" placeholder="VD: Trưởng phòng Nhân sự, Kỹ sư phần mềm..." required>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">C&#7845;p &#273;&#7897; (Level)</label>
+                            <input type="number" th:field="*{jobLevel}" class="form-control" min="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">H&#7879; s&#7889; ph&#7909; c&#7845;p</label>
+                            <input type="number" step="0.01" th:field="*{allowanceCoeff}" class="form-control" min="0" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Ch&#7913;c v&#7909; th&#259;ng ti&#7871;n ti&#7871;p theo</label>
+                            <select th:field="*{nextPosition}" class="form-select">
+                                <option value="">Kh&#244;ng c&#243; - k&#7883;ch tr&#7847;n</option>
+                                <option th:each="p : ${allPositions}" th:if="${position.id == null or p.id != position.id}" th:value="${p.id}" th:text="${p.positionName}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <aside class="hint-card">
+                <h3><i class="bi bi-lightbulb me-2"></i>G&#7907;i &#253; thi&#7871;t l&#7853;p</h3>
+                <ul class="mb-0 ps-3">
+                    <li>Level n&#234;n t&#259;ng d&#7847;n theo th&#7913; b&#7853;c trong c&#244;ng ty.</li>
+                    <li>H&#7879; s&#7889; ph&#7909; c&#7845;p d&#249;ng cho t&#237;nh l&#432;&#417;ng/ph&#7909; c&#7845;p.</li>
+                    <li>Ch&#7913;c v&#7909; th&#259;ng ti&#7871;n gi&#250;p th&#7875; hi&#7879;n l&#7897; tr&#236;nh ngh&#7873; nghi&#7879;p.</li>
+                </ul>
+            </aside>
         </div>
-    </div>
-
-	<div class="mb-4">
-	    <label class="form-label fw-bold">Chức vụ thăng tiến tiếp theo</label>
-	    <select th:field="*{nextPosition}" class="form-select">
-	        <option value="">-- Không có (Kịch trần) --</option>
-	        <option th:each="p : ${allPositions}" 
-	                th:if="${position.id == null or p.id != position.id}" 
-	                th:value="${p.id}" 
-	                th:text="${p.positionName}"></option>
-	    </select>
-	</div>
-
-    <div class="d-flex justify-content-between">
-        <a th:href="@{/admin/positions}" class="btn btn-outline-secondary px-4">Quay lại</a>
-        <button type="submit" class="btn btn-success px-4">Lưu chức vụ</button>
-    </div>
-</form>
+        <div class="action-bar">
+            <a th:href="@{/admin/positions}" class="btn btn-outline-secondary px-4">H&#7911;y</a>
+            <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i><span th:text="${position.id != null ? 'Cập nhật chức vụ' : 'Tạo chức vụ'}">Tạo chức vụ</span></button>
+        </div>
+    </form>
+</main>
+<script>
+    document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const menu = document.getElementById(toggle.dataset.submenuToggle);
+            if (menu) menu.classList.toggle('open');
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/hrms-settings.js}"></script>
+<script th:src="@{/js/hrms-ui.js}"></script>
+</body>
+</html>

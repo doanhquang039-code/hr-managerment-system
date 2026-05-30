@@ -92,7 +92,15 @@
             <a th:href="@{/admin/departments}">Tất cả phòng ban</a>
             <a th:each="d : ${departments}" th:href="@{/admin/departments/{id}/members(id=${d.id})}" th:text="${d.departmentName}">Phòng ban</a>
           </div>
-          <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+          <a class="nav-parent" data-submenu-toggle="position-options">
+            <span class="left"><i class="bi bi-briefcase"></i> Ch&#7913;c v&#7909;</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="position-options" class="submenu">
+            <a th:href="@{/admin/positions}">T&#7845;t c&#7843; ch&#7913;c v&#7909;</a>
+            <a th:href="@{/admin/positions/add}">Th&#234;m ch&#7913;c v&#7909; m&#7899;i</a>
+            <a th:each="p : ${positions}" th:href="@{/admin/users(positionId=${p.id})}" th:text="${p.positionName}">Ch&#7913;c v&#7909;</a>
+          </div>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <a class="nav-parent" data-submenu-toggle="contract-options">
             <span class="left"><i class="bi bi-file-text"></i> Hợp đồng</span>
@@ -112,8 +120,17 @@
             <a th:href="@{/admin/payroll}">Tất cả phòng ban</a>
             <a th:each="d : ${departments}" th:href="@{/admin/payroll(departmentId=${d.id})}" th:text="${d.departmentName}">Phòng ban</a>
           </div>
-          <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh toán</a>
-          <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
+          <a class="nav-parent" data-submenu-toggle="payment-options">
+            <span class="left"><i class="bi bi-bank"></i> Thanh to&#225;n</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="payment-options" class="submenu">
+            <a th:href="@{/admin/payments}">T&#7845;t c&#7843; thanh to&#225;n</a>
+            <a th:href="@{/admin/payments(status='PENDING')}">Ch&#7901; x&#7917; l&#253;</a>
+            <a th:href="@{/admin/payments(status='PROCESSING')}">&#272;ang x&#7917; l&#253;</a>
+            <a th:href="@{/admin/payments(status='COMPLETED')}">Ho&#224;n th&#224;nh</a>
+            <a th:href="@{/admin/payments(status='FAILED')}">Th&#7845;t b&#7841;i</a>
+          </div>          <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
           <a class="nav-parent" data-submenu-toggle="leave-options">
             <span class="left"><i class="bi bi-calendar-x"></i> Ngh&#7881; ph&#233;p</span>
             <i class="bi bi-caret-down-fill"></i>
@@ -124,8 +141,25 @@
             <a th:href="@{/admin/leaves(status='APPROVED')}">&#272;&#227; duy&#7879;t</a>
             <a th:href="@{/admin/leaves(status='REJECTED')}">B&#7883; t&#7915; ch&#7889;i</a>
           </div>          <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-          <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> Công việc</a>
-          <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
+          <a class="nav-parent" data-submenu-toggle="task-options">
+            <span class="left"><i class="bi bi-list-task"></i> C&#244;ng vi&#7879;c</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="task-options" class="submenu">
+            <a th:href="@{/admin/tasks}">Xem all</a>
+            <a th:href="@{/admin/tasks(extraShift=true)}">T&#259;ng ca</a>
+            <a th:href="@{/admin/tasks(extraShift=false)}">Kh&#244;ng t&#259;ng ca</a>
+          </div>
+          <a class="nav-parent" data-submenu-toggle="assignment-options">
+            <span class="left"><i class="bi bi-person-check"></i> Ph&#226;n c&#244;ng</span>
+            <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <div id="assignment-options" class="submenu">
+            <a th:href="@{/admin/assignments}">Xem all</a>
+            <a th:href="@{/admin/assignments(status='IN_PROGRESS')}">&#272;ang l&#224;m</a>
+            <a th:href="@{/admin/assignments(status='PENDING')}">Ch&#7901;</a>
+            <a th:href="@{/admin/assignments(status='COMPLETED')}">Ho&#224;n th&#224;nh</a>
+          </div>
           <a class="nav-parent" data-submenu-toggle="shift-options">
             <span class="left"><i class="bi bi-clock-history"></i> Ca làm việc</span>
             <i class="bi bi-caret-down-fill"></i>
@@ -139,7 +173,7 @@
           </div>
           <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
-          <a th:href="@{/admin/kpi-goals}"><i class="bi bi-bullseye"></i> Mục tiêu KPI</a>
+          <a th:href="@{/admin/kpi}"><i class="bi bi-bullseye"></i> Mục tiêu KPI</a>
           <a th:href="@{/admin/skills}"><i class="bi bi-tools"></i> Kỹ năng NV</a>
           <a th:href="@{/admin/training}"><i class="bi bi-mortarboard"></i> Đào tạo</a>
           <a class="nav-parent" data-submenu-toggle="video-options">

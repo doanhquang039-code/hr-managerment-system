@@ -157,7 +157,15 @@
     </div>
     <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
     <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Phòng ban</a>
-    <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
+    <a class="nav-parent" data-submenu-toggle="position-options">
+        <span class="left"><i class="bi bi-briefcase"></i> Ch&#7913;c v&#7909;</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="position-options" class="submenu">
+        <a th:href="@{/admin/positions}">T&#7845;t c&#7843; ch&#7913;c v&#7909;</a>
+        <a th:href="@{/admin/positions/add}">Th&#234;m ch&#7913;c v&#7909; m&#7899;i</a>
+        <a th:each="p : ${positions}" th:classappend="${selectedPositionId == p.id ? ' active' : ''}" th:href="@{/admin/users(positionId=${p.id})}" th:text="${p.positionName}">Ch&#7913;c v&#7909;</a>
+    </div>
     <hr>
     <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
     <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
@@ -234,6 +242,14 @@
                         <option value="">Tất cả</option>
                         <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}"
                                 th:selected="${d.id == selectedDeptId}"></option>
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <label class="form-label">Ch&#7913;c v&#7909;</label>
+                    <select name="positionId" class="form-select">
+                        <option value="">T&#7845;t c&#7843;</option>
+                        <option th:each="p : ${positions}" th:value="${p.id}" th:text="${p.positionName}"
+                                th:selected="${p.id == selectedPositionId}"></option>
                     </select>
                 </div>
                 <div class="col-lg-2 col-md-6">

@@ -15,6 +15,13 @@
         .sidebar a { display: flex; align-items: center; gap: 10px; color: #94a3b8; text-decoration: none; padding: 10px 20px; border-left: 3px solid transparent; transition: all .2s; font-size: .86rem; }
         .sidebar a:hover, .sidebar a.active { color: white; background: rgba(255,255,255,.07); border-left-color: #06b6d4; }
         .sidebar hr { border-color: rgba(255,255,255,.1); margin: 10px 16px; }
+        .nav-parent { justify-content: space-between; cursor: pointer; }
+        .nav-parent .left { display: inline-flex; align-items: center; gap: 10px; }
+        .nav-parent .bi-caret-down-fill { margin-left: auto; color: #cbd5e1; font-size: .68rem; }
+        .submenu { display: none; padding: 4px 0 8px; background: rgba(255,255,255,.04); }
+        .submenu.open { display: block; }
+        .submenu a { padding: 9px 20px 9px 48px; font-size: .84rem; color: #cbd5e1; border-left: 3px solid transparent; }
+        .submenu a.active { color: white; background: rgba(99,102,241,.18); border-left-color: #6366f1; }
         .main { margin-left: 248px; padding: 28px 30px 56px; }
         .page-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
         .page-title h1 { margin: 0; font-size: 1.8rem; font-weight: 800; }
@@ -57,16 +64,42 @@
     <hr>
     <a th:href="@{/admin/contracts}"><i class="bi bi-file-text"></i> Hợp đồng</a>
     <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> Bảng lương</a>
-    <a th:href="@{/admin/payments}"><i class="bi bi-bank"></i> Thanh toán</a>
-    <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
+    <a class="nav-parent" data-submenu-toggle="payment-options">
+        <span class="left"><i class="bi bi-bank"></i> Thanh to&#225;n</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="payment-options" class="submenu">
+        <a th:classappend="${status == null ? ' active' : ''}" th:href="@{/admin/payments}">T&#7845;t c&#7843; thanh to&#225;n</a>
+        <a th:classappend="${status == 'PENDING' ? ' active' : ''}" th:href="@{/admin/payments(status='PENDING')}">Ch&#7901; x&#7917; l&#253;</a>
+        <a th:classappend="${status == 'PROCESSING' ? ' active' : ''}" th:href="@{/admin/payments(status='PROCESSING')}">&#272;ang x&#7917; l&#253;</a>
+        <a th:classappend="${status == 'COMPLETED' ? ' active' : ''}" th:href="@{/admin/payments(status='COMPLETED')}">Ho&#224;n th&#224;nh</a>
+        <a th:classappend="${status == 'FAILED' ? ' active' : ''}" th:href="@{/admin/payments(status='FAILED')}">Th&#7845;t b&#7841;i</a>
+    </div>    <a th:href="@{/admin/documents}"><i class="bi bi-folder2-open"></i> Tài liệu</a>
     <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Nghỉ phép</a>
     <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Chấm công</a>
-    <a th:href="@{/admin/tasks}" class="active"><i class="bi bi-list-task"></i> Công việc</a>
-    <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Phân công</a>
+    <a class="nav-parent" data-submenu-toggle="task-options">
+        <span class="left"><i class="bi bi-list-task"></i> C&#244;ng vi&#7879;c</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="task-options" class="submenu">
+        <a th:classappend="${selectedExtraShift == null ? ' active' : ''}" th:href="@{/admin/tasks}">Xem all</a>
+        <a th:classappend="${selectedExtraShift == true ? ' active' : ''}" th:href="@{/admin/tasks(extraShift=true)}">T&#259;ng ca</a>
+        <a th:classappend="${selectedExtraShift == false ? ' active' : ''}" th:href="@{/admin/tasks(extraShift=false)}">Kh&#244;ng t&#259;ng ca</a>
+    </div>
+    <a class="nav-parent" data-submenu-toggle="assignment-options">
+        <span class="left"><i class="bi bi-person-check"></i> Ph&#226;n c&#244;ng</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="assignment-options" class="submenu">
+        <a th:href="@{/admin/assignments}">Xem all</a>
+        <a th:href="@{/admin/assignments(status='IN_PROGRESS')}">&#272;ang l&#224;m</a>
+        <a th:href="@{/admin/assignments(status='PENDING')}">Ch&#7901;</a>
+        <a th:href="@{/admin/assignments(status='COMPLETED')}">Ho&#224;n th&#224;nh</a>
+    </div>
     <a th:href="@{/admin/shifts}"><i class="bi bi-clock-history"></i> Ca làm việc</a>
     <hr>
     <a th:href="@{/admin/reviews}"><i class="bi bi-star-half"></i> Đánh giá KPI</a>
-    <a th:href="@{/admin/kpi-goals}"><i class="bi bi-bullseye"></i> Mục tiêu KPI</a>
+    <a th:href="@{/admin/kpi}"><i class="bi bi-bullseye"></i> Mục tiêu KPI</a>
     <a th:href="@{/admin/skills}"><i class="bi bi-tools"></i> Kỹ năng NV</a>
     <a th:href="@{/admin/training}"><i class="bi bi-mortarboard"></i> Đào tạo</a>
     <hr>
@@ -96,10 +129,10 @@
             <p>Tạo task theo khoảng ngày cụ thể, lọc, sắp xếp và xuất báo cáo.</p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a th:href="@{/admin/tasks/export/excel(keyword=${keyword},taskType=${selectedTaskType},startDate=${startDate},endDate=${endDate},sortBy=${sortBy},direction=${direction})}" class="btn btn-outline-success btn-soft">
+            <a th:href="@{/admin/tasks/export/excel(keyword=${keyword},taskType=${selectedTaskType},extraShift=${selectedExtraShift},startDate=${startDate},endDate=${endDate},sortBy=${sortBy},direction=${direction})}" class="btn btn-outline-success btn-soft">
                 <i class="bi bi-file-earmark-excel"></i> Excel
             </a>
-            <a th:href="@{/admin/tasks/export/pdf(keyword=${keyword},taskType=${selectedTaskType},startDate=${startDate},endDate=${endDate},sortBy=${sortBy},direction=${direction})}" class="btn btn-outline-danger btn-soft">
+            <a th:href="@{/admin/tasks/export/pdf(keyword=${keyword},taskType=${selectedTaskType},extraShift=${selectedExtraShift},startDate=${startDate},endDate=${endDate},sortBy=${sortBy},direction=${direction})}" class="btn btn-outline-danger btn-soft">
                 <i class="bi bi-file-earmark-pdf"></i> PDF
             </a>
             <a th:href="@{/admin/tasks/add}" class="btn btn-primary btn-soft">
@@ -217,7 +250,14 @@
     </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const menu = document.getElementById(toggle.dataset.submenuToggle);
+            if (menu) menu.classList.toggle('open');
+        });
+    });
+</script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/lang-toggle.js}"></script>
 <script th:src="@{/js/hrms-settings.js}"></script>
 <script th:src="@{/js/hrms-search.js}"></script>

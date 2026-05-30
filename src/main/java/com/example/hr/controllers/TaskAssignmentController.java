@@ -51,6 +51,7 @@ public class TaskAssignmentController {
     @Transactional(readOnly = true)
     public String list(@RequestParam(name = "departmentId", required = false) Integer departmentId,
                        @RequestParam(name = "keyword", required = false) String keyword,
+                       @RequestParam(name = "status", required = false) TaskStatus status,
                        Model model) {
         List<TaskAssignment> assignments = assignmentRepository.findAllWithUser();
 
@@ -71,6 +72,12 @@ public class TaskAssignmentController {
                             || (a.getTask() != null
                             && a.getTask().getTaskName() != null
                             && a.getTask().getTaskName().toLowerCase().contains(normalized)))
+                    .collect(Collectors.toList());
+        }
+
+        if (status != null) {
+            assignments = assignments.stream()
+                    .filter(a -> a.getStatus() == status)
                     .collect(Collectors.toList());
         }
 
@@ -100,6 +107,7 @@ public class TaskAssignmentController {
         model.addAttribute("assignments", assignments);
         model.addAttribute("departments", departments);
         model.addAttribute("selectedDepartmentId", departmentId);
+        model.addAttribute("selectedStatus", status);
         model.addAttribute("keyword", keyword);
         model.addAttribute("assignmentManagers", assignmentManagers);
         model.addAttribute("statuses", TaskStatus.values());

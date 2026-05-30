@@ -48,6 +48,7 @@ public class TaskController {
     @GetMapping
     public String list(@RequestParam(name = "keyword", required = false) String keyword,
                        @RequestParam(name = "taskType", required = false) String taskType,
+                       @RequestParam(name = "extraShift", required = false) Boolean extraShift,
                        @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                        @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
@@ -61,7 +62,7 @@ public class TaskController {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, buildSort(normalizedSortBy, normalizedDirection));
         
         String normalizedKeyword = keyword != null && !keyword.isBlank() ? keyword.trim() : null;
-        org.springframework.data.domain.Page<Task> taskPage = taskRepository.searchTasks(normalizedKeyword, type, startDate, endDate, pageable);
+        org.springframework.data.domain.Page<Task> taskPage = taskRepository.searchTasks(normalizedKeyword, type, extraShift, startDate, endDate, pageable);
 
         model.addAttribute("tasks", taskPage.getContent());
         model.addAttribute("taskPage", taskPage);
@@ -70,6 +71,7 @@ public class TaskController {
         model.addAttribute("totalItems", taskPage.getTotalElements());
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedTaskType", taskType);
+        model.addAttribute("selectedExtraShift", extraShift);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
         model.addAttribute("sortBy", normalizedSortBy);
@@ -127,13 +129,14 @@ public class TaskController {
     @GetMapping("/export/excel")
     public void exportExcel(@RequestParam(name = "keyword", required = false) String keyword,
                             @RequestParam(name = "taskType", required = false) String taskType,
+                            @RequestParam(name = "extraShift", required = false) Boolean extraShift,
                             @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                             @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                             @RequestParam(name = "direction", defaultValue = "desc") String direction,
                             HttpServletResponse response) throws IOException {
         String normalizedKeyword = keyword != null && !keyword.isBlank() ? keyword.trim() : null;
-        List<Task> tasks = taskRepository.searchTasks(normalizedKeyword, parseTaskType(taskType), startDate, endDate,
+        List<Task> tasks = taskRepository.searchTasks(normalizedKeyword, parseTaskType(taskType), extraShift, startDate, endDate,
                 org.springframework.data.domain.PageRequest.of(0, Integer.MAX_VALUE, buildSort(normalizeSortBy(sortBy), normalizeDirection(direction)))).getContent();
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -167,13 +170,14 @@ public class TaskController {
     @GetMapping("/export/pdf")
     public void exportPdf(@RequestParam(name = "keyword", required = false) String keyword,
                           @RequestParam(name = "taskType", required = false) String taskType,
+                          @RequestParam(name = "extraShift", required = false) Boolean extraShift,
                           @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                           @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                           @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
                           @RequestParam(name = "direction", defaultValue = "desc") String direction,
                           HttpServletResponse response) throws IOException {
         String normalizedKeyword = keyword != null && !keyword.isBlank() ? keyword.trim() : null;
-        List<Task> tasks = taskRepository.searchTasks(normalizedKeyword, parseTaskType(taskType), startDate, endDate, org.springframework.data.domain.PageRequest.of(0, Integer.MAX_VALUE, buildSort(normalizeSortBy(sortBy), normalizeDirection(direction)))).getContent();
+        List<Task> tasks = taskRepository.searchTasks(normalizedKeyword, parseTaskType(taskType), extraShift, startDate, endDate, org.springframework.data.domain.PageRequest.of(0, Integer.MAX_VALUE, buildSort(normalizeSortBy(sortBy), normalizeDirection(direction)))).getContent();
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=tasks.pdf");

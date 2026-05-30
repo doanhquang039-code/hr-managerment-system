@@ -44,6 +44,7 @@ public class JobPositionController {
 
         model.addAttribute("positionPage", positionPage);
         model.addAttribute("positions", positionPage.getContent());
+        model.addAttribute("allPositions", positionRepository.findByActiveTrue());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", positionPage.getTotalPages());
         model.addAttribute("totalItems", positionPage.getTotalElements());

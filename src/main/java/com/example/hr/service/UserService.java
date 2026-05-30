@@ -77,7 +77,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public org.springframework.data.domain.Page<User> findAdminUsers(String keyword, Integer deptId, String role, org.springframework.data.domain.Pageable pageable) {
+    public org.springframework.data.domain.Page<User> findAdminUsers(String keyword, Integer deptId, Integer positionId, String role, org.springframework.data.domain.Pageable pageable) {
         com.example.hr.enums.Role roleEnum = null;
         if (role != null && !role.isBlank()) {
             try {
@@ -86,7 +86,7 @@ public class UserService {
                 // Ignore invalid role
             }
         }
-        return userRepository.searchActiveUsersForAdmin(keyword, deptId, roleEnum, pageable);
+        return userRepository.searchActiveUsersForAdmin(keyword, deptId, positionId, roleEnum, pageable);
     }
 
     @Transactional(readOnly = true)

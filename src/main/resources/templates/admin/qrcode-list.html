@@ -3,220 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý QR Code - HR System</title>
+    <title>Qu&#7843;n l&#253; QR Code - HRMS Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .stats-card {
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-        .stats-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            transform: translate(30px, -30px);
-        }
-        .stats-card h5 {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-        .stats-card h2 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 0;
-        }
-        .qr-type-badge {
-            font-size: 0.8rem;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-        .scan-count {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-        }
-        .action-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 2px;
-            transition: all 0.3s;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .table th {
-            background: #f8f9fa;
-            border: none;
-            font-weight: 600;
-            color: #495057;
-            padding: 15px 12px;
-        }
-        .table td {
-            padding: 15px 12px;
-            vertical-align: middle;
-            border-color: #e9ecef;
-        }
-        .table tbody tr:hover {
-            background-color: #f8f9fa;
-        }
+        * { font-family: Inter, sans-serif; }
+        body { margin: 0; background: #eef2f7; color: #0f172a; }
+        .sidebar { width: 248px; min-height: 100vh; position: fixed; inset: 0 auto 0 0; background: linear-gradient(180deg,#111827,#1f2937 48%,#0f172a); color: white; overflow-y: auto; }
+        .sidebar-logo { font-size: 1rem; font-weight: 800; letter-spacing: 1.5px; text-align: center; padding: 20px 16px 14px; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; color: #94a3b8; text-decoration: none; padding: 10px 20px; border-left: 3px solid transparent; font-size: .86rem; transition: .2s; }
+        .sidebar a:hover, .sidebar a.active { color: white; background: rgba(255,255,255,.07); border-left-color: #0ea5e9; }
+        .sidebar hr { border-color: rgba(255,255,255,.1); margin: 10px 16px; }
+        .main { margin-left: 248px; padding: 28px 30px 56px; }
+        .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+        .page-head h1 { font-size: 1.9rem; font-weight: 800; margin: 0; }
+        .page-sub { color: #64748b; margin-top: 4px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; border: 1px solid #e2e8f0; border-radius: 18px; padding: 18px; box-shadow: 0 12px 28px rgba(15,23,42,.07); position: relative; overflow: hidden; }
+        .stat-card::after { content: ''; position: absolute; right: -28px; top: -28px; width: 96px; height: 96px; border-radius: 999px; background: rgba(14,165,233,.12); }
+        .stat-label { color: #64748b; font-size: .78rem; text-transform: uppercase; font-weight: 800; letter-spacing: .06em; }
+        .stat-value { font-size: 2rem; font-weight: 800; margin-top: 10px; }
+        .panel { background: white; border: 1px solid #e2e8f0; border-radius: 18px; overflow: hidden; box-shadow: 0 12px 28px rgba(15,23,42,.07); }
+        .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid #e2e8f0; }
+        .panel-head h2 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+        table th { background: #f8fafc!important; color: #475569; font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; padding: 14px 16px!important; }
+        table td { padding: 14px 16px!important; vertical-align: middle; border-color: #eef2f7; }
+        .type-badge { border-radius: 999px; padding: 6px 10px; font-weight: 800; font-size: .76rem; }
+        .scan-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 34px; padding: 5px 10px; border-radius: 999px; background: #e0f2fe; color: #0369a1; font-weight: 800; }
+        .action-btn { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; }
+        .empty-state { text-align: center; padding: 56px 20px; color: #64748b; }
+        @media (max-width: 1199px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 991px) { .sidebar { position: relative; width: 100%; min-height: auto; } .main { margin-left: 0; padding: 20px 16px 40px; } .stat-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Include sidebar -->
-            <div th:replace="fragments/admin-sidebar :: sidebar"></div>
-            
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-qr-code me-2 text-primary"></i>Quản lý QR Code</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a th:href="@{/admin/qrcode/create}" class="btn btn-primary">
-                            <i class="bi bi-plus-circle me-1"></i>Tạo QR Code mới
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Flash messages -->
-                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle me-2"></i><span th:text="${success}"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-
-                <!-- Statistics Cards -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            <h5>Tổng QR Code</h5>
-                            <h2 th:text="${stats != null ? stats.totalQRCodes : 0}">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                            <h5>Đang hoạt động</h5>
-                            <h2 th:text="${stats != null ? stats.activeQRCodes : 0}">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                            <h5>Tổng lượt quét</h5>
-                            <h2 th:text="${stats != null ? stats.totalScans : 0}">0</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                            <h5>Quét hôm nay</h5>
-                            <h2 th:text="${stats != null ? stats.todayScans : 0}">0</h2>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- QR Codes Table -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Danh sách QR Code</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Tên</th>
-                                        <th>Loại</th>
-                                        <th>Vị trí</th>
-                                        <th>Lượt quét</th>
-                                        <th>Trạng thái</th>
-                                        <th>Ngày tạo</th>
-                                        <th>Thao tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="qr : ${qrCodes}">
-                                        <td>
-                                            <span class="badge bg-light text-dark" th:text="${qr.id}">1</span>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <strong th:text="${qr.name}">Main Entrance</strong>
-                                                <br>
-                                                <small class="text-muted" th:text="${qr.description}">Description</small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge qr-type-badge bg-primary" th:text="${qr.type}">CHECK_IN</span>
-                                        </td>
-                                        <td>
-                                            <i class="bi bi-geo-alt text-muted me-1"></i>
-                                            <span th:text="${qr.location}">Building A</span>
-                                        </td>
-                                        <td>
-                                            <span class="scan-count" th:text="${qr.scanCount}">0</span>
-                                        </td>
-                                        <td>
-                                            <span th:if="${qr.isActive}" class="badge bg-success">
-                                                <i class="bi bi-check-circle me-1"></i>Hoạt động
-                                            </span>
-                                            <span th:unless="${qr.isActive}" class="badge bg-secondary">
-                                                <i class="bi bi-pause-circle me-1"></i>Tạm dừng
-                                            </span>
-                                        </td>
-                                        <td th:text="${#temporals.format(qr.createdAt, 'dd/MM/yyyy')}">01/01/2024</td>
-                                        <td>
-                                            <a th:href="@{/admin/qrcode/view/{id}(id=${qr.id})}" 
-                                               class="btn btn-info action-btn" title="Xem chi tiết">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a th:href="@{/admin/qrcode/edit/{id}(id=${qr.id})}" 
-                                               class="btn btn-warning action-btn" title="Sửa">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <form th:action="@{/admin/qrcode/delete/{id}(id=${qr.id})}" method="post" style="display:inline;">
-                                                <button type="submit" class="btn btn-danger action-btn" 
-                                                        onclick="return confirm('Bạn có chắc muốn xóa QR Code này?')" title="Xóa">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    <tr th:if="${#lists.isEmpty(qrCodes)}">
-                                        <td colspan="8" class="text-center py-5">
-                                            <i class="bi bi-qr-code" style="font-size: 4rem; color: #dee2e6;"></i>
-                                            <p class="text-muted mt-3 mb-3">Chưa có QR Code nào</p>
-                                            <a th:href="@{/admin/qrcode/create}" class="btn btn-primary">
-                                                <i class="bi bi-plus-circle me-1"></i>Tạo QR Code đầu tiên
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<aside class="sidebar">
+    <div class="sidebar-logo">&#9889; HRMS ADMIN</div>
+    <hr>
+    <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh&#226;n vi&#234;n</a>
+    <a th:href="@{/admin/departments}"><i class="bi bi-building"></i> Ph&#242;ng ban</a>
+    <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Ch&#7913;c v&#7909;</a>
+    <hr>
+    <a th:href="@{/admin/attendance}"><i class="bi bi-clipboard-check"></i> Ch&#7845;m c&#244;ng</a>
+    <a th:href="@{/admin/leaves}"><i class="bi bi-calendar-x"></i> Ngh&#7881; ph&#233;p</a>
+    <a th:href="@{/admin/payroll}"><i class="bi bi-cash-coin"></i> B&#7843;ng l&#432;&#417;ng</a>
+    <a th:href="@{/admin/tasks}"><i class="bi bi-list-task"></i> C&#244;ng vi&#7879;c</a>
+    <a th:href="@{/admin/assignments}"><i class="bi bi-person-check"></i> Ph&#226;n c&#244;ng</a>
+    <hr>
+    <a th:href="@{/admin/kpi}"><i class="bi bi-bullseye"></i> M&#7909;c ti&#234;u KPI</a>
+    <a th:href="@{/admin/qrcode/list}" class="active"><i class="bi bi-qr-code"></i> QR Code</a>
+    <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Th&#244;ng b&#225;o</a>
+</aside>
+<main class="main">
+    <section class="page-head">
+        <div><h1><i class="bi bi-qr-code text-primary me-2"></i>Qu&#7843;n l&#253; QR Code</h1><div class="page-sub">T&#7841;o, theo d&#245;i v&#224; qu&#7843;n l&#253; QR Code cho ch&#7845;m c&#244;ng, t&#224;i s&#7843;n, t&#224;i li&#7879;u v&#224; s&#7921; ki&#7879;n.</div></div>
+        <a th:href="@{/admin/qrcode/create}" class="btn btn-primary fw-bold"><i class="bi bi-plus-circle me-1"></i>T&#7841;o QR Code m&#7899;i</a>
+    </section>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i><span th:text="${success}"></span><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    <section class="stat-grid">
+        <div class="stat-card"><div class="stat-label">T&#7893;ng QR Code</div><div class="stat-value text-primary" th:text="${stats != null ? stats.totalQRCodes : 0}">0</div></div>
+        <div class="stat-card"><div class="stat-label">&#272;ang ho&#7841;t &#273;&#7897;ng</div><div class="stat-value text-success" th:text="${stats != null ? stats.activeQRCodes : 0}">0</div></div>
+        <div class="stat-card"><div class="stat-label">T&#7893;ng l&#432;&#7907;t qu&#233;t</div><div class="stat-value text-info" th:text="${stats != null ? stats.totalScans : 0}">0</div></div>
+        <div class="stat-card"><div class="stat-label">Qu&#233;t h&#244;m nay</div><div class="stat-value text-warning" th:text="${stats != null ? stats.todayScans : 0}">0</div></div>
+    </section>
+    <section class="panel">
+        <div class="panel-head"><h2><i class="bi bi-list-ul me-2"></i>Danh s&#225;ch QR Code</h2><span class="text-muted" th:text="${qrCodes.size()} + ' QR Code'">0 QR Code</span></div>
+        <div class="table-responsive"><table class="table mb-0"><thead><tr><th>ID</th><th>T&#234;n</th><th>Lo&#7841;i</th><th>V&#7883; tr&#237;</th><th>L&#432;&#7907;t qu&#233;t</th><th>Tr&#7841;ng th&#225;i</th><th>Ng&#224;y t&#7841;o</th><th>Thao t&#225;c</th></tr></thead><tbody><tr th:each="qr : ${qrCodes}"><td><span class="badge text-bg-light" th:text="${qr.id}">1</span></td><td><div class="fw-bold" th:text="${qr.name}">Main Entrance</div><div class="text-muted small" th:text="${qr.description}">Description</div></td><td><span class="type-badge text-bg-primary" th:text="${qr.type}">CHECK_IN</span></td><td><i class="bi bi-geo-alt text-muted me-1"></i><span th:text="${qr.location}">Building A</span></td><td><span class="scan-pill" th:text="${qr.scanCount}">0</span></td><td><span th:if="${qr.isActive}" class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Ho&#7841;t &#273;&#7897;ng</span><span th:unless="${qr.isActive}" class="badge text-bg-secondary"><i class="bi bi-pause-circle me-1"></i>T&#7841;m d&#7915;ng</span></td><td th:text="${#temporals.format(qr.createdAt, 'dd/MM/yyyy')}">01/01/2024</td><td><a th:href="@{/admin/qrcode/view/{id}(id=${qr.id})}" class="btn btn-info action-btn" title="Xem"><i class="bi bi-eye"></i></a><a th:href="@{/admin/qrcode/edit/{id}(id=${qr.id})}" class="btn btn-warning action-btn" title="S&#7917;a"><i class="bi bi-pencil"></i></a><form th:action="@{/admin/qrcode/delete/{id}(id=${qr.id})}" method="post" style="display:inline;"><button type="submit" class="btn btn-danger action-btn" onclick="return confirm('Xoa QR Code nay?')" title="X&#243;a"><i class="bi bi-trash"></i></button></form></td></tr><tr th:if="${#lists.isEmpty(qrCodes)}"><td colspan="8" class="empty-state"><i class="bi bi-qr-code fs-1 d-block mb-3"></i>Ch&#432;a c&#243; QR Code n&#224;o.<div class="mt-3"><a th:href="@{/admin/qrcode/create}" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i>T&#7841;o QR Code &#273;&#7847;u ti&#234;n</a></div></td></tr></tbody></table></div>
+    </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/hrms-settings.js}"></script>
+<script th:src="@{/js/hrms-ui.js}"></script>
 </body>
 </html>

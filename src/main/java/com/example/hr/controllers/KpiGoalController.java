@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class KpiGoalController {
@@ -53,6 +54,7 @@ public class KpiGoalController {
         }
 
         model.addAttribute("goals", goals);
+        model.addAttribute("goalRows", goals.stream().map(KpiGoalRow::from).collect(Collectors.toList()));
         model.addAttribute("users", userRepository.findAll());
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("statuses", KpiStatus.values());
@@ -62,6 +64,38 @@ public class KpiGoalController {
         model.addAttribute("countCompleted", kpiGoalService.countByStatus(KpiStatus.COMPLETED));
         model.addAttribute("countCancelled", kpiGoalService.countByStatus(KpiStatus.CANCELED));
         return "admin/kpi-list";
+    }
+
+    public record KpiGoalRow(Integer id, String employeeName, String departmentName, String title,
+                             String category, String progress, String deadline, String status,
+                             String statusClass) {
+        static KpiGoalRow from(KpiGoal goal) {
+            String employeeName = goal.getUser() != null ? goal.getUser().getFullName() : "N/A";
+            String departmentName = goal.getUser() != null && goal.getUser().getDepartment() != null
+                    ? goal.getUser().getDepartment().getDepartmentName() : "";
+            String current = goal.getCurrentValue() != null ? goal.getCurrentValue().stripTrailingZeros().toPlainString() : "0";
+            String target = goal.getTargetValue() != null ? goal.getTargetValue().stripTrailingZeros().toPlainString() : "0";
+            String unit = goal.getUnit() != null ? " " + goal.getUnit() : "";
+            String progress = current + " / " + target + unit;
+            if (goal.getAchievementPct() != null) {
+                progress += " (" + goal.getAchievementPct().stripTrailingZeros().toPlainString() + "%)";
+            }
+            String status = switch (goal.getStatus()) {
+                case ACTIVE -> "Active";
+                case COMPLETED -> "Hoàn thành";
+                case FAILED -> "Không đạt";
+                case CANCELED -> "Đã hủy";
+                case DRAFT -> "Nháp";
+            };
+            String statusClass = switch (goal.getStatus()) {
+                case ACTIVE -> "status-active";
+                case COMPLETED -> "status-completed";
+                case FAILED, CANCELED -> "status-canceled";
+                case DRAFT -> "";
+            };
+            return new KpiGoalRow(goal.getId(), employeeName, departmentName, goal.getGoalTitle(),
+                    goal.getCategory(), progress, String.valueOf(goal.getEndDate()), status, statusClass);
+        }
     }
 
     @GetMapping("/admin/kpi/add")

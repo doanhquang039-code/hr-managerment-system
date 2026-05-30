@@ -38,10 +38,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.status = 'ACTIVE' AND " +
            "(:keyword IS NULL OR :keyword = '' OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(u.employeeCode) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
            "(:deptId IS NULL OR u.department.id = :deptId) AND " +
+           "(:positionId IS NULL OR u.position.id = :positionId) AND " +
            "(:roleEnum IS NULL OR u.role = :roleEnum)")
     org.springframework.data.domain.Page<User> searchActiveUsersForAdmin(
         @Param("keyword") String keyword, 
         @Param("deptId") Integer deptId, 
+        @Param("positionId") Integer positionId,
         @Param("roleEnum") com.example.hr.enums.Role roleEnum, 
         org.springframework.data.domain.Pageable pageable);
 

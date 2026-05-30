@@ -25,10 +25,12 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
            "(:keyword IS NULL OR LOWER(t.taskName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
            "OR LOWER(t.description) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
            "AND (:taskType IS NULL OR t.taskType = :taskType) " +
+           "AND (:extraShift IS NULL OR t.isExtraShift = :extraShift) " +
            "AND (:startDate IS NULL OR t.startDate >= :startDate) " +
            "AND (:endDate IS NULL OR t.endDate <= :endDate)")
     org.springframework.data.domain.Page<Task> searchTasks(@Param("keyword") String keyword,
                            @Param("taskType") TaskType taskType,
+                           @Param("extraShift") Boolean extraShift,
                            @Param("startDate") LocalDate startDate,
                            @Param("endDate") LocalDate endDate,
                            org.springframework.data.domain.Pageable pageable);
