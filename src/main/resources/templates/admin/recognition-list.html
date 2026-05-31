@@ -1,100 +1,73 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Vinh danh - HR System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Vinh danh - HRMS Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin:0; background:#eef3f9; color:#0f172a; }
+    .page-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:24px; }
+    .breadcrumb-lite { color:#64748b; font-size:.9rem; margin-bottom:6px; }
+    .page-title { display:flex; align-items:center; gap:10px; font-size:1.75rem; font-weight:800; margin:0; }
+    .page-subtitle { margin-top:6px; color:#64748b; font-size:.95rem; }
+    .stat-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-bottom:24px; }
+    .stat-card { border-radius:14px; color:white; padding:22px 24px; min-height:132px; position:relative; overflow:hidden; box-shadow:0 12px 28px rgba(15,23,42,.08); }
+    .stat-card:after { content:""; position:absolute; right:-34px; top:-34px; width:120px; height:120px; border-radius:999px; background:rgba(255,255,255,.14); }
+    .stat-card .label { font-weight:800; letter-spacing:.02em; margin-bottom:14px; }
+    .stat-card strong { font-size:2.2rem; line-height:1; }
+    .table-card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; box-shadow:0 12px 28px rgba(15,23,42,.06); overflow:hidden; }
+    .table-head { padding:18px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; }
+    .table-head h2 { font-size:1.05rem; font-weight:800; margin:0; }
+    .table th { background:#f8fafc; color:#64748b; font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; padding:13px 16px; border:0; }
+    .table td { padding:14px 16px; vertical-align:middle; border-color:#edf2f7; font-size:.9rem; }
+    .empty-state { padding:48px 16px; text-align:center; color:#94a3b8; }
+    @media (max-width: 991px) { .stat-grid { grid-template-columns:1fr; } .page-head { flex-direction:column; } }
+  </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <div th:replace="fragments/admin-sidebar :: sidebar"></div>
-            
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-award me-2"></i>Quản lý Vinh danh & Khen thưởng</h1>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card text-white bg-primary">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng lượt vinh danh</h5>
-                                <h2 class="mb-0" th:text="${stats != null ? stats.totalRecognitions : 0}">0</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-success">
-                            <div class="card-body">
-                                <h5 class="card-title">Tháng này</h5>
-                                <h2 class="mb-0" th:text="${stats != null ? stats.thisMonth : 0}">0</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-white bg-warning">
-                            <div class="card-body">
-                                <h5 class="card-title">Tổng điểm thưởng</h5>
-                                <h2 class="mb-0" th:text="${stats != null ? stats.totalPoints : 0}">0</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recognitions Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Danh sách vinh danh</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Người nhận</th>
-                                        <th>Người tặng</th>
-                                        <th>Loại</th>
-                                        <th>Tiêu đề</th>
-                                        <th>Điểm</th>
-                                        <th>Công khai</th>
-                                        <th>Ngày tạo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="recognition : ${recognitions}">
-                                        <td th:text="${recognition.id}">1</td>
-                                        <td th:text="${recognition.recipient != null ? recognition.recipient.fullName : 'N/A'}">Nguyễn Văn A</td>
-                                        <td th:text="${recognition.giver != null ? recognition.giver.fullName : 'N/A'}">Trần Thị B</td>
-                                        <td>
-                                            <span class="badge bg-info" th:text="${recognition.type}">EXCELLENCE</span>
-                                        </td>
-                                        <td th:text="${recognition.title}">Xuất sắc tháng 1</td>
-                                        <td>
-                                            <span class="badge bg-warning" th:text="${recognition.points}">10</span>
-                                        </td>
-                                        <td>
-                                            <i th:if="${recognition.isPublic}" class="bi bi-check-circle text-success"></i>
-                                            <i th:unless="${recognition.isPublic}" class="bi bi-x-circle text-danger"></i>
-                                        </td>
-                                        <td th:text="${#temporals.format(recognition.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
-                                    </tr>
-                                    <tr th:if="${#lists.isEmpty(recognitions)}">
-                                        <td colspan="8" class="text-center text-muted">Chưa có vinh danh nào</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+<div th:replace="fragments/admin-sidebar :: sidebar"></div>
+<main class="admin-main">
+  <div class="page-head">
+    <div>
+      <div class="breadcrumb-lite"><a th:href="@{/admin/dashboard}" class="text-decoration-none">Dashboard</a> / Engagement / Vinh danh</div>
+      <h1 class="page-title"><i class="bi bi-award text-warning"></i>Quản lý Vinh danh & Khen thưởng</h1>
+      <div class="page-subtitle">Theo dõi lượt vinh danh, điểm thưởng và trạng thái công khai.</div>
     </div>
+    <a th:href="@{/groups}" class="btn btn-outline-secondary"><i class="bi bi-diagram-3 me-1"></i>Mở group</a>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <section class="stat-grid">
+    <div class="stat-card" style="background:linear-gradient(135deg,#2563eb,#7c3aed)"><div class="label">Tổng lượt vinh danh</div><strong th:text="${stats != null ? stats.totalRecognitions : 0}">0</strong></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#059669,#16a34a)"><div class="label">Tháng này</div><strong th:text="${stats != null ? stats.thisMonth : 0}">0</strong></div>
+    <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#f97316)"><div class="label">Tổng điểm thưởng</div><strong th:text="${stats != null ? stats.totalPoints : 0}">0</strong></div>
+  </section>
+
+  <section class="table-card">
+    <div class="table-head"><h2><i class="bi bi-list-ul me-2"></i>Danh sách vinh danh</h2><span class="text-muted small" th:text="${recognitions != null ? #lists.size(recognitions) + ' lượt' : '0 lượt'}">0 lượt</span></div>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>ID</th><th>Người nhận</th><th>Người tặng</th><th>Loại</th><th>Tiêu đề</th><th>Điểm</th><th>Công khai</th><th>Ngày tạo</th></tr></thead>
+        <tbody>
+        <tr th:if="${recognitions == null or #lists.isEmpty(recognitions)}"><td colspan="8" class="empty-state"><i class="bi bi-award fs-1 d-block mb-2"></i>Chưa có vinh danh nào</td></tr>
+        <tr th:each="recognition : ${recognitions}">
+          <td th:text="${recognition.id}">1</td>
+          <td class="fw-semibold" th:text="${recognition.recipient != null ? recognition.recipient.fullName : 'N/A'}">Người nhận</td>
+          <td th:text="${recognition.giver != null ? recognition.giver.fullName : 'N/A'}">Người tặng</td>
+          <td><span class="badge text-bg-info" th:text="${recognition.type}">EXCELLENCE</span></td>
+          <td th:text="${recognition.title}">Tiêu đề</td>
+          <td><span class="badge text-bg-warning" th:text="${recognition.points}">10</span></td>
+          <td><i th:if="${recognition.isPublic}" class="bi bi-check-circle-fill text-success"></i><i th:unless="${recognition.isPublic}" class="bi bi-x-circle-fill text-danger"></i></td>
+          <td th:text="${recognition.createdAt != null ? #temporals.format(recognition.createdAt, 'dd/MM/yyyy HH:mm') : '-'}">01/01/2026 10:00</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
