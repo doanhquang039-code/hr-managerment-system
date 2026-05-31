@@ -190,7 +190,26 @@ public class OnboardingOffboardingService {
      */
     @Transactional(readOnly = true)
     public List<OnboardingChecklist> getAllChecklists() {
-        return checklistRepository.findAll();
+        return checklistRepository.findAllWithUsers();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OnboardingChecklist> getChecklistsByStatus(String status) {
+        if ("completed".equalsIgnoreCase(status)) {
+            return checklistRepository.findByIsCompletedWithUsers(true);
+        }
+        if ("pending".equalsIgnoreCase(status)) {
+            return checklistRepository.findByIsCompletedWithUsers(false);
+        }
+        return getAllChecklists();
+    }
+
+    @Transactional(readOnly = true)
+    public List<OnboardingChecklist> getChecklistsByCategory(String category) {
+        if (category == null || category.isBlank()) {
+            return getAllChecklists();
+        }
+        return checklistRepository.findByCategoryWithUsers(category);
     }
     
     /**

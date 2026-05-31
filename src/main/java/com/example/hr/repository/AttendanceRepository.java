@@ -20,17 +20,34 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     Optional<Attendance> findByUserAndAttendanceDate(User user, LocalDate date);
 
-    @Query(value = "SELECT a FROM Attendance a JOIN FETCH a.user u " +
+    @Query(value = "SELECT a FROM Attendance a JOIN FETCH a.user u LEFT JOIN FETCH u.department " +
            "WHERE a.attendanceDate BETWEEN :start AND :end",
            countQuery = "SELECT COUNT(a) FROM Attendance a " +
            "WHERE a.attendanceDate BETWEEN :start AND :end")
     org.springframework.data.domain.Page<Attendance> findByAttendanceDateBetween(@Param("start") LocalDate start, @Param("end") LocalDate end, org.springframework.data.domain.Pageable pageable);
 
-    @Query(value = "SELECT a FROM Attendance a JOIN FETCH a.user u " +
+    @Query(value = "SELECT a FROM Attendance a JOIN FETCH a.user u LEFT JOIN FETCH u.department " +
+           "WHERE a.attendanceDate BETWEEN :start AND :end AND a.status = :status",
+           countQuery = "SELECT COUNT(a) FROM Attendance a " +
+           "WHERE a.attendanceDate BETWEEN :start AND :end AND a.status = :status")
+    org.springframework.data.domain.Page<Attendance> findByAttendanceDateBetweenAndStatus(@Param("start") LocalDate start,
+                                                                                          @Param("end") LocalDate end,
+                                                                                          @Param("status") AttendanceStatus status,
+                                                                                          org.springframework.data.domain.Pageable pageable);
+
+    @Query(value = "SELECT a FROM Attendance a JOIN FETCH a.user u LEFT JOIN FETCH u.department " +
            "WHERE (:keyword IS NULL OR u.fullName LIKE %:keyword%)",
            countQuery = "SELECT COUNT(a) FROM Attendance a JOIN a.user u " +
            "WHERE (:keyword IS NULL OR u.fullName LIKE %:keyword%)")
     org.springframework.data.domain.Page<Attendance> findAllWithUser(@Param("keyword") String keyword, org.springframework.data.domain.Pageable pageable);
+
+    @Query(value = "SELECT a FROM Attendance a JOIN FETCH a.user u LEFT JOIN FETCH u.department " +
+           "WHERE (:keyword IS NULL OR u.fullName LIKE %:keyword%) AND a.status = :status",
+           countQuery = "SELECT COUNT(a) FROM Attendance a JOIN a.user u " +
+           "WHERE (:keyword IS NULL OR u.fullName LIKE %:keyword%) AND a.status = :status")
+    org.springframework.data.domain.Page<Attendance> findAllWithUserAndStatus(@Param("keyword") String keyword,
+                                                                              @Param("status") AttendanceStatus status,
+                                                                              org.springframework.data.domain.Pageable pageable);
 
     @Query("SELECT a FROM Attendance a JOIN FETCH a.user u " +
            "WHERE u = :user AND YEAR(a.attendanceDate) = :year AND MONTH(a.attendanceDate) = :month " +

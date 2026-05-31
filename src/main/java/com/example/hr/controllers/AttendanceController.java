@@ -39,6 +39,7 @@ public class AttendanceController {
     public String adminList(@RequestParam(required = false) String keyword,
                             @RequestParam(required = false) Integer month,
                             @RequestParam(required = false) Integer year,
+                            @RequestParam(required = false) AttendanceStatus status,
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size,
                             Model model) {
@@ -48,8 +49,14 @@ public class AttendanceController {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "attendanceDate"));
         org.springframework.data.domain.Page<Attendance> attendancePage;
 
-        if (keyword != null && !keyword.isBlank()) {
+        if (keyword != null && !keyword.isBlank() && status != null) {
+            attendancePage = attendanceRepository.findAllWithUserAndStatus(keyword.trim(), status, pageable);
+        } else if (keyword != null && !keyword.isBlank()) {
             attendancePage = attendanceRepository.findAllWithUser(keyword.trim(), pageable);
+        } else if (status != null) {
+            LocalDate start = LocalDate.of(currentYear, currentMonth, 1);
+            LocalDate end   = start.withDayOfMonth(start.lengthOfMonth());
+            attendancePage = attendanceRepository.findByAttendanceDateBetweenAndStatus(start, end, status, pageable);
         } else {
             LocalDate start = LocalDate.of(currentYear, currentMonth, 1);
             LocalDate end   = start.withDayOfMonth(start.lengthOfMonth());
@@ -64,6 +71,8 @@ public class AttendanceController {
         model.addAttribute("keyword", keyword);
         model.addAttribute("month", currentMonth);
         model.addAttribute("year", currentYear);
+        model.addAttribute("statuses", AttendanceStatus.values());
+        model.addAttribute("selectedStatus", status);
         model.addAttribute("users", userRepository.findAll());
         return "admin/attendance-list";
     }

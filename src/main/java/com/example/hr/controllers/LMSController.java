@@ -101,14 +101,20 @@ public class LMSController {
     @GetMapping("/admin/courses")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public String adminCourseList(Model model) {
-        model.addAttribute("courses", courseService.getActiveCourses());
+        List<Course> courses = courseService.getActiveCourses();
+        long mandatoryCount = courses.stream().filter(c -> Boolean.TRUE.equals(c.getIsMandatory())).count();
+        model.addAttribute("courses", courses);
+        model.addAttribute("mandatoryCount", mandatoryCount);
         return "admin/course-list";
     }
     
     @GetMapping("/admin/course/new")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public String newCourseForm(Model model) {
-        model.addAttribute("course", new Course());
+        Course course = new Course();
+        course.setIsActive(true);
+        course.setIsMandatory(false);
+        model.addAttribute("course", course);
         return "admin/course-form";
     }
     
@@ -116,6 +122,12 @@ public class LMSController {
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
     public String saveCourse(@ModelAttribute Course course, RedirectAttributes ra) {
         try {
+            if (course.getIsActive() == null) {
+                course.setIsActive(true);
+            }
+            if (course.getIsMandatory() == null) {
+                course.setIsMandatory(false);
+            }
             courseService.createCourse(course);
             ra.addFlashAttribute("success", "Tạo khóa học thành công!");
         } catch (Exception e) {

@@ -32,11 +32,11 @@ public class KpiGoalService {
     }
 
     public List<KpiGoal> findAll() {
-        return kpiGoalRepository.findAll();
+        return kpiGoalRepository.findAllWithUserAndDepartment();
     }
 
     public List<KpiGoal> findByUser(Integer userId) {
-        return kpiGoalRepository.findByUserId(userId);
+        return kpiGoalRepository.findByUserIdWithUserAndDepartment(userId);
     }
 
     public List<KpiGoal> findActiveByUser(Integer userId) {
@@ -44,7 +44,7 @@ public class KpiGoalService {
     }
 
     public List<KpiGoal> findByStatus(KpiStatus status) {
-        return kpiGoalRepository.findByStatus(status);
+        return kpiGoalRepository.findByStatusWithUserAndDepartment(status);
     }
 
     public Optional<KpiGoal> findById(Integer id) {

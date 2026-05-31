@@ -11,6 +11,12 @@ import java.util.List;
 
 @Repository
 public interface RecognitionRepository extends JpaRepository<Recognition, Integer> {
+
+    @Query("SELECT r FROM Recognition r LEFT JOIN FETCH r.recipient LEFT JOIN FETCH r.giver ORDER BY r.createdAt DESC")
+    List<Recognition> findAllWithUsers();
+
+    @Query("SELECT r FROM Recognition r LEFT JOIN FETCH r.recipient LEFT JOIN FETCH r.giver WHERE r.type = :type ORDER BY r.createdAt DESC")
+    List<Recognition> findByTypeWithUsers(@Param("type") String type);
     
     List<Recognition> findByRecipient(User recipient);
     

@@ -281,7 +281,14 @@ public class EmployeeEngagementService {
      */
     @Transactional(readOnly = true)
     public List<Recognition> getAllRecognitions() {
-        return recognitionRepository.findAll();
+        return recognitionRepository.findAllWithUsers();
+    }
+
+    public List<Recognition> getRecognitionsByType(String type) {
+        if (type == null || type.isBlank()) {
+            return getAllRecognitions();
+        }
+        return recognitionRepository.findByTypeWithUsers(type);
     }
     
     /**

@@ -1,6 +1,8 @@
 package com.example.hr.controllers;
 
 import com.example.hr.models.*;
+import com.example.hr.enums.UserStatus;
+import com.example.hr.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.OnboardingOffboardingService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class OnboardingController {
     
     private final OnboardingOffboardingService onboardingService;
     private final AuthUserHelper authUserHelper;
+    private final UserRepository userRepository;
     
     // ===== User Views =====
     
@@ -50,9 +53,28 @@ public class OnboardingController {
     
     @GetMapping("/admin/onboarding/checklists")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public String adminChecklistList(Model model) {
-        model.addAttribute("checklists", onboardingService.getAllChecklists());
+    public String adminChecklistList(@RequestParam(required = false) String status,
+                                     @RequestParam(required = false) String category,
+                                     Authentication auth,
+                                     Model model) {
+        var checklists = category != null && !category.isBlank()
+                ? onboardingService.getChecklistsByCategory(category)
+                : onboardingService.getChecklistsByStatus(status);
+        if (checklists.isEmpty()) {
+            var users = userRepository.findByStatus(UserStatus.ACTIVE);
+            if (!users.isEmpty()) {
+                User hr = authUserHelper.getCurrentUser(auth);
+                onboardingService.createStandardOnboardingChecklist(users.get(0), hr != null ? hr : users.get(0));
+                checklists = category != null && !category.isBlank()
+                        ? onboardingService.getChecklistsByCategory(category)
+                        : onboardingService.getChecklistsByStatus(status);
+            }
+        }
+        model.addAttribute("checklists", checklists);
         model.addAttribute("stats", onboardingService.getChecklistStats());
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("categories", java.util.List.of("PAPERWORK", "IT_SETUP", "INTRODUCTION", "TRAINING", "OTHER"));
         return "admin/checklist-list";
     }
     

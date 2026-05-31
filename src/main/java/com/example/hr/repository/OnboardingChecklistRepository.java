@@ -11,6 +11,15 @@ import java.util.List;
 
 @Repository
 public interface OnboardingChecklistRepository extends JpaRepository<OnboardingChecklist, Integer> {
+
+    @Query("SELECT o FROM OnboardingChecklist o LEFT JOIN FETCH o.user LEFT JOIN FETCH o.assignedTo ORDER BY o.createdAt DESC")
+    List<OnboardingChecklist> findAllWithUsers();
+
+    @Query("SELECT o FROM OnboardingChecklist o LEFT JOIN FETCH o.user LEFT JOIN FETCH o.assignedTo WHERE o.isCompleted = :completed ORDER BY o.createdAt DESC")
+    List<OnboardingChecklist> findByIsCompletedWithUsers(@Param("completed") boolean completed);
+
+    @Query("SELECT o FROM OnboardingChecklist o LEFT JOIN FETCH o.user LEFT JOIN FETCH o.assignedTo WHERE o.category = :category ORDER BY o.createdAt DESC")
+    List<OnboardingChecklist> findByCategoryWithUsers(@Param("category") String category);
     
     List<OnboardingChecklist> findByUser(User user);
     

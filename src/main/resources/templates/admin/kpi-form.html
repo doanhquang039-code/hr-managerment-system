@@ -36,10 +36,10 @@
 <div class="sidebar">
     <div class="sidebar-logo">? HRMS ADMIN</div>
     <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
+    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhï¿½n viï¿½n</a>
     <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
     <a th:href="@{/admin/kpi}" class="active"><i class="bi bi-bullseye"></i> KPI Goals</a>
-    <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi phí</a>
+    <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi phï¿½</a>
     <a th:href="@{/admin/skills}"><i class="bi bi-mortarboard"></i> K? nang</a>
     <hr/>
           <!-- Language Toggle -->
@@ -58,20 +58,20 @@
           </div>
     <form th:action="@{/logout}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> Ðang xu?t</button>
+        <button type="submit" class="btn btn-outline-light btn-sm w-100"><i class="bi bi-box-arrow-right"></i> ï¿½ang xu?t</button>
     </form>
 </div>
 
 <div class="main">
     <div class="mb-3">
         <a th:href="@{/admin/kpi}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-arrow-left me-1"></i>Quay l?i
+            <i class="bi bi-arrow-left me-1"></i>Quay láº¡i
         </a>
     </div>
     <div class="form-card">
         <div class="form-card-header">
             <h5><i class="bi bi-bullseye me-2"></i>
-                <span th:text="${goal.id != null ? 'Ch?nh s?a KPI Goal' : 'T?o KPI Goal m?i'}"></span>
+                <span th:text="${goal.id != null ? 'Chá»‰nh sá»­a KPI Goal' : 'Táº¡o KPI Goal má»›i'}"></span>
             </h5>
         </div>
         <div class="form-card-body">
@@ -81,51 +81,51 @@
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Nhân viên <span class="text-danger">*</span></label>
+                        <label class="form-label">Nhï¿½n viï¿½n <span class="text-danger">*</span></label>
                         <select name="userId" class="form-select" required>
-                            <option value="">-- Ch?n nhân viên --</option>
+                            <option value="">-- Ch?n nhï¿½n viï¿½n --</option>
                             <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName}"
                                     th:selected="${goal.user != null and goal.user.id == u.id}"></option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Phòng ban</label>
+                        <label class="form-label">Phï¿½ng ban</label>
                         <select name="departmentId" class="form-select">
-                            <option value="">-- Không ch?n --</option>
+                            <option value="">-- Khï¿½ng ch?n --</option>
                             <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}"
                                     th:selected="${goal.department != null and goal.department.id == d.id}"></option>
                         </select>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Tiêu d? KPI <span class="text-danger">*</span></label>
+                        <label class="form-label">Tiï¿½u d? KPI <span class="text-danger">*</span></label>
                         <input type="text" name="goalTitle" class="form-control" required
-                               th:value="${goal.goalTitle}" placeholder="VD: Hoàn thành 10 task trong tháng"/>
+                               th:value="${goal.goalTitle}" placeholder="VD: Hoï¿½n thï¿½nh 10 task trong thï¿½ng"/>
                     </div>
                     <div class="col-12">
-                        <label class="form-label">Mô t?</label>
+                        <label class="form-label">Mï¿½ t?</label>
                         <textarea name="description" class="form-control" rows="3"
-                                  th:text="${goal.description}" placeholder="Mô t? chi ti?t m?c tiêu..."></textarea>
+                                  th:text="${goal.description}" placeholder="Mï¿½ t? chi ti?t m?c tiï¿½u..."></textarea>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Danh m?c</label>
                         <select name="category" class="form-select">
-                            <option value="INDIVIDUAL" th:selected="${goal.category == 'INDIVIDUAL'}">Cá nhân</option>
-                            <option value="TEAM" th:selected="${goal.category == 'TEAM'}">Nhóm</option>
-                            <option value="DEPARTMENT" th:selected="${goal.category == 'DEPARTMENT'}">Phòng ban</option>
+                            <option value="INDIVIDUAL" th:selected="${goal.category == 'INDIVIDUAL'}">Cï¿½ nhï¿½n</option>
+                            <option value="TEAM" th:selected="${goal.category == 'TEAM'}">Nhï¿½m</option>
+                            <option value="DEPARTMENT" th:selected="${goal.category == 'DEPARTMENT'}">Phï¿½ng ban</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Giá tr? m?c tiêu <span class="text-danger">*</span></label>
+                        <label class="form-label">Giï¿½ tr? m?c tiï¿½u <span class="text-danger">*</span></label>
                         <input type="number" name="targetValue" class="form-control" required step="0.01" min="0"
                                th:value="${goal.targetValue}"/>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Ðon v?</label>
+                        <label class="form-label">ï¿½on v?</label>
                         <input type="text" name="unit" class="form-control"
                                th:value="${goal.unit}" placeholder="%, task, VND..."/>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Giá tr? hi?n t?i</label>
+                        <label class="form-label">Giï¿½ tr? hi?n t?i</label>
                         <input type="number" name="currentValue" class="form-control" step="0.01" min="0"
                                th:value="${goal.currentValue != null ? goal.currentValue : 0}"/>
                     </div>
@@ -135,19 +135,19 @@
                                th:value="${goal.weight != null ? goal.weight : 1.0}"/>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Tr?ng thái</label>
+                        <label class="form-label">Tr?ng thï¿½i</label>
                         <select name="status" class="form-select">
                             <option th:each="s : ${statuses}" th:value="${s.name()}" th:text="${s.name()}"
                                     th:selected="${goal.status == s}"></option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ngày b?t d?u <span class="text-danger">*</span></label>
+                        <label class="form-label">Ngï¿½y b?t d?u <span class="text-danger">*</span></label>
                         <input type="date" name="startDate" class="form-control" required
                                th:value="${goal.startDate}"/>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ngày k?t thúc <span class="text-danger">*</span></label>
+                        <label class="form-label">Ngï¿½y k?t thï¿½c <span class="text-danger">*</span></label>
                         <input type="date" name="endDate" class="form-control" required
                                th:value="${goal.endDate}"/>
                     </div>

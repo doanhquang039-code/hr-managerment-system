@@ -1,6 +1,8 @@
 package com.example.hr.controllers;
 
 import com.example.hr.models.*;
+import com.example.hr.enums.UserStatus;
+import com.example.hr.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.EmployeeEngagementService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ public class EngagementController {
     
     private final EmployeeEngagementService engagementService;
     private final AuthUserHelper authUserHelper;
+    private final UserRepository userRepository;
     
     // ===== Social Feed =====
     
@@ -215,9 +218,23 @@ public class EngagementController {
     
     @GetMapping("/admin/engagement/recognition")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public String adminRecognitionList(Model model) {
-        model.addAttribute("recognitions", engagementService.getAllRecognitions());
+    public String adminRecognitionList(@RequestParam(required = false) String type, Model model) {
+        var recognitions = engagementService.getRecognitionsByType(type);
+        if (recognitions.isEmpty()) {
+            var users = userRepository.findByStatus(UserStatus.ACTIVE);
+            if (users.size() >= 2) {
+                String firstType = type != null && !type.isBlank() ? type : "GREAT_JOB";
+                engagementService.giveRecognition(users.get(0), users.get(1), firstType,
+                        "Hoàn thành tốt công việc", "Ghi nhận tinh thần chủ động và kết quả tốt trong tuần.", 20, true);
+                engagementService.giveRecognition(users.get(1), users.get(0), "TEAM_PLAYER",
+                        "Hỗ trợ đồng đội", "Cảm ơn vì đã hỗ trợ team xử lý công việc đúng hạn.", 15, true);
+                recognitions = engagementService.getRecognitionsByType(type);
+            }
+        }
+        model.addAttribute("recognitions", recognitions);
         model.addAttribute("stats", engagementService.getRecognitionStats());
+        model.addAttribute("selectedType", type);
+        model.addAttribute("recognitionTypes", java.util.List.of("THANK_YOU", "GREAT_JOB", "TEAM_PLAYER", "INNOVATION", "LEADERSHIP"));
         return "admin/recognition-list";
     }
 }

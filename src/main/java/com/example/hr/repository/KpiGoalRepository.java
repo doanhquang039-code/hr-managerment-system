@@ -13,6 +13,15 @@ import java.util.List;
 @Repository
 public interface KpiGoalRepository extends JpaRepository<KpiGoal, Integer> {
 
+    @Query("SELECT k FROM KpiGoal k LEFT JOIN FETCH k.user u LEFT JOIN FETCH u.department LEFT JOIN FETCH k.department")
+    List<KpiGoal> findAllWithUserAndDepartment();
+
+    @Query("SELECT k FROM KpiGoal k LEFT JOIN FETCH k.user u LEFT JOIN FETCH u.department LEFT JOIN FETCH k.department WHERE u.id = :userId")
+    List<KpiGoal> findByUserIdWithUserAndDepartment(@Param("userId") Integer userId);
+
+    @Query("SELECT k FROM KpiGoal k LEFT JOIN FETCH k.user u LEFT JOIN FETCH u.department LEFT JOIN FETCH k.department WHERE k.status = :status")
+    List<KpiGoal> findByStatusWithUserAndDepartment(@Param("status") KpiStatus status);
+
     List<KpiGoal> findByUserId(Integer userId);
 
     List<KpiGoal> findByUserIdAndStatus(Integer userId, KpiStatus status);

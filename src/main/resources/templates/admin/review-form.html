@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
-  <title>Form –·nh Gi· KPI - HRMS Admin</title>
+  <title>Form ÔøΩÔøΩnh GiÔøΩ KPI - HRMS Admin</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -29,9 +29,9 @@
       <div class="sidebar-logo">? HRMS ADMIN</div>
       <hr style="border-color: rgba(255,255,255,0.15)"/>
       <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-      <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nh‚n viÍn</a>
+      <a th:href="@{/admin/users}"><i class="bi bi-people"></i> NhÔøΩn viÔøΩn</a>
       <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
-      <a th:href="@{/admin/reviews}" class="active"><i class="bi bi-star-half"></i> –·nh gi· KPI</a>
+      <a th:href="@{/admin/reviews}" class="active"><i class="bi bi-star-half"></i> ÔøΩÔøΩnh giÔøΩ KPI</a>
       <a th:href="@{/hiring}"><i class="bi bi-person-plus"></i> Tuy?n d?ng</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap" style="padding:8px 16px;border-top:1px solid rgba(255,255,255,0.08);margin-top:4px;">
@@ -49,7 +49,7 @@
           </div>
       <form th:action="@{/logout}" method="post" class="px-3 mt-4">
         <button type="submit" class="btn btn-outline-light btn-sm w-100">
-          <i class="bi bi-box-arrow-right"></i> –ang xu?t
+          <i class="bi bi-box-arrow-right"></i> ÔøΩang xu?t
         </button>
       </form>
     </nav>
@@ -59,7 +59,7 @@
         <div>
           <h1 class="h3 mb-0">
             <i class="bi bi-star-half text-warning me-2"></i>
-            <span th:text="${review.id == null ? 'ThÍm –·nh Gi· KPI' : 'Ch?nh S?a –·nh Gi· KPI'}"></span>
+            <span th:text="${review.id == null ? 'ThÔøΩm ÔøΩÔøΩnh GiÔøΩ KPI' : 'Ch?nh S?a ÔøΩÔøΩnh GiÔøΩ KPI'}"></span>
           </h1>
         </div>
         <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary">
@@ -74,30 +74,30 @@
           <div class="col-md-8">
             <div class="card border-0 shadow-sm mb-4">
               <div class="card-header bg-white border-0 pt-4 pb-2">
-                <h5 class="mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>ThÙng tin d·nh gi·</h5>
+                <h5 class="mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>ThÔøΩng tin dÔøΩnh giÔøΩ</h5>
               </div>
               <div class="card-body">
                 <div class="row g-3">
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Nh‚n viÍn <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">NhÔøΩn viÔøΩn <span class="text-danger">*</span></label>
                     <select th:field="*{user.id}" class="form-select" required>
-                      <option value="">-- Ch?n nh‚n viÍn --</option>
+                      <option value="">-- Ch?n nhÔøΩn viÔøΩn --</option>
                       <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.fullName + ' (' + u.username + ')'}"></option>
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">K? d·nh gi· <span class="text-danger">*</span></label>
+                    <label class="form-label fw-semibold">K? dÔøΩnh giÔøΩ <span class="text-danger">*</span></label>
                     <select th:field="*{reviewPeriod}" class="form-select" required>
                       <option value="">-- Ch?n k? --</option>
                       <option th:each="p : ${periods}" th:value="${p}" th:text="${p}"></option>
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Ng‡y d·nh gi·</label>
+                    <label class="form-label fw-semibold">NgÔøΩy dÔøΩnh giÔøΩ</label>
                     <input type="date" th:field="*{reviewDate}" class="form-control"/>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold">Tr?ng th·i</label>
+                    <label class="form-label fw-semibold">Tr?ng thÔøΩi</label>
                     <select th:field="*{status}" class="form-select">
                       <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label}"></option>
                     </select>
@@ -105,17 +105,15 @@
                 </div>
               </div>
             </div>
-
             <!-- Scoring -->
             <div class="card border-0 shadow-sm mb-4">
               <div class="card-header bg-white border-0 pt-4 pb-2">
-                <h5 class="mb-0"><i class="bi bi-bar-chart me-2 text-success"></i>–i?m d·nh gi· (0-100)</h5>
+                <h5 class="mb-0"><i class="bi bi-bar-chart me-2 text-success"></i>ƒêi·ªÉm ƒë√°nh gi√° (0-100)</h5>
               </div>
               <div class="card-body">
-                <!-- KPI Score -->
                 <div class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="form-label fw-semibold mb-0">?? Ch? s? KPI</label>
+                    <label class="form-label fw-semibold mb-0">Ch·ªâ s·ªë KPI</label>
                     <span id="kpiVal" class="badge bg-primary px-3"></span>
                   </div>
                   <input type="range" class="form-range" min="0" max="100" step="1"
@@ -123,10 +121,9 @@
                          oninput="document.getElementById('kpiVal').textContent = this.value"/>
                   <div class="range-label"><span>0</span><span>50</span><span>100</span></div>
                 </div>
-                <!-- Attitude -->
                 <div class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="form-label fw-semibold mb-0">?? Th·i d? l‡m vi?c</label>
+                    <label class="form-label fw-semibold mb-0">Th√°i ƒë·ªô l√†m vi·ªác</label>
                     <span id="attVal" class="badge bg-info px-3"></span>
                   </div>
                   <input type="range" class="form-range" min="0" max="100" step="1"
@@ -134,10 +131,9 @@
                          oninput="document.getElementById('attVal').textContent = this.value"/>
                   <div class="range-label"><span>0</span><span>50</span><span>100</span></div>
                 </div>
-                <!-- Teamwork -->
                 <div class="mb-4">
                   <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label class="form-label fw-semibold mb-0">?? L‡m vi?c nhÛm</label>
+                    <label class="form-label fw-semibold mb-0">L√†m vi·ªác nh√≥m</label>
                     <span id="twVal" class="badge bg-success px-3"></span>
                   </div>
                   <input type="range" class="form-range" min="0" max="100" step="1"
@@ -147,24 +143,23 @@
                 </div>
               </div>
             </div>
-
             <!-- Comments -->
             <div class="card border-0 shadow-sm mb-4">
               <div class="card-header bg-white border-0 pt-4 pb-2">
-                <h5 class="mb-0"><i class="bi bi-chat-text me-2 text-warning"></i>Nh?n xÈt chi ti?t</h5>
+                <h5 class="mb-0"><i class="bi bi-chat-text me-2 text-warning"></i>Nh?n xÔøΩt chi ti?t</h5>
               </div>
               <div class="card-body">
                 <div class="mb-3">
-                  <label class="form-label fw-semibold">? –i?m m?nh</label>
-                  <textarea th:field="*{strengths}" class="form-control" rows="3" placeholder="Nh?ng di?m n?i b?t c?a nh‚n viÍn..."></textarea>
+                  <label class="form-label fw-semibold">? ÔøΩi?m m?nh</label>
+                  <textarea th:field="*{strengths}" class="form-control" rows="3" placeholder="Nh?ng di?m n?i b?t c?a nhÔøΩn viÔøΩn..."></textarea>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label fw-semibold">?? C?n c?i thi?n</label>
-                  <textarea th:field="*{improvements}" class="form-control" rows="3" placeholder="Nh?ng di?m c?n c?i thi?n..."></textarea>
+                  <label class="form-label fw-semibold">C·∫ßn c·∫£i thi·ªán</label>
+                  <textarea th:field="*{improvements}" class="form-control" rows="3" placeholder="Nh·ªØng ƒëi·ªÉm c·∫ßn c·∫£i thi·ªán..."></textarea>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label fw-semibold">?? Ghi ch˙ kh·c</label>
-                  <textarea th:field="*{comments}" class="form-control" rows="2" placeholder="C·c ghi ch˙ b? sung..."></textarea>
+                  <label class="form-label fw-semibold">Ghi ch√∫ kh√°c</label>
+                  <textarea th:field="*{comments}" class="form-control" rows="2" placeholder="CÔøΩc ghi chÔøΩ b? sung..."></textarea>
                 </div>
               </div>
             </div>
@@ -174,13 +169,13 @@
           <div class="col-md-4">
             <div class="card border-0 shadow-sm mb-4" style="position: sticky; top: 20px;">
               <div class="card-body text-center py-5">
-                <h6 class="text-muted text-uppercase fw-bold mb-3">–i?m t?ng h?p</h6>
+                <h6 class="text-muted text-uppercase fw-bold mb-3">ÔøΩi?m t?ng h?p</h6>
                 <div class="score-display" id="overallDisplay">--</div>
                 <div class="mt-2 mb-4" id="ratingLabel" style="font-size:1.1rem; font-weight:600;">---</div>
                 <div class="progress mb-3" style="height: 12px; border-radius: 6px;">
                   <div class="progress-bar" id="overallBar" role="progressbar" style="width: 0%; transition: width 0.4s;"></div>
                 </div>
-                <p class="text-muted small">–i?m t?ng = trung bÏnh c?a 3 tiÍu chÌ</p>
+                <p class="text-muted small">ÔøΩi?m t?ng = trung bÔøΩnh c?a 3 tiÔøΩu chÔøΩ</p>
               </div>
             </div>
           </div>
@@ -188,9 +183,9 @@
 
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary px-4">
-            <i class="bi bi-save me-1"></i> Luu d·nh gi·
+            <i class="bi bi-save me-1"></i> Luu dÔøΩnh giÔøΩ
           </button>
-          <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary px-4">Hu?</a>
+          <a th:href="@{/admin/reviews}" class="btn btn-outline-secondary px-4">H·ªßy</a>
         </div>
       </form>
     </main>
@@ -207,12 +202,12 @@
     document.getElementById('overallDisplay').textContent = overall;
     document.getElementById('overallBar').style.width = overall + '%';
 
-    let label = 'Y?u', color = 'bg-danger';
-    if (overall >= 90) { label = '?? Xu?t s?c'; color = 'bg-success'; }
-    else if (overall >= 75) { label = '? T?t'; color = 'bg-primary'; }
-    else if (overall >= 60) { label = '?? Kh·'; color = 'bg-info'; }
-    else if (overall >= 50) { label = '?? Trung bÏnh'; color = 'bg-warning'; }
-    else { label = '? Y?u'; color = 'bg-danger'; }
+    let label = 'Y·∫øu', color = 'bg-danger';
+    if (overall >= 90) { label = 'Xu·∫•t s·∫Øc'; color = 'bg-success'; }
+    else if (overall >= 75) { label = 'T·ªët'; color = 'bg-primary'; }
+    else if (overall >= 60) { label = 'Kh√°'; color = 'bg-info'; }
+    else if (overall >= 50) { label = 'Trung b√¨nh'; color = 'bg-warning'; }
+    else { label = 'Y·∫øu'; color = 'bg-danger'; }
 
     document.getElementById('ratingLabel').textContent = label;
     const bar = document.getElementById('overallBar');
@@ -226,8 +221,8 @@
     // Init badge values
     const kpiEl = document.querySelector('[name="kpiScore"]');
     const attEl = document.querySelector('[name="attitudeScore"]');
-    const twEl  = document.querySelector('[name="teamworkScore"]');
-    if (kpiEl) document.getElementById('kpiVal').textContent = kpiEl.value;
+                    <label class="form-label fw-semibold mb-0">Th√°i ƒë·ªô l√†m vi·ªác</label>
+                    <label class="form-label fw-semibold mb-0">L√†m vi·ªác nh√≥m</label>
     if (attEl) document.getElementById('attVal').textContent = attEl.value;
     if (twEl)  document.getElementById('twVal').textContent  = twEl.value;
     updateOverall();
