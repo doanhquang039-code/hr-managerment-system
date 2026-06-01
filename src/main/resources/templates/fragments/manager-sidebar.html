@@ -19,26 +19,28 @@
             overflow-y: auto;
             position: sticky;
             top: 0;
-            padding: 18px 10px 20px;
+            padding: 20px 14px 28px;
         }
         .manager-sidebar::-webkit-scrollbar { width: 6px; }
         .manager-sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,.05); }
         .manager-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.22); border-radius: 999px; }
-        .manager-brand { color: white; font-weight: 800; font-size: 1.02rem; letter-spacing: 1.6px; padding: 6px 14px 14px; display:flex; align-items:center; gap:10px; }
+        .manager-brand { color: white; font-weight: 800; font-size: 1.02rem; letter-spacing: 1.6px; padding: 8px 16px 18px; display:flex; align-items:center; gap:12px; }
         .manager-brand i { color:#f59e0b; }
-        .manager-divider { border-color: rgba(255,255,255,.1); margin: 0 8px 12px; }
-        .manager-section { color:#64748b; font-size:.66rem; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; padding:14px 14px 6px; }
+        .manager-divider { border-color: rgba(255,255,255,.1); margin: 0 8px 18px; }
+        .manager-section { color:#64748b; font-size:.66rem; font-weight:800; letter-spacing:1.8px; text-transform:uppercase; padding:18px 14px 8px; }
         .manager-sidebar .nav-link, .manager-sidebar .nav-parent, .manager-sidebar .submenu a {
             color:#a8b3c7 !important;
             text-decoration:none;
             display:flex;
             align-items:center;
-            gap:11px;
-            padding:10px 14px;
+            gap:12px;
+            padding:12px 15px;
             border-left:3px solid transparent;
-            border-radius:0 10px 10px 0;
-            font-size:.88rem;
+            border-radius:0 12px 12px 0;
+            font-size:.9rem;
             font-weight:650;
+            margin:3px 0;
+            min-height:46px;
             transition:all .18s ease;
             cursor:pointer;
         }
@@ -51,12 +53,13 @@
         }
         .manager-sidebar i { width:20px; font-size:1rem; }
         .manager-sidebar .nav-parent { justify-content:space-between; }
-        .manager-sidebar .nav-parent .left { display:inline-flex; align-items:center; gap:11px; min-width:0; }
-        .manager-sidebar .nav-parent .bi-caret-down-fill { width:auto; margin-left:auto; color:#cbd5e1; font-size:.68rem; }
-        .manager-sidebar .submenu { display:none; padding:2px 0 8px; background:rgba(255,255,255,.025); }
+        .manager-sidebar .nav-parent .left { display:inline-flex; align-items:center; gap:12px; min-width:0; }
+        .manager-sidebar .nav-parent .bi-caret-down-fill { width:auto; margin-left:auto; color:#cbd5e1; font-size:.68rem; transition:transform .18s ease; }
+        .manager-sidebar .nav-parent.open .bi-caret-down-fill { transform:rotate(180deg); }
+        .manager-sidebar .submenu { display:none; padding:5px 0 10px; margin:2px 0 8px; background:rgba(255,255,255,.03); border-radius:0 12px 12px 0; }
         .manager-sidebar .submenu.open { display:block; }
-        .manager-sidebar .submenu a { padding:9px 12px 9px 48px; font-size:.83rem; font-weight:600; }
-        .manager-sidebar .sidebar-logout { padding:14px 8px 0; margin-top:14px; border-top:1px solid rgba(255,255,255,.1); }
+        .manager-sidebar .submenu a { padding:10px 12px 10px 50px; font-size:.84rem; font-weight:600; min-height:40px; }
+        .manager-sidebar .sidebar-logout { padding:18px 8px 0; margin-top:18px; border-top:1px solid rgba(255,255,255,.1); }
         .bg-light { background-color: transparent !important; }
     </style>
 
@@ -64,10 +67,33 @@
     <hr class="manager-divider">
 
     <div class="manager-section">T&#7893;ng quan</div>
-    <a class="nav-link" href="/manager/dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a class="nav-link" href="/manager/analytics"><i class="bi bi-graph-up-arrow"></i> Team Analytics</a>
-    <a class="nav-link" href="/manager/ai-insights"><i class="bi bi-stars"></i> AI Insights</a>
-    <a class="nav-link" href="/groups"><i class="bi bi-diagram-3"></i> Nh&#243;m c&#7911;a t&#244;i</a>
+    <a class="nav-parent" data-manager-submenu-toggle="manager-dashboard-options">
+        <span class="left"><i class="bi bi-speedometer2"></i> Dashboard</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="manager-dashboard-options" class="submenu">
+        <a href="/manager/dashboard">Dashboard ch&#237;nh</a>
+        <a href="/manager/dashboard-advanced">Dashboard n&#226;ng cao</a>
+        <a href="/manager/analytics">Team Analytics</a>
+    </div>
+    <a class="nav-parent" data-manager-submenu-toggle="manager-ai-options">
+        <span class="left"><i class="bi bi-stars"></i> AI Insights</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="manager-ai-options" class="submenu">
+        <a href="/manager/ai-insights">Insight team</a>
+        <a href="/manager/analytics">Ph&#226;n t&#237;ch hi&#7879;u su&#7845;t</a>
+        <a href="/manager/reports/team">B&#225;o c&#225;o t&#7893;ng h&#7907;p</a>
+    </div>
+    <a class="nav-parent" data-manager-submenu-toggle="manager-group-options">
+        <span class="left"><i class="bi bi-diagram-3"></i> Nh&#243;m c&#7911;a t&#244;i</span>
+        <i class="bi bi-caret-down-fill"></i>
+    </a>
+    <div id="manager-group-options" class="submenu">
+        <a href="/groups">T&#7845;t c&#7843; nh&#243;m</a>
+        <a href="/manager/team">Team c&#7911;a t&#244;i</a>
+        <a href="/manager/team-members">Th&#224;nh vi&#234;n</a>
+    </div>
 
     <div class="manager-section">Qu&#7843;n tr&#7883; &#273;&#7897;i nh&#243;m</div>
     <a class="nav-parent" data-manager-submenu-toggle="manager-goals-options">
@@ -77,6 +103,9 @@
     <div id="manager-goals-options" class="submenu">
         <a href="/manager/goals">T&#7845;t c&#7843; m&#7909;c ti&#234;u</a>
         <a href="/manager/goals/create">T&#7841;o m&#7909;c ti&#234;u</a>
+        <a href="/manager/goals?status=IN_PROGRESS">&#272;ang tri&#7875;n khai</a>
+        <a href="/manager/goals?status=COMPLETED">Ho&#224;n th&#224;nh</a>
+        <a href="/manager/goals?status=OVERDUE">Qu&#225; h&#7841;n</a>
     </div>
     <a class="nav-parent" data-manager-submenu-toggle="manager-meeting-options">
         <span class="left"><i class="bi bi-calendar-event"></i> Cu&#7897;c h&#7885;p</span>
@@ -85,6 +114,9 @@
     <div id="manager-meeting-options" class="submenu">
         <a href="/manager/meetings">T&#7845;t c&#7843; cu&#7897;c h&#7885;p</a>
         <a href="/manager/meetings/create">L&#234;n l&#7883;ch h&#7885;p</a>
+        <a href="/manager/meetings/type/TEAM">H&#7885;p team</a>
+        <a href="/manager/meetings/type/ONE_ON_ONE">1-1</a>
+        <a href="/manager/meetings/type/REVIEW">Review</a>
     </div>
     <a class="nav-parent" data-manager-submenu-toggle="manager-budget-options">
         <span class="left"><i class="bi bi-cash-stack"></i> Ng&#226;n s&#225;ch</span>
@@ -93,6 +125,7 @@
     <div id="manager-budget-options" class="submenu">
         <a href="/manager/budget">T&#7893;ng quan ng&#226;n s&#225;ch</a>
         <a href="/manager/budget/create">T&#7841;o ng&#226;n s&#225;ch</a>
+        <a href="/manager/budget/analytics">Ph&#226;n t&#237;ch ng&#226;n s&#225;ch</a>
         <a href="/manager/reports/budget">B&#225;o c&#225;o ng&#226;n s&#225;ch</a>
     </div>
 
@@ -105,6 +138,7 @@
         <a href="/manager/team">Danh s&#225;ch team</a>
         <a href="/manager/team-members">Th&#224;nh vi&#234;n team</a>
         <a href="/manager/performance">Hi&#7879;u su&#7845;t</a>
+        <a href="/manager/contracts">H&#7907;p &#273;&#7891;ng team</a>
     </div>
     <a class="nav-parent" data-manager-submenu-toggle="manager-attendance-options">
         <span class="left"><i class="bi bi-calendar-check"></i> Ch&#7845;m c&#244;ng</span>
@@ -114,6 +148,8 @@
         <a href="/manager/attendance">Theo d&#245;i ch&#7845;m c&#244;ng</a>
         <a href="/manager/overtime">T&#259;ng ca</a>
         <a href="/manager/overtime?status=PENDING">T&#259;ng ca ch&#7901; duy&#7879;t</a>
+        <a href="/manager/overtime?status=APPROVED">T&#259;ng ca &#273;&#227; duy&#7879;t</a>
+        <a href="/manager/overtime?status=REJECTED">T&#259;ng ca b&#7883; t&#7915; ch&#7889;i</a>
     </div>
     <a class="nav-parent" data-manager-submenu-toggle="manager-leave-options">
         <span class="left"><i class="bi bi-calendar-x"></i> Ngh&#7881; ph&#233;p</span>
@@ -155,7 +191,10 @@
             document.querySelectorAll('[data-manager-submenu-toggle]').forEach(function (toggle) {
                 toggle.addEventListener('click', function () {
                     var menu = document.getElementById(toggle.dataset.managerSubmenuToggle);
-                    if (menu) menu.classList.toggle('open');
+                    if (menu) {
+                        menu.classList.toggle('open');
+                        toggle.classList.toggle('open', menu.classList.contains('open'));
+                    }
                 });
             });
             var current = window.location.pathname + window.location.search;
@@ -169,7 +208,15 @@
                     if (!best || href.length > (best.getAttribute('href') || '').length) best = link;
                 }
             });
-            if (best) best.classList.add('active');
+            if (best) {
+                best.classList.add('active');
+                var submenu = best.closest('.submenu');
+                if (submenu) {
+                    submenu.classList.add('open');
+                    var parent = document.querySelector('[data-manager-submenu-toggle="' + submenu.id + '"]');
+                    if (parent) parent.classList.add('open', 'active');
+                }
+            }
         })();
     </script>
     <script th:src="@{/js/role-polish.js}"></script>
