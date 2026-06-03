@@ -3,103 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Quản lý khóa học - HRMS Admin</title>
+    <title>Qu&#7843;n l&#253; kh&#243;a h&#7885;c - HRMS Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: Inter, sans-serif; }
-        body { margin: 0; background: #eef3f9; color: #0f172a; }
-        .course-shell { max-width: 1440px; margin: 0 auto; }
-        .page-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
-        .page-title { font-size: 1.65rem; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 10px; }
-        .page-subtitle { color: #64748b; margin-top: 4px; font-weight: 500; }
-        .stat-grid { display: grid; grid-template-columns: repeat(4, minmax(170px, 1fr)); gap: 16px; margin-bottom: 20px; }
-        .stat-card { background: #fff; border-radius: 14px; padding: 18px 20px; box-shadow: 0 10px 28px rgba(15,23,42,.07); border: 1px solid #e5e7eb; }
-        .stat-label { color: #64748b; font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
-        .stat-value { font-size: 2rem; font-weight: 800; margin-top: 6px; }
-        .panel { background: #fff; border-radius: 14px; box-shadow: 0 10px 28px rgba(15,23,42,.07); border: 1px solid #e5e7eb; overflow: hidden; }
-        .panel-head { padding: 18px 22px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-        .panel-title { margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; align-items: center; gap: 9px; }
-        .table { margin: 0; }
-        .table thead th { background: #f8fafc; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; padding: 15px 16px; }
-        .table tbody td { padding: 15px 16px; vertical-align: middle; }
-        .empty-state { padding: 48px 16px; color: #64748b; text-align: center; }
-        @media (max-width: 1100px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+        body { margin:0; background:#eef3f9; color:#0f172a; }
+        .admin-main { padding:28px 36px 92px; }
+        .course-react-shell { max-width:1440px; margin:0 auto; }
+        .course-react-hero {
+            display:flex; align-items:center; justify-content:space-between; gap:20px;
+            background:linear-gradient(135deg,#111827,#2563eb 58%,#0f766e);
+            color:#fff; border-radius:18px; padding:28px 32px; margin-bottom:22px;
+            box-shadow:0 22px 52px rgba(15,23,42,.18);
+        }
+        .course-react-kicker { display:inline-flex; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.13); font-size:.76rem; font-weight:800; letter-spacing:.08em; margin-bottom:10px; }
+        .course-react-hero h1 { margin:0; font-size:2rem; font-weight:800; letter-spacing:0; }
+        .course-react-hero p { margin:8px 0 0; color:rgba(255,255,255,.78); max-width:680px; }
+        .course-react-new { display:inline-flex; align-items:center; gap:8px; background:#fff; color:#1d4ed8; border-radius:12px; padding:12px 16px; font-weight:800; text-decoration:none; white-space:nowrap; }
+        .course-react-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:18px; }
+        .course-react-stat { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:18px; display:flex; gap:14px; align-items:center; box-shadow:0 12px 28px rgba(15,23,42,.07); }
+        .course-react-stat-icon { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; background:#eef2ff; color:#4f46e5; font-size:1.25rem; }
+        .course-react-stat.green .course-react-stat-icon { background:#dcfce7; color:#059669; }
+        .course-react-stat.red .course-react-stat-icon { background:#fee2e2; color:#dc2626; }
+        .course-react-stat.purple .course-react-stat-icon { background:#f3e8ff; color:#7c3aed; }
+        .course-react-stat-label { font-size:.75rem; color:#64748b; text-transform:uppercase; font-weight:800; letter-spacing:.04em; }
+        .course-react-stat-value { font-size:1.75rem; font-weight:800; line-height:1.1; margin-top:3px; }
+        .course-react-filters { display:grid; grid-template-columns:minmax(280px,1fr) 220px 220px; gap:12px; background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:14px; margin-bottom:18px; box-shadow:0 12px 28px rgba(15,23,42,.07); }
+        .course-react-search { display:flex; align-items:center; gap:10px; border:1px solid #dbe3ef; border-radius:12px; padding:0 13px; background:#fff; }
+        .course-react-search i { color:#64748b; }
+        .course-react-search input, .course-react-filters select { width:100%; min-height:44px; border:0; outline:0; color:#0f172a; font-weight:650; background:#fff; }
+        .course-react-filters select { border:1px solid #dbe3ef; border-radius:12px; padding:0 12px; }
+        .course-react-list { display:grid; gap:14px; }
+        .course-react-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:16px; box-shadow:0 12px 28px rgba(15,23,42,.07); display:grid; grid-template-columns:92px minmax(0,1fr) auto; gap:16px; align-items:center; }
+        .course-react-thumb { width:92px; height:92px; border-radius:14px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#dbeafe,#eef2ff); color:#2563eb; font-size:2rem; }
+        .course-react-thumb img { width:100%; height:100%; object-fit:cover; }
+        .course-react-tags { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+        .course-react-tag { display:inline-flex; align-items:center; border-radius:999px; padding:5px 9px; background:#f1f5f9; color:#475569; font-size:.72rem; font-weight:800; }
+        .course-react-tag.primary { background:#dbeafe; color:#1d4ed8; }
+        .course-react-tag.success { background:#dcfce7; color:#047857; }
+        .course-react-tag.danger { background:#fee2e2; color:#b91c1c; }
+        .course-react-tag.muted { background:#e5e7eb; color:#475569; }
+        .course-react-body h3 { margin:0 0 6px; font-size:1.08rem; font-weight:800; }
+        .course-react-body p { margin:0 0 10px; color:#64748b; line-height:1.5; }
+        .course-react-meta { display:flex; gap:12px; flex-wrap:wrap; color:#475569; font-size:.82rem; font-weight:700; }
+        .course-react-meta span { display:inline-flex; align-items:center; gap:6px; }
+        .course-react-actions { display:flex; gap:8px; align-items:center; }
+        .course-react-empty { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:56px 20px; text-align:center; color:#64748b; box-shadow:0 12px 28px rgba(15,23,42,.07); }
+        .course-react-empty i { display:block; font-size:2.5rem; margin-bottom:12px; }
+        .course-react-empty strong { display:block; color:#334155; margin-bottom:4px; }
+        @media (max-width:1100px) {
+            .course-react-stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .course-react-filters { grid-template-columns:1fr; }
+            .course-react-card { grid-template-columns:72px minmax(0,1fr); }
+            .course-react-thumb { width:72px; height:72px; }
+            .course-react-actions { grid-column:1 / -1; }
+        }
+        @media (max-width:720px) {
+            .admin-main { padding:20px 16px 90px; }
+            .course-react-hero { flex-direction:column; align-items:flex-start; }
+            .course-react-stats { grid-template-columns:1fr; }
+        }
     </style>
 </head>
 <body>
 <div th:replace="fragments/admin-sidebar :: sidebar"></div>
 <main class="admin-main">
-    <div class="course-shell">
-        <div class="page-head">
-            <div>
-                <h1 class="page-title"><i class="bi bi-book text-primary"></i>Quản lý khóa học</h1>
-                <div class="page-subtitle">Theo dõi khóa học LMS, trạng thái hoạt động và nội dung bắt buộc.</div>
-            </div>
-            <a th:href="@{/admin/course/new}" class="btn btn-primary fw-bold"><i class="bi bi-plus-lg me-1"></i>Tạo khóa học mới</a>
-        </div>
-
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-        <section class="stat-grid">
-            <div class="stat-card"><div class="stat-label">Tổng khóa học</div><div class="stat-value" th:text="${#lists.size(courses)}">0</div></div>
-            <div class="stat-card"><div class="stat-label">Đang hoạt động</div><div class="stat-value text-success" th:text="${#lists.size(courses)}">0</div></div>
-            <div class="stat-card"><div class="stat-label">Bắt buộc</div><div class="stat-value text-danger" th:text="${mandatoryCount}">0</div></div>
-            <div class="stat-card"><div class="stat-label">Danh mục</div><div class="stat-value text-primary">6</div></div>
-        </section>
-
-        <section class="panel">
-            <div class="panel-head">
-                <h2 class="panel-title"><i class="bi bi-list-ul"></i>Danh sách khóa học</h2>
-                <span class="text-muted fw-bold" th:text="${#lists.size(courses)} + ' khóa học'">0 khóa học</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                    <tr>
-                        <th>Tiêu đề</th>
-                        <th>Danh mục</th>
-                        <th>Cấp độ</th>
-                        <th>Thời lượng</th>
-                        <th>Điểm đạt</th>
-                        <th>Trạng thái</th>
-                        <th class="text-end">Thao tác</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="course : ${courses}">
-                        <td>
-                            <div class="fw-bold" th:text="${course.title}">Course Title</div>
-                            <small class="text-muted" th:text="${course.description}">Description</small>
-                        </td>
-                        <td><span class="badge bg-primary" th:text="${course.category}">TECHNICAL</span></td>
-                        <td><span class="badge bg-info" th:text="${course.level}">BEGINNER</span></td>
-                        <td th:text="${course.durationMinutes != null ? course.durationMinutes + ' phút' : '-'}">-</td>
-                        <td th:text="${course.passingScore != null ? course.passingScore + '%' : '-'}">-</td>
-                        <td>
-                            <span class="badge" th:classappend="${course.isActive ? ' bg-success' : ' bg-secondary'}" th:text="${course.isActive ? 'Hoạt động' : 'Tạm dừng'}">Hoạt động</span>
-                            <span th:if="${course.isMandatory}" class="badge bg-danger ms-1">Bắt buộc</span>
-                        </td>
-                        <td class="text-end">
-                            <a th:href="@{/lms/course/{id}(id=${course.id})}" class="btn btn-sm btn-outline-info" title="Xem"><i class="bi bi-eye"></i></a>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(courses)}">
-                        <td colspan="7" class="empty-state">
-                            <i class="bi bi-folder2-open fs-2 d-block mb-2"></i>
-                            Chưa có khóa học nào.
-                            <div class="mt-3"><a th:href="@{/admin/course/new}" class="btn btn-primary fw-bold"><i class="bi bi-plus-lg me-1"></i>Tạo khóa học đầu tiên</a></div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </div>
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <div data-hrms-react="CourseAdminList"></div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
+    window.HRMS_COURSE_REACT_CONFIG = {
+        courses: /*[[${courseCards}]]*/ []
+    };
+</script>
+<script th:src="@{/js/hrms-course-react.js}"></script>
 <script th:src="@{/js/hrms-ui.js}"></script>
 </body>
 </html>

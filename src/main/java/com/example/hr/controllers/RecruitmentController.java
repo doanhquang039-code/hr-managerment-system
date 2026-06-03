@@ -108,6 +108,11 @@ public class RecruitmentController {
         
         return "hiring/dashboard";
     }
+
+    @GetMapping("/users")
+    public String hiringUsers() {
+        return "redirect:/admin/users?role=HIRING";
+    }
     
     // Inner class for Hiring Overview DTO
     public static class HiringOverview {

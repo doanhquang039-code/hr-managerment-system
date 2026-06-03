@@ -1,194 +1,196 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C�ng vi?c c?a t�i - HRMS</title>
+    <title>C&#244;ng vi&#7879;c c&#7911;a t&#244;i - HRMS</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        body { background: #f0f4f8; min-height: 100vh; }
-        .sidebar { width: 260px; min-height: 100vh; background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); position: fixed; left: 0; top: 0; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
-        .sidebar-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 12px; }
-        .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .brand-name { color: white; font-weight: 700; font-size: 1rem; }
-        .brand-sub { color: #64748b; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
-        .sidebar-user { padding: 16px 20px; display: flex; align-items: center; gap: 12px; background: rgba(99,102,241,0.1); margin: 16px 12px; border-radius: 12px; }
-        .sidebar-user-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(99,102,241,0.5); }
-        .sidebar-user-name { color: white; font-weight: 600; font-size: 0.85rem; }
-        .sidebar-user-role { color: #94a3b8; font-size: 0.72rem; }
-        .sidebar-section-label { color: #475569; font-size: 0.65rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 12px 20px 4px; }
-        .sidebar nav a { display: flex; align-items: center; gap: 12px; padding: 10px 20px; color: #94a3b8; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
-        .sidebar nav a:hover, .sidebar nav a.active { color: white; background: rgba(99,102,241,0.15); border-left-color: #6366f1; }
-        .sidebar nav a i { font-size: 1rem; width: 20px; }
-        .sidebar-logout { padding: 20px; border-top: 1px solid rgba(255,255,255,0.08); }
-        .main-content { margin-left: 260px; padding: 28px 32px; }
-        .page-header { margin-bottom: 28px; }
-        .page-header h1 { font-size: 1.6rem; font-weight: 700; color: #0f172a; margin: 0; }
-        .page-header p { color: #64748b; font-size: 0.88rem; margin-top: 4px; }
-
-        .filter-bar {
-            background: white; border-radius: 14px; padding: 16px 20px;
-            margin-bottom: 24px; display: flex; gap: 12px; align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #0f172a; }
+        .main-content { margin-left: 312px; padding: 34px 36px 96px; min-height: 100vh; }
+        .page-shell { max-width: 1180px; margin: 0 auto; }
+        .page-header { text-align: center; margin-bottom: 28px; color: #ffffff; }
+        .page-header h1 { font-size: 2rem; font-weight: 800; margin: 0; letter-spacing: 0; }
+        .page-header p { color: rgba(255,255,255,0.78); font-size: 0.98rem; margin: 8px 0 0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .stat-card {
+            background: rgba(255,255,255,0.96); border: 1px solid rgba(255,255,255,0.45);
+            border-radius: 14px; padding: 20px 18px; text-align: center; box-shadow: 0 18px 42px rgba(15,23,42,0.12);
         }
+        .stat-card .value { font-size: 1.7rem; font-weight: 800; line-height: 1; }
+        .stat-card .label { margin-top: 10px; font-size: 0.76rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .stat-card.pending { border-top: 4px solid #f59e0b; }
+        .stat-card.in-progress { border-top: 4px solid #6366f1; }
+        .stat-card.completed { border-top: 4px solid #10b981; }
+        .filter-panel {
+            background: rgba(255,255,255,0.96); border-radius: 16px; padding: 16px 20px; margin-bottom: 22px;
+            display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+            box-shadow: 0 18px 42px rgba(15,23,42,0.12);
+        }
+        .filter-label { color: #475569; font-weight: 800; font-size: 0.9rem; }
         .filter-chip {
-            padding: 6px 18px; border-radius: 20px; font-size: 0.8rem;
-            font-weight: 600; cursor: pointer; transition: all 0.2s;
-            border: 2px solid #e2e8f0; background: white; color: #64748b;
-            text-decoration: none;
+            min-width: 116px; text-align: center; padding: 9px 16px; border-radius: 999px;
+            border: 2px solid #e2e8f0; background: #fff; color: #64748b; text-decoration: none;
+            font-weight: 800; font-size: 0.84rem; transition: all 0.18s ease;
         }
-        .filter-chip.active, .filter-chip:hover { background: #6366f1; color: white; border-color: #6366f1; }
-
+        .filter-chip:hover, .filter-chip.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+        .task-list { display: grid; gap: 14px; }
         .task-card {
-            background: white; border-radius: 16px; padding: 20px 22px;
-            margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.04); border-left: 4px solid #e2e8f0;
-            transition: all 0.2s; display: flex; align-items: flex-start; gap: 16px;
+            background: rgba(255,255,255,0.97); border: 1px solid rgba(255,255,255,0.48);
+            border-left: 5px solid #cbd5e1; border-radius: 18px; padding: 20px 22px;
+            box-shadow: 0 18px 42px rgba(15,23,42,0.12); display: grid;
+            grid-template-columns: 54px minmax(0, 1fr) auto; gap: 16px; align-items: flex-start;
         }
-        .task-card:hover { transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-        .task-card.pending  { border-left-color: #f59e0b; }
+        .task-card.pending { border-left-color: #f59e0b; }
         .task-card.in_progress { border-left-color: #6366f1; }
-        .task-card.done     { border-left-color: #10b981; }
-        .task-card.cancelled { border-left-color: #ef4444; }
-
-        .task-status-icon {
-            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        .task-card.completed, .task-card.done { border-left-color: #10b981; }
+        .task-card.canceled, .task-card.cancelled { border-left-color: #ef4444; }
+        .task-icon {
+            width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.35rem; color: #0f172a; background: #f1f5f9;
         }
-        .task-status-icon.pending    { background: #fff7ed; }
-        .task-status-icon.in_progress { background: #ede9fe; }
-        .task-status-icon.completed   { background: #d1fae5; }
-        .task-status-icon.canceled    { background: #fee2e2; }
-
-        .task-name { font-weight: 700; font-size: 0.95rem; color: #0f172a; margin-bottom: 4px; }
-        .task-desc { color: #64748b; font-size: 0.82rem; margin-bottom: 10px; line-height: 1.5; }
-        .task-meta { display: flex; gap: 14px; flex-wrap: wrap; }
-        .task-meta-item { font-size: 0.78rem; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
-
-        .badge-pending     { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
-        .badge-in_progress { background: #ede9fe; color: #7c3aed; border: 1px solid #ddd6fe; }
-        .badge-completed   { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-        .badge-canceled    { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-
-        .status-select {
-            padding: 4px 10px; border-radius: 8px; border: 1px solid #e2e8f0;
-            font-size: 0.78rem; cursor: pointer; font-weight: 600;
+        .task-card.pending .task-icon { background: #fff7ed; color: #d97706; }
+        .task-card.in_progress .task-icon { background: #eef2ff; color: #4f46e5; }
+        .task-card.completed .task-icon, .task-card.done .task-icon { background: #dcfce7; color: #059669; }
+        .task-card.canceled .task-icon, .task-card.cancelled .task-icon { background: #fee2e2; color: #dc2626; }
+        .task-name { font-size: 1rem; font-weight: 800; margin-bottom: 6px; color: #0f172a; }
+        .task-desc { color: #64748b; font-size: 0.9rem; line-height: 1.55; margin-bottom: 12px; }
+        .task-meta { display: flex; gap: 12px; flex-wrap: wrap; }
+        .task-meta-item {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 10px;
+            background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; font-size: 0.78rem; font-weight: 700;
         }
-
-        .stats-bar {
-            display: flex; gap: 16px; margin-bottom: 24px;
+        .task-actions { min-width: 180px; text-align: right; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 7px 11px;
+            font-size: 0.76rem; font-weight: 800; border: 1px solid #e2e8f0; color: #475569; background: #f8fafc;
         }
-        .stat-pill {
-            background: white; border-radius: 12px; padding: 14px 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex: 1; text-align: center;
-            border: 1px solid rgba(0,0,0,0.04);
+        .status-pill.pending { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+        .status-pill.in_progress { background: #eef2ff; color: #4f46e5; border-color: #c7d2fe; }
+        .status-pill.completed, .status-pill.done { background: #dcfce7; color: #047857; border-color: #bbf7d0; }
+        .status-pill.canceled, .status-pill.cancelled { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+        .status-select { width: 100%; margin-top: 10px; border-radius: 10px; border: 1px solid #dbe3ef; padding: 8px 10px; font-size: 0.84rem; font-weight: 700; color: #334155; }
+        .empty-state {
+            background: rgba(255,255,255,0.97); border-radius: 18px; padding: 64px 24px; text-align: center;
+            color: #64748b; box-shadow: 0 18px 42px rgba(15,23,42,0.12);
         }
-        .stat-pill .sp-val { font-size: 1.5rem; font-weight: 800; color: #0f172a; }
-        .stat-pill .sp-lbl { font-size: 0.72rem; color: #94a3b8; font-weight: 500; margin-top: 2px; text-transform: uppercase; }
-
-        .empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; background: white; border-radius: 16px; }
-        .empty-state i { font-size: 3.5rem; display: block; margin-bottom: 16px; }
-
-      /* ===== LANGUAGE TOGGLE ===== */
-      .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
-      .lang-btn:hover { background:rgba(255,255,255,0.18)!important;color:white!important; }
-      .lang-btn.active { background:#6366f1!important;border-color:#6366f1!important;color:white!important; }
+        .empty-state i { display: block; font-size: 3rem; color: #94a3b8; margin-bottom: 16px; }
+        .empty-state strong { display: block; color: #334155; font-size: 1.05rem; margin-bottom: 4px; }
+        @media (max-width: 1100px) {
+            .main-content { margin-left: 0; padding: 24px 18px 96px; }
+            .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .task-card { grid-template-columns: 48px minmax(0, 1fr); }
+            .task-actions { grid-column: 1 / -1; text-align: left; width: 100%; }
+        }
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .filter-chip { flex: 1 1 140px; }
+        }
     </style>
 </head>
 <body>
-
-<!-- SIDEBAR -->
 <div th:replace="fragments/user-sidebar :: sidebar"></div>
 
-<div class="main-content">
-    <div class="page-header">
-        <h1>?? C�ng vi?c c?a t�i</h1>
-        <p>Danh s�ch c�ng vi?c du?c giao v� tr?ng th�i th?c hi?n</p>
-    </div>
+<main class="main-content">
+    <div class="page-shell">
+        <header class="page-header">
+            <h1><i class="bi bi-list-task"></i> C&#244;ng vi&#7879;c c&#7911;a t&#244;i</h1>
+            <p>Danh s&#225;ch c&#244;ng vi&#7879;c &#273;&#432;&#7907;c giao v&#224; tr&#7841;ng th&#225;i th&#7921;c hi&#7879;n.</p>
+        </header>
 
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-        <div class="stat-pill">
-            <div class="sp-val" th:text="${totalTasks}">0</div>
-            <div class="sp-lbl">T?ng c�ng vi?c</div>
-        </div>
-        <div class="stat-pill" style="border-top: 3px solid #f59e0b;">
-            <div class="sp-val" style="color:#f59e0b;" th:text="${pendingCount}">0</div>
-            <div class="sp-lbl">Ch? x? l�</div>
-        </div>
-        <div class="stat-pill" style="border-top: 3px solid #6366f1;">
-            <div class="sp-val" style="color:#6366f1;" th:text="${inProgressCount}">0</div>
-            <div class="sp-lbl">�ang l�m</div>
-        </div>
-        <div class="stat-pill" style="border-top: 3px solid #10b981;">
-            <div class="sp-val" style="color:#10b981;" th:text="${doneCount}">0</div>
-            <div class="sp-lbl">Ho�n th�nh</div>
-        </div>
-    </div>
+        <section class="stats-grid" aria-label="T&#7893;ng quan c&#244;ng vi&#7879;c">
+            <div class="stat-card">
+                <div class="value" th:text="${totalTasks}">0</div>
+                <div class="label">T&#7893;ng c&#244;ng vi&#7879;c</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="value" style="color:#f59e0b;" th:text="${pendingCount}">0</div>
+                <div class="label">Ch&#7901; x&#7917; l&#253;</div>
+            </div>
+            <div class="stat-card in-progress">
+                <div class="value" style="color:#6366f1;" th:text="${inProgressCount}">0</div>
+                <div class="label">&#272;ang l&#224;m</div>
+            </div>
+            <div class="stat-card completed">
+                <div class="value" style="color:#10b981;" th:text="${doneCount}">0</div>
+                <div class="label">Ho&#224;n th&#224;nh</div>
+            </div>
+        </section>
 
-    <!-- Filter -->
-    <div class="filter-bar">
-        <span style="font-size:0.82rem;font-weight:600;color:#64748b;">L?c:</span>
-        <a href="/user1/tasks" th:class="${filter == null ? 'filter-chip active' : 'filter-chip'}">T?t c?</a>
-        <a href="/user1/tasks?filter=PENDING" th:class="${filter == 'PENDING' ? 'filter-chip active' : 'filter-chip'}">? Ch? x? l�</a>
-        <a href="/user1/tasks?filter=IN_PROGRESS" th:class="${filter == 'IN_PROGRESS' ? 'filter-chip active' : 'filter-chip'}">?? �ang l�m</a>
-        <a href="/user1/tasks?filter=COMPLETED" th:class="${filter == 'COMPLETED' ? 'filter-chip active' : 'filter-chip'}">? Ho�n th�nh</a>
-    </div>
+        <nav class="filter-panel" aria-label="B&#7897; l&#7885;c c&#244;ng vi&#7879;c">
+            <span class="filter-label">L&#7885;c:</span>
+            <a th:href="@{/user1/tasks}" th:class="${filter == null ? 'filter-chip active' : 'filter-chip'}">T&#7845;t c&#7843;</a>
+            <a th:href="@{/user1/tasks(filter='PENDING')}" th:class="${filter == 'PENDING' ? 'filter-chip active' : 'filter-chip'}">Ch&#7901; x&#7917; l&#253;</a>
+            <a th:href="@{/user1/tasks(filter='IN_PROGRESS')}" th:class="${filter == 'IN_PROGRESS' ? 'filter-chip active' : 'filter-chip'}">&#272;ang l&#224;m</a>
+            <a th:href="@{/user1/tasks(filter='COMPLETED')}" th:class="${filter == 'COMPLETED' ? 'filter-chip active' : 'filter-chip'}">Ho&#224;n th&#224;nh</a>
+        </nav>
 
-    <!-- Task List -->
-    <div th:if="${#lists.isEmpty(myTasks)}" class="empty-state">
-        <i class="bi bi-inbox"></i>
-        <div style="font-size:1rem;font-weight:600;color:#64748b;">Kh�ng c� c�ng vi?c n�o</div>
-        <div style="font-size:0.85rem;margin-top:4px;">Chua c� c�ng vi?c du?c giao ho?c kh�ng ph� h?p b? l?c</div>
-    </div>
+        <section th:if="${#lists.isEmpty(myTasks)}" class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <strong>Kh&#244;ng c&#243; c&#244;ng vi&#7879;c n&#224;o</strong>
+            <span>Ch&#432;a c&#243; c&#244;ng vi&#7879;c &#273;&#432;&#7907;c giao ho&#7863;c kh&#244;ng ph&#249; h&#7907;p b&#7897; l&#7885;c hi&#7879;n t&#7841;i.</span>
+        </section>
 
-    <div th:each="a : ${myTasks}"
-         th:class="'task-card ' + ${a.status.name().toLowerCase()}">
-
-        <div th:switch="${a.status.name()}"
-             th:class="'task-status-icon ' + ${a.status.name().toLowerCase()}">
-            <span th:case="'PENDING'">?</span>
-            <span th:case="'IN_PROGRESS'">??</span>
-            <span th:case="'COMPLETED'">?</span>
-            <span th:case="'CANCELED'">?</span>
-            <span th:case="*">??</span>
-        </div>
-
-        <div style="flex:1;">
-            <div class="task-name" th:text="${a.task.taskName}">T�n c�ng vi?c</div>
-            <div class="task-desc" th:text="${a.task.description != null ? a.task.description : 'Kh�ng c� m� t?'}">M� t?</div>
-            <div class="task-meta">
-                <div class="task-meta-item"><i class="bi bi-tag"></i> <span th:text="${a.task.taskType}">Lo?i</span></div>
-                <div class="task-meta-item"><i class="bi bi-calendar3"></i> Ng�y giao: <span th:text="${a.assignedDate}">01/01</span></div>
-                <div class="task-meta-item" th:if="${a.task.startDate != null or a.task.endDate != null}">
-                    <i class="bi bi-calendar-range"></i>
-                    H?n task:
-                    <span th:text="${(a.task.startDate != null ? #temporals.format(a.task.startDate, 'dd/MM/yyyy') : '---') + ' - ' + (a.task.endDate != null ? #temporals.format(a.task.endDate, 'dd/MM/yyyy') : '---')}">01/01 - 02/01</span>
+        <section class="task-list" th:if="${!#lists.isEmpty(myTasks)}">
+            <article th:each="a : ${myTasks}"
+                     th:with="statusName=${a.status != null ? a.status.name() : 'PENDING'}, statusClass=${#strings.toLowerCase(statusName)}"
+                     th:class="${'task-card ' + statusClass}">
+                <div class="task-icon">
+                    <i th:if="${statusName == 'PENDING'}" class="bi bi-hourglass-split"></i>
+                    <i th:if="${statusName == 'IN_PROGRESS'}" class="bi bi-lightning-charge"></i>
+                    <i th:if="${statusName == 'COMPLETED'}" class="bi bi-check2-circle"></i>
+                    <i th:if="${statusName == 'CANCELED'}" class="bi bi-x-circle"></i>
+                    <i th:if="${statusName != 'PENDING' and statusName != 'IN_PROGRESS' and statusName != 'COMPLETED' and statusName != 'CANCELED'}" class="bi bi-list-check"></i>
                 </div>
-                <div class="task-meta-item" th:if="${a.actualHours != null}"><i class="bi bi-clock"></i> Gi? th?c t?: <span th:text="${a.actualHours} + 'h'">0h</span></div>
-            </div>
-        </div>
 
-        <div style="flex-shrink:0;text-align:right;">
-            <span class="badge rounded-pill mb-2"
-                  th:text="${a.status}">PENDING</span>
-            <!-- Update status form -->
-            <div th:if="${a.status.name() != 'COMPLETED' and a.status.name() != 'CANCELED'}">
-                <form th:action="@{'/user1/tasks/' + ${a.id} + '/update-status'}" method="post" style="margin-top:8px;">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <select name="status" class="status-select" onchange="this.form.submit()">
-                        <option value="">C?p nh?t tr?ng th�i</option>
-                        <option value="IN_PROGRESS" th:selected="${a.status.name() == 'IN_PROGRESS'}">?? �ang l�m</option>
-                        <option value="COMPLETED">? Ho�n th�nh</option>
-                    </select>
-                </form>
-            </div>
-        </div>
+                <div>
+                    <div class="task-name" th:text="${a.task != null ? a.task.taskName : 'C&#244;ng vi&#7879;c'}">C&#244;ng vi&#7879;c</div>
+                    <div class="task-desc" th:text="${a.task != null and a.task.description != null ? a.task.description : 'Kh&#244;ng c&#243; m&#244; t&#7843;'}">Kh&#244;ng c&#243; m&#244; t&#7843;</div>
+                    <div class="task-meta">
+                        <span class="task-meta-item" th:if="${a.task != null and a.task.taskType != null}">
+                            <i class="bi bi-tag"></i><span th:text="${a.task.taskType}">Lo&#7841;i</span>
+                        </span>
+                        <span class="task-meta-item" th:if="${a.assignedDate != null}">
+                            <i class="bi bi-calendar-check"></i>Ng&#224;y giao: <span th:text="${a.assignedDate}">--</span>
+                        </span>
+                        <span class="task-meta-item" th:if="${a.task != null and (a.task.startDate != null or a.task.endDate != null)}">
+                            <i class="bi bi-calendar-range"></i>H&#7841;n:
+                            <span th:text="${(a.task.startDate != null ? #temporals.format(a.task.startDate, 'dd/MM/yyyy') : '--') + ' - ' + (a.task.endDate != null ? #temporals.format(a.task.endDate, 'dd/MM/yyyy') : '--')}">--</span>
+                        </span>
+                        <span class="task-meta-item" th:if="${a.actualHours != null}">
+                            <i class="bi bi-clock"></i>Gi&#7901; th&#7921;c t&#7871;: <span th:text="${a.actualHours + 'h'}">0h</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="task-actions">
+                    <span th:class="${'status-pill ' + statusClass}">
+                        <span th:if="${statusName == 'PENDING'}">Ch&#7901; x&#7917; l&#253;</span>
+                        <span th:if="${statusName == 'IN_PROGRESS'}">&#272;ang l&#224;m</span>
+                        <span th:if="${statusName == 'COMPLETED'}">Ho&#224;n th&#224;nh</span>
+                        <span th:if="${statusName == 'CANCELED'}">&#272;&#227; h&#7911;y</span>
+                        <span th:if="${statusName != 'PENDING' and statusName != 'IN_PROGRESS' and statusName != 'COMPLETED' and statusName != 'CANCELED'}" th:text="${statusName}">Tr&#7841;ng th&#225;i</span>
+                    </span>
+
+                    <form th:if="${statusName != 'COMPLETED' and statusName != 'CANCELED'}"
+                          th:action="@{'/user1/tasks/' + ${a.id} + '/update-status'}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <select name="status" class="status-select" onchange="this.form.submit()">
+                            <option value="">C&#7853;p nh&#7853;t tr&#7841;ng th&#225;i</option>
+                            <option value="PENDING" th:selected="${statusName == 'PENDING'}">Ch&#7901; x&#7917; l&#253;</option>
+                            <option value="IN_PROGRESS" th:selected="${statusName == 'IN_PROGRESS'}">&#272;ang l&#224;m</option>
+                            <option value="COMPLETED">Ho&#224;n th&#224;nh</option>
+                        </select>
+                    </form>
+                </div>
+            </article>
+        </section>
     </div>
-</div>
+</main>
+
 <div th:replace="fragments/user-sidebar :: settingsFab"></div>
 <script th:src="@{/js/lang-toggle.js}"></script>
 <script th:src="@{/js/hrms-settings.js}"></script>

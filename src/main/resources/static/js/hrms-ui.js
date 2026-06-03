@@ -48,11 +48,13 @@
       ['link', '/admin/reviews', 'bi-star-half', 'Đánh giá KPI'],
       ['link', '/admin/kpi', 'bi-bullseye', 'Mục tiêu KPI'],
       ['link', '/admin/skills', 'bi-tools', 'Kỹ năng NV'],
-      ['link', '/admin/training', 'bi-mortarboard', 'Đào tạo'],
+      ['parent', 'training', 'bi-mortarboard', 'Đào tạo',
+        [['/admin/training', 'Tất cả chương trình'], ['/admin/training?status=PLANNED', 'Kế hoạch'], ['/admin/training?status=IN_PROGRESS', 'Đang diễn ra'], ['/admin/training?status=COMPLETED', 'Hoàn thành'], ['/admin/training?status=CANCELLED', 'Đã hủy'], ['/admin/training?trainingType=INTERNAL', 'Internal'], ['/admin/training?trainingType=EXTERNAL', 'External'], ['/admin/training?trainingType=ONLINE', 'Online'], ['/admin/training?trainingType=WORKSHOP', 'Workshop']]],
       ['parent', 'videos', 'bi-collection-play', 'Video đào tạo',
         [['/admin/videos', 'Tất cả video'], ['/admin/videos?category=Onboarding', 'Onboarding'], ['/admin/videos?category=Kỹ năng mềm', 'Kỹ năng mềm'], ['/admin/videos?category=Kỹ thuật', 'Kỹ thuật'], ['/admin/videos?category=An toàn lao động', 'An toàn lao động']]],
       ['hr'],
-      ['link', '/admin/expenses', 'bi-receipt', 'Chi phí'],
+      ['parent', 'expenses', 'bi-receipt', 'Chi phí',
+        [['/admin/expenses', 'Tất cả chi phí'], ['/admin/expenses?status=PENDING', 'Chờ duyệt'], ['/admin/expenses?status=APPROVED', 'Đã duyệt'], ['/admin/expenses?status=REJECTED', 'Từ chối'], ['/admin/expenses?status=PAID', 'Đã thanh toán']]],
       ['link', '/admin/assets', 'bi-box-seam', 'Tài sản'],
       ['link', '/admin/announcements', 'bi-megaphone', 'Thông báo'],
       ['link', '/admin/reports', 'bi-bar-chart-line', 'Báo cáo'],
@@ -75,8 +77,17 @@
       ['link', '/admin/cloud', 'bi-cloud', 'Cloud Storage']
     ];
 
+    function repairText(value) {
+      var text = String(value);
+      try {
+        return decodeURIComponent(escape(text));
+      } catch (e) {
+        return text;
+      }
+    }
+
     function esc(value) {
-      return String(value).replace(/[&<>"']/g, function(ch) {
+      return repairText(value).replace(/[&<>"']/g, function(ch) {
         return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
       });
     }
@@ -270,7 +281,7 @@
     btn.id = 'hrms-back-top';
     btn.innerHTML = '↑';
     btn.title = 'Back to top';
-    btn.style.cssText = 'position:fixed;bottom:216px;right:30px;z-index:8998;width:36px;height:36px;border-radius:50%;background:rgba(99,102,241,0.3);border:1px solid rgba(99,102,241,0.5);color:#6366f1;font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all 0.2s;font-weight:700;';
+    btn.style.cssText = 'position:fixed;bottom:252px;right:30px;z-index:8998;width:36px;height:36px;border-radius:50%;background:rgba(99,102,241,0.3);border:1px solid rgba(99,102,241,0.5);color:#6366f1;font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all 0.2s;font-weight:700;';
     btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     btn.addEventListener('mouseenter', function() { this.style.background = '#6366f1'; this.style.color = 'white'; });
     btn.addEventListener('mouseleave', function() { this.style.background = 'rgba(99,102,241,0.3)'; this.style.color = '#6366f1'; });
@@ -306,6 +317,18 @@
       script.defer = true;
       document.body.appendChild(script);
     }
+  }
+
+  function injectReactIslandLoader() {
+    if (document.getElementById('hrms-react-islands-js')) return;
+    var hasReactRoot = document.querySelector('[data-hrms-react]');
+    if (!hasReactRoot) return;
+
+    var script = document.createElement('script');
+    script.id = 'hrms-react-islands-js';
+    script.src = '/js/hrms-react-islands.js';
+    script.defer = true;
+    document.body.appendChild(script);
   }
 
   function injectSettingsWidget() {
@@ -407,6 +430,7 @@
     injectBackToTop();
     injectSettingsWidget();
     injectChatbotWidget();
+    injectReactIslandLoader();
 
     // Intercept flash messages and show as toasts
     document.querySelectorAll('.alert-success, .alert-danger, .alert-warning').forEach(function(el) {

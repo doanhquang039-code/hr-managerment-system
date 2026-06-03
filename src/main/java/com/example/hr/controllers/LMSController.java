@@ -2,6 +2,7 @@ package com.example.hr.controllers;
 
 import com.example.hr.models.*;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.CloudinaryService;
 import com.example.hr.service.CourseManagementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,9 +10,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ public class LMSController {
     
     private final CourseManagementService courseService;
     private final AuthUserHelper authUserHelper;
+    private final CloudinaryService cloudinaryService;
     
     // ===== User Views =====
     
@@ -105,7 +110,25 @@ public class LMSController {
         long mandatoryCount = courses.stream().filter(c -> Boolean.TRUE.equals(c.getIsMandatory())).count();
         model.addAttribute("courses", courses);
         model.addAttribute("mandatoryCount", mandatoryCount);
+        model.addAttribute("courseCards", courses.stream().map(this::toCourseCard).toList());
         return "admin/course-list";
+    }
+
+    private Map<String, Object> toCourseCard(Course course) {
+        Map<String, Object> card = new LinkedHashMap<>();
+        card.put("id", course.getId());
+        card.put("title", course.getTitle());
+        card.put("description", course.getDescription());
+        card.put("category", course.getCategory());
+        card.put("level", course.getLevel());
+        card.put("durationMinutes", course.getDurationMinutes());
+        card.put("passingScore", course.getPassingScore());
+        card.put("thumbnailUrl", course.getThumbnailUrl());
+        card.put("videoUrl", course.getVideoUrl());
+        card.put("mandatory", Boolean.TRUE.equals(course.getIsMandatory()));
+        card.put("active", Boolean.TRUE.equals(course.getIsActive()));
+        card.put("createdAt", course.getCreatedAt() != null ? course.getCreatedAt().toString() : null);
+        return card;
     }
     
     @GetMapping("/admin/course/new")
@@ -120,8 +143,20 @@ public class LMSController {
     
     @PostMapping("/admin/course/save")
     @PreAuthorize("hasAnyRole('ADMIN', 'HR')")
-    public String saveCourse(@ModelAttribute Course course, RedirectAttributes ra) {
+    public String saveCourse(@ModelAttribute Course course,
+                             @RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
+                             RedirectAttributes ra) {
         try {
+            if (videoFile != null && !videoFile.isEmpty()) {
+                var upload = cloudinaryService.uploadVideo(videoFile, "hr_course_videos");
+                Object secureUrl = upload.get("secure_url");
+                Object publicId = upload.get("public_id");
+                course.setVideoUrl(secureUrl != null ? secureUrl.toString() : null);
+                course.setVideoPublicId(publicId != null ? publicId.toString() : null);
+                if ((course.getThumbnailUrl() == null || course.getThumbnailUrl().isBlank()) && publicId != null) {
+                    course.setThumbnailUrl(cloudinaryService.generateVideoThumbnail(publicId.toString()));
+                }
+            }
             if (course.getIsActive() == null) {
                 course.setIsActive(true);
             }

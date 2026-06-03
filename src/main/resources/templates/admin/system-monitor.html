@@ -2,112 +2,252 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>System Monitor - HR Management</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <title>System Health - HRMS Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { margin:0; font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#eef3f9; color:#0f172a; }
+        .ops-header { background:#fff; border:1px solid #dbe4ef; border-radius:18px; padding:24px 28px; box-shadow:0 18px 42px rgba(15,23,42,.08); display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:24px; }
+        .ops-title { display:flex; align-items:center; gap:14px; }
+        .ops-title-icon { width:50px; height:50px; border-radius:16px; display:grid; place-items:center; background:#e0f2fe; color:#0369a1; font-size:1.35rem; }
+        .ops-kicker { color:#64748b; font-size:.9rem; margin-top:4px; }
+        .ops-card { background:#fff; border:1px solid #dbe4ef; border-radius:16px; box-shadow:0 14px 32px rgba(15,23,42,.06); overflow:hidden; height:100%; }
+        .ops-card-head { padding:18px 20px; border-bottom:1px solid #edf2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .ops-card-body { padding:18px 20px; }
+        .metric-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:24px; }
+        .metric { background:#fff; border:1px solid #dbe4ef; border-radius:16px; padding:18px; min-height:130px; box-shadow:0 14px 32px rgba(15,23,42,.06); }
+        .metric-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+        .metric-icon { width:46px; height:46px; border-radius:14px; display:grid; place-items:center; font-size:1.25rem; }
+        .metric-label { color:#64748b; font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; font-weight:800; }
+        .metric-value { font-size:1.75rem; font-weight:850; margin-top:8px; }
+        .muted { color:#64748b; }
+        .status-pill { border-radius:999px; padding:5px 10px; font-size:.72rem; font-weight:850; text-transform:uppercase; }
+        .status-up, .status-ready { color:#047857; background:#d1fae5; }
+        .status-down, .status-error { color:#b91c1c; background:#fee2e2; }
+        .status-limited, .status-disabled, .status-progress { color:#92400e; background:#fef3c7; }
+        .topic-list { display:flex; flex-wrap:wrap; gap:8px; }
+        .topic { border:1px solid #dbe4ef; background:#f8fafc; color:#334155; border-radius:999px; padding:6px 10px; font-size:.78rem; font-weight:700; }
+        .ops-table { width:100%; border-collapse:collapse; }
+        .ops-table th { color:#64748b; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; font-weight:850; padding:10px 8px; border-bottom:1px solid #e5edf6; }
+        .ops-table td { padding:11px 8px; border-bottom:1px solid #edf2f7; vertical-align:top; font-size:.9rem; }
+        .readiness { display:grid; gap:10px; }
+        .readiness-item { border:1px solid #e2e8f0; border-radius:12px; padding:12px 14px; background:#f8fafc; }
+        .readiness-title { display:flex; align-items:center; justify-content:space-between; gap:12px; font-weight:800; }
+        .quick-links { display:flex; flex-wrap:wrap; gap:10px; }
+        .quick-links a { text-decoration:none; border:1px solid #cbd5e1; color:#0f172a; background:#fff; border-radius:10px; padding:9px 12px; font-weight:750; }
+        .quick-links a:hover { border-color:#2563eb; color:#2563eb; }
+        @media (max-width:1200px) { .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width:720px) { .metric-grid { grid-template-columns:1fr; } .ops-header { align-items:flex-start; flex-direction:column; } }
+    </style>
 </head>
-<body>
-    <div class="container-fluid">
-        <div class="row">
-            <div th:replace="fragments/admin-sidebar :: sidebar"></div>
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-activity me-2"></i>System Monitor</h1>
-                    <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
-                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
-                    </button>
-                </div>
+<body data-settings-scope="admin">
+<div th:replace="fragments/admin-sidebar :: sidebar"></div>
+<main class="admin-main">
+    <section class="ops-header">
+        <div class="ops-title">
+            <div class="ops-title-icon"><i class="bi bi-activity"></i></div>
+            <div>
+                <h1 class="h3 fw-bold mb-0">System Health & Event Monitor</h1>
+                <div class="ops-kicker">Theo dõi Kafka, Redis, Email, Cloud, Audit và mức sẵn sàng hoàn thiện HRMS.</div>
+            </div>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn btn-outline-secondary" href="/admin/cache"><i class="bi bi-lightning-charge me-1"></i>Cache</a>
+            <a class="btn btn-outline-secondary" href="/admin/cloud"><i class="bi bi-cloud me-1"></i>Cloud</a>
+            <button class="btn btn-primary" onclick="location.reload()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+        </div>
+    </section>
 
-                <!-- System Health -->
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <i class="bi bi-cpu fs-1 text-primary"></i>
-                                <h3 class="mt-2" th:text="${systemHealth.cpuUsage + '%'}">45%</h3>
-                                <p class="text-muted mb-0">CPU Usage</p>
-                                <div class="progress mt-2" style="height: 5px;">
-                                    <div class="progress-bar" th:style="'width: ' + ${systemHealth.cpuUsage} + '%'"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <i class="bi bi-memory fs-1 text-warning"></i>
-                                <h3 class="mt-2" th:text="${systemHealth.memoryUsage + '%'}">68%</h3>
-                                <p class="text-muted mb-0">Memory Usage</p>
-                                <div class="progress mt-2" style="height: 5px;">
-                                    <div class="progress-bar bg-warning" th:style="'width: ' + ${systemHealth.memoryUsage} + '%'"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <i class="bi bi-hdd fs-1 text-info"></i>
-                                <h3 class="mt-2" th:text="${systemHealth.diskUsage + '%'}">52%</h3>
-                                <p class="text-muted mb-0">Disk Usage</p>
-                                <div class="progress mt-2" style="height: 5px;">
-                                    <div class="progress-bar bg-info" th:style="'width: ' + ${systemHealth.diskUsage} + '%'"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <i class="bi bi-check-circle fs-1 text-success"></i>
-                                <h3 class="mt-2" th:text="${systemHealth.status}">Healthy</h3>
-                                <p class="text-muted mb-0">System Status</p>
-                                <small class="text-muted" th:text="'Uptime: ' + ${systemHealth.uptime}">Uptime: 15 days</small>
-                            </div>
-                        </div>
-                    </div>
+    <section class="metric-grid">
+        <div class="metric">
+            <div class="metric-top">
+                <div>
+                    <div class="metric-label">Database</div>
+                    <div class="metric-value" th:text="${systemHealth.database.status}">UP</div>
                 </div>
+                <div class="metric-icon" style="background:#dbeafe;color:#1d4ed8;"><i class="bi bi-database-check"></i></div>
+            </div>
+            <div class="muted mt-2" th:text="${systemHealth.database.database ?: 'Không xác định'}">MySQL</div>
+        </div>
+        <div class="metric">
+            <div class="metric-top">
+                <div>
+                    <div class="metric-label">Redis cache</div>
+                    <div class="metric-value" th:text="${systemHealth.cache.status}">UP</div>
+                </div>
+                <div class="metric-icon" style="background:#dcfce7;color:#15803d;"><i class="bi bi-hdd-network"></i></div>
+            </div>
+            <div class="muted mt-2" th:text="${systemHealth.cache.redis != null ? 'Keys: ' + systemHealth.cache.redis.dbSize : (systemHealth.cache.error ?: 'Không có dữ liệu')}">Keys: 0</div>
+        </div>
+        <div class="metric">
+            <div class="metric-top">
+                <div>
+                    <div class="metric-label">Kafka</div>
+                    <div class="metric-value" th:text="${operationsMonitor.kafka.status}">DOWN</div>
+                </div>
+                <div class="metric-icon" style="background:#fef3c7;color:#b45309;"><i class="bi bi-broadcast-pin"></i></div>
+            </div>
+            <div class="muted mt-2" th:text="${operationsMonitor.kafka.presentConfiguredTopics + '/' + operationsMonitor.kafka.configuredTopicCount + ' topic sẵn sàng'}">0/0 topic</div>
+        </div>
+        <div class="metric">
+            <div class="metric-top">
+                <div>
+                    <div class="metric-label">Audit log</div>
+                    <div class="metric-value" th:text="${operationsMonitor.audit.total}">0</div>
+                </div>
+                <div class="metric-icon" style="background:#ede9fe;color:#6d28d9;"><i class="bi bi-journal-check"></i></div>
+            </div>
+            <div class="muted mt-2">Ghi nhận mutation admin/manager/hiring</div>
+        </div>
+    </section>
 
-                <!-- Performance Metrics -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="bi bi-speedometer2 me-2"></i>Performance Metrics</h5>
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <section class="ops-card">
+                <div class="ops-card-head">
+                    <div class="fw-bold"><i class="bi bi-broadcast-pin me-2"></i>Kafka Event Pipeline</div>
+                    <span class="status-pill"
+                          th:classappend="${operationsMonitor.kafka.status == 'UP'} ? ' status-up' : ' status-down'"
+                          th:text="${operationsMonitor.kafka.status}">DOWN</span>
+                </div>
+                <div class="ops-card-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-3"><div class="metric-label">Broker topics</div><div class="fw-bold fs-5" th:text="${operationsMonitor.kafka.brokerTopicCount ?: 0}">0</div></div>
+                        <div class="col-md-3"><div class="metric-label">Configured</div><div class="fw-bold fs-5" th:text="${operationsMonitor.kafka.configuredTopicCount}">10</div></div>
+                        <div class="col-md-3"><div class="metric-label">DLT present</div><div class="fw-bold fs-5" th:text="${operationsMonitor.kafka.presentDltTopics ?: 0}">0</div></div>
+                        <div class="col-md-3"><div class="metric-label">Nodes</div><div class="fw-bold fs-5" th:text="${operationsMonitor.kafka.nodeCount ?: 0}">0</div></div>
                     </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <td><strong>Average Response Time</strong></td>
-                                    <td th:text="${performanceMetrics.avgResponseTime + ' ms'}">150 ms</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Requests Per Minute</strong></td>
-                                    <td th:text="${performanceMetrics.requestsPerMinute}">120</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Active Sessions</strong></td>
-                                    <td th:text="${performanceMetrics.activeSessions}">45</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Database Connections</strong></td>
-                                    <td th:text="${performanceMetrics.dbConnections}">10</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Cache Hit Rate</strong></td>
-                                    <td th:text="${performanceMetrics.cacheHitRate + '%'}">85%</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="alert alert-warning py-2" th:if="${operationsMonitor.kafka.message != null}" th:text="${operationsMonitor.kafka.message}">Kafka offline</div>
+                    <div class="metric-label mb-2">Topics đã cấu hình</div>
+                    <div class="topic-list mb-3">
+                        <span class="topic" th:each="topic : ${operationsMonitor.kafka.configuredTopics}" th:text="${topic}">hr-topic</span>
+                    </div>
+                    <div class="metric-label mb-2">Dead-letter topics</div>
+                    <div class="topic-list">
+                        <span class="topic" th:each="topic : ${operationsMonitor.kafka.dltTopics}" th:text="${topic}">hr-topic.DLT</span>
                     </div>
                 </div>
-            </main>
+            </section>
+        </div>
+
+        <div class="col-xl-4">
+            <section class="ops-card">
+                <div class="ops-card-head">
+                    <div class="fw-bold"><i class="bi bi-check2-circle me-2"></i>Readiness HRMS</div>
+                </div>
+                <div class="ops-card-body readiness">
+                    <div class="readiness-item" th:each="item : ${operationsMonitor.readiness}">
+                        <div class="readiness-title">
+                            <span th:text="${item.name}">Tên hạng mục</span>
+                            <span class="status-pill"
+                                  th:classappend="${item.status == 'READY'} ? ' status-ready' : ' status-progress'"
+                                  th:text="${item.status}">READY</span>
+                        </div>
+                        <div class="muted mt-1" th:text="${item.note}">Ghi chú</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-xl-6">
+            <section class="ops-card">
+                <div class="ops-card-head">
+                    <div class="fw-bold"><i class="bi bi-envelope-check me-2"></i>Email & Cloud</div>
+                    <span class="status-pill status-ready" th:text="${operationsMonitor.email.status}">READY</span>
+                </div>
+                <div class="ops-card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="metric-label">Email provider</div>
+                            <div class="fw-bold fs-5" th:text="${operationsMonitor.email.provider}">Gmail SMTP</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="metric-label">Notification rows</div>
+                            <div class="fw-bold fs-5" th:text="${operationsMonitor.notifications.total}">0</div>
+                        </div>
+                    </div>
+                    <hr>
+                    <table class="ops-table">
+                        <tbody>
+                        <tr th:each="service : ${operationsMonitor.cloud.services}">
+                            <td class="fw-bold" th:text="${service.key}">s3</td>
+                            <td><span class="status-pill" th:classappend="${service.value == 'online'} ? ' status-up' : ' status-limited'" th:text="${service.value}">online</span></td>
+                        </tr>
+                        <tr th:if="${operationsMonitor.cloud.services == null or operationsMonitor.cloud.services.isEmpty()}">
+                            <td colspan="2" class="muted">Chưa có dịch vụ cloud đang bật.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-xl-6">
+            <section class="ops-card">
+                <div class="ops-card-head">
+                    <div class="fw-bold"><i class="bi bi-speedometer2 me-2"></i>Runtime</div>
+                </div>
+                <div class="ops-card-body">
+                    <table class="ops-table">
+                        <tbody>
+                        <tr><td class="fw-bold">OS</td><td th:text="${systemHealth.server.osName + ' ' + systemHealth.server.osVersion}">Windows</td></tr>
+                        <tr><td class="fw-bold">CPU processors</td><td th:text="${systemHealth.server.availableProcessors}">8</td></tr>
+                        <tr><td class="fw-bold">Memory used</td><td th:text="${systemHealth.memory.usedMemory + ' / ' + systemHealth.memory.maxMemory}">0 MB</td></tr>
+                        <tr><td class="fw-bold">Heap</td><td th:text="${systemHealth.memory.heap.used + ' / ' + systemHealth.memory.heap.max}">0 MB</td></tr>
+                        <tr><td class="fw-bold">Uptime</td><td th:text="${performanceMetrics.uptime + ' ms'}">0 ms</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12">
+            <section class="ops-card">
+                <div class="ops-card-head">
+                    <div class="fw-bold"><i class="bi bi-journal-text me-2"></i>Audit gần nhất</div>
+                    <a href="/admin/audit-log" class="btn btn-sm btn-outline-primary">Xem nhật ký</a>
+                </div>
+                <div class="ops-card-body">
+                    <table class="ops-table">
+                        <thead>
+                        <tr><th>Thời điểm</th><th>Người thao tác</th><th>Hành động</th><th>Module</th><th>ID</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="log : ${operationsMonitor.audit.recent}">
+                            <td th:text="${log.time}">03/06/2026 14:00</td>
+                            <td th:text="${log.actor}">admin</td>
+                            <td><span class="topic" th:text="${log.action}">POST_200</span></td>
+                            <td th:text="${log.entityType}">USERS</td>
+                            <td th:text="${log.entityId ?: '-'}">-</td>
+                        </tr>
+                        <tr th:if="${operationsMonitor.audit.recent == null or operationsMonitor.audit.recent.isEmpty()}">
+                            <td colspan="5" class="text-center muted py-4">Chưa có audit log.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div class="col-12">
+            <section class="ops-card">
+                <div class="ops-card-head">
+                    <div class="fw-bold"><i class="bi bi-link-45deg me-2"></i>Lối tắt triển khai tiếp</div>
+                </div>
+                <div class="ops-card-body quick-links">
+                    <a href="/admin/users"><i class="bi bi-people me-1"></i>Nhân viên</a>
+                    <a href="/admin/attendance"><i class="bi bi-clipboard-check me-1"></i>Chấm công</a>
+                    <a href="/admin/leaves"><i class="bi bi-calendar-x me-1"></i>Nghỉ phép</a>
+                    <a href="/admin/payroll"><i class="bi bi-cash-coin me-1"></i>Bảng lương</a>
+                    <a href="/hiring/postings"><i class="bi bi-person-plus me-1"></i>Tuyển dụng</a>
+                    <a href="/admin/onboarding/checklists"><i class="bi bi-list-check me-1"></i>Onboarding</a>
+                    <a href="/admin/kpi"><i class="bi bi-bullseye me-1"></i>KPI</a>
+                </div>
+            </section>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Auto-refresh every 30 seconds
-        setTimeout(function() { location.reload(); }, 30000);
-    </script>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/hrms-ui.js}"></script>
 </body>
 </html>

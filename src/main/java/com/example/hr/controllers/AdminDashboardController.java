@@ -54,9 +54,11 @@ public class AdminDashboardController {
     public String systemMonitor(Model model) {
         var systemHealth = systemMonitorService.getSystemHealth();
         var performanceMetrics = systemMonitorService.getPerformanceMetrics();
+        var operationsMonitor = systemMonitorService.getOperationsMonitor();
         
         model.addAttribute("systemHealth", systemHealth);
         model.addAttribute("performanceMetrics", performanceMetrics);
+        model.addAttribute("operationsMonitor", operationsMonitor);
 
         return "admin/system-monitor";
     }

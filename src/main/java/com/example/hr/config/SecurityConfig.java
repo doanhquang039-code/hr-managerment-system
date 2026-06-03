@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .ignoringRequestMatchers(
                         "/admin/payments/ipn/momo", "/admin/payment/ipn/momo",
                         "/admin/payments/ipn/vnpay", "/admin/payment/ipn/vnpay",
+                        "/admin/course/save",
                         "/api/lifestyle/health-insights"))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(

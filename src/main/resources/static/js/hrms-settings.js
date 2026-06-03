@@ -854,7 +854,7 @@
     panel.id = 'hrms-settings-panel';
     panel.innerHTML = [
       '<div id="hrms-settings-overlay" style="position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.5);" onclick="document.getElementById(\'hrms-settings-panel\').remove()"></div>',
-      '<div style="position:fixed;right:22px;bottom:210px;z-index:10002;width:320px;background:#1e293b;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;">',
+      '<div style="position:fixed;right:22px;bottom:150px;z-index:10002;width:320px;background:#1e293b;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;">',
         // Header
         '<div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">',
           '<div style="display:flex;align-items:center;gap:10px;">',
@@ -993,7 +993,7 @@
     btn.setAttribute('onclick', 'HRMS.settings.openPanel()');
     btn.style.cssText = [
       'position:fixed',
-      'bottom:152px',
+      'bottom:176px',
       'right:22px',
       'z-index:9998',
       'width:52px',

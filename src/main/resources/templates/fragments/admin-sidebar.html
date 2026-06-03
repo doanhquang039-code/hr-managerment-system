@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <body>
-<nav th:fragment="sidebar" class="admin-sidebar">
+<nav th:fragment="sidebar" class="admin-sidebar" data-synced-admin-menu="true">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" th:href="@{/css/chatbot-widget.css}">
   <style>
-    .admin-sidebar { width: 300px; min-height: 100vh; position: fixed; inset: 0 auto 0 0; z-index: 1000; overflow-y: auto; background: linear-gradient(180deg,#0f172a 0%,#111827 52%,#172033 100%); border-right: 1px solid rgba(148,163,184,.16); box-shadow: 10px 0 28px rgba(15,23,42,.18); padding: 18px 18px 24px; color: #dbe7f5; }
-    .admin-sidebar * { box-sizing: border-box; }
-    .admin-brand { min-height: 54px; display:flex; align-items:center; justify-content:center; gap:10px; color:#fff; font-weight:800; letter-spacing:.08em; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); margin-bottom: 18px; }
-    .admin-sidebar hr { border-color: rgba(148,163,184,.16); margin: 12px 18px; }
-    .admin-nav { display:flex; flex-direction:column; gap:2px; }
-    .admin-nav a, .admin-nav button { width:100%; min-height:42px; border:0; background:transparent; color:#aab7c8; text-decoration:none; display:flex; align-items:center; gap:12px; padding:9px 14px; font-size:.95rem; font-weight:600; text-align:left; border-left:3px solid transparent; }
+    .admin-sidebar { width:300px; min-height:100vh; position:fixed; inset:0 auto 0 0; z-index:1000; overflow-y:auto; background:linear-gradient(180deg,#0f172a 0%,#111827 52%,#172033 100%); border-right:1px solid rgba(148,163,184,.16); box-shadow:10px 0 28px rgba(15,23,42,.18); padding:20px 18px 26px; color:#dbe7f5; }
+    .admin-sidebar * { box-sizing:border-box; }
+    .admin-brand { min-height:56px; display:flex; align-items:center; justify-content:center; gap:10px; color:#fff; font-weight:800; letter-spacing:.08em; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); margin-bottom:20px; }
+    .admin-nav { display:flex; flex-direction:column; gap:4px; }
+    .admin-nav a, .admin-nav button { width:100%; min-height:44px; border:0; background:transparent; color:#aab7c8; text-decoration:none; display:flex; align-items:center; gap:12px; padding:10px 14px; font-size:.95rem; font-weight:650; text-align:left; border-left:3px solid transparent; }
     .admin-nav a:hover, .admin-nav button:hover, .admin-nav a.active, .admin-nav button.active { color:#fff; background:rgba(255,255,255,.08); border-left-color:#818cf8; }
     .admin-nav i { width:18px; text-align:center; color:inherit; }
+    .admin-nav hr { border-color:rgba(148,163,184,.16); margin:12px 18px; }
     .admin-parent { cursor:pointer; }
-    .admin-parent .caret { margin-left:auto; width:auto; transition:transform .18s ease; font-size:.78rem; }
+    .admin-parent .caret { margin-left:auto; width:auto; color:#cbd5e1; transition:transform .18s ease; font-size:.74rem; }
     .admin-parent.open .caret { transform:rotate(180deg); }
-    .admin-submenu { display:none; padding:4px 0 8px 34px; background:rgba(15,23,42,.28); }
+    .admin-submenu { display:none; padding:6px 0 10px 34px; margin:0 0 4px; background:rgba(15,23,42,.28); }
     .admin-submenu.open { display:block; }
-    .admin-submenu a { min-height:34px; padding:7px 12px; font-size:.84rem; font-weight:600; border-left:0; color:#c7d2e1; }
+    .admin-submenu a { min-height:36px; padding:8px 12px; font-size:.84rem; font-weight:650; border-left:0; color:#c7d2e1; }
     .admin-submenu a:hover, .admin-submenu a.active { color:#fff; background:rgba(255,255,255,.06); }
-    .admin-lang { display:flex; align-items:center; justify-content:center; gap:8px; padding:12px 0; }
+    .admin-lang { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 0; }
     .admin-lang button { border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); color:#cbd5e1; border-radius:8px; padding:5px 12px; font-size:.75rem; font-weight:800; }
     .admin-logout { padding:12px 6px 0; }
-    .admin-logout button { width:100%; min-height:36px; border:1px solid rgba(255,255,255,.75); color:#fff; background:transparent; border-radius:6px; font-weight:700; }
+    .admin-logout button { width:100%; min-height:38px; border:1px solid rgba(255,255,255,.75); color:#fff; background:transparent; border-radius:6px; font-weight:750; }
     .admin-main { margin-left:300px; min-height:100vh; padding:32px 40px; background:#eef3f9; }
-    @media (max-width: 991px) { .admin-sidebar { position:relative; width:100%; min-height:auto; max-height:460px; } .admin-main { margin-left:0; padding:20px; } }
+    @media (max-width:991px) { .admin-sidebar { position:relative; width:100%; min-height:auto; max-height:460px; } .admin-main { margin-left:0; padding:20px; } }
   </style>
 
   <div class="admin-brand"><span style="color:#fb923c">&#9889;</span> HRMS ADMIN</div>
@@ -33,7 +33,7 @@
     <a href="/admin/dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a>
     <a href="/profile"><i class="bi bi-person-circle"></i>Profile</a>
     <button type="button" class="admin-parent" data-menu="users"><i class="bi bi-people"></i>Nhân viên<i class="bi bi-chevron-down caret"></i></button>
-    <div class="admin-submenu" id="users"><a href="/admin/users">Quản lý nhân viên</a><a href="/hiring/users">Hiring user</a><a href="/admin/users?role=USER">User thường</a></div>
+    <div class="admin-submenu" id="users"><a href="/admin/users?role=MANAGER">Quản lý</a><a href="/hiring/users">Hiring user</a><a href="/admin/users?role=USER">Nhân viên user</a></div>
     <a href="/admin/groups"><i class="bi bi-diagram-3"></i>Groups</a>
     <a href="/admin/password-reset-requests"><i class="bi bi-shield-lock"></i>Password resets</a>
     <button type="button" class="admin-parent" data-menu="departments"><i class="bi bi-building"></i>Phòng ban<i class="bi bi-chevron-down caret"></i></button>
@@ -45,32 +45,47 @@
     <button type="button" class="admin-parent" data-menu="payroll"><i class="bi bi-cash-coin"></i>Bảng lương<i class="bi bi-chevron-down caret"></i></button>
     <div class="admin-submenu" id="payroll"><a href="/admin/payroll">Tất cả phòng ban</a><a href="/admin/payroll?departmentId=1">Phòng Nhân Sự</a><a href="/admin/payroll?departmentId=2">Phòng Kỹ Thuật</a><a href="/admin/payroll?departmentId=3">Phòng Kinh Doanh</a></div>
     <button type="button" class="admin-parent" data-menu="payments"><i class="bi bi-bank"></i>Thanh toán<i class="bi bi-chevron-down caret"></i></button>
-    <div class="admin-submenu" id="payments"><a href="/admin/payments">Tất cả</a><a href="/admin/payments?status=PENDING">Chờ thanh toán</a><a href="/admin/payments?status=PAID">Đã thanh toán</a><a href="/admin/payments?status=FAILED">Lỗi</a></div>
+    <div class="admin-submenu" id="payments"><a href="/admin/payments">Tất cả thanh toán</a><a href="/admin/payments?status=PENDING">Chờ xử lý</a><a href="/admin/payments?status=COMPLETED">Hoàn thành</a><a href="/admin/payments?status=FAILED">Thất bại</a></div>
     <a href="/admin/documents"><i class="bi bi-folder2-open"></i>Tài liệu</a>
     <button type="button" class="admin-parent" data-menu="leaves"><i class="bi bi-calendar-x"></i>Nghỉ phép<i class="bi bi-chevron-down caret"></i></button>
-    <div class="admin-submenu" id="leaves"><a href="/admin/leaves">Tất cả</a><a href="/admin/leaves?status=APPROVED">Đã duyệt</a><a href="/admin/leaves?status=PENDING">Chờ duyệt</a><a href="/admin/leaves?status=REJECTED">Bị từ chối</a></div>
-    <a href="/admin/attendance"><i class="bi bi-clipboard-check"></i>Chấm công</a>
+    <div class="admin-submenu" id="leaves"><a href="/admin/leaves">Tất cả đơn nghỉ</a><a href="/admin/leaves?status=PENDING">Chờ duyệt</a><a href="/admin/leaves?status=APPROVED">Đã duyệt</a><a href="/admin/leaves?status=REJECTED">Bị từ chối</a></div>
+    <button type="button" class="admin-parent" data-menu="attendance"><i class="bi bi-clipboard-check"></i>Chấm công<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="attendance"><a href="/admin/attendance">Tất cả chấm công</a><a href="/admin/attendance?status=PRESENT">Có mặt</a><a href="/admin/attendance?status=LATE">Đi muộn</a><a href="/admin/attendance?status=EARLY_LEAVE">Về sớm</a><a href="/admin/attendance?status=ABSENT">Vắng mặt</a></div>
     <button type="button" class="admin-parent" data-menu="tasks"><i class="bi bi-list-task"></i>Công việc<i class="bi bi-chevron-down caret"></i></button>
     <div class="admin-submenu" id="tasks"><a href="/admin/tasks">Xem all</a><a href="/admin/tasks?extraShift=true">Tăng ca</a><a href="/admin/tasks?extraShift=false">Không tăng ca</a></div>
     <button type="button" class="admin-parent" data-menu="assignments"><i class="bi bi-person-check"></i>Phân công<i class="bi bi-chevron-down caret"></i></button>
-    <div class="admin-submenu" id="assignments"><a href="/admin/assignments">Tất cả</a><a href="/admin/assignments?status=PENDING">Chờ</a><a href="/admin/assignments?status=IN_PROGRESS">Đang làm</a><a href="/admin/assignments?status=COMPLETED">Hoàn thành</a></div>
-    <button type="button" class="admin-parent" data-menu="shifts"><i class="bi bi-clock"></i>Ca làm việc<i class="bi bi-chevron-down caret"></i></button>
-    <div class="admin-submenu" id="shifts"><a href="/admin/shifts">Tất cả ca</a><a href="/admin/shifts?type=MORNING">Ca sáng</a><a href="/admin/shifts?type=AFTERNOON">Ca chiều</a><a href="/admin/shifts?type=EVENING">Ca tối</a><a href="/admin/shifts?type=NIGHT">Ca đêm</a></div>
+    <div class="admin-submenu" id="assignments"><a href="/admin/assignments">Xem all</a><a href="/admin/assignments?status=IN_PROGRESS">Đang làm</a><a href="/admin/assignments?status=PENDING">Chờ</a><a href="/admin/assignments?status=COMPLETED">Hoàn thành</a></div>
+    <button type="button" class="admin-parent" data-menu="shifts"><i class="bi bi-clock-history"></i>Ca làm việc<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="shifts"><a href="/admin/shifts">Tất cả ca</a><a href="/admin/shifts?period=morning">Ca sáng</a><a href="/admin/shifts?period=afternoon">Ca chiều</a><a href="/admin/shifts?period=evening">Ca tối</a><a href="/admin/shifts?period=night">Ca đêm</a></div>
     <hr>
     <a href="/admin/reviews"><i class="bi bi-star-half"></i>Đánh giá KPI</a>
     <a href="/admin/kpi"><i class="bi bi-bullseye"></i>Mục tiêu KPI</a>
-    <a href="/admin/skills"><i class="bi bi-mortarboard"></i>Kỹ năng</a>
-    <a href="/admin/training"><i class="bi bi-mortarboard-fill"></i>Đào tạo</a>
-    <button type="button" class="admin-parent" data-menu="videos"><i class="bi bi-play-btn"></i>Video đào tạo<i class="bi bi-chevron-down caret"></i></button>
+    <button type="button" class="admin-parent" data-menu="skills"><i class="bi bi-tools"></i>Kỹ năng NV<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="skills"><a href="/admin/skills">Tất cả kỹ năng</a><a href="/admin/skills?category=TECHNICAL">Technical</a><a href="/admin/skills?category=LANGUAGE">Language</a><a href="/admin/skills?level=BEGINNER">Beginner</a><a href="/admin/skills?level=EXPERT">Expert</a></div>
+    <button type="button" class="admin-parent" data-menu="training"><i class="bi bi-mortarboard"></i>Đào tạo<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="training"><a href="/admin/training">Tất cả chương trình</a><a href="/admin/training?status=PLANNED">Kế hoạch</a><a href="/admin/training?status=IN_PROGRESS">Đang diễn ra</a><a href="/admin/training?status=COMPLETED">Hoàn thành</a><a href="/admin/training?status=CANCELLED">Đã hủy</a><a href="/admin/training?trainingType=INTERNAL">Internal</a><a href="/admin/training?trainingType=EXTERNAL">External</a><a href="/admin/training?trainingType=ONLINE">Online</a><a href="/admin/training?trainingType=WORKSHOP">Workshop</a></div>
+    <button type="button" class="admin-parent" data-menu="videos"><i class="bi bi-collection-play"></i>Video đào tạo<i class="bi bi-chevron-down caret"></i></button>
     <div class="admin-submenu" id="videos"><a href="/admin/videos">Tất cả video</a><a href="/admin/videos?category=ONBOARDING">Onboarding</a><a href="/admin/videos?category=TECHNICAL">Kỹ thuật</a><a href="/admin/videos?category=SOFT_SKILL">Kỹ năng mềm</a><a href="/admin/videos?category=COMPLIANCE">Quy định</a></div>
-    <a href="/admin/expenses"><i class="bi bi-receipt"></i>Chi phí</a>
+    <hr>
+    <button type="button" class="admin-parent" data-menu="expenses"><i class="bi bi-receipt"></i>Chi phí<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="expenses"><a href="/admin/expenses">Tất cả chi phí</a><a href="/admin/expenses?status=PENDING">Chờ duyệt</a><a href="/admin/expenses?status=APPROVED">Đã duyệt</a><a href="/admin/expenses?status=REJECTED">Từ chối</a><a href="/admin/expenses?status=PAID">Đã thanh toán</a></div>
+    <a href="/admin/assets"><i class="bi bi-box-seam"></i>Tài sản</a>
+    <a href="/admin/announcements"><i class="bi bi-megaphone"></i>Thông báo</a>
     <a href="/admin/reports"><i class="bi bi-bar-chart-line"></i>Báo cáo</a>
     <button type="button" class="admin-parent" data-menu="hiring"><i class="bi bi-person-plus"></i>Tuyển dụng<i class="bi bi-chevron-down caret"></i></button>
-    <div class="admin-submenu" id="hiring"><a href="/hiring/postings">Tất cả tin tuyển dụng</a><a href="/hiring/postings?type=PART_TIME">Part-time</a><a href="/hiring/postings?type=FULL_TIME">Chính thức</a><a href="/hiring/postings?type=INTERN">Intern</a><a href="/hiring/postings?level=JUNIOR">Junior</a><a href="/hiring/postings?keyword=Bảo vệ">Bảo vệ</a></div>
-    <a href="/admin/engagement/surveys"><i class="bi bi-clipboard-data"></i>Khảo sát</a>
-    <a href="/admin/engagement/recognition"><i class="bi bi-award"></i>Vinh danh</a>
+    <div class="admin-submenu" id="hiring"><a href="/hiring/postings">Tất cả tin tuyển</a><a href="/hiring/postings/add">Đăng tin mới</a><a href="/hiring/postings?category=FULL_TIME">Chính thức</a><a href="/hiring/postings?category=PART_TIME">Part-time</a><a href="/hiring/postings?category=INTERN">Intern</a><a href="/hiring/postings?category=JUNIOR">Junior</a><a href="/hiring/postings?category=SECURITY">Bảo vệ</a></div>
+    <a href="/admin/courses"><i class="bi bi-book"></i>LMS - Khóa học</a>
     <a href="/admin/qrcode/list"><i class="bi bi-qr-code"></i>QR Code</a>
-    <a href="/admin/settings"><i class="bi bi-gear"></i>Cài đặt</a>
+    <a href="/admin/engagement/surveys"><i class="bi bi-clipboard-data"></i>Khảo sát</a>
+    <button type="button" class="admin-parent" data-menu="recognition"><i class="bi bi-award"></i>Vinh danh<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="recognition"><a href="/admin/engagement/recognition">Tất cả vinh danh</a><a href="/admin/engagement/recognition?type=THANK_YOU">Cảm ơn</a><a href="/admin/engagement/recognition?type=GREAT_JOB">Làm tốt</a><a href="/admin/engagement/recognition?type=TEAM_PLAYER">Đồng đội</a><a href="/admin/engagement/recognition?type=LEADERSHIP">Lãnh đạo</a></div>
+    <button type="button" class="admin-parent" data-menu="onboarding"><i class="bi bi-list-check"></i>Onboarding<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="onboarding"><a href="/admin/onboarding/checklists">Tất cả checklist</a><a href="/admin/onboarding/checklists?status=pending">Đang chờ</a><a href="/admin/onboarding/checklists?status=completed">Hoàn thành</a><a href="/admin/onboarding/checklists?category=PAPERWORK">Hồ sơ</a><a href="/admin/onboarding/checklists?category=IT_SETUP">IT setup</a><a href="/admin/onboarding/checklists?category=TRAINING">Đào tạo</a></div>
+    <a href="/admin/okr/objectives"><i class="bi bi-graph-up"></i>OKR</a>
+    <a href="/admin/analytics/dashboard"><i class="bi bi-graph-up-arrow"></i>Phân tích</a>
+    <hr>
+    <button type="button" class="admin-parent" data-menu="system"><i class="bi bi-sliders"></i>Hệ thống<i class="bi bi-chevron-down caret"></i></button>
+    <div class="admin-submenu" id="system"><a href="/admin/system-monitor">System Health</a><a href="/admin/cache">Cache & Email</a><a href="/admin/cloud">Cloud Storage</a><a href="/admin/audit-log">Nhật ký</a><a href="/admin/settings">Cài đặt</a></div>
   </div>
   <div class="admin-lang"><button type="button" data-lang="vi">NV VI</button><span style="opacity:.25">|</span><button type="button" data-lang="en">GB EN</button></div>
   <form th:action="@{/logout}" method="post" class="admin-logout">
@@ -85,8 +100,7 @@
         if (href && href !== '/' && path.startsWith(href.split('?')[0])) a.classList.add('active');
       });
       document.querySelectorAll('.admin-parent').forEach(btn => {
-        const id = btn.dataset.menu;
-        const sub = document.getElementById(id);
+        const sub = document.getElementById(btn.dataset.menu);
         const open = sub && [...sub.querySelectorAll('a')].some(a => path.startsWith(a.getAttribute('href').split('?')[0]));
         if (open) { btn.classList.add('open','active'); sub.classList.add('open'); }
         btn.addEventListener('click', () => { btn.classList.toggle('open'); sub && sub.classList.toggle('open'); });

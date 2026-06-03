@@ -28,6 +28,12 @@ public class Course {
     private String category; // TECHNICAL, SOFT_SKILLS, COMPLIANCE, LEADERSHIP
     
     private String thumbnailUrl;
+
+    @Column(length = 500)
+    private String videoUrl;
+
+    @Column(length = 255)
+    private String videoPublicId;
     
     @Column(nullable = false)
     private String level; // BEGINNER, INTERMEDIATE, ADVANCED

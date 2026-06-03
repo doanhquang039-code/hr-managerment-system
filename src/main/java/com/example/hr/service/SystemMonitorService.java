@@ -1,8 +1,17 @@
 package com.example.hr.service;
 
+import com.example.hr.models.HrAuditLog;
+import com.example.hr.repository.HrAuditLogRepository;
+import com.example.hr.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.cache.CacheManager;
+import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,9 +21,16 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.OperatingSystemMXBean;
 import java.sql.Connection;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +40,13 @@ public class SystemMonitorService {
     private final DataSource dataSource;
     private final RedisTemplate<String, Object> redisTemplate;
     private final CacheManager cacheManager;
+    private final KafkaProperties kafkaProperties;
+    private final Environment environment;
+    private final HrAuditLogRepository hrAuditLogRepository;
+    private final HrAuditLogService hrAuditLogService;
+    private final NotificationRepository notificationRepository;
+    private final ObjectProvider<CloudStorageFacade> cloudStorageFacadeProvider;
+    private final ObjectProvider<EmailFacade> emailFacadeProvider;
 
     /**
      * Lấy system health metrics
@@ -239,5 +262,189 @@ public class SystemMonitorService {
         }
         
         return metrics;
+    }
+
+    public Map<String, Object> getOperationsMonitor() {
+        Map<String, Object> monitor = new LinkedHashMap<>();
+        monitor.put("kafka", getKafkaMetrics());
+        monitor.put("email", getEmailMetrics());
+        monitor.put("cloud", getCloudMetrics());
+        monitor.put("audit", getAuditMetrics());
+        monitor.put("notifications", getNotificationMetrics());
+        monitor.put("readiness", getReadinessChecklist());
+        return monitor;
+    }
+
+    private Map<String, Object> getKafkaMetrics() {
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        List<String> configuredTopics = configuredKafkaTopics();
+        List<String> dltTopics = configuredTopics.stream().map(topic -> topic + ".DLT").toList();
+
+        metrics.put("bootstrapServers", kafkaProperties.getBootstrapServers());
+        metrics.put("configuredTopics", configuredTopics);
+        metrics.put("dltTopics", dltTopics);
+        metrics.put("configuredTopicCount", configuredTopics.size());
+        metrics.put("dltTopicCount", dltTopics.size());
+
+        if (kafkaProperties.getBootstrapServers() == null || kafkaProperties.getBootstrapServers().isEmpty()) {
+            metrics.put("status", "DISABLED");
+            metrics.put("message", "Chưa cấu hình bootstrap server.");
+            return metrics;
+        }
+
+        Properties props = new Properties();
+        props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, String.join(",", kafkaProperties.getBootstrapServers()));
+        props.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, "1500");
+        props.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "1500");
+
+        try (AdminClient adminClient = AdminClient.create(props)) {
+            Set<String> existingTopics = adminClient.listTopics().names().get(2, TimeUnit.SECONDS);
+            int present = 0;
+            List<String> missingTopics = new ArrayList<>();
+            for (String topic : configuredTopics) {
+                if (existingTopics.contains(topic)) {
+                    present++;
+                } else {
+                    missingTopics.add(topic);
+                }
+            }
+
+            int dltPresent = 0;
+            for (String topic : dltTopics) {
+                if (existingTopics.contains(topic)) {
+                    dltPresent++;
+                }
+            }
+
+            metrics.put("status", "UP");
+            metrics.put("clusterId", adminClient.describeCluster().clusterId().get(2, TimeUnit.SECONDS));
+            metrics.put("nodeCount", adminClient.describeCluster().nodes().get(2, TimeUnit.SECONDS).size());
+            metrics.put("brokerTopicCount", existingTopics.size());
+            metrics.put("presentConfiguredTopics", present);
+            metrics.put("presentDltTopics", dltPresent);
+            metrics.put("missingTopics", missingTopics);
+        } catch (Exception e) {
+            metrics.put("status", "DOWN");
+            metrics.put("message", "Không kết nối được Kafka broker: " + e.getMessage());
+            metrics.put("presentConfiguredTopics", 0);
+            metrics.put("presentDltTopics", 0);
+            metrics.put("missingTopics", configuredTopics);
+        }
+        return metrics;
+    }
+
+    private List<String> configuredKafkaTopics() {
+        List<String> topics = new ArrayList<>();
+        String[] keys = {
+                "attendance", "leave", "payroll", "notifications", "performance-reviews",
+                "recruitment", "training", "employee-lifecycle", "audit-events", "health-insights"
+        };
+        for (String key : keys) {
+            String topic = environment.getProperty("kafka.topics." + key);
+            if (topic != null && !topic.isBlank()) {
+                topics.add(topic);
+            }
+        }
+        return topics;
+    }
+
+    private Map<String, Object> getEmailMetrics() {
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        try {
+            EmailFacade emailFacade = emailFacadeProvider.getIfAvailable();
+            metrics.put("status", emailFacade != null ? "READY" : "DISABLED");
+            metrics.put("provider", emailFacade != null ? emailFacade.getProvider() : "Không có provider");
+        } catch (Exception e) {
+            metrics.put("status", "ERROR");
+            metrics.put("provider", "Không xác định");
+            metrics.put("message", e.getMessage());
+        }
+        return metrics;
+    }
+
+    private Map<String, Object> getCloudMetrics() {
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        try {
+            CloudStorageFacade cloudStorageFacade = cloudStorageFacadeProvider.getIfAvailable();
+            if (cloudStorageFacade == null) {
+                metrics.put("status", "DISABLED");
+                metrics.put("services", Map.of());
+                metrics.put("enabledServices", List.of());
+                return metrics;
+            }
+            Map<String, Object> services = cloudStorageFacade.getHealthStatus();
+            metrics.put("status", services.values().stream().anyMatch("online"::equals) ? "READY" : "LIMITED");
+            metrics.put("services", services);
+            metrics.put("enabledServices", cloudStorageFacade.getEnabledServices());
+        } catch (Exception e) {
+            metrics.put("status", "ERROR");
+            metrics.put("services", Map.of());
+            metrics.put("enabledServices", List.of());
+            metrics.put("message", e.getMessage());
+        }
+        return metrics;
+    }
+
+    private Map<String, Object> getAuditMetrics() {
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        try {
+            List<Map<String, Object>> recent = hrAuditLogService.findLogs(null, PageRequest.of(0, 8))
+                    .getContent()
+                    .stream()
+                    .map(this::auditRow)
+                    .toList();
+            metrics.put("status", "READY");
+            metrics.put("total", hrAuditLogRepository.count());
+            metrics.put("recent", recent);
+        } catch (Exception e) {
+            metrics.put("status", "ERROR");
+            metrics.put("total", 0L);
+            metrics.put("recent", List.of());
+            metrics.put("message", e.getMessage());
+        }
+        return metrics;
+    }
+
+    private Map<String, Object> auditRow(HrAuditLog log) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("time", log.getCreatedAt() != null
+                ? log.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                : "");
+        row.put("actor", log.getActorUsername());
+        row.put("action", log.getAction());
+        row.put("entityType", log.getEntityType());
+        row.put("entityId", log.getEntityId());
+        return row;
+    }
+
+    private Map<String, Object> getNotificationMetrics() {
+        Map<String, Object> metrics = new LinkedHashMap<>();
+        try {
+            metrics.put("status", "READY");
+            metrics.put("total", notificationRepository.count());
+        } catch (Exception e) {
+            metrics.put("status", "ERROR");
+            metrics.put("total", 0L);
+            metrics.put("message", e.getMessage());
+        }
+        return metrics;
+    }
+
+    private List<Map<String, Object>> getReadinessChecklist() {
+        List<Map<String, Object>> items = new ArrayList<>();
+        items.add(readiness("Sửa lỗi font và menu", "IN_PROGRESS", "Admin sidebar đã được chuẩn hóa, các template rời vẫn cần gom dần về fragment chung."));
+        items.add(readiness("Workflow HR chính", "IN_PROGRESS", "Theo dõi nhân viên, nghỉ phép, chấm công, lương, tuyển dụng, onboarding."));
+        items.add(readiness("Dữ liệu mẫu và enum filter", "IN_PROGRESS", "Các màn cần lấy option từ enum/database thay vì hardcode rải rác."));
+        items.add(readiness("AI và Health Insight", "READY", "API trả kết quả đồng bộ, cảnh báo/audit chạy async qua Kafka."));
+        items.add(readiness("Kafka/Event-driven", "READY", "Audit và Health Insight đã có topic, retry và dead-letter topic."));
+        return items;
+    }
+
+    private Map<String, Object> readiness(String name, String status, String note) {
+        Map<String, Object> item = new LinkedHashMap<>();
+        item.put("name", name);
+        item.put("status", status);
+        item.put("note", note);
+        return item;
     }
 }
