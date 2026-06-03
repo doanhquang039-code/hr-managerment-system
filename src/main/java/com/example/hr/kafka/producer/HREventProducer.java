@@ -44,6 +44,12 @@ public class HREventProducer {
     @Value("${kafka.topics.employee-lifecycle}")
     private String employeeLifecycleTopic;
 
+    @Value("${kafka.topics.audit-events}")
+    private String auditEventsTopic;
+
+    @Value("${kafka.topics.health-insights}")
+    private String healthInsightsTopic;
+
     /**
      * Publish Attendance Event
      */
@@ -217,6 +223,47 @@ public class HREventProducer {
             });
         } catch (Exception e) {
             log.error("Error publishing employee lifecycle event", e);
+        }
+    }
+
+    public void publishAuditEvent(AuditEvent event) {
+        try {
+            String key = event.getEntityType() != null ? event.getEntityType() : "AUDIT";
+            CompletableFuture<SendResult<String, Object>> future =
+                    kafkaTemplate.send(auditEventsTopic, key, event);
+
+            future.whenComplete((result, ex) -> {
+                if (ex == null) {
+                    log.debug("Audit event published: actor={}, action={}, entityType={}",
+                            event.getActorUsername(), event.getAction(), event.getEntityType());
+                } else {
+                    log.error("Failed to publish audit event: actor={}, action={}",
+                            event.getActorUsername(), event.getAction(), ex);
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error publishing audit event", e);
+            throw e;
+        }
+    }
+
+    public void publishHealthInsightEvent(HealthInsightEvent event) {
+        try {
+            String key = event.getUserId() != null ? event.getUserId().toString() : "anonymous";
+            CompletableFuture<SendResult<String, Object>> future =
+                    kafkaTemplate.send(healthInsightsTopic, key, event);
+
+            future.whenComplete((result, ex) -> {
+                if (ex == null) {
+                    log.info("Health insight event published: userId={}, riskLevel={}, score={}",
+                            event.getUserId(), event.getRiskLevel(), event.getWellnessScore());
+                } else {
+                    log.error("Failed to publish health insight event: userId={}", event.getUserId(), ex);
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error publishing health insight event", e);
+            throw e;
         }
     }
 }

@@ -1,14 +1,18 @@
 package com.example.hr.interceptor;
 
+import com.example.hr.kafka.events.AuditEvent;
+import com.example.hr.kafka.producer.HREventProducer;
 import com.example.hr.service.HrAuditLogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
@@ -27,9 +31,12 @@ public class AdminMutationAuditInterceptor implements HandlerInterceptor {
     ).stream().map(value -> value.toLowerCase(Locale.ROOT)).collect(Collectors.toUnmodifiableSet());
 
     private final HrAuditLogService auditLogService;
+    private final ObjectProvider<HREventProducer> eventProducerProvider;
 
-    public AdminMutationAuditInterceptor(HrAuditLogService auditLogService) {
+    public AdminMutationAuditInterceptor(HrAuditLogService auditLogService,
+                                         ObjectProvider<HREventProducer> eventProducerProvider) {
         this.auditLogService = auditLogService;
+        this.eventProducerProvider = eventProducerProvider;
     }
 
     @Override
@@ -55,7 +62,29 @@ public class AdminMutationAuditInterceptor implements HandlerInterceptor {
         String entityId = resolveEntityId(uri);
         String detail = buildDetail(request, response, ex);
 
-        auditLogService.log(auth.getName(), action, entityType, entityId, detail, getClientIp(request));
+        String actorUsername = auth.getName();
+        String ipAddress = getClientIp(request);
+        AuditEvent event = new AuditEvent(
+                actorUsername,
+                action,
+                entityType,
+                entityId,
+                detail,
+                ipAddress,
+                LocalDateTime.now()
+        );
+
+        HREventProducer eventProducer = eventProducerProvider.getIfAvailable();
+        if (eventProducer != null) {
+            try {
+                eventProducer.publishAuditEvent(event);
+                return;
+            } catch (Exception ignored) {
+                // Fall back to direct DB logging when Kafka is unavailable.
+            }
+        }
+
+        auditLogService.log(actorUsername, action, entityType, entityId, detail, ipAddress);
     }
 
     private boolean hasAuditedRole(Authentication auth) {

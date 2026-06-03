@@ -37,6 +37,12 @@ public class KafkaConfig {
     @Value("${kafka.topics.employee-lifecycle}")
     private String employeeLifecycleTopic;
 
+    @Value("${kafka.topics.audit-events}")
+    private String auditEventsTopic;
+
+    @Value("${kafka.topics.health-insights}")
+    private String healthInsightsTopic;
+
     @Bean
     public NewTopic attendanceTopic() {
         return TopicBuilder.name(attendanceTopic)
@@ -139,6 +145,32 @@ public class KafkaConfig {
     @Bean
     public NewTopic employeeLifecycleDeadLetterTopic() {
         return deadLetterTopic(employeeLifecycleTopic, 2);
+    }
+
+    @Bean
+    public NewTopic auditEventsTopic() {
+        return TopicBuilder.name(auditEventsTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic auditEventsDeadLetterTopic() {
+        return deadLetterTopic(auditEventsTopic, 3);
+    }
+
+    @Bean
+    public NewTopic healthInsightsTopic() {
+        return TopicBuilder.name(healthInsightsTopic)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic healthInsightsDeadLetterTopic() {
+        return deadLetterTopic(healthInsightsTopic, 3);
     }
 
     private NewTopic deadLetterTopic(String topicName, int partitions) {
