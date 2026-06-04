@@ -2,6 +2,8 @@ package com.example.hr.repository;
 
 import com.example.hr.models.JobPosting;
 import com.example.hr.models.Department;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,6 +26,28 @@ public interface JobPostingRepository extends JpaRepository<JobPosting, Integer>
 
     @Query("SELECT j FROM JobPosting j WHERE j.title LIKE %:keyword% OR j.description LIKE %:keyword%")
     List<JobPosting> searchByKeyword(@Param("keyword") String keyword);
+
+    @Query("""
+           SELECT j FROM JobPosting j
+           LEFT JOIN j.department d
+           LEFT JOIN j.position p
+           WHERE (:keyword IS NULL OR :keyword = ''
+                  OR LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(j.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(j.location) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(d.departmentName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(p.positionName) LIKE LOWER(CONCAT('%', :keyword, '%')))
+             AND (:status IS NULL OR :status = '' OR j.status = :status)
+             AND (:employmentType IS NULL OR :employmentType = '' OR j.employmentType = :employmentType)
+             AND (:experienceLevel IS NULL OR :experienceLevel = '' OR j.experienceLevel = :experienceLevel)
+             AND (:departmentId IS NULL OR d.id = :departmentId)
+           """)
+    Page<JobPosting> searchJobPostings(@Param("keyword") String keyword,
+                                       @Param("status") String status,
+                                       @Param("employmentType") String employmentType,
+                                       @Param("experienceLevel") String experienceLevel,
+                                       @Param("departmentId") Integer departmentId,
+                                       Pageable pageable);
 
     List<JobPosting> findByEmploymentTypeAndStatusOrderByCreatedAtDesc(String employmentType, String status);
 

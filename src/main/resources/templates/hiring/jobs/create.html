@@ -57,7 +57,7 @@
                                         <label for="department" class="form-label">Department *</label>
                                         <select class="form-select" id="department" th:field="*{department}" required>
                                             <option value="">Select Department</option>
-                                            <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">Engineering</option>
+                                            <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.departmentName}">Engineering</option>
                                         </select>
                                     </div>
 
@@ -65,7 +65,7 @@
                                         <label for="position" class="form-label">Position</label>
                                         <select class="form-select" id="position" th:field="*{position}">
                                             <option value="">Select Position</option>
-                                            <option th:each="pos : ${positions}" th:value="${pos.id}" th:text="${pos.title}">Software Engineer</option>
+                                            <option th:each="pos : ${positions}" th:value="${pos.id}" th:text="${pos.positionName}">Software Engineer</option>
                                         </select>
                                     </div>
 

@@ -50,7 +50,7 @@
                     <i class="bi bi-calendar2-check text-success display-4 mb-3"></i>
                     <h5 class="text-muted">No job postings closing in the next 14 days</h5>
                     <p class="text-muted">All job postings have sufficient time remaining.</p>
-                    <a href="/hiring/jobs/list" class="btn btn-outline-primary mt-2">View All Jobs</a>
+                    <a href="/hiring/jobs" class="btn btn-outline-primary mt-2">View All Jobs</a>
                 </div>
             </div>
 
@@ -88,15 +88,16 @@
                                     </td>
                                     <td>
                                         <div class="d-flex gap-1">
-                                            <a th:href="@{/hiring/postings/edit/{id}(id=${job.id})}"
+                                            <a th:href="@{/hiring/jobs/{id}/edit(id=${job.id})}"
                                                class="btn btn-sm btn-outline-warning">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a th:href="@{/hiring/postings/close/{id}(id=${job.id})}"
-                                               class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('Close this job posting?')">
-                                                <i class="bi bi-x-circle"></i>
-                                            </a>
+                                            <form th:action="@{/hiring/jobs/{id}/close(id=${job.id})}" method="post"
+                                                  onsubmit="return confirm('Close this job posting?')">
+                                                <button class="btn btn-sm btn-outline-danger" type="submit">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>

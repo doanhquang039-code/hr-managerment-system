@@ -212,7 +212,7 @@
                                                     </form>
                                                 </li>
                                                 <li th:if="${candidate.currentStage == 'INTERVIEW'}">
-                                                    <a th:href="@{/hiring/interviews/create?candidateId={id}(id=${candidate.id})}" class="dropdown-item">
+                                                    <a th:href="@{/hiring/interviews/create(candidateId=${candidate.id})}" class="dropdown-item">
                                                         <i class="bi bi-calendar-plus me-2"></i>Schedule Interview
                                                     </a>
                                                 </li>

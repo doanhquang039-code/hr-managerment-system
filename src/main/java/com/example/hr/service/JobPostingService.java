@@ -4,6 +4,8 @@ import com.example.hr.models.JobPosting;
 import com.example.hr.models.Department;
 import com.example.hr.repository.JobPostingRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,6 +140,16 @@ public class JobPostingService {
      */
     public List<JobPosting> searchJobPostings(String keyword) {
         return jobPostingRepository.searchByKeyword(keyword);
+    }
+
+    public Page<JobPosting> searchJobPostings(String keyword, String status, String employmentType,
+                                              String experienceLevel, Integer departmentId, Pageable pageable) {
+        return jobPostingRepository.searchJobPostings(keyword, status, employmentType, experienceLevel, departmentId, pageable);
+    }
+
+    @Transactional
+    public void deleteJobPosting(Integer id) {
+        jobPostingRepository.delete(getJobPostingById(id));
     }
 
     /**

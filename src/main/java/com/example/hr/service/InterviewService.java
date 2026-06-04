@@ -5,6 +5,8 @@ import com.example.hr.models.Candidate;
 import com.example.hr.models.User;
 import com.example.hr.repository.InterviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -160,14 +162,20 @@ public class InterviewService {
         return interviewRepository.findInterviewsByDateRange(startDate, endDate);
     }
 
+    public Page<Interview> searchInterviews(String keyword, String status, String type,
+                                            LocalDateTime startDate, LocalDateTime endDate,
+                                            Pageable pageable) {
+        return interviewRepository.searchInterviews(keyword, status, type, startDate, endDate, pageable);
+    }
+
     /**
      * Get interview statistics
      */
     public InterviewStatistics getInterviewStatistics() {
         long totalInterviews = interviewRepository.count();
-        long scheduledInterviews = interviewRepository.countByInterviewerAndStatus(null, "SCHEDULED");
-        long completedInterviews = interviewRepository.countByInterviewerAndStatus(null, "COMPLETED");
-        long cancelledInterviews = interviewRepository.countByInterviewerAndStatus(null, "CANCELLED");
+        long scheduledInterviews = interviewRepository.countByStatus("SCHEDULED");
+        long completedInterviews = interviewRepository.countByStatus("COMPLETED");
+        long cancelledInterviews = interviewRepository.countByStatus("CANCELLED");
         
         Double avgScore = interviewRepository.getAverageInterviewScore();
         

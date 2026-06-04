@@ -1,458 +1,329 @@
-/**
- * HRMS DataTable v1
- * Client-side: search, filter, sort, pagination cho tất cả bảng
- * Dùng: <table class="hrms-dt" data-page-size="10">
+/*
+ * HRMS DataTable
+ * Adds client-side search, column filters, sorting, pagination, and CSV export
+ * to tables with .hrms-dt or .data-table.
  */
 (function () {
   'use strict';
 
   var instances = [];
 
-  // ==================== CORE CLASS ====================
+  function textOf(cell) {
+    return (cell && (cell.getAttribute('data-sort-value') || cell.textContent) || '').trim();
+  }
+
+  function normalize(value) {
+    return (value || '').toString().toLowerCase().trim();
+  }
+
+  function button(label, title) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = label;
+    btn.title = title || label;
+    btn.className = 'btn btn-sm btn-outline-secondary';
+    return btn;
+  }
+
   function DataTable(table) {
     this.table = table;
     this.tbody = table.querySelector('tbody');
-    this.allRows = [];
-    this.filteredRows = [];
+    if (!this.tbody) return;
+    this.allRows = Array.from(this.tbody.querySelectorAll('tr'));
+    this.filteredRows = this.allRows.slice();
     this.currentPage = 1;
-    this.pageSize = parseInt(table.getAttribute('data-page-size') || '10');
+    this.pageSize = parseInt(table.getAttribute('data-page-size') || '10', 10);
     this.sortCol = -1;
     this.sortDir = 'asc';
     this.searchQuery = '';
     this.columnFilters = {};
-    this.wrapper = null;
+    this.originalCells = new WeakMap();
     this.init();
   }
 
   DataTable.prototype.init = function () {
-    // Wrap table
+    if (!this.allRows.length) return;
+
     var wrapper = document.createElement('div');
     wrapper.className = 'hrms-dt-wrapper';
-    wrapper.style.cssText = 'position:relative;';
     this.table.parentNode.insertBefore(wrapper, this.table);
     wrapper.appendChild(this.table);
     this.wrapper = wrapper;
 
-    // Capture all rows
-    this.allRows = Array.from(this.tbody.querySelectorAll('tr'));
-    this.filteredRows = this.allRows.slice();
+    this.allRows.forEach(function (row) {
+      Array.from(row.children).forEach(function (cell) {
+        this.originalCells.set(cell, cell.innerHTML);
+      }, this);
+    }, this);
 
-    // Build toolbar
     this.buildToolbar();
-
-    // Make headers sortable
     this.makeSortable();
-
-    // Initial render
-    this.render();
+    this.applyFilters();
   };
 
   DataTable.prototype.buildToolbar = function () {
     var self = this;
-    // Detect if page has light or dark background
-    var bodyBg = window.getComputedStyle(document.body).backgroundColor;
-    var isLight = true;
-    if (bodyBg) {
-      var m = bodyBg.match(/\d+/g);
-      if (m && m.length >= 3) {
-        isLight = (parseInt(m[0]) + parseInt(m[1]) + parseInt(m[2])) > 380;
-      }
-    }
-    var inputBg = isLight ? '#f8fafc' : '#2a2a3e';
-    var inputBorder = isLight ? '1px solid #e2e8f0' : '1px solid rgba(255,255,255,0.1)';
-    var inputColor = isLight ? '#1e293b' : 'white';
-    this.isLight = isLight;
-    var selectBg = isLight ? '#f8fafc' : '#2a2a3e';
-    var selectBorder = isLight ? '1px solid #e2e8f0' : '1px solid rgba(255,255,255,0.1)';
-    var selectColor = isLight ? '#475569' : '#94a3b8';
-
     var toolbar = document.createElement('div');
-    toolbar.className = 'hrms-dt-toolbar';
-    toolbar.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;';
+    toolbar.className = 'hrms-dt-toolbar d-flex align-items-center gap-2 flex-wrap mb-3';
 
-    // Search input
-    var searchWrap = document.createElement('div');
-    searchWrap.style.cssText = 'position:relative;flex:1;min-width:200px;';
-    searchWrap.innerHTML = [
-      '<span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#64748b;font-size:0.85rem;">🔍</span>',
-      '<input type="text" placeholder="Search all columns..." ',
-        'style="width:100%;padding:8px 10px 8px 32px;background:' + inputBg + ';border:' + inputBorder + ';',
-        'border-radius:10px;color:' + inputColor + ';font-size:0.85rem;outline:none;box-sizing:border-box;" ',
-        'class="hrms-dt-search">',
-    ].join('');
-    toolbar.appendChild(searchWrap);
+    var search = document.createElement('input');
+    search.type = 'search';
+    search.className = 'form-control form-control-sm';
+    search.placeholder = this.table.getAttribute('data-search-placeholder') || 'Search table...';
+    search.style.maxWidth = '320px';
+    toolbar.appendChild(search);
 
-    // Column filter dropdowns — auto-detect columns with few unique values
-    var headers = Array.from(this.table.querySelectorAll('thead th'));
-    headers.forEach(function(th, i) {
-      var text = th.textContent.trim().replace(/[⇅↑↓]/g,'').trim().toLowerCase();
-      // Only add filter for status/type/role columns
-      var filterCols = ['trạng thái','status','loại','type','vai trò','role','phòng ban','department','danh mục','category','giới tính','gender'];
-      if (!filterCols.includes(text)) return;
+    this.buildColumnFilters(toolbar);
 
-      // Collect unique values
-      var values = new Set();
-      self.allRows.forEach(function(row) {
-        var cell = row.querySelectorAll('td')[i];
-        if (cell) {
-          var v = cell.textContent.trim();
-          if (v && v.length < 50) values.add(v);
-        }
-      });
-      if (values.size < 2 || values.size > 20) return;
-
-      var sel = document.createElement('select');
-      sel.style.cssText = 'padding:8px 12px;background:' + selectBg + ';border:' + selectBorder + ';border-radius:10px;color:' + selectColor + ';font-size:0.82rem;cursor:pointer;max-width:150px;';
-      var defaultOpt = document.createElement('option');
-      defaultOpt.value = '';
-      defaultOpt.textContent = th.textContent.trim().replace(/[⇅↑↓]/g,'').trim() + ': All';
-      sel.appendChild(defaultOpt);
-      Array.from(values).sort().forEach(function(v) {
-        var opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v.length > 20 ? v.substring(0,20)+'...' : v;
-        sel.appendChild(opt);
-      });
-      sel.addEventListener('change', function() {
-        self.columnFilters[i] = this.value;
-        self.currentPage = 1;
-        self.applyFilters();
-      });
-      toolbar.appendChild(sel);
-    });
-
-    // Page size selector
-    var pageSel = document.createElement('select');
-    pageSel.style.cssText = 'padding:8px 12px;background:' + selectBg + ';border:' + selectBorder + ';border-radius:10px;color:' + selectColor + ';font-size:0.82rem;cursor:pointer;';
+    var pageSize = document.createElement('select');
+    pageSize.className = 'form-select form-select-sm';
+    pageSize.style.width = 'auto';
     [5, 10, 25, 50, 100].forEach(function (n) {
-      var opt = document.createElement('option');
-      opt.value = n;
-      opt.textContent = n + ' rows';
-      if (n === self.pageSize) opt.selected = true;
-      pageSel.appendChild(opt);
+      var option = document.createElement('option');
+      option.value = n;
+      option.textContent = n + ' rows';
+      option.selected = n === self.pageSize;
+      pageSize.appendChild(option);
     });
-    toolbar.appendChild(pageSel);
+    toolbar.appendChild(pageSize);
 
-    // Export CSV button
-    var exportBtn = document.createElement('button');
-    exportBtn.innerHTML = '📥 CSV';
-    exportBtn.title = 'Export to CSV';
-    exportBtn.style.cssText = 'padding:8px 14px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:10px;color:#6366f1;font-size:0.82rem;cursor:pointer;font-weight:600;white-space:nowrap;';
+    var exportBtn = button('CSV', 'Export filtered rows to CSV');
     toolbar.appendChild(exportBtn);
 
-    // Reset filters button
-    var resetBtn = document.createElement('button');
-    resetBtn.innerHTML = '✕ Reset';
-    resetBtn.title = 'Reset all filters';
-    resetBtn.style.cssText = 'padding:8px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:10px;color:#ef4444;font-size:0.82rem;cursor:pointer;font-weight:600;white-space:nowrap;display:none;';
+    var resetBtn = button('Reset', 'Clear search, filters, and sorting');
+    resetBtn.style.display = 'none';
     toolbar.appendChild(resetBtn);
 
-    // Info text
     var info = document.createElement('span');
-    info.className = 'hrms-dt-info';
-    info.style.cssText = 'color:#64748b;font-size:0.78rem;white-space:nowrap;margin-left:auto;';
+    info.className = 'hrms-dt-info text-muted small ms-auto';
     toolbar.appendChild(info);
 
-    this.wrapper.insertBefore(toolbar, this.table);
-
-    // Events
-    var searchInput = toolbar.querySelector('.hrms-dt-search');
-
-    searchInput.addEventListener('input', function () {
-      self.searchQuery = this.value.toLowerCase().trim();
+    search.addEventListener('input', function () {
+      self.searchQuery = normalize(this.value);
       self.currentPage = 1;
-      resetBtn.style.display = self.searchQuery ? 'block' : 'none';
       self.applyFilters();
     });
 
-    pageSel.addEventListener('change', function () {
-      self.pageSize = parseInt(this.value);
+    pageSize.addEventListener('change', function () {
+      self.pageSize = parseInt(this.value, 10);
       self.currentPage = 1;
       self.render();
     });
 
-    exportBtn.addEventListener('click', function () { self.exportCSV(); });
+    exportBtn.addEventListener('click', function () {
+      self.exportCSV();
+    });
 
-    resetBtn.addEventListener('click', function() {
-      searchInput.value = '';
+    resetBtn.addEventListener('click', function () {
+      search.value = '';
       self.searchQuery = '';
       self.columnFilters = {};
       self.sortCol = -1;
       self.sortDir = 'asc';
-      toolbar.querySelectorAll('select').forEach(function(s) { s.value = ''; });
-      self.table.querySelectorAll('.hrms-sort-indicator').forEach(function(s) { s.textContent = '⇅'; s.style.color = '#475569'; });
-      resetBtn.style.display = 'none';
+      toolbar.querySelectorAll('select[data-filter-column]').forEach(function (select) {
+        select.value = '';
+      });
+      self.table.querySelectorAll('.hrms-sort-indicator').forEach(function (indicator) {
+        indicator.textContent = '<>';
+      });
       self.applyFilters();
     });
 
+    this.wrapper.insertBefore(toolbar, this.table);
     this.infoEl = info;
-    this.toolbar = toolbar;
     this.resetBtn = resetBtn;
+  };
+
+  DataTable.prototype.buildColumnFilters = function (toolbar) {
+    var self = this;
+    var headers = Array.from(this.table.querySelectorAll('thead th'));
+    var filterNames = [
+      'status', 'trang thai', 'type', 'loai', 'role', 'vai tro',
+      'department', 'phong ban', 'category', 'danh muc', 'gender', 'gioi tinh'
+    ];
+
+    headers.forEach(function (th, index) {
+      if (th.hasAttribute('data-no-filter')) return;
+      var label = normalize(th.textContent.replace(/[<>]/g, ''));
+      var explicit = th.hasAttribute('data-filter');
+      if (!explicit && filterNames.indexOf(label) === -1) return;
+
+      var values = new Set();
+      self.allRows.forEach(function (row) {
+        var value = textOf(row.children[index]);
+        if (value && value.length <= 60) values.add(value);
+      });
+      if (values.size < 2 || values.size > 40) return;
+
+      var select = document.createElement('select');
+      select.className = 'form-select form-select-sm';
+      select.style.width = 'auto';
+      select.setAttribute('data-filter-column', index);
+
+      var all = document.createElement('option');
+      all.value = '';
+      all.textContent = th.textContent.trim().replace(/[<>]/g, '') + ': All';
+      select.appendChild(all);
+
+      Array.from(values).sort(function (a, b) { return a.localeCompare(b, 'vi'); }).forEach(function (value) {
+        var option = document.createElement('option');
+        option.value = value;
+        option.textContent = value.length > 24 ? value.slice(0, 24) + '...' : value;
+        select.appendChild(option);
+      });
+
+      select.addEventListener('change', function () {
+        self.columnFilters[index] = this.value;
+        self.currentPage = 1;
+        self.applyFilters();
+      });
+
+      toolbar.appendChild(select);
+    });
   };
 
   DataTable.prototype.makeSortable = function () {
     var self = this;
-    var headers = this.table.querySelectorAll('thead th');
-    headers.forEach(function (th, i) {
-      // Skip action columns
-      var text = th.textContent.trim().toLowerCase();
-      if (text === 'thao tác' || text === 'action' || text === '') return;
+    Array.from(this.table.querySelectorAll('thead th')).forEach(function (th, index) {
+      var text = normalize(th.textContent);
+      if (!text || text === 'actions' || text === 'action' || text === 'thao tac' || th.hasAttribute('data-no-sort')) return;
 
       th.style.cursor = 'pointer';
       th.style.userSelect = 'none';
-      th.style.position = 'relative';
-
       var indicator = document.createElement('span');
-      indicator.className = 'hrms-sort-indicator';
-      indicator.style.cssText = 'margin-left:6px;color:#475569;font-size:0.7rem;';
-      indicator.textContent = '⇅';
+      indicator.className = 'hrms-sort-indicator ms-1 text-muted';
+      indicator.textContent = '<>';
       th.appendChild(indicator);
 
       th.addEventListener('click', function () {
-        if (self.sortCol === i) {
-          self.sortDir = self.sortDir === 'asc' ? 'desc' : 'asc';
-        } else {
-          self.sortCol = i;
-          self.sortDir = 'asc';
-        }
-        // Update indicators
-        self.table.querySelectorAll('.hrms-sort-indicator').forEach(function (s) {
-          s.textContent = '⇅';
-          s.style.color = '#475569';
+        self.sortDir = self.sortCol === index && self.sortDir === 'asc' ? 'desc' : 'asc';
+        self.sortCol = index;
+        self.table.querySelectorAll('.hrms-sort-indicator').forEach(function (el) {
+          el.textContent = '<>';
         });
-        indicator.textContent = self.sortDir === 'asc' ? '↑' : '↓';
-        indicator.style.color = '#6366f1';
+        indicator.textContent = self.sortDir === 'asc' ? '^' : 'v';
         self.applyFilters();
       });
     });
+  };
+
+  DataTable.prototype.restoreCells = function () {
+    this.allRows.forEach(function (row) {
+      Array.from(row.children).forEach(function (cell) {
+        if (this.originalCells.has(cell)) cell.innerHTML = this.originalCells.get(cell);
+      }, this);
+    }, this);
   };
 
   DataTable.prototype.applyFilters = function () {
     var self = this;
     var q = this.searchQuery;
-
     this.filteredRows = this.allRows.filter(function (row) {
-      // Global search
-      if (q) {
-        var text = row.textContent.toLowerCase();
-        if (!text.includes(q)) return false;
-      }
-      // Column filters
-      var cells = row.querySelectorAll('td');
-      for (var col in self.columnFilters) {
-        var val = self.columnFilters[col].toLowerCase();
-        if (!val) continue;
-        var cell = cells[parseInt(col)];
-        if (!cell) continue;
-        if (!cell.textContent.toLowerCase().includes(val)) return false;
-      }
-      return true;
+      if (q && normalize(row.textContent).indexOf(q) === -1) return false;
+      return Object.keys(self.columnFilters).every(function (key) {
+        var value = self.columnFilters[key];
+        if (!value) return true;
+        return normalize(textOf(row.children[parseInt(key, 10)])).indexOf(normalize(value)) !== -1;
+      });
     });
 
-    // Sort
     if (this.sortCol >= 0) {
       var col = this.sortCol;
-      var dir = this.sortDir;
+      var dir = this.sortDir === 'asc' ? 1 : -1;
       this.filteredRows.sort(function (a, b) {
-        var aText = (a.querySelectorAll('td')[col] || {}).textContent || '';
-        var bText = (b.querySelectorAll('td')[col] || {}).textContent || '';
-        // Try numeric
-        var aNum = parseFloat(aText.replace(/[^0-9.-]/g, ''));
-        var bNum = parseFloat(bText.replace(/[^0-9.-]/g, ''));
-        var cmp;
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-          cmp = aNum - bNum;
-        } else {
-          cmp = aText.localeCompare(bText, 'vi');
-        }
-        return dir === 'asc' ? cmp : -cmp;
+        var av = textOf(a.children[col]);
+        var bv = textOf(b.children[col]);
+        var an = Number(av.replace(/[^0-9.-]/g, ''));
+        var bn = Number(bv.replace(/[^0-9.-]/g, ''));
+        var cmp = !isNaN(an) && !isNaN(bn) && av.match(/\d/) && bv.match(/\d/)
+          ? an - bn
+          : av.localeCompare(bv, 'vi');
+        return cmp * dir;
       });
     }
 
-    this.currentPage = 1;
+    if (this.resetBtn) {
+      var hasFilters = q || Object.keys(this.columnFilters).some(function (key) { return self.columnFilters[key]; }) || this.sortCol >= 0;
+      this.resetBtn.style.display = hasFilters ? '' : 'none';
+    }
     this.render();
   };
 
   DataTable.prototype.render = function () {
-    var self = this;
+    this.restoreCells();
     var total = this.filteredRows.length;
     var pages = Math.max(1, Math.ceil(total / this.pageSize));
     this.currentPage = Math.min(this.currentPage, pages);
-
     var start = (this.currentPage - 1) * this.pageSize;
     var end = Math.min(start + this.pageSize, total);
-    var pageRows = this.filteredRows.slice(start, end);
+    var shown = this.filteredRows.slice(start, end);
 
-    // Hide all rows
-    this.allRows.forEach(function (r) { r.style.display = 'none'; });
-    // Show page rows
-    pageRows.forEach(function (r) {
-      r.style.display = '';
-      // Highlight search matches
-      if (self.searchQuery) {
-        r.querySelectorAll('td').forEach(function(td) {
-          var text = td.textContent;
-          var lower = text.toLowerCase();
-          if (lower.includes(self.searchQuery)) {
-            var regex = new RegExp('(' + self.searchQuery.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
-            // Only highlight text nodes, not HTML
-            if (!td.querySelector('a,button,span.status-badge,span.badge')) {
-              td.innerHTML = td.textContent.replace(regex, '<mark style="background:rgba(99,102,241,0.3);color:white;border-radius:3px;padding:0 2px;">$1</mark>');
-            }
-          }
-        });
-      }
-    });
+    this.allRows.forEach(function (row) { row.style.display = 'none'; });
+    shown.forEach(function (row) { row.style.display = ''; });
 
-    // Empty state
-    var emptyRow = this.tbody.querySelector('.hrms-dt-empty');
-    if (emptyRow) emptyRow.remove();
+    var empty = this.tbody.querySelector('.hrms-dt-empty');
+    if (empty) empty.remove();
     if (total === 0) {
-      var cols = (this.table.querySelector('thead tr') || {}).children;
-      var colCount = cols ? cols.length : 5;
-      var empty = document.createElement('tr');
+      empty = document.createElement('tr');
       empty.className = 'hrms-dt-empty';
-      empty.innerHTML = '<td colspan="' + colCount + '" style="text-align:center;padding:40px;color:#475569;">' +
-        '<div style="font-size:2rem;margin-bottom:8px;">🔍</div>' +
-        '<div style="font-weight:600;">No results found</div>' +
-        '<div style="font-size:0.82rem;margin-top:4px;">Try adjusting your search or filters</div>' +
-        '</td>';
+      empty.innerHTML = '<td colspan="' + this.table.querySelectorAll('thead th').length + '" class="text-center text-muted py-4">No results found</td>';
       this.tbody.appendChild(empty);
     }
 
-    // Update info
     if (this.infoEl) {
-      this.infoEl.textContent = total === 0
-        ? 'No results'
-        : 'Showing ' + (start + 1) + '-' + end + ' of ' + total + ' rows';
+      this.infoEl.textContent = total === 0 ? 'No rows' : 'Showing ' + (start + 1) + '-' + end + ' of ' + total;
     }
-
-    // Render pagination
     this.renderPagination(pages);
   };
 
   DataTable.prototype.renderPagination = function (pages) {
     var self = this;
-    var existing = this.wrapper.querySelector('.hrms-dt-pagination');
-    if (existing) existing.remove();
+    var old = this.wrapper.querySelector('.hrms-dt-pagination');
+    if (old) old.remove();
     if (pages <= 1) return;
 
-    var pag = document.createElement('div');
-    pag.className = 'hrms-dt-pagination';
-    pag.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;flex-wrap:wrap;';
+    var nav = document.createElement('div');
+    nav.className = 'hrms-dt-pagination d-flex justify-content-center gap-1 flex-wrap mt-3';
+    var add = function (label, page, disabled, active) {
+      var btn = button(label);
+      if (active) btn.className = 'btn btn-sm btn-primary';
+      btn.disabled = disabled;
+      btn.addEventListener('click', function () {
+        self.currentPage = page;
+        self.render();
+      });
+      nav.appendChild(btn);
+    };
 
-    var isLight = this.isLight || false;
-    var btnBg = isLight ? '#f1f5f9' : 'rgba(255,255,255,0.06)';
-    var btnBorder = isLight ? '1px solid #e2e8f0' : '1px solid rgba(255,255,255,0.1)';
-    var btnColor = isLight ? '#475569' : '#94a3b8';
-    var btnStyle = 'padding:6px 12px;border-radius:8px;border:' + btnBorder + ';cursor:pointer;font-size:0.82rem;font-weight:600;transition:all 0.15s;';
-
-    // Prev
-    var prev = document.createElement('button');
-    prev.textContent = '← Prev';
-    prev.style.cssText = btnStyle + 'background:' + btnBg + ';color:' + btnColor + ';';
-    prev.disabled = this.currentPage === 1;
-    if (this.currentPage === 1) prev.style.opacity = '0.4';
-    prev.addEventListener('click', function () {
-      if (self.currentPage > 1) { self.currentPage--; self.render(); }
-    });
-    pag.appendChild(prev);
-
-    // Page numbers
-    var startPage = Math.max(1, this.currentPage - 2);
-    var endPage = Math.min(pages, startPage + 4);
-    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
-
-    if (startPage > 1) {
-      pag.appendChild(this._pageBtn(1, pages));
-      if (startPage > 2) {
-        var dots = document.createElement('span');
-        dots.textContent = '...';
-        dots.style.color = '#475569';
-        pag.appendChild(dots);
-      }
+    add('Prev', Math.max(1, this.currentPage - 1), this.currentPage === 1, false);
+    for (var i = Math.max(1, this.currentPage - 2); i <= Math.min(pages, this.currentPage + 2); i++) {
+      add(String(i), i, false, i === this.currentPage);
     }
-
-    for (var i = startPage; i <= endPage; i++) {
-      pag.appendChild(this._pageBtn(i, pages));
-    }
-
-    if (endPage < pages) {
-      if (endPage < pages - 1) {
-        var dots2 = document.createElement('span');
-        dots2.textContent = '...';
-        dots2.style.color = '#475569';
-        pag.appendChild(dots2);
-      }
-      pag.appendChild(this._pageBtn(pages, pages));
-    }
-
-    // Next
-    var next = document.createElement('button');
-    next.textContent = 'Next →';
-    next.style.cssText = btnStyle + 'background:' + btnBg + ';color:' + btnColor + ';';
-    next.disabled = this.currentPage === pages;
-    if (this.currentPage === pages) next.style.opacity = '0.4';
-    next.addEventListener('click', function () {
-      if (self.currentPage < pages) { self.currentPage++; self.render(); }
-    });
-    pag.appendChild(next);
-
-    this.wrapper.appendChild(pag);
-  };
-
-  DataTable.prototype._pageBtn = function (n, pages) {
-    var self = this;
-    var btn = document.createElement('button');
-    btn.textContent = n;
-    var isActive = n === this.currentPage;
-    var isLight = this.isLight || false;
-    var inactiveBg = isLight ? '#f1f5f9' : 'rgba(255,255,255,0.06)';
-    var inactiveBorder = isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)';
-    var inactiveColor = isLight ? '#475569' : '#94a3b8';
-    btn.style.cssText = 'padding:6px 12px;border-radius:8px;border:1px solid ' +
-      (isActive ? '#6366f1' : inactiveBorder) + ';cursor:pointer;font-size:0.82rem;font-weight:' +
-      (isActive ? '700' : '500') + ';background:' +
-      (isActive ? 'linear-gradient(135deg,#6366f1,#8b5cf6)' : inactiveBg) +
-      ';color:' + (isActive ? 'white' : inactiveColor) + ';transition:all 0.15s;';
-    btn.addEventListener('click', function () {
-      self.currentPage = n;
-      self.render();
-    });
-    return btn;
+    add('Next', Math.min(pages, this.currentPage + 1), this.currentPage === pages, false);
+    this.wrapper.appendChild(nav);
   };
 
   DataTable.prototype.exportCSV = function () {
     var headers = Array.from(this.table.querySelectorAll('thead th'))
-      .map(function (th) { return '"' + th.textContent.trim().replace(/[⇅↑↓]/g, '').trim() + '"'; })
-      .join(',');
-
+      .map(function (th) { return '"' + th.textContent.replace(/[<>^v]/g, '').trim().replace(/"/g, '""') + '"'; });
     var rows = this.filteredRows.map(function (row) {
-      return Array.from(row.querySelectorAll('td'))
-        .map(function (td) { return '"' + td.textContent.trim().replace(/"/g, '""') + '"'; })
-        .join(',');
+      return Array.from(row.children).map(function (td) {
+        return '"' + textOf(td).replace(/"/g, '""') + '"';
+      }).join(',');
     });
-
-    var csv = [headers].concat(rows).join('\n');
-    var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    var blob = new Blob(['\uFEFF' + [headers.join(',')].concat(rows).join('\n')], { type: 'text/csv;charset=utf-8;' });
     var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'hrms-export-' + new Date().toISOString().slice(0, 10) + '.csv';
-    a.click();
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'hrms-export-' + new Date().toISOString().slice(0, 10) + '.csv';
+    link.click();
     URL.revokeObjectURL(url);
-
-    if (window.HRMS && window.HRMS.toast) {
-      window.HRMS.toast('Exported ' + this.filteredRows.length + ' rows to CSV', 'success');
-    }
   };
 
-  // ==================== AUTO INIT ====================
   function initAll() {
     document.querySelectorAll('table.hrms-dt, table.data-table').forEach(function (table) {
       if (!table.getAttribute('data-dt-init')) {
         table.setAttribute('data-dt-init', '1');
-        // Add hrms-dt class if missing
         table.classList.add('hrms-dt');
         instances.push(new DataTable(table));
       }
@@ -468,4 +339,5 @@
   window.HRMS = window.HRMS || {};
   window.HRMS.DataTable = DataTable;
   window.HRMS.initDataTables = initAll;
+  window.HRMS.dataTableInstances = instances;
 })();

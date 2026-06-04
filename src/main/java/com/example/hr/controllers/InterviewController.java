@@ -5,6 +5,9 @@ import com.example.hr.service.InterviewService;
 import com.example.hr.service.CandidateService;
 import com.example.hr.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,18 +30,37 @@ public class InterviewController {
     public String listInterviews(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String type,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "scheduledTime") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir,
             Model model) {
-        
-        var interviews = (status != null && !status.trim().isEmpty())
-                ? interviewService.getInterviewsByStatus(status)
-                : interviewService.getAllInterviews();
+
+        String normalizedSortBy = normalizeInterviewSort(sortBy);
+        Sort.Direction direction = "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
+        var pageable = PageRequest.of(Math.max(page, 0), Math.max(size, 1), Sort.by(direction, normalizedSortBy));
+        var interviewPage = interviewService.searchInterviews(blankToNull(search), blankToNull(status), blankToNull(type),
+                startDate, endDate, pageable);
         
         var statistics = interviewService.getInterviewStatistics();
         
-        model.addAttribute("interviews", interviews);
+        model.addAttribute("interviewPage", interviewPage);
+        model.addAttribute("interviews", interviewPage.getContent());
+        model.addAttribute("currentPage", interviewPage.getNumber());
+        model.addAttribute("totalPages", interviewPage.getTotalPages());
+        model.addAttribute("totalItems", interviewPage.getTotalElements());
+        model.addAttribute("sortField", normalizedSortBy);
+        model.addAttribute("sortDir", direction.name().toLowerCase());
+        model.addAttribute("reverseSortDir", direction == Sort.Direction.ASC ? "desc" : "asc");
         model.addAttribute("statistics", statistics);
         model.addAttribute("selectedStatus", status);
         model.addAttribute("selectedType", type);
+        model.addAttribute("searchKeyword", search);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
         
         return "hiring/interviews/list";
     }
@@ -155,5 +177,17 @@ public class InterviewController {
         
         model.addAttribute("interviews", upcomingInterviews);
         return "hiring/interviews/upcoming";
+    }
+
+    private String normalizeInterviewSort(String sortBy) {
+        return switch (sortBy) {
+            case "scheduledTime", "status", "interviewType", "interviewRound", "durationMinutes",
+                 "overallScore", "createdAt", "updatedAt" -> sortBy;
+            default -> "scheduledTime";
+        };
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
     }
 }

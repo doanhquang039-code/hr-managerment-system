@@ -3,6 +3,8 @@ package com.example.hr.repository;
 import com.example.hr.models.Interview;
 import com.example.hr.models.Candidate;
 import com.example.hr.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,10 +31,34 @@ public interface InterviewRepository extends JpaRepository<Interview, Integer> {
     List<Interview> findInterviewsByDateRange(@Param("startDate") LocalDateTime startDate,
                                               @Param("endDate") LocalDateTime endDate);
 
+    @Query("""
+           SELECT i FROM Interview i
+           LEFT JOIN i.candidate c
+           LEFT JOIN c.jobPosting j
+           LEFT JOIN i.interviewer u
+           WHERE (:keyword IS NULL OR :keyword = ''
+                  OR LOWER(c.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(c.email) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                  OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')))
+             AND (:status IS NULL OR :status = '' OR i.status = :status)
+             AND (:type IS NULL OR :type = '' OR i.interviewType = :type)
+             AND (:startDate IS NULL OR i.scheduledTime >= :startDate)
+             AND (:endDate IS NULL OR i.scheduledTime <= :endDate)
+           """)
+    Page<Interview> searchInterviews(@Param("keyword") String keyword,
+                                     @Param("status") String status,
+                                     @Param("type") String type,
+                                     @Param("startDate") LocalDateTime startDate,
+                                     @Param("endDate") LocalDateTime endDate,
+                                     Pageable pageable);
+
     List<Interview> findByInterviewTypeAndStatusOrderByScheduledTimeDesc(String interviewType, String status);
 
     @Query("SELECT COUNT(i) FROM Interview i WHERE i.interviewer = :interviewer AND i.status = :status")
     long countByInterviewerAndStatus(@Param("interviewer") User interviewer, @Param("status") String status);
+
+    long countByStatus(String status);
 
     @Query("SELECT i FROM Interview i WHERE i.candidate = :candidate AND i.interviewRound = :round")
     List<Interview> findByCandidateAndRound(@Param("candidate") Candidate candidate, @Param("round") Integer round);
