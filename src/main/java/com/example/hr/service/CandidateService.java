@@ -105,6 +105,10 @@ public class CandidateService {
     public Candidate hireCandidate(Integer id) {
         Candidate candidate = getCandidateById(id);
         candidate.setCurrentStage("HIRED");
+        String workflowNote = LocalDateTime.now() + ": HIRED - ready for onboarding checklist, contract setup and LMS assignment";
+        candidate.setNotes(candidate.getNotes() != null && !candidate.getNotes().isBlank()
+                ? candidate.getNotes() + "\n\n" + workflowNote
+                : workflowNote);
         candidate.setUpdatedAt(LocalDateTime.now());
         return candidateRepository.save(candidate);
     }

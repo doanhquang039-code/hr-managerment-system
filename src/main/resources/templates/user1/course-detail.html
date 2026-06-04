@@ -1,197 +1,181 @@
-﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${course.title} + ' - LMS'">Course Detail</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title th:text="${course.title} + ' - LMS'">Khóa học - LMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .course-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 0;
-        }
-        .lesson-item {
-            border-left: 3px solid #e9ecef;
-            transition: all 0.3s;
-        }
-        .lesson-item:hover {
-            border-left-color: #667eea;
-            background-color: #f8f9fa;
-        }
-        .lesson-item.completed {
-            border-left-color: #28a745;
-        }
+        :root { --nav:#111827; --panel:#ffffff; --ink:#0f172a; --muted:#64748b; --line:#dbe4ef; --violet:#6d5dfc; --green:#10b981; }
+        body { margin:0; font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#eef3f9; color:var(--ink); }
+        .lms-shell { display:grid; grid-template-columns:300px minmax(0,1fr); min-height:100vh; }
+        .lms-side { background:linear-gradient(180deg,#0f172a,#172033); color:#dbe7f5; padding:24px 20px; border-right:1px solid rgba(148,163,184,.16); }
+        .brand { display:flex; align-items:center; gap:12px; padding:14px 10px 22px; border-bottom:1px solid rgba(148,163,184,.16); margin-bottom:22px; font-weight:850; letter-spacing:.08em; color:#fff; }
+        .brand-icon { width:44px; height:44px; border-radius:14px; display:grid; place-items:center; background:#745cf6; font-weight:850; }
+        .nav-title { color:#7f8da3; font-size:.76rem; text-transform:uppercase; letter-spacing:.14em; font-weight:850; margin:24px 10px 10px; }
+        .side-link { min-height:44px; display:flex; align-items:center; gap:12px; color:#b7c4d6; text-decoration:none; border-left:3px solid transparent; padding:10px 12px; font-weight:700; }
+        .side-link:hover, .side-link.active { color:#fff; background:rgba(255,255,255,.08); border-left-color:#818cf8; }
+        .lms-main { padding:30px 42px 54px; }
+        .hero { background:linear-gradient(135deg,#5b6ee8,#7b4bbe); color:#fff; border-radius:22px; padding:30px; display:flex; justify-content:space-between; gap:24px; box-shadow:0 24px 54px rgba(80,70,160,.24); }
+        .hero h1 { font-size:2rem; font-weight:850; margin:8px 0 10px; letter-spacing:0; }
+        .chip { display:inline-flex; align-items:center; gap:7px; border-radius:999px; padding:7px 11px; background:rgba(255,255,255,.16); font-weight:800; font-size:.78rem; }
+        .hero-meta { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+        .hero-action { min-width:260px; background:rgba(15,23,42,.18); border:1px solid rgba(255,255,255,.22); border-radius:18px; padding:18px; align-self:stretch; display:flex; flex-direction:column; justify-content:center; }
+        .progress { height:12px; background:rgba(255,255,255,.22); }
+        .progress-bar { background:#34d399; }
+        .grid { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(320px,.75fr); gap:22px; margin-top:24px; }
+        .cardx { background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:0 16px 40px rgba(15,23,42,.07); overflow:hidden; }
+        .cardx-head { padding:18px 20px; border-bottom:1px solid #edf2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .cardx-body { padding:20px; }
+        .video-box { aspect-ratio:16/9; background:#0f172a; border-radius:16px; overflow:hidden; display:grid; place-items:center; color:#cbd5e1; }
+        .video-box video { width:100%; height:100%; object-fit:cover; display:block; }
+        .lesson { display:flex; align-items:flex-start; gap:14px; padding:14px; border:1px solid #e5edf6; border-radius:14px; margin-bottom:10px; background:#fbfdff; }
+        .lesson-icon { width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:#eef2ff; color:#4f46e5; flex:0 0 auto; }
+        .stat { display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid #edf2f7; }
+        .stat:last-child { border-bottom:0; }
+        .btn-primary { background:linear-gradient(135deg,#5b6ee8,#7b4bbe); border:0; font-weight:800; }
+        .btn-outline-secondary, .btn-outline-primary { font-weight:750; }
+        .range-wrap input[type=range] { width:100%; accent-color:#6d5dfc; }
+        @media (max-width:1100px) { .lms-shell { grid-template-columns:1fr; } .lms-side { position:relative; } .grid, .hero { grid-template-columns:1fr; flex-direction:column; } }
     </style>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: navbar"></div>
+<div class="lms-shell">
+    <aside class="lms-side">
+        <div class="brand"><div class="brand-icon">HR</div><div>HRMS<br><small style="color:#8b9bb0;letter-spacing:.22em">LMS</small></div></div>
+        <div class="nav-title">Học tập</div>
+        <a class="side-link" href="/user1/dashboard"><i class="bi bi-speedometer2"></i>Dashboard</a>
+        <a class="side-link" href="/lms/courses"><i class="bi bi-book"></i>Danh sách khóa học</a>
+        <a class="side-link active" href="/lms/my-courses"><i class="bi bi-mortarboard"></i>Khóa học của tôi</a>
+        <a class="side-link" href="/user1/tasks"><i class="bi bi-list-task"></i>Công việc</a>
+        <a class="side-link" href="/user1/profile"><i class="bi bi-person-circle"></i>Hồ sơ cá nhân</a>
+    </aside>
 
-    <!-- Course Header -->
-    <div class="course-header">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8">
-                    <span class="badge bg-light text-dark mb-2" th:text="${course.category}">Category</span>
-                    <h1 th:text="${course.title}">Course Title</h1>
-                    <p class="lead" th:text="${course.description}">Course Description</p>
-                    
-                    <div class="d-flex gap-4 mt-3">
-                        <div>
-                            <i class="fas fa-signal me-2"></i>
-                            <span th:text="${course.level}">Level</span>
+    <main class="lms-main">
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${success}">Thành công</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}">Có lỗi</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <section class="hero">
+            <div>
+                <span class="chip"><i class="bi bi-bookmark-star"></i><span th:text="${course.category ?: 'GENERAL'}">GENERAL</span></span>
+                <h1 th:text="${course.title}">Tên khóa học</h1>
+                <p class="mb-0 opacity-75" th:text="${course.description ?: 'Khóa học nội bộ HRMS.'}">Mô tả khóa học</p>
+                <div class="hero-meta">
+                    <span class="chip"><i class="bi bi-bar-chart"></i><span th:text="${course.level ?: 'BEGINNER'}">BEGINNER</span></span>
+                    <span class="chip"><i class="bi bi-clock"></i><span th:text="${(course.durationMinutes ?: 0) + ' phút'}">60 phút</span></span>
+                    <span class="chip" th:if="${course.instructor != null}"><i class="bi bi-person-video3"></i><span th:text="${course.instructor.fullName}">Instructor</span></span>
+                    <span class="chip" th:if="${course.isMandatory == true}"><i class="bi bi-exclamation-circle"></i>Bắt buộc</span>
+                </div>
+            </div>
+            <div class="hero-action">
+                <div th:if="${!isEnrolled}">
+                    <div class="fw-bold mb-2">Bạn chưa đăng ký khóa học này</div>
+                    <form th:action="@{/lms/enroll/{id}(id=${course.id})}" method="post">
+                        <button class="btn btn-light w-100 fw-bold" type="submit"><i class="bi bi-plus-circle me-1"></i>Đăng ký học</button>
+                    </form>
+                </div>
+                <div th:if="${isEnrolled}">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-bold">Tiến độ của bạn</div>
+                        <span class="badge bg-light text-dark" th:text="${enrollment.status}">IN_PROGRESS</span>
+                    </div>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" th:style="'width:' + ${(enrollment.progressPercent ?: 0)} + '%'"></div>
+                    </div>
+                    <div class="fw-bold fs-4" th:text="${(enrollment.progressPercent ?: 0) + '%'}">0%</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid">
+            <div>
+                <div class="cardx mb-4">
+                    <div class="cardx-head">
+                        <div class="fw-bold"><i class="bi bi-play-circle me-2"></i>Video khóa học</div>
+                        <span class="text-muted small" th:text="${course.videoUrl != null and !course.videoUrl.isBlank() ? 'Cloudinary' : 'Chưa có video'}">Cloudinary</span>
+                    </div>
+                    <div class="cardx-body">
+                        <div class="video-box" th:if="${course.videoUrl != null and !course.videoUrl.isBlank()}">
+                            <video controls playsinline preload="metadata" th:poster="${course.thumbnailUrl}" th:src="${course.videoUrl}"></video>
                         </div>
-                        <div>
-                            <i class="fas fa-clock me-2"></i>
-                            <span th:text="${course.durationMinutes} + ' phút'">Duration</span>
-                        </div>
-                        <div th:if="${course.instructor}">
-                            <i class="fas fa-user me-2"></i>
-                            <span th:text="${course.instructor}">Instructor</span>
+                        <div class="video-box" th:unless="${course.videoUrl != null and !course.videoUrl.isBlank()}">
+                            <div class="text-center">
+                                <i class="bi bi-cloud-slash fs-1 d-block mb-2"></i>
+                                <div>Khóa học này chưa có video tải lên.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 text-end">
-                    <div th:if="${!isEnrolled}">
-                        <form th:action="@{/lms/enroll/{id}(id=${course.id})}" method="post">
-                            <button type="submit" class="btn btn-light btn-lg">
-                                <i class="fas fa-plus me-2"></i>Đăng ký khóa học
-                            </button>
+
+                <div class="cardx">
+                    <div class="cardx-head">
+                        <div class="fw-bold"><i class="bi bi-list-check me-2"></i>Nội dung khóa học</div>
+                        <span class="text-muted small" th:text="${#lists.size(lessons)} + ' bài'">0 bài</span>
+                    </div>
+                    <div class="cardx-body">
+                        <div th:if="${#lists.isEmpty(lessons)}" class="text-center text-muted py-4">
+                            <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+                            Chưa có bài học nào.
+                        </div>
+                        <div class="lesson" th:each="lesson : ${lessons}">
+                            <div class="lesson-icon"><i class="bi bi-play-fill"></i></div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold" th:text="${lesson.title}">Tên bài học</div>
+                                <div class="text-muted small" th:text="${lesson.description ?: 'Không có mô tả.'}">Mô tả</div>
+                                <div class="d-flex gap-2 flex-wrap mt-2">
+                                    <span class="badge text-bg-light" th:text="${lesson.contentType ?: 'LESSON'}">LESSON</span>
+                                    <span class="badge text-bg-light" th:text="${(lesson.durationMinutes ?: 0) + ' phút'}">0 phút</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside>
+                <div class="cardx mb-4">
+                    <div class="cardx-head"><div class="fw-bold"><i class="bi bi-sliders me-2"></i>Cập nhật tiến độ</div></div>
+                    <div class="cardx-body">
+                        <form th:if="${isEnrolled}" th:action="@{/lms/enrollment/{id}/progress(id=${enrollment.id})}" method="post">
+                            <div class="range-wrap">
+                                <label class="form-label fw-bold">Tiến độ hoàn thành</label>
+                                <input type="range" name="progressPercent" min="0" max="100" step="5"
+                                       th:value="${enrollment.progressPercent ?: 0}"
+                                       oninput="document.getElementById('progressValue').textContent=this.value + '%'">
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span class="text-muted">0%</span>
+                                    <strong id="progressValue" th:text="${(enrollment.progressPercent ?: 0) + '%'}">0%</strong>
+                                    <span class="text-muted">100%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100 mt-3" type="submit"><i class="bi bi-check2-circle me-1"></i>Lưu tiến độ</button>
                         </form>
-                    </div>
-                    <div th:if="${isEnrolled}">
-                        <div class="card bg-light text-dark">
-                            <div class="card-body">
-                                <h5>Tiến độ của bạn</h5>
-                                <div class="progress mb-2" style="height: 25px;">
-                                    <div class="progress-bar bg-success" role="progressbar" 
-                                         th:style="'width: ' + ${enrollment.progressPercent} + '%'"
-                                         th:text="${enrollment.progressPercent} + '%'">
-                                    </div>
-                                </div>
-                                <small th:text="${enrollment.status}">Status</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Course Content -->
-            <div class="col-md-8">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5><i class="fas fa-list me-2"></i>Nội dung khóa học</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${lessons.empty}" class="text-center py-4">
-                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">Chưa có bài học nào</p>
-                        </div>
-                        
-                        <div class="list-group">
-                            <div class="list-group-item lesson-item" th:each="lesson : ${lessons}">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">
-                                            <i class="fas fa-play-circle me-2 text-primary"></i>
-                                            <span th:text="${lesson.title}">Lesson Title</span>
-                                        </h6>
-                                        <p class="mb-1 text-muted small" th:text="${lesson.description}">Description</p>
-                                        <small class="text-muted">
-                                            <i class="fas fa-clock me-1"></i>
-                                            <span th:text="${lesson.durationMinutes} + ' phút'">Duration</span>
-                                        </small>
-                                    </div>
-                                    <div>
-                                        <span th:if="${lesson.contentType == 'VIDEO'}" class="badge bg-primary">
-                                            <i class="fas fa-video"></i> Video
-                                        </span>
-                                        <span th:if="${lesson.contentType == 'DOCUMENT'}" class="badge bg-info">
-                                            <i class="fas fa-file-alt"></i> Tài liệu
-                                        </span>
-                                        <span th:if="${lesson.contentType == 'QUIZ'}" class="badge bg-warning">
-                                            <i class="fas fa-question-circle"></i> Quiz
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div th:unless="${isEnrolled}" class="text-muted">Đăng ký khóa học để cập nhật tiến độ.</div>
                     </div>
                 </div>
 
-                <!-- Course Description -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-info-circle me-2"></i>Mô tả chi tiết</h5>
-                    </div>
-                    <div class="card-body">
-                        <p th:text="${course.description}">Full description</p>
-                        
-                        <h6 class="mt-4">Bạn sẽ học được gì?</h6>
-                        <ul>
-                            <li>Kiến thức cơ bản và nâng cao</li>
-                            <li>Thực hành qua các bài tập</li>
-                            <li>Áp dụng vào công việc thực tế</li>
-                        </ul>
+                <div class="cardx">
+                    <div class="cardx-head"><div class="fw-bold"><i class="bi bi-info-circle me-2"></i>Thông tin</div></div>
+                    <div class="cardx-body">
+                        <div class="stat"><span>Danh mục</span><strong th:text="${course.category ?: 'GENERAL'}">GENERAL</strong></div>
+                        <div class="stat"><span>Cấp độ</span><strong th:text="${course.level ?: 'BEGINNER'}">BEGINNER</strong></div>
+                        <div class="stat"><span>Thời lượng</span><strong th:text="${(course.durationMinutes ?: 0) + ' phút'}">0 phút</strong></div>
+                        <div class="stat"><span>Điểm đạt</span><strong th:text="${(course.passingScore ?: 0) + '%'}">80%</strong></div>
+                        <div class="stat"><span>Trạng thái</span><strong th:text="${course.isActive == true ? 'Đang mở' : 'Tạm ẩn'}">Đang mở</strong></div>
+                        <a href="/lms/my-courses" class="btn btn-outline-secondary w-100 mt-3"><i class="bi bi-arrow-left me-1"></i>Quay lại khóa học của tôi</a>
                     </div>
                 </div>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="col-md-4">
-                <!-- Course Info -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5><i class="fas fa-info me-2"></i>Thông tin</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <strong>Danh mục:</strong>
-                            <span class="badge bg-primary" th:text="${course.category}">Category</span>
-                        </div>
-                        <div class="mb-3">
-                            <strong>Cấp độ:</strong>
-                            <span class="badge" 
-                                  th:classappend="${course.level == 'BEGINNER'} ? 'bg-success' : 
-                                                 (${course.level == 'INTERMEDIATE'} ? 'bg-warning' : 'bg-danger')"
-                                  th:text="${course.level}">Level</span>
-                        </div>
-                        <div class="mb-3">
-                            <strong>Thời lượng:</strong>
-                            <span th:text="${course.durationMinutes} + ' phút'">Duration</span>
-                        </div>
-                        <div class="mb-3" th:if="${course.instructor}">
-                            <strong>Giảng viên:</strong>
-                            <span th:text="${course.instructor}">Instructor</span>
-                        </div>
-                        <div class="mb-3" th:if="${course.isMandatory}">
-                            <span class="badge bg-danger">
-                                <i class="fas fa-exclamation-circle me-1"></i>Bắt buộc
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions -->
-                <div class="card" th:if="${isEnrolled}">
-                    <div class="card-body">
-                        <a href="#" class="btn btn-primary w-100 mb-2">
-                            <i class="fas fa-play me-2"></i>Bắt đầu học
-                        </a>
-                        <a th:href="@{/lms/my-courses}" class="btn btn-outline-secondary w-100">
-                            <i class="fas fa-arrow-left me-2"></i>Quay lại khóa học của tôi
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            </aside>
+        </section>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

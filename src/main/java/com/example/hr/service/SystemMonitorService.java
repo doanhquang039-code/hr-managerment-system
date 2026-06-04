@@ -432,10 +432,10 @@ public class SystemMonitorService {
 
     private List<Map<String, Object>> getReadinessChecklist() {
         List<Map<String, Object>> items = new ArrayList<>();
-        items.add(readiness("Sửa lỗi font và menu", "IN_PROGRESS", "Admin sidebar đã được chuẩn hóa, các template rời vẫn cần gom dần về fragment chung."));
-        items.add(readiness("Workflow HR chính", "IN_PROGRESS", "Theo dõi nhân viên, nghỉ phép, chấm công, lương, tuyển dụng, onboarding."));
-        items.add(readiness("Dữ liệu mẫu và enum filter", "IN_PROGRESS", "Các màn cần lấy option từ enum/database thay vì hardcode rải rác."));
-        items.add(readiness("AI và Health Insight", "READY", "API trả kết quả đồng bộ, cảnh báo/audit chạy async qua Kafka."));
+        items.add(readiness("Menu và font", "IN_PROGRESS", "Admin sidebar đã gom về fragment chung, các trang cũ tiếp tục được chuyển dần về cùng layout."));
+        items.add(readiness("Workflow HR chính", "IN_PROGRESS", "Nhân viên, nghỉ phép, chấm công, lương, tuyển dụng và onboarding đã có luồng nền."));
+        items.add(readiness("LMS và React islands", "IN_PROGRESS", "Quản trị khóa học đã dùng React island, chi tiết khóa học có video Cloudinary và cập nhật tiến độ."));
+        items.add(readiness("AI và Health Insight", "READY", "API trả kết quả đồng bộ, cảnh báo và audit chạy qua event pipeline."));
         items.add(readiness("Kafka/Event-driven", "READY", "Audit và Health Insight đã có topic, retry và dead-letter topic."));
         return items;
     }

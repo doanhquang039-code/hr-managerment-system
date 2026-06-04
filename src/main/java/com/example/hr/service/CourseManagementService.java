@@ -38,6 +38,13 @@ public class CourseManagementService {
     public List<Course> getActiveCourses() {
         return courseRepository.findByIsActiveTrue();
     }
+
+    @Transactional(readOnly = true)
+    public Course getActiveCourseById(Integer id) {
+        return courseRepository.findById(id)
+                .filter(course -> Boolean.TRUE.equals(course.getIsActive()))
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+    }
     
     /**
      * Get courses by category
@@ -116,6 +123,12 @@ public class CourseManagementService {
     @Transactional(readOnly = true)
     public Optional<CourseEnrollment> getEnrollment(User user, Course course) {
         return enrollmentRepository.findByUserAndCourse(user, course);
+    }
+
+    @Transactional(readOnly = true)
+    public CourseEnrollment getEnrollmentById(Integer enrollmentId) {
+        return enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
     }
     
     /**

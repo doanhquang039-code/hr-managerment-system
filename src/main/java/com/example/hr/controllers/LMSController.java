@@ -64,10 +64,7 @@ public class LMSController {
     @GetMapping("/lms/course/{id}")
     @PreAuthorize("isAuthenticated()")
     public String courseDetail(@PathVariable Integer id, Authentication auth, Model model) {
-        Course course = courseService.getActiveCourses().stream()
-            .filter(c -> c.getId().equals(id))
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Course not found"));
+        Course course = courseService.getActiveCourseById(id);
         
         User user = authUserHelper.getCurrentUser(auth);
         var enrollment = courseService.getEnrollment(user, course);
@@ -87,10 +84,7 @@ public class LMSController {
                               RedirectAttributes ra) {
         try {
             User user = authUserHelper.getCurrentUser(auth);
-            Course course = courseService.getActiveCourses().stream()
-                .filter(c -> c.getId().equals(courseId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+            Course course = courseService.getActiveCourseById(courseId);
             
             courseService.enrollUser(user, course);
             ra.addFlashAttribute("success", "Đăng ký khóa học thành công!");
@@ -99,6 +93,26 @@ public class LMSController {
         }
         
         return "redirect:/lms/course/" + courseId;
+    }
+
+    @PostMapping("/lms/enrollment/{enrollmentId}/progress")
+    @PreAuthorize("isAuthenticated()")
+    public String updateCourseProgress(@PathVariable Integer enrollmentId,
+                                       @RequestParam(defaultValue = "0") Integer progressPercent,
+                                       Authentication auth,
+                                       RedirectAttributes ra) {
+        CourseEnrollment enrollment = courseService.getEnrollmentById(enrollmentId);
+        User user = authUserHelper.getCurrentUser(auth);
+
+        if (enrollment.getUser() == null || !enrollment.getUser().getId().equals(user.getId())) {
+            ra.addFlashAttribute("error", "Bạn không có quyền cập nhật tiến độ khóa học này.");
+            return "redirect:/lms/my-courses";
+        }
+
+        int safeProgress = Math.max(0, Math.min(100, progressPercent == null ? 0 : progressPercent));
+        courseService.updateProgress(enrollmentId, safeProgress);
+        ra.addFlashAttribute("success", safeProgress >= 100 ? "Đã hoàn thành khóa học." : "Đã cập nhật tiến độ học.");
+        return "redirect:/lms/course/" + enrollment.getCourse().getId();
     }
     
     // ===== Admin Views =====
