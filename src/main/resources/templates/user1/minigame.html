@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minigame - HRMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background:#eef2f7; min-height:100vh; margin:0; color:#0f172a; }
+        .sidebar {
+            width:260px;
+            height:100vh;
+            background:linear-gradient(180deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);
+            position:fixed;
+            left:0;
+            top:0;
+            z-index:100;
+            padding-bottom:18px;
+            box-shadow:4px 0 20px rgba(0,0,0,.3);
+            overflow-y:auto;
+            overflow-x:hidden;
+        }
+        .sidebar::-webkit-scrollbar { width:6px; }
+        .sidebar::-webkit-scrollbar-track { background:rgba(255,255,255,.05); }
+        .sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.2); border-radius:3px; }
+        .sidebar-brand {
+            padding:24px 20px 20px;
+            border-bottom:1px solid rgba(255,255,255,.08);
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+        .sidebar-brand .brand-icon {
+            width:40px;
+            height:40px;
+            background:linear-gradient(135deg,#6366f1,#8b5cf6);
+            border-radius:10px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            font-weight:800;
+        }
+        .sidebar-brand .brand-name { color:#fff; font-weight:800; font-size:1rem; line-height:1.2; }
+        .sidebar-brand .brand-sub { color:#64748b; font-size:.7rem; letter-spacing:2px; text-transform:uppercase; font-weight:700; }
+        .sidebar-section-label {
+            color:#64748b;
+            font-size:.65rem;
+            font-weight:800;
+            letter-spacing:2px;
+            text-transform:uppercase;
+            padding:12px 20px 4px;
+        }
+        .sidebar nav a {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            padding:10px 20px;
+            color:#94a3b8;
+            text-decoration:none;
+            font-size:.875rem;
+            font-weight:650;
+            transition:all .18s ease;
+            border-left:3px solid transparent;
+            margin:2px 0;
+        }
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            color:#fff;
+            background:rgba(99,102,241,.15);
+            border-left-color:#6366f1;
+        }
+        .sidebar nav a i { width:20px; font-size:1rem; }
+        .sidebar .user-card {
+            padding:16px 20px !important;
+            display:flex !important;
+            align-items:center !important;
+            gap:12px !important;
+            background:rgba(99,102,241,.12) !important;
+            margin:16px 12px !important;
+            border-radius:12px !important;
+        }
+        .sidebar .submenu { display:none; padding:2px 0 8px; background:rgba(255,255,255,.03); }
+        .sidebar .submenu.open { display:block; }
+        .sidebar .submenu a { padding:9px 20px 9px 52px; font-size:.84rem; color:#cbd5e1; }
+        .sidebar-logout {
+            padding:14px 20px 4px;
+            margin-top:10px;
+            border-top:1px solid rgba(255,255,255,.08);
+            width:100%;
+        }
+        .lang-btn {
+            background:rgba(255,255,255,.08);
+            border:1px solid rgba(255,255,255,.15);
+            color:#94a3b8;
+            border-radius:8px;
+            padding:4px 10px;
+            font-size:.75rem;
+            font-weight:700;
+            cursor:pointer;
+        }
+        .main-content { margin-left:260px; padding:28px 32px; min-height:100vh; }
+        body.role-admin .main-content { margin-left:300px; }
+        .topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; }
+        .topbar h1 { font-size:1.55rem; font-weight:800; margin:0; }
+        .topbar p { margin:4px 0 0; color:#64748b; font-size:.9rem; }
+        .game-hero { background:linear-gradient(135deg,#0f766e,#2563eb); color:#fff; border-radius:8px; padding:24px; display:flex; justify-content:space-between; gap:20px; align-items:center; margin-bottom:22px; }
+        .hero-title { font-size:1.35rem; font-weight:800; margin:0 0 6px; }
+        .hero-meta { opacity:.9; font-size:.9rem; }
+        .score-pill { min-width:150px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); border-radius:8px; padding:14px 16px; text-align:center; }
+        .score-pill strong { display:block; font-size:1.8rem; line-height:1; }
+        .panel { background:#fff; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 2px 12px rgba(15,23,42,.06); }
+        .panel-head { padding:16px 18px; border-bottom:1px solid #eef2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .panel-head h2 { font-size:1rem; font-weight:800; margin:0; }
+        .panel-body { padding:18px; }
+        .question { border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-bottom:14px; }
+        .question-title { display:flex; gap:10px; font-weight:700; margin-bottom:12px; }
+        .question-number { width:28px; height:28px; flex:0 0 28px; border-radius:50%; background:#dbeafe; color:#1d4ed8; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.82rem; }
+        .option-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+        .option-card { min-height:46px; border:1px solid #dbe3ef; border-radius:8px; padding:10px 12px; display:flex; align-items:center; gap:8px; cursor:pointer; transition:.16s ease; }
+        .option-card:hover { border-color:#2563eb; background:#eff6ff; }
+        .option-card input { flex:0 0 auto; }
+        .leader-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid #f1f5f9; }
+        .leader-row:last-child { border-bottom:0; }
+        .leader-name { font-weight:700; font-size:.9rem; }
+        .leader-time { color:#64748b; font-size:.78rem; }
+        .leader-score { color:#0f766e; font-weight:800; white-space:nowrap; }
+        .empty-state { color:#64748b; text-align:center; padding:22px 0; }
+        .btn-play { background:#0f766e; border-color:#0f766e; font-weight:700; }
+        .btn-play:hover { background:#115e59; border-color:#115e59; }
+        @media (max-width: 992px) {
+            .main-content { margin-left:0; padding:22px 16px; }
+            .game-hero { align-items:flex-start; flex-direction:column; }
+            .option-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body th:class="${'role-' + #strings.toLowerCase(currentRole)}">
+<th:block th:if="${currentRole == 'USER'}">
+    <div th:replace="fragments/user-sidebar :: sidebar"></div>
+</th:block>
+<th:block th:if="${currentRole == 'HIRING'}">
+    <div th:replace="fragments/hiring-sidebar :: sidebar"></div>
+</th:block>
+<th:block th:if="${currentRole == 'MANAGER'}">
+    <div th:replace="fragments/manager-sidebar :: sidebar"></div>
+</th:block>
+<th:block th:if="${currentRole == 'ADMIN'}">
+    <div th:replace="fragments/admin-sidebar :: sidebar"></div>
+</th:block>
+
+<main class="main-content">
+    <div class="topbar">
+        <div>
+            <h1><i class="bi bi-controller me-2"></i>Minigame</h1>
+            <p>Th&#7917; th&#225;ch nhanh v&#7873; HR, v&#259;n h&#243;a c&#244;ng ty v&#224; k&#7929; n&#259;ng n&#7897;i b&#7897;.</p>
+        </div>
+        <a class="btn btn-outline-secondary" th:href="${currentRole == 'HIRING' ? '/hiring/dashboard' : (currentRole == 'MANAGER' ? '/manager/dashboard' : (currentRole == 'ADMIN' ? '/admin/dashboard' : '/user1/dashboard'))}">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section class="game-hero">
+        <div>
+            <div class="hero-title" th:text="${quiz.title}">HR Quick Challenge</div>
+            <div class="hero-meta">
+                <i class="bi bi-clock"></i>
+                <span th:text="${quiz.timeLimit}">5</span> ph&#250;t
+                <span class="mx-2">|</span>
+                <i class="bi bi-check2-circle"></i>
+                &#272;&#7841;t t&#7915; <span th:text="${quiz.passingScore}">60</span>%
+                <span class="mx-2">|</span>
+                <span th:text="${#lists.size(questions)}">5</span> c&#226;u h&#7887;i
+            </div>
+        </div>
+        <div class="score-pill">
+            <span>&#272;i&#7875;m cao nh&#7845;t</span>
+            <strong th:text="${bestAttempt != null ? bestAttempt.score + '/' + bestAttempt.totalPoints : '--'}">--</strong>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <form class="panel" th:action="@{/user1/minigame/submit}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" name="quizId" th:value="${quiz.id}"/>
+                <div class="panel-head">
+                    <h2><i class="bi bi-lightning-charge me-1"></i>B&#224;i chơi h&#244;m nay</h2>
+                    <span class="badge text-bg-primary">+10 &#273;i&#7875;m/c&#226;u</span>
+                </div>
+                <div class="panel-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ch&#7885;n minigame</label>
+                        <select class="form-select" onchange="window.location.href='/minigame?quizId=' + this.value">
+                            <option th:each="game : ${games}" th:value="${game.id}" th:selected="${game.id == quiz.id}" th:text="${game.title}">Game</option>
+                        </select>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(questions)}" class="empty-state">
+                        Ch&#432;a c&#243; c&#226;u h&#7887;i minigame.
+                    </div>
+
+                    <div th:each="item, stat : ${questions}" class="question">
+                        <div class="question-title">
+                            <span class="question-number" th:text="${stat.count}">1</span>
+                            <span th:text="${item.question.question}">Question</span>
+                        </div>
+                        <div class="option-grid">
+                            <label class="option-card" th:each="option, optStat : ${item.options}">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       th:name="${'answer_' + item.question.id}"
+                                       th:value="${option}"
+                                       th:required="${optStat.first}">
+                                <span th:text="${option}">Option</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-play btn-primary w-100" type="submit" th:disabled="${#lists.isEmpty(questions)}">
+                        <i class="bi bi-send-check me-1"></i>N&#7897;p b&#224;i v&#224; l&#432;u &#273;i&#7875;m
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <aside class="col-lg-4">
+            <div class="panel mb-4">
+                <div class="panel-head">
+                    <h2><i class="bi bi-gift me-1"></i>Qu&#224; top</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="leader-row">
+                        <div class="leader-name">Top 1</div>
+                        <div class="leader-score" th:text="${quiz.rewardTop1 != null and !#strings.isEmpty(quiz.rewardTop1) ? quiz.rewardTop1 : 'Chua co qua'}">Voucher</div>
+                    </div>
+                    <div class="leader-row">
+                        <div class="leader-name">Top 2</div>
+                        <div class="leader-score" th:text="${quiz.rewardTop2 != null and !#strings.isEmpty(quiz.rewardTop2) ? quiz.rewardTop2 : 'Chua co qua'}">Voucher</div>
+                    </div>
+                    <div class="leader-row">
+                        <div class="leader-name">Top 3</div>
+                        <div class="leader-score" th:text="${quiz.rewardTop3 != null and !#strings.isEmpty(quiz.rewardTop3) ? quiz.rewardTop3 : 'Chua co qua'}">Badge</div>
+                    </div>
+                    <a th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}" class="btn btn-outline-primary w-100 mt-3" href="/manager/minigames/create">
+                        <i class="bi bi-plus-circle me-1"></i>T&#7841;o minigame
+                    </a>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-head">
+                    <h2><i class="bi bi-trophy me-1"></i>B&#7843;ng x&#7871;p h&#7841;ng</h2>
+                </div>
+                <div class="panel-body">
+                    <div th:if="${#lists.isEmpty(leaderboard)}" class="empty-state">
+                        H&#227;y l&#224; ng&#432;&#7901;i &#273;&#7847;u ti&#234;n ghi &#273;i&#7875;m.
+                    </div>
+                    <div th:each="attempt, stat : ${leaderboard}" class="leader-row">
+                        <div>
+                            <div class="leader-name">
+                                <span th:text="${stat.count}">1</span>.
+                                <span th:text="${attempt.user != null and attempt.user.fullName != null ? attempt.user.fullName : 'Nhan vien'}">Nhan vien</span>
+                            </div>
+                            <div class="leader-time" th:text="${attempt.completedAt != null ? #temporals.format(attempt.completedAt, 'dd/MM/yyyy HH:mm') : ''}">01/01/2026</div>
+                        </div>
+                        <div class="leader-score" th:text="${attempt.score + '/' + attempt.totalPoints}">50/50</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+</body>
+</html>

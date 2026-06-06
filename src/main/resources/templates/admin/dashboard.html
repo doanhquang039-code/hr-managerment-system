@@ -56,6 +56,7 @@
       .lang-divider { color: rgba(255,255,255,0.2); font-size: 0.7rem; }
       .card-task      { background: linear-gradient(135deg,#4facfe,#00f2fe); color: #1a202c !important; }
       .card-review    { background: linear-gradient(135deg,#a18cd1,#fbc2eb); }
+      .card-game      { background: linear-gradient(135deg,#0f766e,#2563eb); }
       .chart-card { border-radius: 16px; border: none; }
       .activity-item { padding: 10px 16px; border-radius: 10px; transition: background .2s; }
       .activity-item:hover { background: #f8f9fa; }
@@ -75,7 +76,7 @@
             <i class="bi bi-caret-down-fill"></i>
           </a>
           <div id="employee-options" class="submenu">
-            <a th:href="@{/admin/users(role='MANAGER')}">Qu&#7843;n l&#253;</a>
+            <a th:href="@{/admin/users(role='MANAGER')}">Qu&#7843;n l&#253; Manager</a>
             <a th:href="@{/admin/users(role='HIRING')}">Hiring User</a>
             <a th:href="@{/admin/users(role='USER')}">Nh&#226;n vi&#234;n User</a>
           </div>
@@ -189,6 +190,7 @@
           </div>          <hr style="border-color:rgba(255,255,255,.1);margin:8px 16px"/>
           <a th:href="@{/admin/expenses}"><i class="bi bi-receipt"></i> Chi phí</a>
           <a th:href="@{/admin/assets}"><i class="bi bi-box-seam"></i> Tài sản</a>
+          <a th:href="@{/sales}"><i class="bi bi-shop"></i> B&#225;n h&#224;ng</a>
           <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Thông báo</a>
           <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
           <a th:href="@{/admin/audit-log}"><i class="bi bi-journal-text"></i> Nhật ký</a>
@@ -215,6 +217,8 @@
           <a th:href="@{/admin/okr/objectives}"><i class="bi bi-graph-up"></i> OKR</a>
           <a th:href="@{/admin/settings}"><i class="bi bi-gear"></i> Cài đặt</a>
           <a th:href="@{/admin/analytics/dashboard}"><i class="bi bi-graph-up-arrow"></i> Phân tích</a>
+          <a th:href="@{/admin/minigame}"><i class="bi bi-controller"></i> Minigame</a>
+          <a th:href="@{/admin/minigame/top}"><i class="bi bi-trophy"></i> Top minigame</a>
           <!-- Language Toggle -->
           <div class="lang-toggle-wrap">
             <div class="lang-toggle">
@@ -307,6 +311,13 @@
                 <div class="icon">⭐</div>
                 <h6>KPI Reviews</h6>
                 <h3 th:text="${totalReviews}">0</h3>
+              </a>
+            </div>
+            <div class="col-md-4 col-xl-2">
+              <a th:href="@{/admin/minigame/top}" class="stat-card card-game shadow-sm">
+                <div class="icon">🎮</div>
+                <h6>Minigame</h6>
+                <h3>Top</h3>
               </a>
             </div>
           </div>

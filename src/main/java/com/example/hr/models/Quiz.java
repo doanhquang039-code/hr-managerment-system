@@ -31,6 +31,15 @@ public class Quiz {
     
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(name = "reward_top1")
+    private String rewardTop1;
+
+    @Column(name = "reward_top2")
+    private String rewardTop2;
+
+    @Column(name = "reward_top3")
+    private String rewardTop3;
     
     private Integer timeLimit; // Giới hạn thời gian (phút)
     
