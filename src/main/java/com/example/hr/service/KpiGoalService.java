@@ -4,7 +4,7 @@ import com.example.hr.enums.KpiStatus;
 import com.example.hr.models.KpiGoal;
 import com.example.hr.models.User;
 import com.example.hr.repository.KpiGoalRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

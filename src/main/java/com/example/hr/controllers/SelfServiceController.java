@@ -1,11 +1,23 @@
 package com.example.hr.controllers;
 
-import com.example.hr.dto.LeaveBalanceDTO;
+
+
+
+
+
+
+import com.example.hr.user.repository.UserRepository;
+import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.attendance.repository.AttendanceRepository;
+import com.example.hr.leave.dto.LeaveBalanceDTO;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.models.*;
 import com.example.hr.repository.*;
-import com.example.hr.service.AdvancedLeaveService;
-import com.example.hr.service.UserService;
+import com.example.hr.leave.service.AdvancedLeaveService;
+import com.example.hr.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;

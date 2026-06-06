@@ -1,5 +1,15 @@
 package com.example.hr.service;
 
+
+
+
+
+
+import com.example.hr.user.repository.UserRepository;
+import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.attendance.repository.AttendanceRepository;
 import com.example.hr.dto.EmployeeAnalyticsDTO;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.User;

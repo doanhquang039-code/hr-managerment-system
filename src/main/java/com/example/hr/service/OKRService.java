@@ -1,5 +1,7 @@
 package com.example.hr.service;
 
+
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.dto.OKRCreateDTO;
 import com.example.hr.enums.OKRStatus;
 import com.example.hr.models.*;

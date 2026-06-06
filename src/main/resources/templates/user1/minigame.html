@@ -117,6 +117,13 @@
         .panel-head { padding:16px 18px; border-bottom:1px solid #eef2f7; display:flex; align-items:center; justify-content:space-between; gap:12px; }
         .panel-head h2 { font-size:1rem; font-weight:800; margin:0; }
         .panel-body { padding:18px; }
+        .arcade-card { background:#06111f; color:#fff; border:1px solid rgba(255,255,255,.08); border-radius:8px; overflow:hidden; margin-bottom:22px; box-shadow:0 18px 45px rgba(2,6,23,.18); }
+        .arcade-head { padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; border-bottom:1px solid rgba(255,255,255,.08); }
+        .arcade-head h2 { font-size:1rem; font-weight:800; margin:0; }
+        .arcade-stage { position:relative; background:linear-gradient(180deg,#0f172a,#172554); }
+        #arcadeCanvas { width:100%; height:360px; display:block; background:transparent; touch-action:none; }
+        .arcade-hud { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+        .hud-pill { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.12); border-radius:8px; padding:7px 10px; font-weight:800; font-size:.84rem; }
         .question { border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-bottom:14px; }
         .question-title { display:flex; gap:10px; font-weight:700; margin-bottom:12px; }
         .question-number { width:28px; height:28px; flex:0 0 28px; border-radius:50%; background:#dbeafe; color:#1d4ed8; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.82rem; }
@@ -186,9 +193,27 @@
         </div>
     </section>
 
+    <section class="arcade-card">
+        <div class="arcade-head">
+            <div>
+                <h2><i class="bi bi-joystick me-1"></i>HR Arcade Run</h2>
+                <div style="color:#94a3b8;font-size:.86rem;">Di chuy&#7875;n thanh &#273;&#7905; &#273;&#7875; b&#7855;t qu&#224;, tr&#225;nh c&#7843;nh b&#225;o. Ch&#417;i 45 gi&#226;y.</div>
+            </div>
+            <div class="arcade-hud">
+                <span class="hud-pill">Score: <span id="arcadeScore">0</span></span>
+                <span class="hud-pill">Time: <span id="arcadeTime">45</span>s</span>
+                <button class="btn btn-light btn-sm fw-bold" id="startArcade" type="button"><i class="bi bi-play-fill"></i> Ch&#417;i 2D</button>
+            </div>
+        </div>
+        <div class="arcade-stage">
+            <canvas id="arcadeCanvas" width="960" height="360"></canvas>
+        </div>
+        <input type="hidden" id="arcadeScoreUrl" th:value="@{/minigame/arcade-score}"/>
+    </section>
+
     <div class="row g-4">
         <div class="col-lg-8">
-            <form class="panel" th:action="@{/user1/minigame/submit}" method="post">
+            <form class="panel" th:action="@{/minigame/submit}" method="post">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" name="quizId" th:value="${quiz.id}"/>
                 <div class="panel-head">
@@ -278,5 +303,114 @@
         </aside>
     </div>
 </main>
+<script>
+(function () {
+    var canvas = document.getElementById('arcadeCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var scoreEl = document.getElementById('arcadeScore');
+    var timeEl = document.getElementById('arcadeTime');
+    var startBtn = document.getElementById('startArcade');
+    var player = { x: 430, y: 314, w: 100, h: 18, speed: 16 };
+    var keys = {};
+    var drops = [];
+    var score = 0;
+    var timeLeft = 45;
+    var running = false;
+    var lastSpawn = 0;
+    var startedAt = 0;
+
+    function reset() {
+        score = 0; timeLeft = 45; drops = []; player.x = 430; running = true;
+        startedAt = performance.now(); lastSpawn = 0;
+        scoreEl.textContent = score; timeEl.textContent = timeLeft;
+        startBtn.disabled = true;
+        requestAnimationFrame(loop);
+    }
+
+    function spawn(now) {
+        if (now - lastSpawn < 520) return;
+        lastSpawn = now;
+        var good = Math.random() > 0.28;
+        drops.push({ x: 30 + Math.random() * 900, y: -30, r: good ? 14 : 16, vy: 2.2 + Math.random() * 2.2, good: good });
+    }
+
+    function drawBackground() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255,255,255,.08)';
+        for (var i = 0; i < 36; i++) {
+            var x = (i * 83 + Date.now() / 80) % canvas.width;
+            var y = (i * 47) % canvas.height;
+            ctx.fillRect(x, y, 2, 2);
+        }
+    }
+
+    function drawPlayer() {
+        var grd = ctx.createLinearGradient(player.x, player.y, player.x + player.w, player.y);
+        grd.addColorStop(0, '#14b8a6'); grd.addColorStop(1, '#60a5fa');
+        ctx.fillStyle = grd;
+        ctx.fillRect(player.x, player.y, player.w, player.h);
+        ctx.fillStyle = '#e0f2fe';
+        ctx.font = 'bold 13px Arial';
+        ctx.fillText('HRMS', player.x + 32, player.y + 13);
+    }
+
+    function drawDrop(d) {
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+        ctx.fillStyle = d.good ? '#facc15' : '#ef4444';
+        ctx.fill();
+        ctx.fillStyle = d.good ? '#713f12' : '#fff';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.good ? '$' : '!', d.x, d.y + 6);
+        ctx.textAlign = 'left';
+    }
+
+    function loop(now) {
+        if (!running) return;
+        timeLeft = Math.max(0, 45 - Math.floor((now - startedAt) / 1000));
+        timeEl.textContent = timeLeft;
+        if (keys.ArrowLeft || keys.a) player.x -= player.speed;
+        if (keys.ArrowRight || keys.d) player.x += player.speed;
+        player.x = Math.max(0, Math.min(canvas.width - player.w, player.x));
+        spawn(now);
+        drawBackground();
+        drawPlayer();
+        for (var i = drops.length - 1; i >= 0; i--) {
+            var d = drops[i];
+            d.y += d.vy;
+            drawDrop(d);
+            var hit = d.y + d.r >= player.y && d.x >= player.x && d.x <= player.x + player.w;
+            if (hit) {
+                score += d.good ? 7 : -10;
+                score = Math.max(0, score);
+                scoreEl.textContent = score;
+                drops.splice(i, 1);
+            } else if (d.y > canvas.height + 30) {
+                drops.splice(i, 1);
+            }
+        }
+        if (timeLeft <= 0) {
+            running = false;
+            startBtn.disabled = false;
+            var scoreUrl = document.getElementById('arcadeScoreUrl').value;
+            window.location.href = scoreUrl + '?score=' + encodeURIComponent(Math.min(100, score));
+            return;
+        }
+        requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('keydown', function (e) { keys[e.key] = true; });
+    window.addEventListener('keyup', function (e) { keys[e.key] = false; });
+    canvas.addEventListener('pointermove', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        player.x = ((e.clientX - rect.left) / rect.width) * canvas.width - player.w / 2;
+    });
+    startBtn.addEventListener('click', reset);
+    drawBackground();
+    drawPlayer();
+})();
+</script>
 </body>
 </html>

@@ -5,7 +5,7 @@ import com.example.hr.models.Department;
 import com.example.hr.models.KpiGoal;
 import com.example.hr.models.User;
 import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.KpiGoalService;
 import org.springframework.security.access.prepost.PreAuthorize;

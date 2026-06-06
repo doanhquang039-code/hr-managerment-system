@@ -1,5 +1,7 @@
 package com.example.hr.enums;
 
+
+import com.example.hr.payroll.entity.Payroll;
 public enum NotificationType {
     INFO,
     SUCCESS,

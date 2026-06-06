@@ -1,5 +1,7 @@
 package com.example.hr.kafka.producer;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.kafka.events.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

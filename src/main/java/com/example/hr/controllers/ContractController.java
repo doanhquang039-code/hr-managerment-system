@@ -16,7 +16,7 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.models.Contract;
 import com.example.hr.repository.ContractRepository;
 import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.HrAuditLogService;
 
 import java.util.List;

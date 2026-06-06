@@ -5,7 +5,7 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.models.PerformanceReview;
 import com.example.hr.models.User;
 import com.example.hr.repository.PerformanceReviewRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;

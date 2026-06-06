@@ -9,7 +9,7 @@ import com.example.hr.models.User;
 import com.example.hr.repository.NotificationPreferenceRepository;
 import com.example.hr.repository.NotificationRepository;
 import com.example.hr.repository.NotificationTemplateRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import lombok.RequiredArgsConstructor;

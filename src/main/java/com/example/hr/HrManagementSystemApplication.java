@@ -9,10 +9,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import com.example.hr.repository.UserRepository;
 
-@EntityScan("com.example.hr.models")
-@EnableJpaRepositories("com.example.hr.repository")
+@EntityScan({
+        "com.example.hr.models",
+        "com.example.hr.attendance.entity",
+        "com.example.hr.leave.entity",
+        "com.example.hr.payment.entity",
+        "com.example.hr.payroll.entity",
+        "com.example.hr.sales.entity"
+})
+@EnableJpaRepositories({
+        "com.example.hr.repository",
+        "com.example.hr.attendance.repository",
+        "com.example.hr.leave.repository",
+        "com.example.hr.payment.repository",
+        "com.example.hr.payroll.repository",
+        "com.example.hr.sales.repository",
+        "com.example.hr.user.repository"
+})
 @EnableScheduling
 @SpringBootApplication
 public class HrManagementSystemApplication {

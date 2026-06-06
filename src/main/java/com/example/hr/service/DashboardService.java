@@ -1,5 +1,7 @@
 package com.example.hr.service;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.dto.DashboardStatsDTO;
 import com.example.hr.enums.AssetStatus;
 import com.example.hr.enums.LeaveStatus;
@@ -7,18 +9,18 @@ import com.example.hr.enums.OvertimeStatus;
 import com.example.hr.enums.TrainingStatus;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.EmployeeWarning;
-import com.example.hr.models.LeaveRequest;
+import com.example.hr.leave.entity.LeaveRequest;
 import com.example.hr.models.OvertimeRequest;
 import com.example.hr.models.User;
 import com.example.hr.repository.AssetRepository;
 import com.example.hr.repository.EmployeeBenefitRepository;
 import com.example.hr.repository.EmployeeDocumentRepository;
 import com.example.hr.repository.EmployeeWarningRepository;
-import com.example.hr.repository.LeaveRequestRepository;
+import com.example.hr.leave.repository.LeaveRequestRepository;
 import com.example.hr.repository.OvertimeRequestRepository;
-import com.example.hr.repository.PayrollRepository;
+import com.example.hr.payroll.repository.PayrollRepository;
 import com.example.hr.repository.TrainingProgramRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;

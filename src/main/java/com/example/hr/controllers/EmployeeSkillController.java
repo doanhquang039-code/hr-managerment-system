@@ -3,7 +3,7 @@ package com.example.hr.controllers;
 import com.example.hr.enums.SkillLevel;
 import com.example.hr.models.EmployeeSkill;
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.EmployeeSkillService;
 import org.springframework.dao.DataIntegrityViolationException;

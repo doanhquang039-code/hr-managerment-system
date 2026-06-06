@@ -1,5 +1,7 @@
 package com.example.hr.scheduler;
 
+
+import com.example.hr.attendance.entity.Attendance;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

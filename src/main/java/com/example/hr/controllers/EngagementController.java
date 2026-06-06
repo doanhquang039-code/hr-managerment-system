@@ -2,7 +2,7 @@ package com.example.hr.controllers;
 
 import com.example.hr.models.*;
 import com.example.hr.enums.UserStatus;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.EmployeeEngagementService;
 import lombok.RequiredArgsConstructor;

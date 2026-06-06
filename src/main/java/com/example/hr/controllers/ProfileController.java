@@ -2,7 +2,7 @@ package com.example.hr.controllers;
 
 import com.example.hr.enums.Role;
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;

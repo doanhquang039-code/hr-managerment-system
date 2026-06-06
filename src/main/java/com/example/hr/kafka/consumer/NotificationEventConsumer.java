@@ -1,9 +1,11 @@
 package com.example.hr.kafka.consumer;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.enums.NotificationType;
 import com.example.hr.kafka.events.NotificationEvent;
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.EmailService;
 import com.example.hr.service.FirebaseNotificationService;
 import com.example.hr.service.NotificationService;

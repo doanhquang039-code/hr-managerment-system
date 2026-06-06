@@ -1,5 +1,7 @@
 package com.example.hr.event;
 
+
+import com.example.hr.leave.entity.LeaveRequest;
 import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
 import org.slf4j.Logger;

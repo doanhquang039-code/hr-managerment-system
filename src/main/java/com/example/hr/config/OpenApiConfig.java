@@ -1,5 +1,7 @@
 package com.example.hr.config;
 
+
+import com.example.hr.payment.entity.Payment;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

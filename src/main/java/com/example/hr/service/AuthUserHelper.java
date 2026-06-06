@@ -1,7 +1,7 @@
 package com.example.hr.service;
 
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;

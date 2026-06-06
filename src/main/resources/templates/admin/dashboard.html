@@ -60,6 +60,11 @@
       .chart-card { border-radius: 16px; border: none; }
       .activity-item { padding: 10px 16px; border-radius: 10px; transition: background .2s; }
       .activity-item:hover { background: #f8f9fa; }
+      .extra-metric { border: 1px solid #e9eef5; border-radius: 14px; background: #fff; padding: 16px; height: 100%; }
+      .extra-metric .label { color: #64748b; font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+      .extra-metric .value { color: #111827; font-size: 1.55rem; font-weight: 800; margin-top: 6px; }
+      .extra-progress { height: 8px; border-radius: 999px; background: #eef2f7; overflow: hidden; }
+      .extra-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#667eea,#11998e); }
     </style>
   </head>
   <body>
@@ -450,6 +455,128 @@
               </div>
             </div>
           </div>
+
+          <!-- === EXTRA METRICS ROW === -->
+          <div class="row mb-4">
+            <div class="col-12 mb-2">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="fw-bold mb-0"><i class="bi bi-activity me-2 text-primary"></i>Số liệu mở rộng</h5>
+                  <small class="text-muted">Theo dõi nhanh sản phẩm, đơn hàng, minigame và tình trạng hệ thống.</small>
+                </div>
+                <a th:href="@{/sales}" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-shop me-1"></i>Quản lý bán hàng
+                </a>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3 mb-3">
+              <div class="extra-metric shadow-sm">
+                <div class="label">Doanh thu bán hàng</div>
+                <div class="value" th:text="${#numbers.formatDecimal(salesRevenue,1,'COMMA',0,'POINT')}">0</div>
+                <div class="text-muted small">Tổng giá trị đơn hàng đã ghi nhận</div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-3">
+              <div class="extra-metric shadow-sm">
+                <div class="label">Đơn hàng</div>
+                <div class="value" th:text="${salesOrderCount}">0</div>
+                <div class="text-muted small">Đã xử lý: <span th:text="${paidOrders}">0</span> · Chờ: <span th:text="${pendingOrders}">0</span></div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-3">
+              <div class="extra-metric shadow-sm">
+                <div class="label">Sản phẩm chờ duyệt</div>
+                <div class="value text-warning" th:text="${productPending}">0</div>
+                <div class="text-muted small">Tổng: <span th:text="${productTotal}">0</span> · Đã duyệt: <span th:text="${productApproved}">0</span></div>
+              </div>
+            </div>
+            <div class="col-md-6 col-xl-3 mb-3">
+              <div class="extra-metric shadow-sm">
+                <div class="label">Lượt chơi minigame</div>
+                <div class="value" th:text="${minigameAttemptCount}">0</div>
+                <div class="text-muted small">Lượt chơi đã hoàn thành và có điểm</div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 mb-3">
+              <div class="card chart-card shadow-sm h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-2">
+                  <h6 class="fw-bold mb-1"><i class="bi bi-speedometer2 me-2 text-success"></i>Tỷ lệ vận hành</h6>
+                  <small class="text-muted">Các chỉ số tổng hợp không làm thay đổi dashboard chính.</small>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span>Tài khoản active</span><strong th:text="|${activeRate}%|">0%</strong>
+                    </div>
+                    <div class="extra-progress"><span th:style="|width:${activeRate}%|"></span></div>
+                  </div>
+                  <div class="mb-3">
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span>Duyệt sản phẩm</span><strong th:text="|${productApprovalRate}%|">0%</strong>
+                    </div>
+                    <div class="extra-progress"><span th:style="|width:${productApprovalRate}%|"></span></div>
+                  </div>
+                  <div>
+                    <div class="d-flex justify-content-between small mb-1">
+                      <span>Xử lý nghỉ phép</span><strong th:text="|${leaveResolutionRate}%|">0%</strong>
+                    </div>
+                    <div class="extra-progress"><span th:style="|width:${leaveResolutionRate}%|"></span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 mb-3">
+              <div class="card chart-card shadow-sm h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="fw-bold mb-1"><i class="bi bi-box-seam me-2 text-warning"></i>Tổng hợp sản phẩm</h6>
+                    <small class="text-muted">Trạng thái duyệt marketplace nội bộ.</small>
+                  </div>
+                  <a th:href="@{/sales/products}" class="btn btn-sm btn-outline-warning">Mở</a>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Đã duyệt</span><strong class="text-success" th:text="${productApproved}">0</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Chờ duyệt</span><strong class="text-warning" th:text="${productPending}">0</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Từ chối</span><strong class="text-danger" th:text="${productRejected}">0</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2">
+                    <span>Đang hiển thị</span><strong class="text-primary" th:text="${activeProducts}">0</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4 mb-3">
+              <div class="card chart-card shadow-sm h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="fw-bold mb-1"><i class="bi bi-receipt me-2 text-primary"></i>Tổng hợp đơn hàng</h6>
+                    <small class="text-muted">Theo dõi nhanh trạng thái bán hàng.</small>
+                  </div>
+                  <a th:href="@{/sales/orders}" class="btn btn-sm btn-outline-primary">Mở</a>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Đã xử lý</span><strong class="text-success" th:text="${paidOrders}">0</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2 border-bottom">
+                    <span>Đang chờ</span><strong class="text-warning" th:text="${pendingOrders}">0</strong>
+                  </div>
+                  <div class="d-flex justify-content-between py-2">
+                    <span>Đã hủy</span><strong class="text-danger" th:text="${cancelledOrders}">0</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     </div>
@@ -521,6 +648,7 @@
           cutout: '60%'
         }
       });
+
     </script>
     <script>
     // Inline fallback - runs immediately

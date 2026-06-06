@@ -14,7 +14,7 @@ import com.example.hr.models.User;
 import com.example.hr.repository.DepartmentRepository;
 import com.example.hr.repository.TrainingEnrollmentRepository;
 import com.example.hr.repository.TrainingProgramRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

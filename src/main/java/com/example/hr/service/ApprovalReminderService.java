@@ -1,16 +1,18 @@
 package com.example.hr.service;
 
+
+import com.example.hr.payroll.service.PayrollSecurityService;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.enums.NotificationType;
 import com.example.hr.enums.PaymentStatus;
 import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
-import com.example.hr.models.LeaveRequest;
-import com.example.hr.models.Payroll;
+import com.example.hr.leave.entity.LeaveRequest;
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.models.User;
-import com.example.hr.repository.LeaveRequestRepository;
-import com.example.hr.repository.PayrollRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

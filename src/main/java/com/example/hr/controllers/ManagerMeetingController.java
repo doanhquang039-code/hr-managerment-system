@@ -4,7 +4,7 @@ import com.example.hr.models.Meeting;
 import com.example.hr.models.User;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.MeetingService;
-import com.example.hr.service.UserService;
+import com.example.hr.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

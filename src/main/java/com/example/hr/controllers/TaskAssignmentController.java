@@ -21,7 +21,7 @@ import com.example.hr.models.User;
 import com.example.hr.repository.DepartmentRepository;
 import com.example.hr.repository.TaskAssignmentRepository;
 import com.example.hr.repository.TaskRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.NotificationService;
 import org.springframework.transaction.annotation.Transactional;
 

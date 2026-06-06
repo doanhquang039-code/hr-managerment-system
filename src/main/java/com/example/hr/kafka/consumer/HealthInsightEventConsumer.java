@@ -3,7 +3,7 @@ package com.example.hr.kafka.consumer;
 import com.example.hr.enums.NotificationType;
 import com.example.hr.kafka.events.HealthInsightEvent;
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
 import lombok.RequiredArgsConstructor;

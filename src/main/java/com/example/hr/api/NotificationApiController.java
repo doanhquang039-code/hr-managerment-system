@@ -1,7 +1,7 @@
 package com.example.hr.api;
 
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.CloudStorageFacade;
 import com.example.hr.service.NotificationService;
 import com.example.hr.service.AuthUserHelper;

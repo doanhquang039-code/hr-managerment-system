@@ -9,7 +9,7 @@ import com.example.hr.repository.DepartmentRepository;
 import com.example.hr.repository.KeyResultRepository;
 import com.example.hr.repository.ObjectiveRepository;
 import com.example.hr.service.OKRService;
-import com.example.hr.service.UserService;
+import com.example.hr.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

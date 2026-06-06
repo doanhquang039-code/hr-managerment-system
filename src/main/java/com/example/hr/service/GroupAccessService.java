@@ -7,7 +7,7 @@ import com.example.hr.models.CollaborationGroup;
 import com.example.hr.models.CollaborationGroupRolePermission;
 import com.example.hr.models.User;
 import com.example.hr.repository.CollaborationGroupRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

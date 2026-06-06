@@ -1,5 +1,7 @@
 package com.example.hr.dto;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,10 @@
 package com.example.hr.api;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.dto.EmployeeAnalyticsDTO;
-import com.example.hr.dto.PayrollSummaryDTO;
-import com.example.hr.service.AdvancedPayrollService;
+import com.example.hr.payroll.dto.PayrollSummaryDTO;
+import com.example.hr.payroll.service.AdvancedPayrollService;
 import com.example.hr.service.EmployeeAnalyticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

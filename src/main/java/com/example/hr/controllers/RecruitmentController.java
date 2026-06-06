@@ -9,7 +9,7 @@ import com.example.hr.repository.CandidateRepository;
 import com.example.hr.repository.DepartmentRepository;
 import com.example.hr.repository.JobPostingRepository;
 import com.example.hr.repository.JobPositionRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

@@ -1,5 +1,15 @@
 package com.example.hr.controllers;
 
+
+
+
+
+
+import com.example.hr.user.repository.UserRepository;
+import com.example.hr.leave.entity.LeaveRequest;
+import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.attendance.repository.AttendanceRepository;
 import com.example.hr.enums.*;
 import com.example.hr.models.*;
 import com.example.hr.repository.*;
@@ -116,7 +126,7 @@ public class ManagerController {
             model.addAttribute("today", today.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy")));
             return "manager/dashboard-simple";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi tải dashboard: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lá»—i táº£i dashboard: " + e.getMessage());
             model.addAttribute("errorDetails", e.getClass().getSimpleName());
             return "error/500";
         }
@@ -382,7 +392,7 @@ public class ManagerController {
             
             return "manager/attendance";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi tải attendance: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lá»—i táº£i attendance: " + e.getMessage());
             return "error/500";
         }
     }
@@ -419,7 +429,7 @@ public class ManagerController {
             
             return "manager/performance";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi tải performance: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lá»—i táº£i performance: " + e.getMessage());
             return "error/500";
         }
     }
@@ -451,7 +461,7 @@ public class ManagerController {
             
             return "manager/reports/team";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi tải team reports: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lá»—i táº£i team reports: " + e.getMessage());
             return "error/500";
         }
     }
@@ -464,7 +474,7 @@ public class ManagerController {
             
             return "manager/reports/budget";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi tải budget reports: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lá»—i táº£i budget reports: " + e.getMessage());
             return "error/500";
         }
     }

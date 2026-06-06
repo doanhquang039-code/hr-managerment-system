@@ -7,7 +7,7 @@ import com.example.hr.models.NotificationTemplate;
 import com.example.hr.models.User;
 import com.example.hr.repository.NotificationTemplateRepository;
 import com.example.hr.service.AdvancedNotificationService;
-import com.example.hr.service.UserService;
+import com.example.hr.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;

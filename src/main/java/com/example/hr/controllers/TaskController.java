@@ -4,7 +4,7 @@ import com.example.hr.enums.TaskType;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.Task;
 import com.example.hr.repository.TaskRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;

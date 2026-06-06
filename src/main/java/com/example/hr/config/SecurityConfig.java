@@ -1,10 +1,14 @@
 package com.example.hr.config;
 
+
+
 import com.example.hr.security.LoginVerificationCodeFilter;
 import com.example.hr.service.CustomOAuth2UserService;
 import com.example.hr.service.SystemSettingService;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,10 +25,14 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService oAuth2UserService;
     private final SystemSettingService settingService;
+    private final ObjectProvider<ClientRegistrationRepository> clientRegistrationRepository;
 
-    public SecurityConfig(CustomOAuth2UserService oAuth2UserService, SystemSettingService settingService) {
+    public SecurityConfig(CustomOAuth2UserService oAuth2UserService,
+                          SystemSettingService settingService,
+                          ObjectProvider<ClientRegistrationRepository> clientRegistrationRepository) {
         this.oAuth2UserService = oAuth2UserService;
         this.settingService = settingService;
+        this.clientRegistrationRepository = clientRegistrationRepository;
     }
 
     @Bean
@@ -89,11 +97,6 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/home", true)
                 .permitAll()
             )
-            .oauth2Login(oauth -> oauth
-                .loginPage("/login")
-                .userInfoEndpoint(u -> u.userService(oAuth2UserService))
-                .defaultSuccessUrl("/user1/dashboard", true)
-            )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
@@ -106,6 +109,14 @@ public class SecurityConfig {
                 new LoginVerificationCodeFilter(settingService),
                 UsernamePasswordAuthenticationFilter.class
             );
+
+        if (clientRegistrationRepository.getIfAvailable() != null) {
+            http.oauth2Login(oauth -> oauth
+                .loginPage("/login")
+                .userInfoEndpoint(u -> u.userService(oAuth2UserService))
+                .defaultSuccessUrl("/user1/dashboard", true)
+            );
+        }
 
         return http.build();
     }

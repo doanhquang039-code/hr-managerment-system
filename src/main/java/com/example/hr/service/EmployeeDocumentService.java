@@ -6,7 +6,7 @@ import com.example.hr.exception.ResourceNotFoundException;
 import com.example.hr.models.EmployeeDocument;
 import com.example.hr.models.User;
 import com.example.hr.repository.EmployeeDocumentRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

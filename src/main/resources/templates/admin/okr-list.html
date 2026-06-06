@@ -7,9 +7,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
+        body {
+            background: #eef3f9;
+            overflow-x: hidden;
+        }
+        .okr-main {
+            color: #111827;
+        }
+        .okr-main .page-header {
+            background: #fff;
+            border: 1px solid #e5edf7;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+        }
         .okr-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 25px;
             margin-bottom: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -58,21 +73,21 @@
         .stats-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 20px;
             text-align: center;
+            min-height: 116px;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
+    <div class="admin-shell">
             <!-- Include sidebar -->
             <div th:replace="fragments/admin-sidebar :: sidebar"></div>
             
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-bullseye me-2 text-primary"></i>Quản lý OKR</h1>
+            <main class="admin-main okr-main">
+                <div class="page-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                    <h1 class="h2 mb-0"><i class="bi bi-bullseye me-2 text-primary"></i>Quản lý OKR</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <a href="/admin/okr/objectives/new" class="btn btn-primary">
                             <i class="bi bi-plus-circle me-1"></i>Tạo mục tiêu mới
@@ -240,7 +255,6 @@
                     </div>
                 </div>
             </main>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,7 +3,7 @@ package com.example.hr.controllers;
 import com.example.hr.models.Interview;
 import com.example.hr.service.InterviewService;
 import com.example.hr.service.CandidateService;
-import com.example.hr.service.UserService;
+import com.example.hr.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

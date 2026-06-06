@@ -1,5 +1,7 @@
 package com.example.hr.service;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.models.HrAuditLog;
 import com.example.hr.repository.HrAuditLogRepository;
 import com.example.hr.repository.NotificationRepository;

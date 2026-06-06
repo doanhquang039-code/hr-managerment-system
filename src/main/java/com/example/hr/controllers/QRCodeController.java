@@ -5,7 +5,7 @@ import com.example.hr.models.QRCode;
 import com.example.hr.models.QRCodeScan;
 import com.example.hr.models.User;
 import com.example.hr.service.QRCodeService;
-import com.example.hr.service.UserService;
+import com.example.hr.user.service.UserService;
 import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

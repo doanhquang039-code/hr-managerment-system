@@ -8,14 +8,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
+        body {
+            background: #eef3f9;
+            overflow-x: hidden;
+        }
+        .analytics-main {
+            color: #111827;
+        }
+        .analytics-main .page-header {
+            background: #fff;
+            border: 1px solid #e5edf7;
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+        }
         .stat-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            min-height: 190px;
         }
         
         .stat-card::before {
@@ -48,11 +64,13 @@
         
         .chart-container {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-bottom: 25px;
+            overflow: hidden;
         }
+        .chart-container canvas { max-width: 100%; }
         
         .chart-title {
             font-size: 18px;
@@ -63,14 +81,13 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
+    <div class="admin-shell">
             <!-- Include sidebar -->
             <div th:replace="fragments/admin-sidebar :: sidebar"></div>
             
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Dashboard Phân tích</h1>
+            <main class="admin-main analytics-main">
+                <div class="page-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                    <h1 class="h2 mb-0"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>Dashboard Phân tích</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <button class="btn btn-primary" onclick="refreshDashboard()">
                             <i class="bi bi-arrow-clockwise me-1"></i>Làm mới
@@ -209,7 +226,6 @@
                     </div>
                 </div>
             </main>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

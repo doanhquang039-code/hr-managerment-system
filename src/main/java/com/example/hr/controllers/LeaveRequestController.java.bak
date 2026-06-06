@@ -14,7 +14,7 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.models.LeaveRequest;
 import com.example.hr.models.User;
 import com.example.hr.repository.LeaveRequestRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;
 import com.example.hr.service.EmailFacade;

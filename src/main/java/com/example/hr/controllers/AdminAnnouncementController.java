@@ -4,7 +4,7 @@ import com.example.hr.enums.AnnouncementPriority;
 import com.example.hr.models.CompanyAnnouncement;
 import com.example.hr.models.User;
 import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.CloudStorageFacade;
 import com.example.hr.service.CompanyAnnouncementService;

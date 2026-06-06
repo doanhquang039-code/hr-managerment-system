@@ -1,5 +1,13 @@
 package com.example.hr.service;
 
+
+
+
+
+import com.example.hr.user.repository.UserRepository;
+import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.attendance.repository.AttendanceRepository;
 import com.example.hr.models.Department;
 import com.example.hr.models.User;
 import com.example.hr.repository.*;

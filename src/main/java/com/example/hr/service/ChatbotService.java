@@ -1,5 +1,15 @@
 package com.example.hr.service;
 
+
+
+
+
+
+import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.attendance.repository.AttendanceRepository;
 import com.example.hr.dto.ChatbotChatResponse;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.models.ChatbotMessage;
@@ -326,7 +336,7 @@ public class ChatbotService {
     /** Chuẩn hóa nhẹ: thường + bỏ dấu tiếng Việt cơ bản để khớp từ khóa. */
     private static String normalize(String s) {
         String t = s.toLowerCase(Locale.ROOT).trim();
-        t = t.replace('đ', 'd');
+        t = t.replace('\u0111', 'd');
         t = java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFD)
                 .replaceAll("\\p{M}+", "");
         return t;

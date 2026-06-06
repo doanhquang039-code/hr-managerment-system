@@ -3,7 +3,7 @@ package com.example.hr.api;
 import com.example.hr.dto.EmployeeDocumentDTO;
 import com.example.hr.models.EmployeeDocument;
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.EmployeeDocumentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;

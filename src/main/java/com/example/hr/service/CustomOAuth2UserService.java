@@ -5,7 +5,7 @@ import com.example.hr.models.JobPosition;
 import com.example.hr.models.User;
 import com.example.hr.repository.DepartmentRepository;
 import com.example.hr.repository.JobPositionRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;

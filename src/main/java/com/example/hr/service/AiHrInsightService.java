@@ -1,5 +1,7 @@
 package com.example.hr.service;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.dto.AiInsightResponse;
 import com.example.hr.dto.AiAdvisorResponse;
 import com.example.hr.enums.KpiStatus;
@@ -10,9 +12,9 @@ import com.example.hr.models.KpiGoal;
 import com.example.hr.models.TaskAssignment;
 import com.example.hr.models.User;
 import com.example.hr.repository.KpiGoalRepository;
-import com.example.hr.repository.LeaveRequestRepository;
+import com.example.hr.leave.repository.LeaveRequestRepository;
 import com.example.hr.repository.TaskAssignmentRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

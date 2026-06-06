@@ -3,7 +3,7 @@ package com.example.hr.controllers;
 import com.example.hr.dto.EmployeeDocumentDTO;
 import com.example.hr.models.EmployeeDocument;
 import com.example.hr.models.User;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.EmployeeDocumentService;
 import org.springframework.security.access.prepost.PreAuthorize;

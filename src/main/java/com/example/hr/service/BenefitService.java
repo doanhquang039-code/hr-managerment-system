@@ -8,7 +8,7 @@ import com.example.hr.exception.ResourceNotFoundException;
 import com.example.hr.models.EmployeeBenefit;
 import com.example.hr.models.User;
 import com.example.hr.repository.EmployeeBenefitRepository;
-import com.example.hr.repository.UserRepository;
+import com.example.hr.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

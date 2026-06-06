@@ -1,5 +1,7 @@
 package com.example.hr.scheduler;
 
+
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.service.AwsS3Service;
 import com.example.hr.service.ReportGenerationService;
 import org.slf4j.Logger;

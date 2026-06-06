@@ -1,8 +1,12 @@
 package com.example.hr.api;
 
+
+
+import com.example.hr.payment.entity.Payment;
+import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.service.ApprovalReminderService;
 import com.example.hr.service.AttritionRiskService;
-import com.example.hr.service.BankSalaryTransferService;
+import com.example.hr.payment.service.BankSalaryTransferService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
