@@ -3,10 +3,10 @@ package com.example.hr.api;
 import com.example.hr.dto.KpiGoalDTO;
 import com.example.hr.enums.KpiStatus;
 import com.example.hr.exception.ResourceNotFoundException;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.KpiGoal;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.KpiGoalService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/kpi")
-@Tag(name = "KPI Goals", description = "Quản lý mục tiêu KPI nhân viên")
+@Tag(name = "KPI Goals", description = "Quáº£n lÃ½ má»¥c tiÃªu KPI nhÃ¢n viÃªn")
 public class KpiGoalApiController {
 
     private final KpiGoalService kpiGoalService;
@@ -42,7 +42,7 @@ public class KpiGoalApiController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Lấy tất cả KPI Goals")
+    @Operation(summary = "Láº¥y táº¥t cáº£ KPI Goals")
     public ResponseEntity<List<KpiGoal>> getAll(
             @RequestParam(required = false) KpiStatus status) {
         List<KpiGoal> goals = (status != null)
@@ -53,7 +53,7 @@ public class KpiGoalApiController {
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy KPI Goal theo ID")
+    @Operation(summary = "Láº¥y KPI Goal theo ID")
     public ResponseEntity<KpiGoal> getById(@PathVariable Integer id) {
         return kpiGoalService.findById(id)
                 .map(ResponseEntity::ok)
@@ -62,21 +62,21 @@ public class KpiGoalApiController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy KPI Goals của một nhân viên")
+    @Operation(summary = "Láº¥y KPI Goals cá»§a má»™t nhÃ¢n viÃªn")
     public ResponseEntity<List<KpiGoal>> getByUser(@PathVariable Integer userId) {
         return ResponseEntity.ok(kpiGoalService.findByUser(userId));
     }
 
     @GetMapping("/user/{userId}/active")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy KPI Goals đang active của nhân viên")
+    @Operation(summary = "Láº¥y KPI Goals Ä‘ang active cá»§a nhÃ¢n viÃªn")
     public ResponseEntity<List<KpiGoal>> getActiveByUser(@PathVariable Integer userId) {
         return ResponseEntity.ok(kpiGoalService.findActiveByUser(userId));
     }
 
     @GetMapping("/user/{userId}/avg-achievement")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Tỷ lệ hoàn thành KPI trung bình của nhân viên")
+    @Operation(summary = "Tá»· lá»‡ hoÃ n thÃ nh KPI trung bÃ¬nh cá»§a nhÃ¢n viÃªn")
     public ResponseEntity<Map<String, Object>> getAvgAchievement(@PathVariable Integer userId) {
         Double avg = kpiGoalService.getAvgAchievement(userId);
         return ResponseEntity.ok(Map.of("userId", userId, "avgAchievementPct", avg));
@@ -84,7 +84,7 @@ public class KpiGoalApiController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Tạo KPI Goal mới")
+    @Operation(summary = "Táº¡o KPI Goal má»›i")
     public ResponseEntity<KpiGoal> create(@Valid @RequestBody KpiGoalDTO dto, Principal principal) {
         KpiGoal goal = mapToGoal(dto, new KpiGoal());
 
@@ -98,7 +98,7 @@ public class KpiGoalApiController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Cập nhật KPI Goal")
+    @Operation(summary = "Cáº­p nháº­t KPI Goal")
     public ResponseEntity<KpiGoal> update(@PathVariable Integer id,
                                            @Valid @RequestBody KpiGoalDTO dto) {
         KpiGoal existing = kpiGoalService.findById(id)
@@ -109,7 +109,7 @@ public class KpiGoalApiController {
 
     @PatchMapping("/{id}/progress")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Cập nhật tiến độ KPI (currentValue)")
+    @Operation(summary = "Cáº­p nháº­t tiáº¿n Ä‘á»™ KPI (currentValue)")
     public ResponseEntity<KpiGoal> updateProgress(@PathVariable Integer id,
                                                    @RequestBody Map<String, BigDecimal> body) {
         BigDecimal currentValue = body.get("currentValue");
@@ -121,7 +121,7 @@ public class KpiGoalApiController {
 
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Thay đổi trạng thái KPI Goal")
+    @Operation(summary = "Thay Ä‘á»•i tráº¡ng thÃ¡i KPI Goal")
     public ResponseEntity<KpiGoal> changeStatus(@PathVariable Integer id,
                                                  @RequestBody Map<String, String> body) {
         KpiGoal goal = kpiGoalService.findById(id)
@@ -132,7 +132,7 @@ public class KpiGoalApiController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Xóa KPI Goal")
+    @Operation(summary = "XÃ³a KPI Goal")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         kpiGoalService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("KPI Goal", id));
@@ -142,7 +142,7 @@ public class KpiGoalApiController {
 
     @GetMapping("/stats/summary")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Thống kê tổng quan KPI")
+    @Operation(summary = "Thá»‘ng kÃª tá»•ng quan KPI")
     public ResponseEntity<Map<String, Object>> getSummary() {
         return ResponseEntity.ok(Map.of(
                 "totalActive", kpiGoalService.countByStatus(KpiStatus.ACTIVE),
@@ -176,3 +176,5 @@ public class KpiGoalApiController {
         return target;
     }
 }
+
+

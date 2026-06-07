@@ -7,17 +7,17 @@ import com.example.hr.enums.KpiStatus;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.enums.TaskStatus;
 import com.example.hr.enums.UserStatus;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.KpiGoal;
-import com.example.hr.models.Task;
-import com.example.hr.models.TaskAssignment;
+import com.example.hr.task.entity.Task;
+import com.example.hr.task.entity.TaskAssignment;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.repository.EmployeeWarningRepository;
 import com.example.hr.repository.KpiGoalRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
-import com.example.hr.repository.TaskAssignmentRepository;
-import com.example.hr.repository.TaskRepository;
+import com.example.hr.task.repository.TaskAssignmentRepository;
+import com.example.hr.task.repository.TaskRepository;
 import com.example.hr.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -380,7 +380,7 @@ public class AiAgentService {
             return "";
         }
         String t = value.toLowerCase(Locale.ROOT).trim();
-        t = t.replace('đ', 'd');
+        t = t.replace('\u0111', 'd');
         return java.text.Normalizer.normalize(t, java.text.Normalizer.Form.NFD)
                 .replaceAll("\\p{M}+", "");
     }
@@ -425,3 +425,5 @@ public class AiAgentService {
                                 Map<String, Object> metrics) {
     }
 }
+
+

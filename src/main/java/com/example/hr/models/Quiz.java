@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+import com.example.hr.training.entity.Course;
+import com.example.hr.training.entity.CourseLesson;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,9 +43,9 @@ public class Quiz {
     @Column(name = "reward_top3")
     private String rewardTop3;
     
-    private Integer timeLimit; // Giới hạn thời gian (phút)
+    private Integer timeLimit; // Giá»›i háº¡n thá»i gian (phÃºt)
     
-    private Integer passingScore; // Điểm đạt (%)
+    private Integer passingScore; // Äiá»ƒm Ä‘áº¡t (%)
     
     @Column(nullable = false)
     private Boolean isActive = true;
@@ -62,3 +64,5 @@ public class Quiz {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

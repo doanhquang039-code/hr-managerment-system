@@ -1,6 +1,6 @@
 package com.example.hr.service;
 
-import com.example.hr.models.User; // Đảm bảo đã import model User
+import com.example.hr.models.User; // Äáº£m báº£o Ä‘Ã£ import model User
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,10 +9,10 @@ import java.util.Collections;
 
 public class CustomUserDetails implements UserDetails {
 
-    // Phải khai báo biến user ở đây
+    // Pháº£i khai bÃ¡o biáº¿n user á»Ÿ Ä‘Ã¢y
     private final User user;
 
-    // Phải có Constructor để truyền dữ liệu user vào
+    // Pháº£i cÃ³ Constructor Ä‘á»ƒ truyá»n dá»¯ liá»‡u user vÃ o
     public CustomUserDetails(User user) {
         this.user = user;
     }
@@ -41,3 +41,4 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 }
+

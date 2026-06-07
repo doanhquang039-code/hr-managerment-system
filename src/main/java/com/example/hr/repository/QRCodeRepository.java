@@ -37,3 +37,5 @@ public interface QRCodeRepository extends JpaRepository<QRCode, Integer> {
     
     boolean existsByCode(String code);
 }
+
+

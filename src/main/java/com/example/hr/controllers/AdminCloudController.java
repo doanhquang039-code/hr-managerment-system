@@ -60,13 +60,13 @@ public class AdminCloudController {
         return "admin/cloud-dashboard";
     }
 
-    /** Manual backup report lên S3 */
+    /** Manual backup report lÃªn S3 */
     @PostMapping("/backup-report")
     public String backupReport(@RequestParam(defaultValue = "0") int month,
                                 @RequestParam(defaultValue = "0") int year,
                                 RedirectAttributes ra) {
         if (s3Service == null) {
-            ra.addFlashAttribute("error", "AWS S3 chưa được cấu hình!");
+            ra.addFlashAttribute("error", "AWS S3 chÆ°a Ä‘Æ°á»£c cáº¥u hÃ¬nh!");
             return "redirect:/admin/cloud";
         }
         try {
@@ -75,25 +75,25 @@ public class AdminCloudController {
             byte[] data = reportService.generateMonthlyReportBytes(m, y);
             String fileName = String.format("payroll-report-%d-%02d.csv", y, m);
             String url = s3Service.uploadReport(data, fileName, "text/csv");
-            ra.addFlashAttribute("success", "Đã backup báo cáo lên S3: " + fileName);
+            ra.addFlashAttribute("success", "ÄÃ£ backup bÃ¡o cÃ¡o lÃªn S3: " + fileName);
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Backup thất bại: " + e.getMessage());
+            ra.addFlashAttribute("error", "Backup tháº¥t báº¡i: " + e.getMessage());
         }
         return "redirect:/admin/cloud";
     }
 
-    /** Xóa file trên S3 */
+    /** XÃ³a file trÃªn S3 */
     @PostMapping("/s3/delete")
     public String deleteS3File(@RequestParam String key, RedirectAttributes ra) {
         if (s3Service == null) {
-            ra.addFlashAttribute("error", "S3 chưa cấu hình!");
+            ra.addFlashAttribute("error", "S3 chÆ°a cáº¥u hÃ¬nh!");
             return "redirect:/admin/cloud";
         }
         try {
             s3Service.deleteFile(key);
-            ra.addFlashAttribute("success", "Đã xóa file: " + key);
+            ra.addFlashAttribute("success", "ÄÃ£ xÃ³a file: " + key);
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Xóa thất bại: " + e.getMessage());
+            ra.addFlashAttribute("error", "XÃ³a tháº¥t báº¡i: " + e.getMessage());
         }
         return "redirect:/admin/cloud";
     }
@@ -105,3 +105,5 @@ public class AdminCloudController {
         return cloudStorageFacade.getHealthStatus();
     }
 }
+
+

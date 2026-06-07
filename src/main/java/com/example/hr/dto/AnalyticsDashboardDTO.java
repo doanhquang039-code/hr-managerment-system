@@ -1,6 +1,8 @@
 package com.example.hr.dto;
 
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.payroll.entity.Payroll;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -94,3 +96,5 @@ public class AnalyticsDashboardDTO {
         private String icon;
     }
 }
+
+

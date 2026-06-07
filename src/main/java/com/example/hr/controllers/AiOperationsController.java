@@ -99,3 +99,5 @@ public class AiOperationsController {
         return ResponseEntity.ok(aiAgentService.run(actor, query, mode));
     }
 }
+
+

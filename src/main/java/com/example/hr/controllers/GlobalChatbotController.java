@@ -56,3 +56,5 @@ public class GlobalChatbotController {
         return ok ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }
+
+

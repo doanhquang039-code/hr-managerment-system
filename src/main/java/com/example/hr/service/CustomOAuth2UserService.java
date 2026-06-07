@@ -1,10 +1,10 @@
 package com.example.hr.service;
 
-import com.example.hr.models.Department;
-import com.example.hr.models.JobPosition;
+import com.example.hr.department.entity.Department;
+import com.example.hr.recruitment.entity.JobPosition;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.JobPositionRepository;
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.recruitment.repository.JobPositionRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
@@ -32,30 +32,30 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         
-        // 1. Xác định đang login bằng mạng xã hội nào (google, facebook, zalo, tiktok)
+        // 1. XÃ¡c Ä‘á»‹nh Ä‘ang login báº±ng máº¡ng xÃ£ há»™i nÃ o (google, facebook, zalo, tiktok)
         String clientName = userRequest.getClientRegistration().getRegistrationId();
         
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
         String picture = oAuth2User.getAttribute("picture");
 
-        // 2. Xử lý đặc biệt cho Zalo hoặc TikTok (nếu họ không trả về email)
+        // 2. Xá»­ lÃ½ Ä‘áº·c biá»‡t cho Zalo hoáº·c TikTok (náº¿u há» khÃ´ng tráº£ vá» email)
         if ("zalo".equals(clientName) || email == null) {
-            String id = oAuth2User.getName(); // Lấy ID duy nhất của MXH đó
-            email = id + "@" + clientName + ".com"; // Tạo email giả định: 12345@zalo.com
+            String id = oAuth2User.getName(); // Láº¥y ID duy nháº¥t cá»§a MXH Ä‘Ã³
+            email = id + "@" + clientName + ".com"; // Táº¡o email giáº£ Ä‘á»‹nh: 12345@zalo.com
         }
         
         if (name == null) {
-            name = oAuth2User.getAttribute("display_name"); // Dành cho TikTok
+            name = oAuth2User.getAttribute("display_name"); // DÃ nh cho TikTok
         }
 
-        // 3. Gọi hàm lưu hoặc cập nhật vào Database
+        // 3. Gá»i hÃ m lÆ°u hoáº·c cáº­p nháº­t vÃ o Database
         saveOrUpdateUser(email, name, picture);
 
         return oAuth2User;
     }
 
-    // Hàm phụ trợ để xử lý lưu Database cho đỡ rối code ở trên
+    // HÃ m phá»¥ trá»£ Ä‘á»ƒ xá»­ lÃ½ lÆ°u Database cho Ä‘á»¡ rá»‘i code á»Ÿ trÃªn
     private void saveOrUpdateUser(String email, String name, String picture) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
@@ -63,7 +63,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             User existingUser = userOptional.get();
             existingUser.setProfileImage(picture);
             userRepository.save(existingUser);
-            System.out.println("--- Cập nhật thành viên: " + email);
+            System.out.println("--- Cáº­p nháº­t thÃ nh viÃªn: " + email);
         } else {
             User newUser = new User();
             newUser.setEmail(email);
@@ -74,14 +74,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setRole(Role.USER);
             newUser.setStatus(UserStatus.ACTIVE);
 
-            // Gán giá trị mặc định tránh lỗi NOT NULL trong MySQL
+            // GÃ¡n giÃ¡ trá»‹ máº·c Ä‘á»‹nh trÃ¡nh lá»—i NOT NULL trong MySQL
             Department defaultDept = departmentRepository.findById(1).orElse(null);
             JobPosition defaultPos = jobPositionRepository.findById(1).orElse(null);
             newUser.setDepartment(defaultDept);
             newUser.setPosition(defaultPos);
 
             userRepository.save(newUser);
-            System.out.println("--- Đã đăng ký thành viên mới: " + email);
+            System.out.println("--- ÄÃ£ Ä‘Äƒng kÃ½ thÃ nh viÃªn má»›i: " + email);
         }
     }
 }
+

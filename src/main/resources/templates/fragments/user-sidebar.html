@@ -12,6 +12,11 @@
         .sidebar .submenu.open { display: block; }
         .sidebar .submenu a { padding: 9px 20px 9px 52px; font-size: .84rem; color: #cbd5e1; }
         .sidebar .submenu a.active { color: white; background: rgba(99,102,241,.15); border-left-color: #6366f1; }
+        .sidebar .user-quick-settings { margin:0 12px 12px; display:flex; gap:8px; }
+        .sidebar .user-quick-settings button { width:100%; border:1px solid rgba(255,255,255,.14); background:rgba(255,255,255,.08); color:#e2e8f0; border-radius:10px; padding:9px 12px; font-weight:700; text-align:left; }
+        .sidebar .user-quick-settings i { margin-right:8px; }
+        .sidebar .lang-toggle-wrap .lang-btn { border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); color:#cbd5e1; border-radius:8px; padding:5px 9px; font-size:.72rem; font-weight:800; }
+        .sidebar .lang-toggle-wrap .lang-btn.active { background:#6366f1; border-color:#6366f1; color:#fff; }
     </style>
 
     <div class="sidebar-brand">
@@ -20,6 +25,12 @@
             <div class="brand-name">HRMS</div>
             <div class="brand-sub">HR Platform</div>
         </div>
+    </div>
+
+    <div class="user-quick-settings">
+        <button type="button" onclick="window.HRMS && HRMS.settings && HRMS.settings.openPanel();" data-user-settings-label="true">
+            <i class="bi bi-gear-fill"></i><span>C&#224;i &#273;&#7863;t dashboard</span>
+        </button>
     </div>
 
     <div class="user-card"
@@ -165,6 +176,12 @@
                 <button class="lang-btn" data-lang="vi" type="button">&#127475;&#127483; VI</button>
                 <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
                 <button class="lang-btn" data-lang="en" type="button">&#127468;&#127463; EN</button>
+                <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+                <button class="lang-btn" data-lang="zh" type="button">ZH</button>
+                <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+                <button class="lang-btn" data-lang="ja" type="button">JA</button>
+                <span style="color:rgba(255,255,255,0.2);font-size:0.7rem;">|</span>
+                <button class="lang-btn" data-lang="ko" type="button">KO</button>
             </div>
         </div>
         <form action="/logout" method="post">
@@ -198,6 +215,9 @@
             if (best) best.classList.add('active');
         })();
     </script>
+    <script th:src="@{/js/lang-toggle.js}"></script>
+    <script th:src="@{/js/hrms-settings.js}"></script>
+    <script th:src="@{/js/role-menu-i18n.js}"></script>
 </div>
 
 <button th:fragment="settingsFab"

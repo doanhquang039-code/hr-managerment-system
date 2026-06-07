@@ -1,5 +1,7 @@
 package com.example.hr.elasticsearch.repository;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.elasticsearch.document.EmployeeDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;

@@ -5,29 +5,49 @@ package com.example.hr.service;
 
 
 
+
+import com.example.hr.department.entity.Department;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.user.repository.UserRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.attendance.repository.AttendanceRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.dto.EmployeeAnalyticsDTO;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.enums.UserStatus;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.models.User;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.repository.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.stereotype.Service;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.math.BigDecimal;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.math.RoundingMode;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.time.LocalDate;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.util.HashMap;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.util.List;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.util.Map;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.util.stream.Collectors;
 
 /**
- * Service phân tích nhân sự nâng cao.
- * Bao gồm: turnover rate, headcount trending, department distribution, chi phí.
+ * Service phÃ¢n tÃ­ch nhÃ¢n sá»± nÃ¢ng cao.
+ * Bao gá»“m: turnover rate, headcount trending, department distribution, chi phÃ­.
  */
 @Service
 @Transactional(readOnly = true)
@@ -106,7 +126,7 @@ public class EmployeeAnalyticsService {
     }
 
     /**
-     * Tính turnover rate (tỷ lệ nghỉ việc).
+     * TÃ­nh turnover rate (tá»· lá»‡ nghá»‰ viá»‡c).
      * Formula: (Terminations / Average Headcount) * 100
      */
     public double calculateTurnoverRate(int year) {
@@ -121,7 +141,7 @@ public class EmployeeAnalyticsService {
     }
 
     /**
-     * Phân bố nhân viên theo phòng ban.
+     * PhÃ¢n bá»‘ nhÃ¢n viÃªn theo phÃ²ng ban.
      */
     public Map<String, Long> getHeadcountByDepartment() {
         return userRepository.findAll().stream()
@@ -133,7 +153,7 @@ public class EmployeeAnalyticsService {
     }
 
     /**
-     * Phân bố nhân viên theo vị trí.
+     * PhÃ¢n bá»‘ nhÃ¢n viÃªn theo vá»‹ trÃ­.
      */
     public Map<String, Long> getHeadcountByPosition() {
         return userRepository.findAll().stream()
@@ -145,7 +165,7 @@ public class EmployeeAnalyticsService {
     }
 
     /**
-     * Tổng chi phí nhân sự (lương + phúc lợi).
+     * Tá»•ng chi phÃ­ nhÃ¢n sá»± (lÆ°Æ¡ng + phÃºc lá»£i).
      */
     public BigDecimal calculateTotalHRCost(int month, int year) {
         BigDecimal payrollCost = payrollRepository.findAll().stream()
@@ -159,7 +179,7 @@ public class EmployeeAnalyticsService {
     }
 
     /**
-     * Chi phí trung bình trên mỗi nhân viên.
+     * Chi phÃ­ trung bÃ¬nh trÃªn má»—i nhÃ¢n viÃªn.
      */
     public BigDecimal calculateAvgCostPerEmployee(int month, int year) {
         BigDecimal totalCost = calculateTotalHRCost(month, year);
@@ -172,7 +192,7 @@ public class EmployeeAnalyticsService {
     }
 
     /**
-     * Lấy overview metrics nhanh cho dashboard.
+     * Láº¥y overview metrics nhanh cho dashboard.
      */
     public Map<String, Object> getDashboardQuickStats() {
         Map<String, Object> stats = new HashMap<>();
@@ -190,3 +210,5 @@ public class EmployeeAnalyticsService {
         return stats;
     }
 }
+
+

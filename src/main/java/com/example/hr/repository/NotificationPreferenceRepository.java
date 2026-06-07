@@ -19,3 +19,5 @@ public interface NotificationPreferenceRepository extends JpaRepository<Notifica
     
     List<NotificationPreference> findByUserAndEnabled(User user, Boolean enabled);
 }
+
+

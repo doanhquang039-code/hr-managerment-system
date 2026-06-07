@@ -7,3 +7,5 @@ public class AiAgentRequest {
     private String query;
     private String mode;
 }
+
+

@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import jakarta.persistence.PreUpdate;
 
 import jakarta.persistence.*;
@@ -56,3 +58,5 @@ public class AnalyticsMetric {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

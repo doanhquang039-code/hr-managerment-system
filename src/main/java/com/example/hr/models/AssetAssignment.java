@@ -61,3 +61,5 @@ public class AssetAssignment {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

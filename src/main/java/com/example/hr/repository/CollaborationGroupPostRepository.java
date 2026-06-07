@@ -18,3 +18,5 @@ public interface CollaborationGroupPostRepository extends JpaRepository<Collabor
             """)
     List<CollaborationGroupPost> findFeedByGroup(CollaborationGroup group);
 }
+
+

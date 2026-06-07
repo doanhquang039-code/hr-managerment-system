@@ -15,3 +15,5 @@ public interface WorkShiftRepository extends JpaRepository<WorkShift, Integer> {
     Optional<WorkShift> findByShiftCode(String shiftCode);
     boolean existsByShiftCode(String shiftCode);
 }
+
+

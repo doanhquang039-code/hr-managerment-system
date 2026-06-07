@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class ChatbotRateRequest {
     private int messageId;
-    /** 1–5 sao */
+    /** 1â€“5 sao */
     private Integer rating;
 }
+
+

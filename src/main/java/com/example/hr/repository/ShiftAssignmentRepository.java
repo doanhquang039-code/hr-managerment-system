@@ -23,3 +23,5 @@ public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment
     
     List<ShiftAssignment> findByAssignedDate(LocalDate date);
 }
+
+

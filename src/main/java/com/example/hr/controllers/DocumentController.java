@@ -79,9 +79,9 @@ public class DocumentController {
             dto.setDocumentType(documentType);
             dto.setDescription(description);
             documentService.uploadDocument(dto, file, uploadedBy);
-            ra.addFlashAttribute("success", "Upload tài liệu thành công!");
+            ra.addFlashAttribute("success", "Upload tÃ i liá»‡u thÃ nh cÃ´ng!");
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi upload: " + e.getMessage());
+            ra.addFlashAttribute("error", "Lá»—i upload: " + e.getMessage());
         }
         return "redirect:/admin/documents";
     }
@@ -90,7 +90,7 @@ public class DocumentController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String verify(@PathVariable Long id, RedirectAttributes ra) {
         documentService.verifyDocument(id);
-        ra.addFlashAttribute("success", "Đã xác minh tài liệu!");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ¡c minh tÃ i liá»‡u!");
         return "redirect:/admin/documents";
     }
 
@@ -98,7 +98,7 @@ public class DocumentController {
     @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Long id, RedirectAttributes ra) {
         documentService.deleteDocument(id);
-        ra.addFlashAttribute("success", "Đã xóa tài liệu!");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ³a tÃ i liá»‡u!");
         return "redirect:/admin/documents";
     }
 
@@ -141,9 +141,9 @@ public class DocumentController {
             dto.setDocumentType(documentType);
             dto.setDescription(description);
             documentService.uploadDocument(dto, file, currentUser);
-            ra.addFlashAttribute("success", "Upload tài liệu thành công!");
+            ra.addFlashAttribute("success", "Upload tÃ i liá»‡u thÃ nh cÃ´ng!");
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            ra.addFlashAttribute("error", "Lá»—i: " + e.getMessage());
         }
         return "redirect:/user1/documents";
     }
@@ -158,16 +158,18 @@ public class DocumentController {
 
         EmployeeDocument doc = documentService.getDocumentById(id);
         if (!doc.getUser().getId().equals(currentUser.getId())) {
-            ra.addFlashAttribute("error", "Bạn không có quyền xóa tài liệu này.");
+            ra.addFlashAttribute("error", "Báº¡n khÃ´ng cÃ³ quyá»n xÃ³a tÃ i liá»‡u nÃ y.");
             return "redirect:/user1/documents";
         }
         if (Boolean.TRUE.equals(doc.getIsVerified())) {
-            ra.addFlashAttribute("error", "Tài liệu đã được xác minh, không thể tự xóa.");
+            ra.addFlashAttribute("error", "TÃ i liá»‡u Ä‘Ã£ Ä‘Æ°á»£c xÃ¡c minh, khÃ´ng thá»ƒ tá»± xÃ³a.");
             return "redirect:/user1/documents";
         }
 
         documentService.deleteDocument(id);
-        ra.addFlashAttribute("success", "Đã xóa tài liệu.");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ³a tÃ i liá»‡u.");
         return "redirect:/user1/documents";
     }
 }
+
+

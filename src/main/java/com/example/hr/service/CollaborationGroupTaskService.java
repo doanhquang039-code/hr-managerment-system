@@ -87,3 +87,5 @@ public class CollaborationGroupTaskService {
         return authUserHelper.getCurrentUser(authentication);
     }
 }
+
+

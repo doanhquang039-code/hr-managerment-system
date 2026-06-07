@@ -69,7 +69,7 @@ public class AdminCompanyAssetController {
                     return "admin/asset-form";
                 })
                 .orElseGet(() -> {
-                    ra.addFlashAttribute("error", "Không tìm thấy tài sản.");
+                    ra.addFlashAttribute("error", "KhÃ´ng tÃ¬m tháº¥y tÃ i sáº£n.");
                     return "redirect:/admin/assets";
                 });
     }
@@ -90,7 +90,7 @@ public class AdminCompanyAssetController {
         }
 
         assetRepository.save(asset);
-        ra.addFlashAttribute("success", "Đã lưu tài sản thành công.");
+        ra.addFlashAttribute("success", "ÄÃ£ lÆ°u tÃ i sáº£n thÃ nh cÃ´ng.");
         return "redirect:/admin/assets";
     }
 
@@ -98,16 +98,18 @@ public class AdminCompanyAssetController {
     public String delete(@PathVariable Integer id, RedirectAttributes ra) {
         if (assetRepository.existsById(id)) {
             assetRepository.deleteById(id);
-            ra.addFlashAttribute("success", "Đã xóa tài sản.");
+            ra.addFlashAttribute("success", "ÄÃ£ xÃ³a tÃ i sáº£n.");
         } else {
-            ra.addFlashAttribute("error", "Không tìm thấy tài sản cần xóa.");
+            ra.addFlashAttribute("error", "KhÃ´ng tÃ¬m tháº¥y tÃ i sáº£n cáº§n xÃ³a.");
         }
         return "redirect:/admin/assets";
     }
 
     @GetMapping({"/assign", "/assignments"})
     public String assignmentPlaceholder(RedirectAttributes ra) {
-        ra.addFlashAttribute("success", "Phần bàn giao tài sản sẽ được đồng bộ ở màn hình tài sản mới.");
+        ra.addFlashAttribute("success", "Pháº§n bÃ n giao tÃ i sáº£n sáº½ Ä‘Æ°á»£c Ä‘á»“ng bá»™ á»Ÿ mÃ n hÃ¬nh tÃ i sáº£n má»›i.");
         return "redirect:/admin/assets";
     }
 }
+
+

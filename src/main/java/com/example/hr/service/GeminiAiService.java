@@ -11,9 +11,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 /**
- * Google Gemini AI Service — tích hợp LLM cho chatbot HR.
- * Chỉ active khi ai.gemini.enabled=true và có API key.
- * API key miễn phí: https://aistudio.google.com/app/apikey
+ * Google Gemini AI Service â€” tÃ­ch há»£p LLM cho chatbot HR.
+ * Chá»‰ active khi ai.gemini.enabled=true vÃ  cÃ³ API key.
+ * API key miá»…n phÃ­: https://aistudio.google.com/app/apikey
  */
 @Service
 @ConditionalOnProperty(name = "ai.gemini.enabled", havingValue = "true")
@@ -33,10 +33,10 @@ public class GeminiAiService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     /**
-     * Gọi Gemini API với system prompt + user message.
-     * @param systemPrompt Context về HR system
-     * @param userMessage Câu hỏi của user
-     * @return Câu trả lời từ AI
+     * Gá»i Gemini API vá»›i system prompt + user message.
+     * @param systemPrompt Context vá» HR system
+     * @param userMessage CÃ¢u há»i cá»§a user
+     * @return CÃ¢u tráº£ lá»i tá»« AI
      */
     public String chat(String systemPrompt, String userMessage) {
         try {
@@ -65,7 +65,7 @@ public class GeminiAiService {
                     "topP", 0.9
             ));
 
-            // Safety settings — relax để không block HR content
+            // Safety settings â€” relax Ä‘á»ƒ khÃ´ng block HR content
             body.put("safetySettings", List.of(
                     Map.of("category", "HARM_CATEGORY_HARASSMENT", "threshold", "BLOCK_ONLY_HIGH"),
                     Map.of("category", "HARM_CATEGORY_HATE_SPEECH", "threshold", "BLOCK_ONLY_HIGH")
@@ -87,7 +87,7 @@ public class GeminiAiService {
     }
 
     /**
-     * Chat với conversation history (multi-turn).
+     * Chat vá»›i conversation history (multi-turn).
      */
     public String chatWithHistory(String systemPrompt, List<Map<String, String>> history, String userMessage) {
         try {
@@ -162,3 +162,5 @@ public class GeminiAiService {
         return model;
     }
 }
+
+

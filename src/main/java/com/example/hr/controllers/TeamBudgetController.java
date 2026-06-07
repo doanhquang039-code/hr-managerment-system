@@ -1,5 +1,7 @@
 package com.example.hr.controllers;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.TeamBudget;
 import com.example.hr.models.User;
 import com.example.hr.service.AuthUserHelper;
@@ -203,3 +205,4 @@ public class TeamBudgetController {
         return "manager/budget/analytics";
     }
 }
+

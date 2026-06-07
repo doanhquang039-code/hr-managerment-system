@@ -26,7 +26,7 @@ public class AuditLogService {
     private final AuditEncryptionService auditEncryptionService;
 
     /**
-     * Log một action của user
+     * Log má»™t action cá»§a user
      */
     @Async
     public void logAction(User user, String action, String entityType, Integer entityId,
@@ -76,42 +76,42 @@ public class AuditLogService {
     }
 
     /**
-     * Lấy tất cả audit logs với phân trang
+     * Láº¥y táº¥t cáº£ audit logs vá»›i phÃ¢n trang
      */
     public Page<AuditLog> getAllAuditLogs(Pageable pageable) {
         return auditLogRepository.findAllByOrderByTimestampDesc(pageable).map(this::copyForDisplay);
     }
 
     /**
-     * Lấy audit logs của một user
+     * Láº¥y audit logs cá»§a má»™t user
      */
     public Page<AuditLog> getAuditLogsByUser(User user, Pageable pageable) {
         return auditLogRepository.findByUserOrderByTimestampDesc(user, pageable).map(this::copyForDisplay);
     }
 
     /**
-     * Tìm kiếm audit logs theo action
+     * TÃ¬m kiáº¿m audit logs theo action
      */
     public Page<AuditLog> searchByAction(String action, Pageable pageable) {
         return auditLogRepository.findByActionContainingIgnoreCaseOrderByTimestampDesc(action, pageable).map(this::copyForDisplay);
     }
 
     /**
-     * Lấy audit logs theo entity type
+     * Láº¥y audit logs theo entity type
      */
     public Page<AuditLog> getAuditLogsByEntityType(String entityType, Pageable pageable) {
         return auditLogRepository.findByEntityTypeOrderByTimestampDesc(entityType, pageable).map(this::copyForDisplay);
     }
 
     /**
-     * Lấy audit logs theo khoảng thời gian
+     * Láº¥y audit logs theo khoáº£ng thá»i gian
      */
     public Page<AuditLog> getAuditLogsByDateRange(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
         return auditLogRepository.findByDateRange(startDate, endDate, pageable).map(this::copyForDisplay);
     }
 
     /**
-     * Lấy thống kê audit logs
+     * Láº¥y thá»‘ng kÃª audit logs
      */
     public Map<String, Object> getAuditStatistics() {
         long totalActions = auditLogRepository.count();
@@ -130,7 +130,7 @@ public class AuditLogService {
     }
 
     /**
-     * Xóa audit logs cũ (retention policy)
+     * XÃ³a audit logs cÅ© (retention policy)
      */
     @Transactional
     public void cleanupOldLogs(int retentionDays) {
@@ -140,7 +140,7 @@ public class AuditLogService {
     }
 
     /**
-     * Lấy IP address của client
+     * Láº¥y IP address cá»§a client
      */
     private String getClientIP(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
@@ -226,3 +226,5 @@ public class AuditLogService {
         return copy;
     }
 }
+
+

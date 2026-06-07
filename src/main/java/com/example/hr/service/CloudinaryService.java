@@ -17,7 +17,7 @@ public class CloudinaryService {
         this.cloudinary = cloudinary;
     }
 
-    /** Upload ảnh/file thông thường, trả về URL */
+    /** Upload áº£nh/file thÃ´ng thÆ°á»ng, tráº£ vá» URL */
     public String uploadFile(MultipartFile file, String folder) throws IOException {
         String resourceType = isVideo(file) ? "video" : "auto";
         Map<?, ?> result = cloudinary.uploader().upload(file.getBytes(),
@@ -25,7 +25,7 @@ public class CloudinaryService {
         return result.get("secure_url").toString();
     }
 
-    /** Upload ảnh avatar — trả về URL + public_id */
+    /** Upload áº£nh avatar â€” tráº£ vá» URL + public_id */
     public Map<?, ?> uploadAvatar(MultipartFile file, String folder) throws IOException {
         return cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap(
@@ -35,7 +35,7 @@ public class CloudinaryService {
                 ));
     }
 
-    /** Upload document (PDF, image, Word) — trả về full Map */
+    /** Upload document (PDF, image, Word) â€” tráº£ vá» full Map */
     public Map<?, ?> uploadDocument(MultipartFile file, String folder) throws IOException {
         String ct = file.getContentType() != null ? file.getContentType() : "";
         String resourceType = ct.startsWith("image/") ? "image" : "raw";
@@ -48,7 +48,7 @@ public class CloudinaryService {
                 ));
     }
 
-    /** Upload receipt/image nhỏ */
+    /** Upload receipt/image nhá» */
     public Map<?, ?> uploadReceipt(MultipartFile file, String folder) throws IOException {
         return cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap(
@@ -59,9 +59,9 @@ public class CloudinaryService {
                 ));
     }
 
-    /** Upload video — trả về full Map để lấy public_id, duration, secure_url */
+    /** Upload video â€” tráº£ vá» full Map Ä‘á»ƒ láº¥y public_id, duration, secure_url */
     public Map<?, ?> uploadVideo(MultipartFile file, String folder) throws IOException {
-        // Dùng uploadLarge với InputStream để tránh OutOfMemoryError với video lớn
+        // DÃ¹ng uploadLarge vá»›i InputStream Ä‘á»ƒ trÃ¡nh OutOfMemoryError vá»›i video lá»›n
         try (java.io.InputStream is = file.getInputStream()) {
             return cloudinary.uploader().uploadLarge(is,
                     ObjectUtils.asMap(
@@ -72,30 +72,30 @@ public class CloudinaryService {
         }
     }
 
-    /** Upload ảnh (avatar, thumbnail...) */
+    /** Upload áº£nh (avatar, thumbnail...) */
     public Map<?, ?> upload(MultipartFile file) throws IOException {
         String resourceType = isVideo(file) ? "video" : "auto";
         return cloudinary.uploader().upload(file.getBytes(),
                 ObjectUtils.asMap("resource_type", resourceType));
     }
 
-    /** Xóa video trên Cloudinary theo public_id */
+    /** XÃ³a video trÃªn Cloudinary theo public_id */
     public void deleteVideo(String publicId) throws IOException {
         cloudinary.uploader().destroy(publicId,
                 ObjectUtils.asMap("resource_type", "video"));
     }
 
-    /** Xóa ảnh trên Cloudinary theo public_id */
+    /** XÃ³a áº£nh trÃªn Cloudinary theo public_id */
     public void deleteImage(String publicId) throws IOException {
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
 
     /**
-     * Tạo URL thumbnail từ video public_id.
-     * Cloudinary tự generate frame đầu tiên của video.
+     * Táº¡o URL thumbnail tá»« video public_id.
+     * Cloudinary tá»± generate frame Ä‘áº§u tiÃªn cá»§a video.
      */
     public String generateVideoThumbnail(String videoPublicId) {
-        // Thay đổi extension thành .jpg để lấy thumbnail
+        // Thay Ä‘á»•i extension thÃ nh .jpg Ä‘á»ƒ láº¥y thumbnail
         return cloudinary.url()
                 .resourceType("video")
                 .format("jpg")
@@ -108,3 +108,4 @@ public class CloudinaryService {
         return file.getContentType() != null && file.getContentType().startsWith("video");
     }
 }
+

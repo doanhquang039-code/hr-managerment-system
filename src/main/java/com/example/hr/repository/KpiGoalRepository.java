@@ -1,5 +1,7 @@
 package com.example.hr.repository;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.KpiStatus;
 import com.example.hr.models.KpiGoal;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,3 +38,5 @@ public interface KpiGoalRepository extends JpaRepository<KpiGoal, Integer> {
     @Query("SELECT AVG(k.achievementPct) FROM KpiGoal k WHERE k.user.id = :userId AND k.status = 'COMPLETED'")
     Double avgAchievementByUser(@Param("userId") Integer userId);
 }
+
+

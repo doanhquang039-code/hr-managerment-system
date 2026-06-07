@@ -19,7 +19,7 @@ import com.example.hr.repository.EmployeeWarningRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
 import com.example.hr.repository.OvertimeRequestRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
-import com.example.hr.repository.TrainingProgramRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +121,7 @@ public class DashboardService {
         leaveRequestRepository.findAllByOrderByCreatedAtDesc(page).forEach(l -> {
             Map<String, Object> act = new LinkedHashMap<>();
             act.put("type", "LEAVE_REQUEST");
-            act.put("description", (l.getUser() != null ? l.getUser().getFullName() : "N/A") + " - Nghỉ phép");
+            act.put("description", (l.getUser() != null ? l.getUser().getFullName() : "N/A") + " - Nghá»‰ phÃ©p");
             act.put("status", l.getStatus());
             act.put("time", l.getCreatedAt());
             activities.add(act);
@@ -143,7 +143,7 @@ public class DashboardService {
             act.put("type", "WARNING_ISSUED");
             act.put("description",
                     (w.getUser() != null ? w.getUser().getFullName() : "N/A")
-                            + " - Cảnh cáo " + w.getWarningLevel().name());
+                            + " - Cáº£nh cÃ¡o " + w.getWarningLevel().name());
             act.put("status", Boolean.TRUE.equals(w.getIsAcknowledged()) ? "ACKNOWLEDGED" : "PENDING");
             act.put("time", w.getIssuedDate());
             activities.add(act);
@@ -169,7 +169,7 @@ public class DashboardService {
         metrics.put("year", year);
 
         long totalAtStart = userRepository.count();
-       // MỚI
+       // Má»šI
 long terminatedThisYear = userRepository.countByStatus(UserStatus.INACTIVE);
 List<User> terminatedUsers = userRepository.findByStatus(UserStatus.INACTIVE);
 
@@ -230,3 +230,5 @@ List<User> terminatedUsers = userRepository.findByStatus(UserStatus.INACTIVE);
         return metrics;
     }
 }
+
+

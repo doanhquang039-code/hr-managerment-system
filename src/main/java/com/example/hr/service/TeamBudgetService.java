@@ -1,7 +1,7 @@
 package com.example.hr.service;
 
 import com.example.hr.models.TeamBudget;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
 import com.example.hr.repository.TeamBudgetRepository;
 import lombok.RequiredArgsConstructor;
@@ -147,3 +147,5 @@ public class TeamBudgetService {
             double utilizationRate
     ) {}
 }
+
+

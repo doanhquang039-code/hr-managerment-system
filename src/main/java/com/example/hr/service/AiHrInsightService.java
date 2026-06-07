@@ -1,6 +1,8 @@
 package com.example.hr.service;
 
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.dto.AiInsightResponse;
 import com.example.hr.dto.AiAdvisorResponse;
@@ -9,11 +11,11 @@ import com.example.hr.enums.LeaveStatus;
 import com.example.hr.enums.TaskStatus;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.KpiGoal;
-import com.example.hr.models.TaskAssignment;
+import com.example.hr.task.entity.TaskAssignment;
 import com.example.hr.models.User;
 import com.example.hr.repository.KpiGoalRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
-import com.example.hr.repository.TaskAssignmentRepository;
+import com.example.hr.task.repository.TaskAssignmentRepository;
 import com.example.hr.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -259,3 +261,5 @@ public class AiHrInsightService {
         return 0;
     }
 }
+
+

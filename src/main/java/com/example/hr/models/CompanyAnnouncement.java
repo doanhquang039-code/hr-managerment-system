@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import jakarta.persistence.PreUpdate;
 
 import jakarta.persistence.PrePersist;
@@ -64,3 +66,5 @@ public class CompanyAnnouncement {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

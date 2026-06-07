@@ -46,3 +46,5 @@ public class CollaborationGroupRolePermission {
     @Column(nullable = false, length = 50)
     private GroupFeature feature;
 }
+
+

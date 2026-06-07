@@ -74,7 +74,7 @@ public class EmployeeSkillController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String showEditForm(@PathVariable Integer id, Model model) {
         EmployeeSkill skill = employeeSkillService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Skill không tồn tại"));
+                .orElseThrow(() -> new RuntimeException("Skill khÃ´ng tá»“n táº¡i"));
         model.addAttribute("skill", skill);
         model.addAttribute("userOptions", userOptions());
         model.addAttribute("skillLevels", SkillLevel.values());
@@ -89,10 +89,10 @@ public class EmployeeSkillController {
                        Authentication auth,
                        RedirectAttributes ra) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+                .orElseThrow(() -> new RuntimeException("User khÃ´ng tá»“n táº¡i"));
 
         if (employeeSkillService.existsForAnotherSkill(userId, skill.getSkillName(), skill.getId())) {
-            ra.addFlashAttribute("error", "Nhân viên này đã có kỹ năng \"" + skill.getSkillName() + "\".");
+            ra.addFlashAttribute("error", "NhÃ¢n viÃªn nÃ y Ä‘Ã£ cÃ³ ká»¹ nÄƒng \"" + skill.getSkillName() + "\".");
             return skill.getId() != null
                     ? "redirect:/admin/skills/edit/" + skill.getId()
                     : "redirect:/admin/skills/add";
@@ -105,10 +105,10 @@ public class EmployeeSkillController {
 
         try {
             employeeSkillService.save(skill);
-            ra.addFlashAttribute("success", "Lưu kỹ năng thành công!");
+            ra.addFlashAttribute("success", "LÆ°u ká»¹ nÄƒng thÃ nh cÃ´ng!");
             return "redirect:/admin/skills";
         } catch (DataIntegrityViolationException ex) {
-            ra.addFlashAttribute("error", "Không lưu được kỹ năng. Vui lòng kiểm tra dữ liệu hoặc kỹ năng bị trùng.");
+            ra.addFlashAttribute("error", "KhÃ´ng lÆ°u Ä‘Æ°á»£c ká»¹ nÄƒng. Vui lÃ²ng kiá»ƒm tra dá»¯ liá»‡u hoáº·c ká»¹ nÄƒng bá»‹ trÃ¹ng.");
             return skill.getId() != null
                     ? "redirect:/admin/skills/edit/" + skill.getId()
                     : "redirect:/admin/skills/add";
@@ -119,7 +119,7 @@ public class EmployeeSkillController {
     @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Integer id, RedirectAttributes ra) {
         employeeSkillService.delete(id);
-        ra.addFlashAttribute("success", "Đã xóa kỹ năng!");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ³a ká»¹ nÄƒng!");
         return "redirect:/admin/skills";
     }
 
@@ -152,7 +152,7 @@ public class EmployeeSkillController {
 
         skill.setUser(currentUser);
         employeeSkillService.save(skill);
-        ra.addFlashAttribute("success", "Đã thêm kỹ năng thành công!");
+        ra.addFlashAttribute("success", "ÄÃ£ thÃªm ká»¹ nÄƒng thÃ nh cÃ´ng!");
         return "redirect:/user1/skills";
     }
 
@@ -165,7 +165,7 @@ public class EmployeeSkillController {
                 employeeSkillService.delete(id);
             }
         });
-        ra.addFlashAttribute("success", "Đã xóa kỹ năng!");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ³a ká»¹ nÄƒng!");
         return "redirect:/user1/skills";
     }
 
@@ -205,3 +205,5 @@ public class EmployeeSkillController {
         }
     }
 }
+
+

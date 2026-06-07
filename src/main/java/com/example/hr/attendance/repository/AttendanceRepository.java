@@ -1,5 +1,7 @@
 package com.example.hr.attendance.repository;
 
+
+import com.example.hr.department.entity.Department;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -65,5 +67,5 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     
     // Team Analytics methods
     @Query("SELECT COUNT(a) FROM Attendance a WHERE a.user.department = :department AND a.attendanceDate = :date")
-    long countByDepartmentAndDate(@Param("department") com.example.hr.models.Department department, @Param("date") LocalDate date);
+    long countByDepartmentAndDate(@Param("department") com.example.hr.department.entity.Department department, @Param("date") LocalDate date);
 }

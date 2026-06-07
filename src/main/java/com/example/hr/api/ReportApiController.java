@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 /**
- * REST API controller cho xuất báo cáo.
+ * REST API controller cho xuáº¥t bÃ¡o cÃ¡o.
  */
 @RestController
 @RequestMapping("/api/reports")
@@ -76,3 +76,5 @@ public class ReportApiController {
                 .body(data);
     }
 }
+
+

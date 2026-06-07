@@ -15,12 +15,12 @@ public class CompanyAssetDTO {
 
     private Integer id;
 
-    @NotBlank(message = "Tên tài sản không được để trống")
+    @NotBlank(message = "TÃªn tÃ i sáº£n khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private String assetName;
 
     private String assetCode;
 
-    @NotBlank(message = "Danh mục không được để trống")
+    @NotBlank(message = "Danh má»¥c khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private String category;
 
     private String serialNumber;
@@ -30,3 +30,5 @@ public class CompanyAssetDTO {
     private String location;
     private LocalDate warrantyExpiry;
 }
+
+

@@ -21,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/skills")
-@Tag(name = "Employee Skills", description = "Quản lý kỹ năng nhân viên")
+@Tag(name = "Employee Skills", description = "Quáº£n lÃ½ ká»¹ nÄƒng nhÃ¢n viÃªn")
 public class EmployeeSkillApiController {
 
     private final EmployeeSkillService employeeSkillService;
@@ -35,7 +35,7 @@ public class EmployeeSkillApiController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Lấy tất cả kỹ năng nhân viên")
+    @Operation(summary = "Láº¥y táº¥t cáº£ ká»¹ nÄƒng nhÃ¢n viÃªn")
     public ResponseEntity<List<EmployeeSkill>> getAll(
             @RequestParam(required = false) String category) {
         List<EmployeeSkill> skills = employeeSkillService.findAll();
@@ -49,7 +49,7 @@ public class EmployeeSkillApiController {
 
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy kỹ năng theo ID")
+    @Operation(summary = "Láº¥y ká»¹ nÄƒng theo ID")
     public ResponseEntity<EmployeeSkill> getById(@PathVariable Integer id) {
         return employeeSkillService.findById(id)
                 .map(ResponseEntity::ok)
@@ -58,7 +58,7 @@ public class EmployeeSkillApiController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy kỹ năng của một nhân viên")
+    @Operation(summary = "Láº¥y ká»¹ nÄƒng cá»§a má»™t nhÃ¢n viÃªn")
     public ResponseEntity<List<EmployeeSkill>> getByUser(
             @PathVariable Integer userId,
             @RequestParam(required = false) String category) {
@@ -70,21 +70,21 @@ public class EmployeeSkillApiController {
 
     @GetMapping("/user/{userId}/certified")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy kỹ năng có chứng chỉ của nhân viên")
+    @Operation(summary = "Láº¥y ká»¹ nÄƒng cÃ³ chá»©ng chá»‰ cá»§a nhÃ¢n viÃªn")
     public ResponseEntity<List<EmployeeSkill>> getCertifiedByUser(@PathVariable Integer userId) {
         return ResponseEntity.ok(employeeSkillService.findCertifiedByUser(userId));
     }
 
     @GetMapping("/categories/{category}/names")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy danh sách tên kỹ năng theo category")
+    @Operation(summary = "Láº¥y danh sÃ¡ch tÃªn ká»¹ nÄƒng theo category")
     public ResponseEntity<List<String>> getSkillNamesByCategory(@PathVariable String category) {
         return ResponseEntity.ok(employeeSkillService.getDistinctSkillsByCategory(category));
     }
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Thêm kỹ năng mới cho nhân viên")
+    @Operation(summary = "ThÃªm ká»¹ nÄƒng má»›i cho nhÃ¢n viÃªn")
     public ResponseEntity<EmployeeSkill> create(@Valid @RequestBody EmployeeSkillDTO dto,
                                                  Principal principal) {
         User user = userRepository.findById(dto.getUserId())
@@ -97,7 +97,7 @@ public class EmployeeSkillApiController {
         EmployeeSkill skill = mapToSkill(dto, new EmployeeSkill());
         skill.setUser(user);
 
-        // Người xác nhận là người đang đăng nhập (nếu là admin/manager)
+        // NgÆ°á»i xÃ¡c nháº­n lÃ  ngÆ°á»i Ä‘ang Ä‘Äƒng nháº­p (náº¿u lÃ  admin/manager)
         userRepository.findByUsername(principal.getName()).ifPresent(skill::setVerifiedBy);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(employeeSkillService.save(skill));
@@ -105,7 +105,7 @@ public class EmployeeSkillApiController {
 
     @PutMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Cập nhật kỹ năng")
+    @Operation(summary = "Cáº­p nháº­t ká»¹ nÄƒng")
     public ResponseEntity<EmployeeSkill> update(@PathVariable Integer id,
                                                  @Valid @RequestBody EmployeeSkillDTO dto) {
         EmployeeSkill existing = employeeSkillService.findById(id)
@@ -116,7 +116,7 @@ public class EmployeeSkillApiController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Xóa kỹ năng")
+    @Operation(summary = "XÃ³a ká»¹ nÄƒng")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         employeeSkillService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee Skill", id));
@@ -126,7 +126,7 @@ public class EmployeeSkillApiController {
 
     @GetMapping("/stats/levels")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Thống kê kỹ năng theo cấp độ")
+    @Operation(summary = "Thá»‘ng kÃª ká»¹ nÄƒng theo cáº¥p Ä‘á»™")
     public ResponseEntity<Map<String, Long>> statsByLevel() {
         List<EmployeeSkill> all = employeeSkillService.findAll();
         Map<String, Long> stats = new java.util.LinkedHashMap<>();
@@ -139,7 +139,7 @@ public class EmployeeSkillApiController {
 
     @GetMapping("/stats/categories")
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
-    @Operation(summary = "Thống kê kỹ năng theo category")
+    @Operation(summary = "Thá»‘ng kÃª ká»¹ nÄƒng theo category")
     public ResponseEntity<Map<String, Long>> statsByCategory() {
         List<EmployeeSkill> all = employeeSkillService.findAll();
         Map<String, Long> stats = new java.util.LinkedHashMap<>();
@@ -166,3 +166,5 @@ public class EmployeeSkillApiController {
         return target;
     }
 }
+
+

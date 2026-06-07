@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Firebase Cloud Messaging (FCM) — push notifications realtime.
- * Chỉ active khi firebase.enabled=true.
+ * Firebase Cloud Messaging (FCM) â€” push notifications realtime.
+ * Chá»‰ active khi firebase.enabled=true.
  *
  * Flow:
- * 1. Frontend đăng ký FCM token khi user login
- * 2. Backend lưu token vào DB (user.fcmToken)
- * 3. Khi có event → gọi service này để push notification
+ * 1. Frontend Ä‘Äƒng kÃ½ FCM token khi user login
+ * 2. Backend lÆ°u token vÃ o DB (user.fcmToken)
+ * 3. Khi cÃ³ event â†’ gá»i service nÃ y Ä‘á»ƒ push notification
  */
 @ConditionalOnBean(FirebaseApp.class)
 public class FirebaseNotificationService {
@@ -30,7 +30,7 @@ public class FirebaseNotificationService {
     // ==================== SINGLE DEVICE ====================
 
     /**
-     * Gửi push notification đến một thiết bị cụ thể.
+     * Gá»­i push notification Ä‘áº¿n má»™t thiáº¿t bá»‹ cá»¥ thá»ƒ.
      */
     public String sendToDevice(String fcmToken, String title, String body,
                                 Map<String, String> data) {
@@ -64,8 +64,8 @@ public class FirebaseNotificationService {
     // ==================== TOPIC (broadcast) ====================
 
     /**
-     * Gửi notification đến một topic (nhóm users đã subscribe).
-     * VD: topic "dept-IT" cho toàn bộ phòng IT.
+     * Gá»­i notification Ä‘áº¿n má»™t topic (nhÃ³m users Ä‘Ã£ subscribe).
+     * VD: topic "dept-IT" cho toÃ n bá»™ phÃ²ng IT.
      */
     public String sendToTopic(String topic, String title, String body,
                                Map<String, String> data) {
@@ -90,10 +90,10 @@ public class FirebaseNotificationService {
         }
     }
 
-    // ==================== MULTICAST (nhiều thiết bị) ====================
+    // ==================== MULTICAST (nhiá»u thiáº¿t bá»‹) ====================
 
     /**
-     * Gửi notification đến nhiều FCM tokens cùng lúc (tối đa 500).
+     * Gá»­i notification Ä‘áº¿n nhiá»u FCM tokens cÃ¹ng lÃºc (tá»‘i Ä‘a 500).
      */
     public BatchResponse sendToMultiple(List<String> tokens, String title,
                                          String body, Map<String, String> data) {
@@ -124,7 +124,7 @@ public class FirebaseNotificationService {
     // ==================== SUBSCRIBE / UNSUBSCRIBE TOPIC ====================
 
     /**
-     * Subscribe danh sách tokens vào một topic.
+     * Subscribe danh sÃ¡ch tokens vÃ o má»™t topic.
      */
     public void subscribeToTopic(List<String> tokens, String topic) {
         try {
@@ -138,7 +138,7 @@ public class FirebaseNotificationService {
     }
 
     /**
-     * Unsubscribe tokens khỏi topic.
+     * Unsubscribe tokens khá»i topic.
      */
     public void unsubscribeFromTopic(List<String> tokens, String topic) {
         try {
@@ -151,39 +151,41 @@ public class FirebaseNotificationService {
 
     // ==================== HRMS SPECIFIC HELPERS ====================
 
-    /** Thông báo payslip mới */
+    /** ThÃ´ng bÃ¡o payslip má»›i */
     public void notifyPayslip(String fcmToken, String employeeName, int month, int year) {
         sendToDevice(fcmToken,
-                "💰 Phiếu lương tháng " + month + "/" + year,
-                "Phiếu lương của " + employeeName + " đã sẵn sàng. Nhấn để xem.",
+                "ðŸ’° Phiáº¿u lÆ°Æ¡ng thÃ¡ng " + month + "/" + year,
+                "Phiáº¿u lÆ°Æ¡ng cá»§a " + employeeName + " Ä‘Ã£ sáºµn sÃ ng. Nháº¥n Ä‘á»ƒ xem.",
                 Map.of("type", "PAYROLL", "url", "/user1/payroll"));
     }
 
-    /** Thông báo đơn nghỉ phép được duyệt */
+    /** ThÃ´ng bÃ¡o Ä‘Æ¡n nghá»‰ phÃ©p Ä‘Æ°á»£c duyá»‡t */
     public void notifyLeaveApproved(String fcmToken, String leaveType, String date) {
         sendToDevice(fcmToken,
-                "✅ Đơn nghỉ phép được duyệt",
-                "Đơn " + leaveType + " ngày " + date + " đã được phê duyệt.",
+                "âœ… ÄÆ¡n nghá»‰ phÃ©p Ä‘Æ°á»£c duyá»‡t",
+                "ÄÆ¡n " + leaveType + " ngÃ y " + date + " Ä‘Ã£ Ä‘Æ°á»£c phÃª duyá»‡t.",
                 Map.of("type", "LEAVE", "url", "/user/leaves"));
     }
 
-    /** Thông báo KPI mới */
+    /** ThÃ´ng bÃ¡o KPI má»›i */
     public void notifyKpiAssigned(String fcmToken, String goalTitle) {
         sendToDevice(fcmToken,
-                "🎯 KPI Goal mới",
-                "Bạn được giao mục tiêu: " + goalTitle,
+                "ðŸŽ¯ KPI Goal má»›i",
+                "Báº¡n Ä‘Æ°á»£c giao má»¥c tiÃªu: " + goalTitle,
                 Map.of("type", "KPI", "url", "/user1/kpi"));
     }
 
-    /** Broadcast thông báo công ty đến tất cả nhân viên */
+    /** Broadcast thÃ´ng bÃ¡o cÃ´ng ty Ä‘áº¿n táº¥t cáº£ nhÃ¢n viÃªn */
     public void broadcastAnnouncement(String title, String content) {
-        sendToTopic("all-employees", "📢 " + title, content,
+        sendToTopic("all-employees", "ðŸ“¢ " + title, content,
                 Map.of("type", "ANNOUNCEMENT", "url", "/user1/announcements"));
     }
 
-    /** Thông báo đến phòng ban cụ thể */
+    /** ThÃ´ng bÃ¡o Ä‘áº¿n phÃ²ng ban cá»¥ thá»ƒ */
     public void notifyDepartment(String deptCode, String title, String body) {
         sendToTopic("dept-" + deptCode.toLowerCase(), title, body,
                 Map.of("type", "DEPT_NOTICE"));
     }
 }
+
+

@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Service quản lý tài liệu nhân viên.
- * Hỗ trợ upload, verify, expire tracking.
+ * Service quáº£n lÃ½ tÃ i liá»‡u nhÃ¢n viÃªn.
+ * Há»— trá»£ upload, verify, expire tracking.
  */
 @Service
 @Transactional
@@ -48,7 +48,7 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Lấy tất cả tài liệu của một nhân viên.
+     * Láº¥y táº¥t cáº£ tÃ i liá»‡u cá»§a má»™t nhÃ¢n viÃªn.
      */
     @Transactional(readOnly = true)
     public List<EmployeeDocument> getDocumentsByUser(Integer userId) {
@@ -56,16 +56,16 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Lấy tài liệu theo ID.
+     * Láº¥y tÃ i liá»‡u theo ID.
      */
     @Transactional(readOnly = true)
     public EmployeeDocument getDocumentById(Long id) {
         return documentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tài liệu không tồn tại", id));
+                .orElseThrow(() -> new ResourceNotFoundException("TÃ i liá»‡u khÃ´ng tá»“n táº¡i", id));
     }
 
     /**
-     * Lấy tài liệu theo loại.
+     * Láº¥y tÃ i liá»‡u theo loáº¡i.
      */
     @Transactional(readOnly = true)
     public List<EmployeeDocument> getDocumentsByType(String documentType) {
@@ -73,12 +73,12 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Upload tài liệu mới cho nhân viên.
+     * Upload tÃ i liá»‡u má»›i cho nhÃ¢n viÃªn.
      */
     public EmployeeDocument uploadDocument(EmployeeDocumentDTO dto, MultipartFile file, User uploadedBy) {
         // Validate user exists
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên", dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("NhÃ¢n viÃªn", dto.getUserId()));
 
         // Validate file
         validateFile(file);
@@ -89,7 +89,7 @@ public class EmployeeDocumentService {
             Map<?, ?> uploadResult = cloudinaryService.upload(file);
             fileUrl = (String) uploadResult.get("secure_url");
         } catch (Exception e) {
-            throw new FileUploadException("Không thể upload file: " + e.getMessage(), e);
+            throw new FileUploadException("KhÃ´ng thá»ƒ upload file: " + e.getMessage(), e);
         }
 
         // Create document entity
@@ -109,11 +109,11 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Upload tài liệu không có file (chỉ metadata).
+     * Upload tÃ i liá»‡u khÃ´ng cÃ³ file (chá»‰ metadata).
      */
     public EmployeeDocument createDocumentMetadata(EmployeeDocumentDTO dto, User uploadedBy) {
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên", dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("NhÃ¢n viÃªn", dto.getUserId()));
 
         EmployeeDocument document = new EmployeeDocument();
         document.setUser(user);
@@ -131,7 +131,7 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Cập nhật thông tin tài liệu.
+     * Cáº­p nháº­t thÃ´ng tin tÃ i liá»‡u.
      */
     public EmployeeDocument updateDocument(Long id, EmployeeDocumentDTO dto) {
         EmployeeDocument document = getDocumentById(id);
@@ -146,7 +146,7 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Xác minh tài liệu.
+     * XÃ¡c minh tÃ i liá»‡u.
      */
     public EmployeeDocument verifyDocument(Long documentId) {
         EmployeeDocument document = getDocumentById(documentId);
@@ -155,7 +155,7 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Hủy xác minh tài liệu.
+     * Há»§y xÃ¡c minh tÃ i liá»‡u.
      */
     public EmployeeDocument unverifyDocument(Long documentId) {
         EmployeeDocument document = getDocumentById(documentId);
@@ -164,17 +164,17 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Xóa tài liệu.
+     * XÃ³a tÃ i liá»‡u.
      */
     public void deleteDocument(Long id) {
         if (!documentRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Tài liệu không tồn tại", id);
+            throw new ResourceNotFoundException("TÃ i liá»‡u khÃ´ng tá»“n táº¡i", id);
         }
         documentRepository.deleteById(id);
     }
 
     /**
-     * Lấy tài liệu chưa xác minh.
+     * Láº¥y tÃ i liá»‡u chÆ°a xÃ¡c minh.
      */
     @Transactional(readOnly = true)
     public List<EmployeeDocument> getUnverifiedDocuments() {
@@ -184,7 +184,7 @@ public class EmployeeDocumentService {
     }
 
     /**
-     * Kiểm tra nhân viên đã có loại tài liệu chưa.
+     * Kiá»ƒm tra nhÃ¢n viÃªn Ä‘Ã£ cÃ³ loáº¡i tÃ i liá»‡u chÆ°a.
      */
     @Transactional(readOnly = true)
     public boolean hasDocument(Integer userId, String documentType) {
@@ -195,14 +195,16 @@ public class EmployeeDocumentService {
 
     private void validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new FileUploadException("File không được để trống");
+            throw new FileUploadException("File khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng");
         }
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new FileUploadException("File quá lớn. Tối đa 10MB");
+            throw new FileUploadException("File quÃ¡ lá»›n. Tá»‘i Ä‘a 10MB");
         }
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType)) {
-            throw new FileUploadException("Loại file không được hỗ trợ. Chỉ chấp nhận: PDF, JPEG, PNG, DOC, DOCX");
+            throw new FileUploadException("Loáº¡i file khÃ´ng Ä‘Æ°á»£c há»— trá»£. Chá»‰ cháº¥p nháº­n: PDF, JPEG, PNG, DOC, DOCX");
         }
     }
 }
+
+

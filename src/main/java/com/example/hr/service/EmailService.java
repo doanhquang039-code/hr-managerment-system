@@ -16,71 +16,71 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    // ✅ 1. Chào mừng nhân viên mới
+    // âœ… 1. ChÃ o má»«ng nhÃ¢n viÃªn má»›i
     public void sendWelcomeEmail(String toEmail, String fullName, String username, String password) throws MessagingException {
-        String subject = "🎉 Chào mừng bạn đến với công ty!";
+        String subject = "ðŸŽ‰ ChÃ o má»«ng báº¡n Ä‘áº¿n vá»›i cÃ´ng ty!";
         String content = """
-            <h2>Xin chào %s!</h2>
-            <p>Tài khoản của bạn đã được tạo thành công.</p>
+            <h2>Xin chÃ o %s!</h2>
+            <p>TÃ i khoáº£n cá»§a báº¡n Ä‘Ã£ Ä‘Æ°á»£c táº¡o thÃ nh cÃ´ng.</p>
             <p><b>Username:</b> %s</p>
             <p><b>Password:</b> %s</p>
-            <p>Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu.</p>
+            <p>Vui lÃ²ng Ä‘á»•i máº­t kháº©u sau khi Ä‘Äƒng nháº­p láº§n Ä‘áº§u.</p>
             <br/>
-            <p>Trân trọng,<br/>HR Team</p>
+            <p>TrÃ¢n trá»ng,<br/>HR Team</p>
         """.formatted(fullName, username, password);
 
         sendHtmlEmail(toEmail, subject, content);
     }
 
-    // ✅ 2. Reset Password
+    // âœ… 2. Reset Password
     public void sendResetPasswordEmail(String toEmail, String fullName, String resetLink) throws MessagingException {
-        String subject = "🔐 Yêu cầu đặt lại mật khẩu";
+        String subject = "ðŸ” YÃªu cáº§u Ä‘áº·t láº¡i máº­t kháº©u";
         String content = """
-            <h2>Xin chào %s!</h2>
-            <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu của bạn.</p>
+            <h2>Xin chÃ o %s!</h2>
+            <p>ChÃºng tÃ´i nháº­n Ä‘Æ°á»£c yÃªu cáº§u Ä‘áº·t láº¡i máº­t kháº©u cá»§a báº¡n.</p>
             <a href="%s" style="padding:10px 20px;background:#4CAF50;color:white;text-decoration:none;border-radius:5px;">
-                Đặt lại mật khẩu
+                Äáº·t láº¡i máº­t kháº©u
             </a>
-            <p>Link có hiệu lực trong 30 phút.</p>
-            <p>Nếu bạn không yêu cầu, hãy bỏ qua email này.</p>
+            <p>Link cÃ³ hiá»‡u lá»±c trong 30 phÃºt.</p>
+            <p>Náº¿u báº¡n khÃ´ng yÃªu cáº§u, hÃ£y bá» qua email nÃ y.</p>
         """.formatted(fullName, resetLink);
 
         sendHtmlEmail(toEmail, subject, content);
     }
 
-    // ✅ 3. Thông báo hợp đồng sắp hết hạn
+    // âœ… 3. ThÃ´ng bÃ¡o há»£p Ä‘á»“ng sáº¯p háº¿t háº¡n
     public void sendContractExpiryEmail(String toEmail, String fullName, String contractEndDate) throws MessagingException {
-        String subject = "⚠️ Hợp đồng sắp hết hạn";
+        String subject = "âš ï¸ Há»£p Ä‘á»“ng sáº¯p háº¿t háº¡n";
         String content = """
-            <h2>Xin chào %s!</h2>
-            <p>Hợp đồng của bạn sẽ hết hạn vào ngày <b>%s</b>.</p>
-            <p>Vui lòng liên hệ phòng HR để gia hạn hợp đồng.</p>
+            <h2>Xin chÃ o %s!</h2>
+            <p>Há»£p Ä‘á»“ng cá»§a báº¡n sáº½ háº¿t háº¡n vÃ o ngÃ y <b>%s</b>.</p>
+            <p>Vui lÃ²ng liÃªn há»‡ phÃ²ng HR Ä‘á»ƒ gia háº¡n há»£p Ä‘á»“ng.</p>
             <br/>
-            <p>Trân trọng,<br/>HR Team</p>
+            <p>TrÃ¢n trá»ng,<br/>HR Team</p>
         """.formatted(fullName, contractEndDate);
 
         sendHtmlEmail(toEmail, subject, content);
     }
 
-    // ✅ 4. Gửi Payslip
+    // âœ… 4. Gá»­i Payslip
     public void sendPayslipEmail(String toEmail, String fullName, String month, double salary) throws MessagingException {
-        String subject = "💰 Bảng lương tháng " + month;
+        String subject = "ðŸ’° Báº£ng lÆ°Æ¡ng thÃ¡ng " + month;
         String content = """
-            <h2>Xin chào %s!</h2>
-            <p>Bảng lương tháng <b>%s</b> của bạn:</p>
+            <h2>Xin chÃ o %s!</h2>
+            <p>Báº£ng lÆ°Æ¡ng thÃ¡ng <b>%s</b> cá»§a báº¡n:</p>
             <table border="1" cellpadding="8" style="border-collapse:collapse;">
-                <tr><td><b>Họ tên</b></td><td>%s</td></tr>
-                <tr><td><b>Tháng</b></td><td>%s</td></tr>
-                <tr><td><b>Lương thực nhận</b></td><td>%,.0f VNĐ</td></tr>
+                <tr><td><b>Há» tÃªn</b></td><td>%s</td></tr>
+                <tr><td><b>ThÃ¡ng</b></td><td>%s</td></tr>
+                <tr><td><b>LÆ°Æ¡ng thá»±c nháº­n</b></td><td>%,.0f VNÄ</td></tr>
             </table>
             <br/>
-            <p>Trân trọng,<br/>HR Team</p>
+            <p>TrÃ¢n trá»ng,<br/>HR Team</p>
         """.formatted(fullName, month, fullName, month, salary);
 
         sendHtmlEmail(toEmail, subject, content);
     }
 
-    // ✅ Helper gửi HTML email
+    // âœ… Helper gá»­i HTML email
     public void sendNotificationEmail(String toEmail, String fullName, String subject, String message) throws MessagingException {
         String safeSubject = subject == null || subject.isBlank() ? "HRMS Notification" : subject;
         String safeMessage = message == null ? "" : message;
@@ -103,3 +103,5 @@ public class EmailService {
         mailSender.send(message);
     }
 }
+
+

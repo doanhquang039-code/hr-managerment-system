@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Entity phúc lợi nhân viên (bảo hiểm, hỗ trợ, v.v.).
+ * Entity phÃºc lá»£i nhÃ¢n viÃªn (báº£o hiá»ƒm, há»— trá»£, v.v.).
  */
 @Entity
 @Table(name = "employee_benefit")
@@ -69,21 +69,21 @@ public class EmployeeBenefit {
     // --- Business Logic ---
 
     /**
-     * Kiểm tra benefit đã hết hạn chưa.
+     * Kiá»ƒm tra benefit Ä‘Ã£ háº¿t háº¡n chÆ°a.
      */
     public boolean isExpired() {
         return endDate != null && endDate.isBefore(LocalDate.now());
     }
 
     /**
-     * Kiểm tra benefit sắp hết hạn (trong 30 ngày).
+     * Kiá»ƒm tra benefit sáº¯p háº¿t háº¡n (trong 30 ngÃ y).
      */
     public boolean isExpiringSoon() {
         return isExpiringSoon(30);
     }
 
     /**
-     * Kiểm tra benefit sắp hết hạn trong N ngày.
+     * Kiá»ƒm tra benefit sáº¯p háº¿t háº¡n trong N ngÃ y.
      */
     public boolean isExpiringSoon(int days) {
         if (endDate == null) return false;
@@ -92,17 +92,17 @@ public class EmployeeBenefit {
     }
 
     /**
-     * Tính số tháng còn lại.
+     * TÃ­nh sá»‘ thÃ¡ng cÃ²n láº¡i.
      */
     public long getRemainingMonths() {
-        if (endDate == null) return -1; // vô thời hạn
+        if (endDate == null) return -1; // vÃ´ thá»i háº¡n
         LocalDate today = LocalDate.now();
         if (endDate.isBefore(today)) return 0;
         return ChronoUnit.MONTHS.between(today, endDate);
     }
 
     /**
-     * Tính tổng chi phí dựa trên thời gian sử dụng.
+     * TÃ­nh tá»•ng chi phÃ­ dá»±a trÃªn thá»i gian sá»­ dá»¥ng.
      */
     public BigDecimal getTotalCost() {
         if (monetaryValue == null || startDate == null) return BigDecimal.ZERO;
@@ -113,7 +113,7 @@ public class EmployeeBenefit {
     }
 
     /**
-     * Auto-expire nếu đã quá endDate.
+     * Auto-expire náº¿u Ä‘Ã£ quÃ¡ endDate.
      */
     public boolean autoExpireIfNeeded() {
         if (isExpired() && status == BenefitStatus.ACTIVE) {
@@ -124,7 +124,7 @@ public class EmployeeBenefit {
     }
 
     /**
-     * Lấy icon theo loại phúc lợi.
+     * Láº¥y icon theo loáº¡i phÃºc lá»£i.
      */
     public String getBenefitIcon() {
         return switch (benefitType) {
@@ -153,3 +153,5 @@ public class EmployeeBenefit {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

@@ -56,3 +56,5 @@ public class CollaborationGroupPostService {
         return authUserHelper.getCurrentUser(authentication);
     }
 }
+
+

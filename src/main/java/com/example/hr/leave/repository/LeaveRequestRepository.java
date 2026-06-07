@@ -1,5 +1,7 @@
 package com.example.hr.leave.repository;
 
+
+import com.example.hr.department.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
@@ -78,10 +80,10 @@ List<LeaveRequest> findAllWithUser(@Param("keyword") String keyword);
    
    // Team Analytics methods
    @Query("SELECT COUNT(l) FROM LeaveRequest l WHERE l.user.department = :department AND l.status = 'PENDING'")
-   long countPendingByDepartment(@Param("department") com.example.hr.models.Department department);
+   long countPendingByDepartment(@Param("department") com.example.hr.department.entity.Department department);
    
    @Query("SELECT l FROM LeaveRequest l WHERE l.user.department = :department AND l.startDate >= :startDate AND l.endDate <= :endDate")
-   List<LeaveRequest> findByDepartmentAndDateRange(@Param("department") com.example.hr.models.Department department, 
+   List<LeaveRequest> findByDepartmentAndDateRange(@Param("department") com.example.hr.department.entity.Department department, 
                                                      @Param("startDate") java.time.LocalDate startDate, 
                                                      @Param("endDate") java.time.LocalDate endDate);
 }

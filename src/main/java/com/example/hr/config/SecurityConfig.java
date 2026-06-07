@@ -4,7 +4,7 @@ package com.example.hr.config;
 
 import com.example.hr.security.LoginVerificationCodeFilter;
 import com.example.hr.service.CustomOAuth2UserService;
-import com.example.hr.service.SystemSettingService;
+import com.example.hr.system.service.SystemSettingService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

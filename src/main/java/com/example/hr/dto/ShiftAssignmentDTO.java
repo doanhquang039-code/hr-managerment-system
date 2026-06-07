@@ -8,14 +8,16 @@ import java.time.LocalDate;
 @Data
 public class ShiftAssignmentDTO {
 
-    @NotNull(message = "userId là bắt buộc")
+    @NotNull(message = "userId lÃ  báº¯t buá»™c")
     private Integer userId;
 
-    @NotNull(message = "shiftId là bắt buộc")
+    @NotNull(message = "shiftId lÃ  báº¯t buá»™c")
     private Integer shiftId;
 
-    @NotNull(message = "Ngày làm việc là bắt buộc")
+    @NotNull(message = "NgÃ y lÃ m viá»‡c lÃ  báº¯t buá»™c")
     private LocalDate workDate;
 
     private String note;
 }
+
+

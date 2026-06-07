@@ -1,7 +1,7 @@
 package com.example.hr.repository;
 
 import com.example.hr.enums.OKRStatus;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.Objective;
 import com.example.hr.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,3 +32,5 @@ public interface ObjectiveRepository extends JpaRepository<Objective, Long> {
            "(SELECT u.department FROM User u WHERE u = :user)")
     List<Objective> findAccessibleObjectives(@Param("user") User user);
 }
+
+

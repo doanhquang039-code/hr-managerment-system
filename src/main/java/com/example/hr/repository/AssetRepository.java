@@ -28,3 +28,5 @@ public interface AssetRepository extends JpaRepository<Asset, Integer> {
     
     long countByCategory(String category);
 }
+
+

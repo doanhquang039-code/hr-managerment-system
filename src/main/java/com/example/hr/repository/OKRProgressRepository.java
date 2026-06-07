@@ -14,3 +14,5 @@ public interface OKRProgressRepository extends JpaRepository<OKRProgress, Long> 
     
     List<OKRProgress> findByKeyResultIdOrderByCreatedAtDesc(Long keyResultId);
 }
+
+

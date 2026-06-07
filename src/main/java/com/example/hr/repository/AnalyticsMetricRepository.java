@@ -1,7 +1,7 @@
 package com.example.hr.repository;
 
 import com.example.hr.models.AnalyticsMetric;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,3 +27,5 @@ public interface AnalyticsMetricRepository extends JpaRepository<AnalyticsMetric
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate);
 }
+
+

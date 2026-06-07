@@ -31,3 +31,5 @@ public interface EmployeeSkillRepository extends JpaRepository<EmployeeSkill, In
 
     boolean existsByUserIdAndSkillName(Integer userId, String skillName);
 }
+
+

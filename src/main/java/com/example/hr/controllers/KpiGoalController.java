@@ -1,10 +1,10 @@
 package com.example.hr.controllers;
 
 import com.example.hr.enums.KpiStatus;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.KpiGoal;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.KpiGoalService;
@@ -82,10 +82,10 @@ public class KpiGoalController {
             }
             String status = switch (goal.getStatus()) {
                 case ACTIVE -> "Active";
-                case COMPLETED -> "Hoàn thành";
-                case FAILED -> "Không đạt";
-                case CANCELED -> "Đã hủy";
-                case DRAFT -> "Nháp";
+                case COMPLETED -> "HoÃ n thÃ nh";
+                case FAILED -> "KhÃ´ng Ä‘áº¡t";
+                case CANCELED -> "ÄÃ£ há»§y";
+                case DRAFT -> "NhÃ¡p";
             };
             String statusClass = switch (goal.getStatus()) {
                 case ACTIVE -> "status-active";
@@ -112,7 +112,7 @@ public class KpiGoalController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String showEditForm(@PathVariable Integer id, Model model) {
         KpiGoal goal = kpiGoalService.findById(id)
-                .orElseThrow(() -> new RuntimeException("KPI Goal không tồn tại"));
+                .orElseThrow(() -> new RuntimeException("KPI Goal khÃ´ng tá»“n táº¡i"));
         model.addAttribute("goal", goal);
         model.addAttribute("users", userRepository.findAll());
         model.addAttribute("departments", departmentRepository.findAll());
@@ -128,7 +128,7 @@ public class KpiGoalController {
                        Authentication auth,
                        RedirectAttributes ra) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+                .orElseThrow(() -> new RuntimeException("User khÃ´ng tá»“n táº¡i"));
         goal.setUser(user);
 
         if (departmentId != null) {
@@ -141,7 +141,7 @@ public class KpiGoalController {
         }
 
         kpiGoalService.save(goal);
-        ra.addFlashAttribute("success", "Lưu KPI Goal thành công!");
+        ra.addFlashAttribute("success", "LÆ°u KPI Goal thÃ nh cÃ´ng!");
         return "redirect:/admin/kpi";
     }
 
@@ -151,7 +151,7 @@ public class KpiGoalController {
                                  @RequestParam BigDecimal currentValue,
                                  RedirectAttributes ra) {
         kpiGoalService.updateProgress(id, currentValue);
-        ra.addFlashAttribute("success", "Cập nhật tiến độ KPI thành công!");
+        ra.addFlashAttribute("success", "Cáº­p nháº­t tiáº¿n Ä‘á»™ KPI thÃ nh cÃ´ng!");
         return "redirect:/admin/kpi";
     }
 
@@ -159,7 +159,7 @@ public class KpiGoalController {
     @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Integer id, RedirectAttributes ra) {
         kpiGoalService.delete(id);
-        ra.addFlashAttribute("success", "Đã xóa KPI Goal!");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ³a KPI Goal!");
         return "redirect:/admin/kpi";
     }
 
@@ -182,3 +182,5 @@ public class KpiGoalController {
         return "user1/kpi";
     }
 }
+
+

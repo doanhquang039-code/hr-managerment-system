@@ -60,6 +60,9 @@
         .manager-sidebar .submenu.open { display:block; }
         .manager-sidebar .submenu a { padding:10px 12px 10px 50px; font-size:.84rem; font-weight:600; min-height:40px; }
         .manager-sidebar .sidebar-logout { padding:18px 8px 0; margin-top:18px; border-top:1px solid rgba(255,255,255,.1); }
+        .manager-lang { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; padding:12px 8px 0; }
+        .manager-lang .lang-btn { border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); color:#cbd5e1; border-radius:8px; padding:5px 10px; font-size:.72rem; font-weight:800; }
+        .manager-lang .lang-btn.active { background:#6366f1; border-color:#6366f1; color:#fff; }
         .bg-light { background-color: transparent !important; }
     </style>
 
@@ -196,6 +199,13 @@
     <a class="nav-link" href="#" onclick="event.preventDefault(); window.HRMS && HRMS.settings && HRMS.settings.openPanel();"><i class="bi bi-gear"></i> C&#224;i &#273;&#7863;t dashboard</a>
 
     <div class="sidebar-logout">
+        <div class="manager-lang">
+            <button class="lang-btn" type="button" data-lang="vi">VI</button>
+            <button class="lang-btn" type="button" data-lang="en">EN</button>
+            <button class="lang-btn" type="button" data-lang="zh">ZH</button>
+            <button class="lang-btn" type="button" data-lang="ja">JA</button>
+            <button class="lang-btn" type="button" data-lang="ko">KO</button>
+        </div>
         <form th:action="@{/logout}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <button type="submit" class="btn btn-outline-light btn-sm w-100" style="border-radius:10px;">
@@ -237,6 +247,9 @@
             }
         })();
     </script>
+    <script th:src="@{/js/lang-toggle.js}"></script>
+    <script th:src="@{/js/hrms-settings.js}"></script>
+    <script th:src="@{/js/role-menu-i18n.js}"></script>
     <script th:src="@{/js/role-polish.js}"></script>
     <script th:src="@{/js/chatbot-widget.js}"></script>
 </nav>

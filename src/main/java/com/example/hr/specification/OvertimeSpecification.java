@@ -1,5 +1,7 @@
 package com.example.hr.specification;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.OvertimeStatus;
 import com.example.hr.models.OvertimeRequest;
 import org.springframework.data.jpa.domain.Specification;

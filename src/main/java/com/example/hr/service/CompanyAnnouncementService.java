@@ -2,10 +2,10 @@ package com.example.hr.service;
 
 import com.example.hr.enums.AnnouncementPriority;
 import com.example.hr.models.CompanyAnnouncement;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
 import com.example.hr.repository.CompanyAnnouncementRepository;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +77,7 @@ public class CompanyAnnouncementService {
                                       Integer departmentId, AnnouncementPriority priority,
                                       LocalDateTime publishedAt, boolean active) {
         CompanyAnnouncement a = announcementRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy thông báo"));
+                .orElseThrow(() -> new IllegalArgumentException("KhÃ´ng tÃ¬m tháº¥y thÃ´ng bÃ¡o"));
         a.setTitle(title);
         a.setContent(content);
         a.setPriority(priority != null ? priority : AnnouncementPriority.NORMAL);
@@ -96,3 +96,5 @@ public class CompanyAnnouncementService {
         announcementRepository.deleteById(id);
     }
 }
+
+

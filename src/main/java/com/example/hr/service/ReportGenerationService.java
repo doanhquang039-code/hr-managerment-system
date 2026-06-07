@@ -4,33 +4,101 @@ package com.example.hr.service;
 
 
 
+
+import com.example.hr.department.entity.Department;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.user.repository.UserRepository;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.dto.MonthlyReportDTO;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.payroll.dto.PayrollSummaryDTO;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.models.*;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.repository.*;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.util.ExcelExportUtil;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.util.PayrollCalculator;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import org.slf4j.Logger;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import org.slf4j.LoggerFactory;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import org.springframework.stereotype.Service;
 
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.io.IOException;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.math.BigDecimal;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.math.RoundingMode;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.time.LocalDate;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.time.LocalDateTime;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.time.YearMonth;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.util.*;
+import com.example.hr.training.entity.TrainingProgram;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.util.stream.Collectors;
 
 /**
- * Service tổng hợp báo cáo HR.
- * Bao gồm: Monthly report, Payroll report, Headcount report, Training report, Asset report.
+ * Service tá»•ng há»£p bÃ¡o cÃ¡o HR.
+ * Bao gá»“m: Monthly report, Payroll report, Headcount report, Training report, Asset report.
  */
 @Service
 public class ReportGenerationService {
@@ -75,7 +143,7 @@ public class ReportGenerationService {
     }
 
     /**
-     * Tạo Monthly HR Report.
+     * Táº¡o Monthly HR Report.
      */
     public MonthlyReportDTO generateMonthlyReport(int year, int month) {
         log.info("Generating monthly report for {}/{}", month, year);
@@ -128,14 +196,14 @@ public class ReportGenerationService {
     }
 
     /**
-     * Xuất Excel báo cáo nhân sự tổng hợp.
+     * Xuáº¥t Excel bÃ¡o cÃ¡o nhÃ¢n sá»± tá»•ng há»£p.
      */
     public byte[] exportEmployeeReport() throws IOException {
         log.info("Exporting employee report to Excel");
 
         List<String> headers = List.of(
-                "Mã NV", "Họ tên", "Email", "Phòng ban",
-                "Chức vụ", "Ngày vào làm", "Trạng thái", "Vai trò"
+                "MÃ£ NV", "Há» tÃªn", "Email", "PhÃ²ng ban",
+                "Chá»©c vá»¥", "NgÃ y vÃ o lÃ m", "Tráº¡ng thÃ¡i", "Vai trÃ²"
         );
 
         List<User> employees = userRepository.findAll();
@@ -154,18 +222,18 @@ public class ReportGenerationService {
                 })
                 .collect(Collectors.toList());
 
-        return ExcelExportUtil.exportToExcel("Danh sách nhân viên", headers, data);
+        return ExcelExportUtil.exportToExcel("Danh sÃ¡ch nhÃ¢n viÃªn", headers, data);
     }
 
     /**
-     * Xuất Excel báo cáo OT.
+     * Xuáº¥t Excel bÃ¡o cÃ¡o OT.
      */
     public byte[] exportOvertimeReport(int year, int month) throws IOException {
         log.info("Exporting overtime report for {}/{}", month, year);
 
         List<String> headers = List.of(
-                "Mã NV", "Họ tên", "Ngày OT", "Số giờ",
-                "Lý do", "Trạng thái", "Người duyệt", "Tiền OT"
+                "MÃ£ NV", "Há» tÃªn", "NgÃ y OT", "Sá»‘ giá»",
+                "LÃ½ do", "Tráº¡ng thÃ¡i", "NgÆ°á»i duyá»‡t", "Tiá»n OT"
         );
 
         LocalDate start = LocalDate.of(year, month, 1);
@@ -187,25 +255,25 @@ public class ReportGenerationService {
                     row.add(ot.getHours() != null ? ot.getHours() : 0); // Changed from getTotalHours()
                     row.add(ot.getReason());
                     row.add(ot.getStatus()); // Already a String
-                    row.add(ot.getApprovedBy() != null ? ot.getApprovedBy().getFullName() : "Chưa duyệt");
-                    // OvertimeRequest hiện chưa lưu tiền OT; để 0 và có thể tính lại khi có hourlyRate.
+                    row.add(ot.getApprovedBy() != null ? ot.getApprovedBy().getFullName() : "ChÆ°a duyá»‡t");
+                    // OvertimeRequest hiá»‡n chÆ°a lÆ°u tiá»n OT; Ä‘á»ƒ 0 vÃ  cÃ³ thá»ƒ tÃ­nh láº¡i khi cÃ³ hourlyRate.
                     row.add(BigDecimal.ZERO);
                     return row;
                 })
                 .collect(Collectors.toList());
 
-        return ExcelExportUtil.exportToExcel("Báo cáo OT tháng " + month + "/" + year, headers, data);
+        return ExcelExportUtil.exportToExcel("BÃ¡o cÃ¡o OT thÃ¡ng " + month + "/" + year, headers, data);
     }
 
     /**
-     * Xuất Excel danh sách tài sản.
+     * Xuáº¥t Excel danh sÃ¡ch tÃ i sáº£n.
      */
     public byte[] exportAssetReport() throws IOException {
         log.info("Exporting asset report to Excel");
 
         List<String> headers = List.of(
-                "Mã TS", "Tên tài sản", "Loại", "Nguyên giá",
-                "Ngày mua", "Trạng thái", "Tình trạng", "Vị trí"
+                "MÃ£ TS", "TÃªn tÃ i sáº£n", "Loáº¡i", "NguyÃªn giÃ¡",
+                "NgÃ y mua", "Tráº¡ng thÃ¡i", "TÃ¬nh tráº¡ng", "Vá»‹ trÃ­"
         );
 
         List<Asset> assets = assetRepository.findAll();
@@ -224,18 +292,18 @@ public class ReportGenerationService {
                 })
                 .collect(Collectors.toList());
 
-        return ExcelExportUtil.exportToExcel("Danh sách tài sản", headers, data);
+        return ExcelExportUtil.exportToExcel("Danh sÃ¡ch tÃ i sáº£n", headers, data);
     }
 
     /**
-     * Xuất Excel báo cáo training.
+     * Xuáº¥t Excel bÃ¡o cÃ¡o training.
      */
     public byte[] exportTrainingReport() throws IOException {
         log.info("Exporting training report to Excel");
 
         List<String> headers = List.of(
-                "Tên chương trình", "Loại", "Ngày bắt đầu", "Ngày kết thúc",
-                "Số học viên", "Ngân sách", "Trạng thái", "Giảng viên"
+                "TÃªn chÆ°Æ¡ng trÃ¬nh", "Loáº¡i", "NgÃ y báº¯t Ä‘áº§u", "NgÃ y káº¿t thÃºc",
+                "Sá»‘ há»c viÃªn", "NgÃ¢n sÃ¡ch", "Tráº¡ng thÃ¡i", "Giáº£ng viÃªn"
         );
 
         List<TrainingProgram> programs = trainingProgramRepository.findAll();
@@ -254,11 +322,11 @@ public class ReportGenerationService {
                 })
                 .collect(Collectors.toList());
 
-        return ExcelExportUtil.exportToExcel("Báo cáo đào tạo", headers, data);
+        return ExcelExportUtil.exportToExcel("BÃ¡o cÃ¡o Ä‘Ã o táº¡o", headers, data);
     }
 
     /**
-     * Tổng hợp cost analysis theo phòng ban.
+     * Tá»•ng há»£p cost analysis theo phÃ²ng ban.
      */
     public Map<String, Map<String, BigDecimal>> generateDepartmentCostAnalysis(int year, int month) {
         Map<String, Map<String, BigDecimal>> analysis = new LinkedHashMap<>();
@@ -293,7 +361,7 @@ public class ReportGenerationService {
     }
 
     /**
-     * Tạo yearly summary.
+     * Táº¡o yearly summary.
      */
     public Map<String, Object> generateYearlySummary(int year) {
         Map<String, Object> summary = new LinkedHashMap<>();
@@ -340,12 +408,12 @@ public class ReportGenerationService {
     }
 
     /**
-     * Generate monthly report as Excel bytes — dùng cho S3 backup.
+     * Generate monthly report as Excel bytes â€” dÃ¹ng cho S3 backup.
      */
     public byte[] generateMonthlyReportBytes(int month, int year) {
         try {
             MonthlyReportDTO report = generateMonthlyReport(year, month);
-            // Tạo simple CSV/JSON bytes nếu không có Excel util
+            // Táº¡o simple CSV/JSON bytes náº¿u khÃ´ng cÃ³ Excel util
             String csv = String.format(
                 "Month,Year,TotalEmployees,NewHires,TotalPayroll,LeaveRequests,OvertimeRequests\n%d,%d,%d,%d,%s,%d,%d",
                 month, year,
@@ -362,3 +430,5 @@ public class ReportGenerationService {
         }
     }
 }
+
+

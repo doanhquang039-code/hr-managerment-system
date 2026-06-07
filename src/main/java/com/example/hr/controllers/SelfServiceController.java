@@ -6,27 +6,48 @@ package com.example.hr.controllers;
 
 
 
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.user.repository.UserRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.attendance.repository.AttendanceRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.leave.dto.LeaveBalanceDTO;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.enums.LeaveStatus;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.models.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.repository.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.leave.service.AdvancedLeaveService;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import com.example.hr.user.service.UserService;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import lombok.RequiredArgsConstructor;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.security.core.Authentication;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.stereotype.Controller;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.ui.Model;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.web.bind.annotation.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.time.LocalDate;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.time.LocalDateTime;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
 import java.util.List;
 
 @Controller
@@ -216,3 +237,5 @@ public class SelfServiceController {
         return "redirect:/self-service/portal";
     }
 }
+
+

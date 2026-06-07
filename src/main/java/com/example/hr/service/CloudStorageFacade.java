@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Facade thống nhất cloud storage:
- * - Cloudinary: media (ảnh, video)
- * - AWS S3: backup báo cáo, payslip, audit logs
- * - Google Drive: sync tài liệu nhân viên
+ * Facade thá»‘ng nháº¥t cloud storage:
+ * - Cloudinary: media (áº£nh, video)
+ * - AWS S3: backup bÃ¡o cÃ¡o, payslip, audit logs
+ * - Google Drive: sync tÃ i liá»‡u nhÃ¢n viÃªn
  *
- * Tự động fallback nếu service không available.
+ * Tá»± Ä‘á»™ng fallback náº¿u service khÃ´ng available.
  */
 @Service
 public class CloudStorageFacade {
@@ -35,8 +35,8 @@ public class CloudStorageFacade {
     // ==================== REPORT BACKUP ====================
 
     /**
-     * Backup báo cáo lên S3 (nếu có) + Google Drive (nếu có).
-     * @return Map chứa URLs từ các services
+     * Backup bÃ¡o cÃ¡o lÃªn S3 (náº¿u cÃ³) + Google Drive (náº¿u cÃ³).
+     * @return Map chá»©a URLs tá»« cÃ¡c services
      */
     public Map<String, String> backupReport(byte[] data, String fileName, String mimeType) {
         Map<String, String> urls = new java.util.HashMap<>();
@@ -66,7 +66,7 @@ public class CloudStorageFacade {
     }
 
     /**
-     * Backup payslip PDF lên S3.
+     * Backup payslip PDF lÃªn S3.
      */
     public String backupPayslip(byte[] pdfData, Integer userId, int month, int year) {
         if (s3Service == null) return null;
@@ -79,7 +79,7 @@ public class CloudStorageFacade {
     }
 
     /**
-     * Upload tài liệu nhân viên lên Drive + S3.
+     * Upload tÃ i liá»‡u nhÃ¢n viÃªn lÃªn Drive + S3.
      */
     public Map<String, String> uploadEmployeeDocument(byte[] data, String fileName,
                                                         String mimeType, Integer userId) {
@@ -102,7 +102,7 @@ public class CloudStorageFacade {
     // ==================== PUSH NOTIFICATIONS ====================
 
     /**
-     * Gửi push notification qua Firebase (nếu có).
+     * Gá»­i push notification qua Firebase (náº¿u cÃ³).
      */
     public void pushNotification(String fcmToken, String title, String body,
                                   Map<String, String> data) {
@@ -111,7 +111,7 @@ public class CloudStorageFacade {
     }
 
     /**
-     * Broadcast thông báo đến tất cả nhân viên.
+     * Broadcast thÃ´ng bÃ¡o Ä‘áº¿n táº¥t cáº£ nhÃ¢n viÃªn.
      */
     public void broadcastAnnouncement(String title, String content) {
         if (firebaseService == null) return;
@@ -121,7 +121,7 @@ public class CloudStorageFacade {
     // ==================== HEALTH CHECK ====================
 
     /**
-     * Kiểm tra trạng thái tất cả cloud services.
+     * Kiá»ƒm tra tráº¡ng thÃ¡i táº¥t cáº£ cloud services.
      */
     public Map<String, Object> getHealthStatus() {
         Map<String, Object> status = new java.util.LinkedHashMap<>();
@@ -141,3 +141,5 @@ public class CloudStorageFacade {
         return services;
     }
 }
+
+

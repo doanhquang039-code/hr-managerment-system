@@ -24,3 +24,5 @@ public interface ExitInterviewRepository extends JpaRepository<ExitInterview, In
     
     long countByWouldRecommend(boolean wouldRecommend);
 }
+
+

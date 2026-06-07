@@ -36,3 +36,4 @@ public class UserAssetController {
         return "user1/my-assets";
     }
 }
+

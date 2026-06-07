@@ -148,3 +148,5 @@ public class NewOvertimeService {
         return (day == java.time.DayOfWeek.SATURDAY || day == java.time.DayOfWeek.SUNDAY) ? 2.0 : 1.5;
     }
 }
+
+

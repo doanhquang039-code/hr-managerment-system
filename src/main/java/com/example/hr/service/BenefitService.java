@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Service quản lý phúc lợi nhân viên.
- * Bao gồm: assign/revoke, auto-expire, tính chi phí.
+ * Service quáº£n lÃ½ phÃºc lá»£i nhÃ¢n viÃªn.
+ * Bao gá»“m: assign/revoke, auto-expire, tÃ­nh chi phÃ­.
  */
 @Service
 @Transactional
@@ -41,7 +41,7 @@ public class BenefitService {
     }
 
     /**
-     * Lấy tất cả phúc lợi.
+     * Láº¥y táº¥t cáº£ phÃºc lá»£i.
      */
     @Transactional(readOnly = true)
     public List<EmployeeBenefit> getAllBenefits() {
@@ -49,16 +49,16 @@ public class BenefitService {
     }
 
     /**
-     * Lấy phúc lợi theo ID.
+     * Láº¥y phÃºc lá»£i theo ID.
      */
     @Transactional(readOnly = true)
     public EmployeeBenefit getBenefitById(Integer id) {
         return benefitRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Phúc lợi", id));
+                .orElseThrow(() -> new ResourceNotFoundException("PhÃºc lá»£i", id));
     }
 
     /**
-     * Lấy phúc lợi theo nhân viên.
+     * Láº¥y phÃºc lá»£i theo nhÃ¢n viÃªn.
      */
     @Transactional(readOnly = true)
     public List<EmployeeBenefit> getBenefitsByUser(Integer userId) {
@@ -66,7 +66,7 @@ public class BenefitService {
     }
 
     /**
-     * Lấy phúc lợi đang hoạt động theo nhân viên.
+     * Láº¥y phÃºc lá»£i Ä‘ang hoáº¡t Ä‘á»™ng theo nhÃ¢n viÃªn.
      */
     @Transactional(readOnly = true)
     public List<EmployeeBenefit> getActiveBenefitsByUser(Integer userId) {
@@ -74,15 +74,15 @@ public class BenefitService {
     }
 
     /**
-     * Gán phúc lợi cho nhân viên.
+     * GÃ¡n phÃºc lá»£i cho nhÃ¢n viÃªn.
      */
     public EmployeeBenefit assignBenefit(EmployeeBenefitDTO dto) {
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên", dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("NhÃ¢n viÃªn", dto.getUserId()));
 
         // Validate dates
         if (dto.getEndDate() != null && dto.getEndDate().isBefore(dto.getStartDate())) {
-            throw new BusinessValidationException("Ngày kết thúc phải sau ngày bắt đầu");
+            throw new BusinessValidationException("NgÃ y káº¿t thÃºc pháº£i sau ngÃ y báº¯t Ä‘áº§u");
         }
 
         EmployeeBenefit benefit = new EmployeeBenefit();
@@ -105,7 +105,7 @@ public class BenefitService {
     }
 
     /**
-     * Cập nhật phúc lợi.
+     * Cáº­p nháº­t phÃºc lá»£i.
      */
     public EmployeeBenefit updateBenefit(Integer id, EmployeeBenefitDTO dto) {
         EmployeeBenefit benefit = getBenefitById(id);
@@ -121,7 +121,7 @@ public class BenefitService {
     }
 
     /**
-     * Hủy phúc lợi.
+     * Há»§y phÃºc lá»£i.
      */
     public EmployeeBenefit cancelBenefit(Integer id) {
         EmployeeBenefit benefit = getBenefitById(id);
@@ -131,17 +131,17 @@ public class BenefitService {
     }
 
     /**
-     * Xóa phúc lợi.
+     * XÃ³a phÃºc lá»£i.
      */
     public void deleteBenefit(Integer id) {
         if (!benefitRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Phúc lợi", id);
+            throw new ResourceNotFoundException("PhÃºc lá»£i", id);
         }
         benefitRepository.deleteById(id);
     }
 
     /**
-     * Auto-expire tất cả phúc lợi đã hết hạn nhưng còn status ACTIVE.
+     * Auto-expire táº¥t cáº£ phÃºc lá»£i Ä‘Ã£ háº¿t háº¡n nhÆ°ng cÃ²n status ACTIVE.
      */
     public int autoExpireBenefits() {
         List<EmployeeBenefit> expired = benefitRepository.findExpiredButActive(LocalDate.now());
@@ -158,7 +158,7 @@ public class BenefitService {
     }
 
     /**
-     * Lấy phúc lợi sắp hết hạn (30 ngày).
+     * Láº¥y phÃºc lá»£i sáº¯p háº¿t háº¡n (30 ngÃ y).
      */
     @Transactional(readOnly = true)
     public List<EmployeeBenefit> getExpiringSoonBenefits() {
@@ -168,7 +168,7 @@ public class BenefitService {
     }
 
     /**
-     * Tổng chi phí phúc lợi đang hoạt động.
+     * Tá»•ng chi phÃ­ phÃºc lá»£i Ä‘ang hoáº¡t Ä‘á»™ng.
      */
     @Transactional(readOnly = true)
     public BigDecimal getTotalActiveBenefitCost() {
@@ -176,7 +176,7 @@ public class BenefitService {
     }
 
     /**
-     * Chi phí phúc lợi của nhân viên.
+     * Chi phÃ­ phÃºc lá»£i cá»§a nhÃ¢n viÃªn.
      */
     @Transactional(readOnly = true)
     public BigDecimal getUserBenefitCost(Integer userId) {
@@ -184,7 +184,7 @@ public class BenefitService {
     }
 
     /**
-     * Thống kê phúc lợi theo loại.
+     * Thá»‘ng kÃª phÃºc lá»£i theo loáº¡i.
      */
     @Transactional(readOnly = true)
     public Map<BenefitType, Long> countActiveBenefitsByType() {
@@ -196,7 +196,7 @@ public class BenefitService {
     }
 
     /**
-     * Chi phí phúc lợi theo phòng ban.
+     * Chi phÃ­ phÃºc lá»£i theo phÃ²ng ban.
      */
     @Transactional(readOnly = true)
     public Map<String, BigDecimal> getCostByDepartment() {
@@ -207,3 +207,5 @@ public class BenefitService {
                 ));
     }
 }
+
+

@@ -1,5 +1,7 @@
 package com.example.hr.controllers;
 
+
+import com.example.hr.department.entity.Department;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.Contract;
 import com.example.hr.repository.ContractRepository;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.HrAuditLogService;
 
@@ -104,10 +106,12 @@ public class ContractController {
         contractRepository.save(contract);
         hrAuditLogService.log(auth, isNew ? "CONTRACT_CREATED" : "CONTRACT_UPDATED", "Contract",
                 contract.getId() != null ? String.valueOf(contract.getId()) : null,
-                "Loại: " + contract.getContractType()
+                "Loáº¡i: " + contract.getContractType()
                         + ", userId=" + (contract.getUser() != null ? contract.getUser().getId() : "?")
-                        + ", hết hạn=" + contract.getExpiryDate(),
+                        + ", háº¿t háº¡n=" + contract.getExpiryDate(),
                 null);
         return "redirect:/admin/contracts";
     }
 }
+
+

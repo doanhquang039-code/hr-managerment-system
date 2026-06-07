@@ -53,3 +53,5 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Integer> {
     
     List<AuditLog> findByUserIdOrderByTimestampDesc(Integer userId);
 }
+
+

@@ -14,3 +14,5 @@ public interface KeyResultRepository extends JpaRepository<KeyResult, Long> {
     
     List<KeyResult> findByObjectiveIdOrderByCreatedAtAsc(Long objectiveId);
 }
+
+

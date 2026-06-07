@@ -11,10 +11,10 @@ import java.time.LocalDate;
 @Data
 public class EmployeeSkillDTO {
 
-    @NotNull(message = "userId là bắt buộc")
+    @NotNull(message = "userId lÃ  báº¯t buá»™c")
     private Integer userId;
 
-    @NotBlank(message = "Tên kỹ năng là bắt buộc")
+    @NotBlank(message = "TÃªn ká»¹ nÄƒng lÃ  báº¯t buá»™c")
     private String skillName;
 
     private String skillCategory = "TECHNICAL"; // TECHNICAL, SOFT, LANGUAGE, MANAGEMENT
@@ -35,3 +35,5 @@ public class EmployeeSkillDTO {
 
     private String notes;
 }
+
+

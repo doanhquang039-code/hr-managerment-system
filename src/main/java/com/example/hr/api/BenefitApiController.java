@@ -1,5 +1,7 @@
 package com.example.hr.api;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.dto.EmployeeBenefitDTO;
 import com.example.hr.models.EmployeeBenefit;
 import com.example.hr.service.BenefitService;
@@ -83,3 +85,5 @@ public class BenefitApiController {
         return ResponseEntity.ok(benefitService.getCostByDepartment());
     }
 }
+
+

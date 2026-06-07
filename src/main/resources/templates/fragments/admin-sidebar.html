@@ -230,9 +230,15 @@
   </div>
 
   <div class="admin-lang">
-    <button type="button" data-lang="vi">NV VI</button>
+    <button type="button" class="lang-btn" data-lang="vi">VI</button>
     <span style="opacity:.25">|</span>
-    <button type="button" data-lang="en">GB EN</button>
+    <button type="button" class="lang-btn" data-lang="en">EN</button>
+    <span style="opacity:.25">|</span>
+    <button type="button" class="lang-btn" data-lang="zh">ZH</button>
+    <span style="opacity:.25">|</span>
+    <button type="button" class="lang-btn" data-lang="ja">JA</button>
+    <span style="opacity:.25">|</span>
+    <button type="button" class="lang-btn" data-lang="ko">KO</button>
   </div>
   <form th:action="@{/logout}" method="post" class="admin-logout">
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
@@ -254,6 +260,7 @@
     })();
   </script>
   <script th:src="@{/js/chatbot-widget.js}"></script>
+  <script th:src="@{/js/lang-toggle.js}"></script>
   <script th:src="@{/js/hrms-ui.js}"></script>
 </nav>
 </body>

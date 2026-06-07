@@ -41,3 +41,4 @@ public interface CompanyAssetRepository extends JpaRepository<CompanyAsset, Inte
     @Query("SELECT a.category, COUNT(a) FROM CompanyAsset a GROUP BY a.category")
     List<Object[]> countByCategory();
 }
+

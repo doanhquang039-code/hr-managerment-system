@@ -238,3 +238,5 @@ public class EmailTemplateService {
             List<String> requiredVariables
     ) {}
 }
+
+

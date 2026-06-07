@@ -25,3 +25,4 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
            "(:type IS NULL OR c.contractType = :type)")
     List<Contract> filterContracts(String employeeName, String type, String status, Sort sort);
 }
+

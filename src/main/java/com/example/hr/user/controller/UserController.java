@@ -1,8 +1,10 @@
 package com.example.hr.user.controller;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.JobPositionRepository;
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.recruitment.repository.JobPositionRepository;
 import com.example.hr.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.Sheet;

@@ -43,7 +43,7 @@ public class OnboardingApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Đã hoàn thành task");
+            response.put("message", "ÄÃ£ hoÃ n thÃ nh task");
             response.put("item", item);
             
             return ResponseEntity.ok(response);
@@ -68,7 +68,7 @@ public class OnboardingApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Đã tạo checklist chuẩn");
+            response.put("message", "ÄÃ£ táº¡o checklist chuáº©n");
             
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -105,7 +105,7 @@ public class OnboardingApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Cảm ơn bạn đã chia sẻ");
+            response.put("message", "Cáº£m Æ¡n báº¡n Ä‘Ã£ chia sáº»");
             response.put("interview", interview);
             
             return ResponseEntity.ok(response);
@@ -130,3 +130,5 @@ public class OnboardingApiController {
         return ResponseEntity.ok(response);
     }
 }
+
+

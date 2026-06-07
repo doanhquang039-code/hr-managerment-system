@@ -1,7 +1,7 @@
 package com.example.hr.repository;
 
 import com.example.hr.models.TeamGoal;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -37,3 +37,5 @@ public interface TeamGoalRepository extends JpaRepository<TeamGoal, Integer> {
     // Additional method for Team Analytics
     List<TeamGoal> findByDepartment(Department department);
 }
+
+

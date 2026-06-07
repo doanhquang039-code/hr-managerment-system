@@ -14,13 +14,13 @@ public class AssetAssignmentDTO {
 
     private Integer id;
 
-    @NotNull(message = "Asset ID không được để trống")
+    @NotNull(message = "Asset ID khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private Integer assetId;
 
-    @NotNull(message = "User ID không được để trống")
+    @NotNull(message = "User ID khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private Integer userId;
 
-    @NotNull(message = "Ngày giao không được để trống")
+    @NotNull(message = "NgÃ y giao khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private LocalDate assignedDate;
 
     private LocalDate expectedReturn;
@@ -28,6 +28,8 @@ public class AssetAssignmentDTO {
     private String conditionOnAssign;
     private String notes;
 
-    // Cho trả tài sản
+    // Cho tráº£ tÃ i sáº£n
     private String conditionOnReturn;
 }
+
+

@@ -47,3 +47,5 @@ public class NotificationPreference {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

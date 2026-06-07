@@ -26,69 +26,69 @@ public class HealthInsightService {
 
         if (sleep < 6) {
             score -= 22;
-            flags.add("Thiếu ngủ");
-            recommendations.add("Ưu tiên ngủ 7-8 giờ; tránh OT liên tục nếu ngủ dưới 6 giờ.");
+            flags.add("Thiáº¿u ngá»§");
+            recommendations.add("Æ¯u tiÃªn ngá»§ 7-8 giá»; trÃ¡nh OT liÃªn tá»¥c náº¿u ngá»§ dÆ°á»›i 6 giá».");
         } else if (sleep < 7) {
             score -= 10;
-            recommendations.add("Cố gắng tăng thời lượng ngủ thêm 30-60 phút.");
+            recommendations.add("Cá»‘ gáº¯ng tÄƒng thá»i lÆ°á»£ng ngá»§ thÃªm 30-60 phÃºt.");
         }
 
         if (stress >= 8) {
             score -= 24;
             flags.add("Stress cao");
-            recommendations.add("Trao đổi với quản lý hoặc HR nếu stress kéo dài; chia nhỏ việc và đặt giờ nghỉ ngắn.");
+            recommendations.add("Trao Ä‘á»•i vá»›i quáº£n lÃ½ hoáº·c HR náº¿u stress kÃ©o dÃ i; chia nhá» viá»‡c vÃ  Ä‘áº·t giá» nghá»‰ ngáº¯n.");
         } else if (stress >= 6) {
             score -= 12;
-            recommendations.add("Nên nghỉ 5 phút sau mỗi 60-90 phút làm việc tập trung.");
+            recommendations.add("NÃªn nghá»‰ 5 phÃºt sau má»—i 60-90 phÃºt lÃ m viá»‡c táº­p trung.");
         }
 
         if (steps < 3000) {
             score -= 14;
-            flags.add("Ít vận động");
-            recommendations.add("Đi bộ ngắn trong giờ nghỉ; mục tiêu tham khảo 5.000-7.000 bước mỗi ngày.");
+            flags.add("Ãt váº­n Ä‘á»™ng");
+            recommendations.add("Äi bá»™ ngáº¯n trong giá» nghá»‰; má»¥c tiÃªu tham kháº£o 5.000-7.000 bÆ°á»›c má»—i ngÃ y.");
         } else if (steps < 6000) {
             score -= 6;
-            recommendations.add("Tăng vận động nhẹ, ví dụ đi cầu thang hoặc đi bộ sau bữa trưa.");
+            recommendations.add("TÄƒng váº­n Ä‘á»™ng nháº¹, vÃ­ dá»¥ Ä‘i cáº§u thang hoáº·c Ä‘i bá»™ sau bá»¯a trÆ°a.");
         }
 
         if (water < 1.2) {
             score -= 10;
-            flags.add("Uống ít nước");
-            recommendations.add("Đặt nhắc uống nước; mục tiêu tham khảo 1.5-2 lít mỗi ngày nếu không có chống chỉ định y tế.");
+            flags.add("Uá»‘ng Ã­t nÆ°á»›c");
+            recommendations.add("Äáº·t nháº¯c uá»‘ng nÆ°á»›c; má»¥c tiÃªu tham kháº£o 1.5-2 lÃ­t má»—i ngÃ y náº¿u khÃ´ng cÃ³ chá»‘ng chá»‰ Ä‘á»‹nh y táº¿.");
         }
 
         if (overtime >= 4) {
             score -= 14;
             flags.add("OT cao");
-            recommendations.add("Sau ngày OT nhiều, nên giảm tải ngày kế tiếp hoặc sắp xếp lại ưu tiên công việc.");
+            recommendations.add("Sau ngÃ y OT nhiá»u, nÃªn giáº£m táº£i ngÃ y káº¿ tiáº¿p hoáº·c sáº¯p xáº¿p láº¡i Æ°u tiÃªn cÃ´ng viá»‡c.");
         } else if (overtime >= 2) {
             score -= 6;
-            recommendations.add("Theo dõi OT trong tuần để tránh tích lũy mệt mỏi.");
+            recommendations.add("Theo dÃµi OT trong tuáº§n Ä‘á»ƒ trÃ¡nh tÃ­ch lÅ©y má»‡t má»i.");
         }
 
         String role = user != null && user.getRole() != null ? user.getRole().name() : "USER";
         if ("MANAGER".equals(role)) {
-            recommendations.add("Với vai trò quản lý, nên kiểm tra tải việc của team nếu nhiều thành viên cùng stress cao.");
+            recommendations.add("Vá»›i vai trÃ² quáº£n lÃ½, nÃªn kiá»ƒm tra táº£i viá»‡c cá»§a team náº¿u nhiá»u thÃ nh viÃªn cÃ¹ng stress cao.");
         } else if ("HIRING".equals(role)) {
-            recommendations.add("Lịch phỏng vấn dày dễ gây mệt mỏi; chừa khoảng nghỉ giữa các buổi phỏng vấn.");
+            recommendations.add("Lá»‹ch phá»ng váº¥n dÃ y dá»… gÃ¢y má»‡t má»i; chá»«a khoáº£ng nghá»‰ giá»¯a cÃ¡c buá»•i phá»ng váº¥n.");
         } else if ("ADMIN".equals(role)) {
-            recommendations.add("Admin nên theo dõi xu hướng stress và OT ở cấp hệ thống thay vì chỉ từng cá nhân.");
+            recommendations.add("Admin nÃªn theo dÃµi xu hÆ°á»›ng stress vÃ  OT á»Ÿ cáº¥p há»‡ thá»‘ng thay vÃ¬ chá»‰ tá»«ng cÃ¡ nhÃ¢n.");
         }
 
         if (recommendations.isEmpty()) {
-            recommendations.add("Các chỉ số đang ổn. Tiếp tục duy trì ngủ đủ, vận động nhẹ và uống nước đều.");
+            recommendations.add("CÃ¡c chá»‰ sá»‘ Ä‘ang á»•n. Tiáº¿p tá»¥c duy trÃ¬ ngá»§ Ä‘á»§, váº­n Ä‘á»™ng nháº¹ vÃ  uá»‘ng nÆ°á»›c Ä‘á»u.");
         }
 
         score = Math.max(0, Math.min(100, score));
         String riskLevel = score >= 80 ? "LOW" : score >= 60 ? "MEDIUM" : "HIGH";
         String summary = switch (riskLevel) {
-            case "HIGH" -> "Có dấu hiệu rủi ro sức khỏe hoặc căng thẳng cao. Nên giảm tải và trao đổi với HR/quản lý nếu tình trạng kéo dài.";
-            case "MEDIUM" -> "Có vài chỉ số cần chú ý. Điều chỉnh ngủ, vận động, nước uống hoặc OT sẽ cải thiện đáng kể.";
-            default -> "Chỉ số sinh hoạt đang tương đối ổn.";
+            case "HIGH" -> "CÃ³ dáº¥u hiá»‡u rá»§i ro sá»©c khá»e hoáº·c cÄƒng tháº³ng cao. NÃªn giáº£m táº£i vÃ  trao Ä‘á»•i vá»›i HR/quáº£n lÃ½ náº¿u tÃ¬nh tráº¡ng kÃ©o dÃ i.";
+            case "MEDIUM" -> "CÃ³ vÃ i chá»‰ sá»‘ cáº§n chÃº Ã½. Äiá»u chá»‰nh ngá»§, váº­n Ä‘á»™ng, nÆ°á»›c uá»‘ng hoáº·c OT sáº½ cáº£i thiá»‡n Ä‘Ã¡ng ká»ƒ.";
+            default -> "Chá»‰ sá»‘ sinh hoáº¡t Ä‘ang tÆ°Æ¡ng Ä‘á»‘i á»•n.";
         };
 
         return new HealthInsightResult(Math.round(score), riskLevel, summary, flags, recommendations,
-                "Thông tin chỉ mang tính tham khảo, không thay thế tư vấn y tế chuyên môn.");
+                "ThÃ´ng tin chá»‰ mang tÃ­nh tham kháº£o, khÃ´ng thay tháº¿ tÆ° váº¥n y táº¿ chuyÃªn mÃ´n.");
     }
 
     public record HealthInsightInput(
@@ -109,3 +109,4 @@ public class HealthInsightService {
             String disclaimer
     ) {}
 }
+

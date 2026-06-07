@@ -12,3 +12,5 @@ public interface UserAssetRepository extends JpaRepository<AssetAssignment, Long
     
     List<AssetAssignment> findByUserOrderByAssignedDateDesc(User user);
 }
+
+

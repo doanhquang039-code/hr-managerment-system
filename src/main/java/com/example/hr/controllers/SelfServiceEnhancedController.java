@@ -43,7 +43,7 @@ public class SelfServiceEnhancedController {
         try {
             User user = authUserHelper.getCurrentUser(auth);
             selfServiceService.updateProfile(user, profileData);
-            ra.addFlashAttribute("success", "Cập nhật hồ sơ thành công!");
+            ra.addFlashAttribute("success", "Cáº­p nháº­t há»“ sÆ¡ thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -79,7 +79,7 @@ public class SelfServiceEnhancedController {
             User user = authUserHelper.getCurrentUser(auth);
             selfServiceService.createExpenseClaim(user, category, title, description, 
                                                  amount, LocalDate.parse(expenseDate), receiptUrl);
-            ra.addFlashAttribute("success", "Gửi đơn hoàn tiền thành công!");
+            ra.addFlashAttribute("success", "Gá»­i Ä‘Æ¡n hoÃ n tiá»n thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -111,7 +111,7 @@ public class SelfServiceEnhancedController {
                 .orElseThrow(() -> new RuntimeException("Benefit plan not found"));
             
             selfServiceService.enrollInBenefit(user, plan, LocalDate.parse(effectiveDate));
-            ra.addFlashAttribute("success", "Đăng ký phúc lợi thành công!");
+            ra.addFlashAttribute("success", "ÄÄƒng kÃ½ phÃºc lá»£i thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -137,7 +137,7 @@ public class SelfServiceEnhancedController {
         try {
             User approver = authUserHelper.getCurrentUser(auth);
             selfServiceService.approveClaim(id, approver);
-            ra.addFlashAttribute("success", "Đã phê duyệt đơn hoàn tiền!");
+            ra.addFlashAttribute("success", "ÄÃ£ phÃª duyá»‡t Ä‘Æ¡n hoÃ n tiá»n!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -153,10 +153,12 @@ public class SelfServiceEnhancedController {
         try {
             User approver = authUserHelper.getCurrentUser(auth);
             selfServiceService.rejectClaim(id, approver, reason);
-            ra.addFlashAttribute("success", "Đã từ chối đơn hoàn tiền!");
+            ra.addFlashAttribute("success", "ÄÃ£ tá»« chá»‘i Ä‘Æ¡n hoÃ n tiá»n!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/self-service-enhanced/admin/expenses";
     }
 }
+
+

@@ -28,16 +28,16 @@ public class BenefitPlan {
     @Column(columnDefinition = "TEXT")
     private String description;
     
-    private BigDecimal employeeCost; // Chi phí nhân viên trả
-    private BigDecimal companyCost; // Chi phí công ty trả
+    private BigDecimal employeeCost; // Chi phÃ­ nhÃ¢n viÃªn tráº£
+    private BigDecimal companyCost; // Chi phÃ­ cÃ´ng ty tráº£
     
     @Column(nullable = false)
     private Boolean isActive = true;
     
-    private String provider; // Nhà cung cấp
+    private String provider; // NhÃ  cung cáº¥p
     
     @Column(columnDefinition = "TEXT")
-    private String terms; // Điều khoản
+    private String terms; // Äiá»u khoáº£n
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -53,3 +53,5 @@ public class BenefitPlan {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

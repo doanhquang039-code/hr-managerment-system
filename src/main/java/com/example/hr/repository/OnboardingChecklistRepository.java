@@ -36,3 +36,5 @@ public interface OnboardingChecklistRepository extends JpaRepository<OnboardingC
     
     long countByUserAndIsCompleted(User user, boolean isCompleted);
 }
+
+

@@ -211,3 +211,5 @@ public class NewAssetManagementService {
         return maintenanceRepository.findByAsset(asset);
     }
 }
+
+

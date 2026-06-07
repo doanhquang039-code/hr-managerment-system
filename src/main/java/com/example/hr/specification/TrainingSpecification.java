@@ -1,7 +1,9 @@
 package com.example.hr.specification;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.TrainingStatus;
-import com.example.hr.models.TrainingProgram;
+import com.example.hr.training.entity.TrainingProgram;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -55,3 +57,4 @@ public final class TrainingSpecification {
         };
     }
 }
+

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * DTO tổng hợp thống kê dashboard nâng cao.
+ * DTO tá»•ng há»£p thá»‘ng kÃª dashboard nÃ¢ng cao.
  */
 @Data
 @NoArgsConstructor
@@ -71,3 +71,5 @@ public class DashboardStatsDTO {
     // Contracts
     private long expiringContracts;
 }
+
+

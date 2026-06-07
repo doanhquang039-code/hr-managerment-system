@@ -1,5 +1,7 @@
 package com.example.hr.controllers;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.service.TeamAnalyticsService;
 import com.example.hr.service.TeamGoalService;
 import com.example.hr.service.MeetingService;
@@ -102,3 +104,4 @@ public class ManagerDashboardController {
         return "manager/analytics";
     }
 }
+

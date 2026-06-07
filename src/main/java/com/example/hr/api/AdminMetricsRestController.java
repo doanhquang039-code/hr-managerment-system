@@ -18,9 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * REST API cho Admin — System Health & Metrics.
- * Yêu cầu role ADMIN.
- * Xem tại: /swagger-ui.html → Admin Metrics
+ * REST API cho Admin â€” System Health & Metrics.
+ * YÃªu cáº§u role ADMIN.
+ * Xem táº¡i: /swagger-ui.html â†’ Admin Metrics
  */
 @RestController
 @RequestMapping("/api/admin/metrics")
@@ -32,9 +32,9 @@ public class AdminMetricsRestController {
     private final CacheService cacheService;
     private final CloudStorageFacade cloudStorageFacade;
 
-    /** Tổng quan hệ thống */
+    /** Tá»•ng quan há»‡ thá»‘ng */
     @GetMapping("/health")
-    @Operation(summary = "System health overview", description = "Trả về trạng thái tổng quan: JVM, Redis, Cloud services")
+    @Operation(summary = "System health overview", description = "Tráº£ vá» tráº¡ng thÃ¡i tá»•ng quan: JVM, Redis, Cloud services")
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("status", "UP");
@@ -88,9 +88,9 @@ public class AdminMetricsRestController {
         return ResponseEntity.ok(result);
     }
 
-    /** Chi tiết memory */
+    /** Chi tiáº¿t memory */
     @GetMapping("/memory")
-    @Operation(summary = "Memory details", description = "Heap và non-heap memory usage chi tiết")
+    @Operation(summary = "Memory details", description = "Heap vÃ  non-heap memory usage chi tiáº¿t")
     public ResponseEntity<Map<String, Object>> memoryDetails() {
         MemoryMXBean memory = ManagementFactory.getMemoryMXBean();
         Map<String, Object> result = new LinkedHashMap<>();
@@ -115,7 +115,7 @@ public class AdminMetricsRestController {
 
     /** Cache statistics */
     @GetMapping("/cache")
-    @Operation(summary = "Cache statistics", description = "Số lượng Redis keys theo từng cache bucket")
+    @Operation(summary = "Cache statistics", description = "Sá»‘ lÆ°á»£ng Redis keys theo tá»«ng cache bucket")
     public ResponseEntity<Map<String, Object>> cacheStats() {
         Map<String, Object> result = new LinkedHashMap<>();
         try {
@@ -134,9 +134,9 @@ public class AdminMetricsRestController {
         return ResponseEntity.ok(result);
     }
 
-    /** Evict cache theo tên */
+    /** Evict cache theo tÃªn */
     @DeleteMapping("/cache/{name}")
-    @Operation(summary = "Evict cache", description = "Xóa cache theo tên: dashboard, users, departments, all")
+    @Operation(summary = "Evict cache", description = "XÃ³a cache theo tÃªn: dashboard, users, departments, all")
     public ResponseEntity<Map<String, String>> evictCache(@PathVariable String name) {
         try {
             switch (name) {
@@ -146,10 +146,12 @@ public class AdminMetricsRestController {
                 case "all"         -> cacheService.evictAll();
                 default            -> cacheService.delete(name);
             }
-            return ResponseEntity.ok(Map.of("status", "OK", "message", "Đã xóa cache: " + name));
+            return ResponseEntity.ok(Map.of("status", "OK", "message", "ÄÃ£ xÃ³a cache: " + name));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(Map.of("status", "ERROR", "message", e.getMessage()));
         }
     }
 }
+
+

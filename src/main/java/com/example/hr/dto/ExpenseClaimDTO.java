@@ -11,21 +11,21 @@ import java.time.LocalDate;
 @Data
 public class ExpenseClaimDTO {
 
-    @NotNull(message = "userId là bắt buộc")
+    @NotNull(message = "userId lÃ  báº¯t buá»™c")
     private Integer userId;
 
-    @NotBlank(message = "Tiêu đề là bắt buộc")
+    @NotBlank(message = "TiÃªu Ä‘á» lÃ  báº¯t buá»™c")
     private String claimTitle;
 
     private String category = "OTHER"; // TRAVEL, MEAL, EQUIPMENT, TRAINING, OTHER
 
-    @NotNull(message = "Số tiền là bắt buộc")
-    @DecimalMin(value = "0.01", message = "Số tiền phải > 0")
+    @NotNull(message = "Sá»‘ tiá»n lÃ  báº¯t buá»™c")
+    @DecimalMin(value = "0.01", message = "Sá»‘ tiá»n pháº£i > 0")
     private BigDecimal amount;
 
     private String currency = "VND";
 
-    @NotNull(message = "Ngày chi phí là bắt buộc")
+    @NotNull(message = "NgÃ y chi phÃ­ lÃ  báº¯t buá»™c")
     private LocalDate expenseDate;
 
     private String description;
@@ -34,3 +34,5 @@ public class ExpenseClaimDTO {
 
     private String projectCode;
 }
+
+

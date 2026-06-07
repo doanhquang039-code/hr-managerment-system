@@ -59,3 +59,5 @@ public class OKRProgress {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

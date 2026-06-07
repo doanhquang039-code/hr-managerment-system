@@ -23,7 +23,9 @@ public class ExpenseController {
     public String listExpenses(Model model) {
         List<ExpenseClaim> expenses = expenseClaimRepository.findAll();
         model.addAttribute("expenses", expenses);
-        model.addAttribute("pageTitle", "Quản lý Chi phí");
+        model.addAttribute("pageTitle", "Quáº£n lÃ½ Chi phÃ­");
         return "admin/expenses";
     }
 }
+
+

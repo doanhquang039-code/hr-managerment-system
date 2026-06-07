@@ -10,3 +10,5 @@ public interface ContractExpiryReminderRepository extends JpaRepository<Contract
 
     boolean existsByContractAndReminderDays(Contract contract, Integer reminderDays);
 }
+
+

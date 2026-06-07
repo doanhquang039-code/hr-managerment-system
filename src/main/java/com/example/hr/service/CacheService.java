@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service quản lý cache Redis — evict, stats, manual operations.
+ * Service quáº£n lÃ½ cache Redis â€” evict, stats, manual operations.
  */
 @Service
 public class CacheService {
@@ -24,25 +24,25 @@ public class CacheService {
         this.redisTemplate = redisTemplate;
     }
 
-    /** Xóa toàn bộ cache dashboard */
+    /** XÃ³a toÃ n bá»™ cache dashboard */
     @CacheEvict(value = "dashboard", allEntries = true)
     public void evictDashboard() {
         log.info("Dashboard cache evicted");
     }
 
-    /** Xóa cache users */
+    /** XÃ³a cache users */
     @CacheEvict(value = "users", allEntries = true)
     public void evictUsers() {
         log.info("Users cache evicted");
     }
 
-    /** Xóa cache departments */
+    /** XÃ³a cache departments */
     @CacheEvict(value = "departments", allEntries = true)
     public void evictDepartments() {
         log.info("Departments cache evicted");
     }
 
-    /** Xóa tất cả cache HR */
+    /** XÃ³a táº¥t cáº£ cache HR */
     @Caching(evict = {
         @CacheEvict(value = "dashboard",    allEntries = true),
         @CacheEvict(value = "users",        allEntries = true),
@@ -57,38 +57,38 @@ public class CacheService {
         log.info("All HR caches evicted");
     }
 
-    /** Lưu giá trị tùy ý vào Redis với TTL */
+    /** LÆ°u giÃ¡ trá»‹ tÃ¹y Ã½ vÃ o Redis vá»›i TTL */
     public void set(String key, Object value, long ttlSeconds) {
         redisTemplate.opsForValue().set(key, value, ttlSeconds, TimeUnit.SECONDS);
     }
 
-    /** Lấy giá trị từ Redis */
+    /** Láº¥y giÃ¡ trá»‹ tá»« Redis */
     public Object get(String key) {
         return redisTemplate.opsForValue().get(key);
     }
 
-    /** Xóa key */
+    /** XÃ³a key */
     public void delete(String key) {
         redisTemplate.delete(key);
     }
 
-    /** Kiểm tra key tồn tại */
+    /** Kiá»ƒm tra key tá»“n táº¡i */
     public boolean exists(String key) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
-    /** Lấy tất cả keys theo pattern */
+    /** Láº¥y táº¥t cáº£ keys theo pattern */
     public Set<String> keys(String pattern) {
         return redisTemplate.keys(pattern);
     }
 
-    /** Đếm số keys đang cache */
+    /** Äáº¿m sá»‘ keys Ä‘ang cache */
     public long countKeys(String pattern) {
         Set<String> keys = redisTemplate.keys(pattern);
         return keys != null ? keys.size() : 0;
     }
 
-    /** Increment counter (dùng cho rate limiting, view count...) */
+    /** Increment counter (dÃ¹ng cho rate limiting, view count...) */
     public Long increment(String key, long ttlSeconds) {
         Long count = redisTemplate.opsForValue().increment(key);
         if (count != null && count == 1) {
@@ -97,3 +97,5 @@ public class CacheService {
         return count;
     }
 }
+
+

@@ -1,5 +1,7 @@
 package com.example.hr.api;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.dto.EmployeeWarningDTO;
 import com.example.hr.models.EmployeeWarning;
 import com.example.hr.service.WarningService;
@@ -66,3 +68,5 @@ public class WarningApiController {
         return ResponseEntity.ok(warningService.countByDepartment());
     }
 }
+
+

@@ -22,3 +22,5 @@ public class NotificationSendDTO {
     private Boolean useTemplate;
     private String templateCode;
 }
+
+

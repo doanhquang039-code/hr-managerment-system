@@ -1,7 +1,7 @@
 package com.example.hr.repository;
 
-import com.example.hr.models.Course;
-import com.example.hr.models.CourseLesson;
+import com.example.hr.training.entity.Course;
+import com.example.hr.training.entity.CourseLesson;
 import com.example.hr.models.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -22,3 +22,5 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
 
     Optional<Quiz> findFirstByTitleAndCourseIsNullAndLessonIsNull(String title);
 }
+
+

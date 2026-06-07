@@ -52,3 +52,5 @@ public class ContractExpiryReminder {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

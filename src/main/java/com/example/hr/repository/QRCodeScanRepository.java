@@ -39,3 +39,5 @@ public interface QRCodeScanRepository extends JpaRepository<QRCodeScan, Integer>
     @Query("SELECT s FROM QRCodeScan s WHERE s.user = :user AND DATE(s.scannedAt) = DATE(:date) ORDER BY s.scannedAt DESC")
     List<QRCodeScan> findByUserAndDate(@Param("user") User user, @Param("date") LocalDateTime date);
 }
+
+

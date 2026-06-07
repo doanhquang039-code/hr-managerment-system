@@ -16,16 +16,16 @@ public class EmployeeWarningDTO {
 
     private Integer id;
 
-    @NotNull(message = "User ID không được để trống")
+    @NotNull(message = "User ID khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private Integer userId;
 
-    @NotNull(message = "Issued By không được để trống")
+    @NotNull(message = "Issued By khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private Integer issuedById;
 
-    @NotNull(message = "Mức cảnh cáo không được để trống")
+    @NotNull(message = "Má»©c cáº£nh cÃ¡o khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private WarningLevel warningLevel;
 
-    @NotBlank(message = "Lý do không được để trống")
+    @NotBlank(message = "LÃ½ do khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private String reason;
 
     private String description;
@@ -33,3 +33,5 @@ public class EmployeeWarningDTO {
     private LocalDate expiryDate;
     private String attachmentUrl;
 }
+
+

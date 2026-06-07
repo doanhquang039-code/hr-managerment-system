@@ -44,7 +44,7 @@ public class QuizQuestion {
     private Integer orderIndex;
     
     @Column(columnDefinition = "TEXT")
-    private String explanation; // Giải thích đáp án
+    private String explanation; // Giáº£i thÃ­ch Ä‘Ã¡p Ã¡n
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -63,3 +63,5 @@ public class QuizQuestion {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

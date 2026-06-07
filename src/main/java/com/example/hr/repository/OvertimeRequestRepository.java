@@ -30,3 +30,5 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
     
     long countByStatus(String status);
 }
+
+

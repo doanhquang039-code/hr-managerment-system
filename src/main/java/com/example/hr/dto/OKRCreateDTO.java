@@ -1,5 +1,7 @@
 package com.example.hr.dto;
 
+
+import com.example.hr.department.entity.Department;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,3 +36,5 @@ public class OKRCreateDTO {
         private Integer weight;
     }
 }
+
+

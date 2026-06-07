@@ -12,3 +12,5 @@ public interface CollaborationGroupRepository extends JpaRepository<Collaboratio
     Optional<CollaborationGroup> findByName(String name);
     boolean existsByActiveTrueAndMembersContaining(User user);
 }
+
+

@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.KpiStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -76,9 +78,11 @@ public class KpiGoal {
     public String getAchievementLabel() {
         if (achievementPct == null) return "0%";
         double pct = achievementPct.doubleValue();
-        if (pct >= 100) return "Đạt mục tiêu";
-        if (pct >= 80)  return "Gần đạt";
-        if (pct >= 50)  return "Đang tiến hành";
-        return "Chưa đạt";
+        if (pct >= 100) return "Äáº¡t má»¥c tiÃªu";
+        if (pct >= 80)  return "Gáº§n Ä‘áº¡t";
+        if (pct >= 50)  return "Äang tiáº¿n hÃ nh";
+        return "ChÆ°a Ä‘áº¡t";
     }
 }
+
+

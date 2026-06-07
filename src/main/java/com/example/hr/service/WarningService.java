@@ -22,15 +22,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Service quản lý cảnh cáo / kỷ luật nhân viên.
- * Bao gồm: issue warning, escalation logic, auto-terminate.
+ * Service quáº£n lÃ½ cáº£nh cÃ¡o / ká»· luáº­t nhÃ¢n viÃªn.
+ * Bao gá»“m: issue warning, escalation logic, auto-terminate.
  */
 @Service
 @Transactional
 public class WarningService {
 
     private static final Logger log = LoggerFactory.getLogger(WarningService.class);
-    private static final int DEFAULT_EXPIRY_DAYS = 180; // Cảnh cáo hết hiệu lực sau 6 tháng
+    private static final int DEFAULT_EXPIRY_DAYS = 180; // Cáº£nh cÃ¡o háº¿t hiá»‡u lá»±c sau 6 thÃ¡ng
     private static final int MAX_WARNINGS_BEFORE_ESCALATION = 3;
 
     private final EmployeeWarningRepository warningRepository;
@@ -46,7 +46,7 @@ public class WarningService {
     }
 
     /**
-     * Lấy tất cả cảnh cáo.
+     * Láº¥y táº¥t cáº£ cáº£nh cÃ¡o.
      */
     @Transactional(readOnly = true)
     public List<EmployeeWarning> getAllWarnings() {
@@ -54,16 +54,16 @@ public class WarningService {
     }
 
     /**
-     * Lấy cảnh cáo theo ID.
+     * Láº¥y cáº£nh cÃ¡o theo ID.
      */
     @Transactional(readOnly = true)
     public EmployeeWarning getWarningById(Integer id) {
         return warningRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cảnh cáo", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cáº£nh cÃ¡o", id));
     }
 
     /**
-     * Lấy cảnh cáo theo nhân viên.
+     * Láº¥y cáº£nh cÃ¡o theo nhÃ¢n viÃªn.
      */
     @Transactional(readOnly = true)
     public List<EmployeeWarning> getWarningsByUser(Integer userId) {
@@ -71,7 +71,7 @@ public class WarningService {
     }
 
     /**
-     * Lấy cảnh cáo đang hiệu lực của nhân viên.
+     * Láº¥y cáº£nh cÃ¡o Ä‘ang hiá»‡u lá»±c cá»§a nhÃ¢n viÃªn.
      */
     @Transactional(readOnly = true)
     public List<EmployeeWarning> getActiveWarnings(Integer userId) {
@@ -79,16 +79,16 @@ public class WarningService {
     }
 
     /**
-     * Ban hành cảnh cáo mới.
-     * Tự động escalation nếu đã có nhiều cảnh cáo cùng level.
+     * Ban hÃ nh cáº£nh cÃ¡o má»›i.
+     * Tá»± Ä‘á»™ng escalation náº¿u Ä‘Ã£ cÃ³ nhiá»u cáº£nh cÃ¡o cÃ¹ng level.
      */
     public EmployeeWarning issueWarning(EmployeeWarningDTO dto) {
         User employee = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Nhân viên", dto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("NhÃ¢n viÃªn", dto.getUserId()));
         User issuer = userRepository.findById(dto.getIssuedById())
-                .orElseThrow(() -> new ResourceNotFoundException("Người ban hành", dto.getIssuedById()));
+                .orElseThrow(() -> new ResourceNotFoundException("NgÆ°á»i ban hÃ nh", dto.getIssuedById()));
 
-        // Xác định warning level (auto-escalation nếu cần)
+        // XÃ¡c Ä‘á»‹nh warning level (auto-escalation náº¿u cáº§n)
         WarningLevel level = dto.getWarningLevel();
         WarningLevel effectiveLevel = determineEffectiveLevel(dto.getUserId(), level);
 
@@ -117,7 +117,7 @@ public class WarningService {
     }
 
     /**
-     * Nhân viên xác nhận đã đọc cảnh cáo.
+     * NhÃ¢n viÃªn xÃ¡c nháº­n Ä‘Ã£ Ä‘á»c cáº£nh cÃ¡o.
      */
     public EmployeeWarning acknowledgeWarning(Integer warningId) {
         EmployeeWarning warning = getWarningById(warningId);
@@ -126,17 +126,17 @@ public class WarningService {
     }
 
     /**
-     * Xóa cảnh cáo (chỉ admin).
+     * XÃ³a cáº£nh cÃ¡o (chá»‰ admin).
      */
     public void deleteWarning(Integer id) {
         if (!warningRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Cảnh cáo", id);
+            throw new ResourceNotFoundException("Cáº£nh cÃ¡o", id);
         }
         warningRepository.deleteById(id);
     }
 
     /**
-     * Thống kê cảnh cáo theo mức độ.
+     * Thá»‘ng kÃª cáº£nh cÃ¡o theo má»©c Ä‘á»™.
      */
     @Transactional(readOnly = true)
     public Map<WarningLevel, Long> countByWarningLevel() {
@@ -148,7 +148,7 @@ public class WarningService {
     }
 
     /**
-     * Thống kê cảnh cáo theo phòng ban.
+     * Thá»‘ng kÃª cáº£nh cÃ¡o theo phÃ²ng ban.
      */
     @Transactional(readOnly = true)
     public Map<String, Long> countByDepartment() {
@@ -160,7 +160,7 @@ public class WarningService {
     }
 
     /**
-     * Đếm nhân viên có cảnh cáo nghiêm trọng.
+     * Äáº¿m nhÃ¢n viÃªn cÃ³ cáº£nh cÃ¡o nghiÃªm trá»ng.
      */
     @Transactional(readOnly = true)
     public long countEmployeesWithSevereWarnings() {
@@ -168,7 +168,7 @@ public class WarningService {
     }
 
     /**
-     * Kiểm tra và xử lý cảnh cáo chưa acknowledge sau 30 ngày.
+     * Kiá»ƒm tra vÃ  xá»­ lÃ½ cáº£nh cÃ¡o chÆ°a acknowledge sau 30 ngÃ y.
      */
     public List<EmployeeWarning> processUnacknowledgedWarnings() {
         LocalDate cutoff = LocalDate.now().minusDays(30);
@@ -178,11 +178,11 @@ public class WarningService {
             if (warning.needsEscalation()) {
                 log.warn("Warning {} needs escalation: user={}, level={}",
                         warning.getId(), warning.getUser().getUsername(), warning.getWarningLevel());
-                // Tạo thông báo nhắc nhở
+                // Táº¡o thÃ´ng bÃ¡o nháº¯c nhá»Ÿ
                 try {
                     notificationService.createNotification(
                             warning.getUser(),
-                            "Bạn có cảnh cáo chưa xác nhận từ " + warning.getIssuedDate(),
+                            "Báº¡n cÃ³ cáº£nh cÃ¡o chÆ°a xÃ¡c nháº­n tá»« " + warning.getIssuedDate(),
                             NotificationType.WARNING,
                             "/user1/warnings"
                     );
@@ -198,7 +198,7 @@ public class WarningService {
     // --- Private helpers ---
 
     /**
-     * Auto-escalation: nếu đã có >= 3 cảnh cáo cùng level, tự động nâng level.
+     * Auto-escalation: náº¿u Ä‘Ã£ cÃ³ >= 3 cáº£nh cÃ¡o cÃ¹ng level, tá»± Ä‘á»™ng nÃ¢ng level.
      */
     private WarningLevel determineEffectiveLevel(Integer userId, WarningLevel requestedLevel) {
         long sameLevel = warningRepository
@@ -214,7 +214,7 @@ public class WarningService {
     }
 
     /**
-     * Xử lý hậu cảnh cáo: nếu TERMINATION → deactivate user.
+     * Xá»­ lÃ½ háº­u cáº£nh cÃ¡o: náº¿u TERMINATION â†’ deactivate user.
      */
     private void handlePostWarningActions(EmployeeWarning warning) {
         if (warning.getWarningLevel() == WarningLevel.TERMINATION) {
@@ -224,9 +224,9 @@ public class WarningService {
             log.warn("Employee {} has been deactivated due to TERMINATION warning", employee.getUsername());
         }
 
-        // Tạo thông báo cho nhân viên
+        // Táº¡o thÃ´ng bÃ¡o cho nhÃ¢n viÃªn
         try {
-            String message = String.format("Bạn nhận được cảnh cáo mức %s: %s",
+            String message = String.format("Báº¡n nháº­n Ä‘Æ°á»£c cáº£nh cÃ¡o má»©c %s: %s",
                     warning.getWarningLevel().getDisplayName(), warning.getReason());
             notificationService.createNotification(warning.getUser(), message, NotificationType.WARNING, "/user1/warnings");
         } catch (Exception e) {
@@ -234,3 +234,5 @@ public class WarningService {
         }
     }
 }
+
+

@@ -24,3 +24,5 @@ public interface AssetMaintenanceRepository extends JpaRepository<AssetMaintenan
     
     List<AssetMaintenance> findByMaintenanceDateBetween(LocalDate startDate, LocalDate endDate);
 }
+
+

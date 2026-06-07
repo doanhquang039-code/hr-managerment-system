@@ -35,10 +35,10 @@ public class NotificationApiController {
         this.authUserHelper = authUserHelper;
     }
 
-    /** Unread count — dùng cho badge polling */
+    /** Unread count â€” dÃ¹ng cho badge polling */
     @GetMapping("/unread-count")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Lấy số thông báo chưa đọc")
+    @Operation(summary = "Láº¥y sá»‘ thÃ´ng bÃ¡o chÆ°a Ä‘á»c")
     public ResponseEntity<Map<String, Object>> getUnreadCount(Authentication auth) {
         User user = authUserHelper.getCurrentUser(auth);
         long count = user != null ? notificationService.countUnread(user) : 0;
@@ -48,7 +48,7 @@ public class NotificationApiController {
     /** Mark all read via API */
     @PutMapping("/mark-all-read")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Đánh dấu tất cả đã đọc")
+    @Operation(summary = "ÄÃ¡nh dáº¥u táº¥t cáº£ Ä‘Ã£ Ä‘á»c")
     public ResponseEntity<Map<String, String>> markAllRead(Authentication auth) {
         User user = authUserHelper.getCurrentUser(auth);
         if (user != null) notificationService.markAllRead(user);
@@ -56,11 +56,11 @@ public class NotificationApiController {
     }
 
     /**
-     * Frontend gọi endpoint này sau khi lấy được FCM token từ Firebase SDK.
+     * Frontend gá»i endpoint nÃ y sau khi láº¥y Ä‘Æ°á»£c FCM token tá»« Firebase SDK.
      */
     @PostMapping("/register-token")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Đăng ký FCM token cho push notifications")
+    @Operation(summary = "ÄÄƒng kÃ½ FCM token cho push notifications")
     public ResponseEntity<Map<String, String>> registerToken(
             @RequestBody Map<String, String> body,
             Principal principal) {
@@ -78,11 +78,11 @@ public class NotificationApiController {
     }
 
     /**
-     * Xóa FCM token khi user logout.
+     * XÃ³a FCM token khi user logout.
      */
     @DeleteMapping("/unregister-token")
     @PreAuthorize("isAuthenticated()")
-    @Operation(summary = "Xóa FCM token khi logout")
+    @Operation(summary = "XÃ³a FCM token khi logout")
     public ResponseEntity<Void> unregisterToken(Principal principal) {
         userRepository.findByUsername(principal.getName()).ifPresent(user -> {
             user.setFcmToken(null);
@@ -92,11 +92,11 @@ public class NotificationApiController {
     }
 
     /**
-     * Gửi test notification đến user hiện tại.
+     * Gá»­i test notification Ä‘áº¿n user hiá»‡n táº¡i.
      */
     @PostMapping("/test")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Gửi test push notification")
+    @Operation(summary = "Gá»­i test push notification")
     public ResponseEntity<Map<String, Object>> sendTest(
             @RequestBody Map<String, String> body,
             Principal principal) {
@@ -106,39 +106,41 @@ public class NotificationApiController {
         if (target == null || target.getFcmToken() == null) {
             return ResponseEntity.ok(Map.of(
                     "status", "skipped",
-                    "reason", "User không có FCM token"));
+                    "reason", "User khÃ´ng cÃ³ FCM token"));
         }
 
         cloudStorageFacade.pushNotification(
                 target.getFcmToken(),
-                "🔔 Test Notification",
-                "Đây là test push notification từ HRMS Admin",
+                "ðŸ”” Test Notification",
+                "ÄÃ¢y lÃ  test push notification tá»« HRMS Admin",
                 Map.of("type", "TEST"));
 
         return ResponseEntity.ok(Map.of("status", "sent", "to", targetUsername));
     }
 
     /**
-     * Broadcast thông báo đến tất cả nhân viên qua Firebase.
+     * Broadcast thÃ´ng bÃ¡o Ä‘áº¿n táº¥t cáº£ nhÃ¢n viÃªn qua Firebase.
      */
     @PostMapping("/broadcast")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Broadcast thông báo đến tất cả nhân viên")
+    @Operation(summary = "Broadcast thÃ´ng bÃ¡o Ä‘áº¿n táº¥t cáº£ nhÃ¢n viÃªn")
     public ResponseEntity<Map<String, String>> broadcast(
             @RequestBody Map<String, String> body) {
-        String title   = body.getOrDefault("title", "Thông báo");
+        String title   = body.getOrDefault("title", "ThÃ´ng bÃ¡o");
         String content = body.getOrDefault("content", "");
         cloudStorageFacade.broadcastAnnouncement(title, content);
         return ResponseEntity.ok(Map.of("status", "broadcast_sent"));
     }
 
     /**
-     * Lấy trạng thái tất cả cloud services.
+     * Láº¥y tráº¡ng thÃ¡i táº¥t cáº£ cloud services.
      */
     @GetMapping("/cloud-status")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Kiểm tra trạng thái cloud services")
+    @Operation(summary = "Kiá»ƒm tra tráº¡ng thÃ¡i cloud services")
     public ResponseEntity<Map<String, Object>> cloudStatus() {
         return ResponseEntity.ok(cloudStorageFacade.getHealthStatus());
     }
 }
+
+

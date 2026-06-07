@@ -56,7 +56,7 @@ public class PerformanceReviewController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String showEditForm(@PathVariable Integer id, Model model) {
         PerformanceReview review = reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Review không tồn tại: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Review khÃ´ng tá»“n táº¡i: " + id));
         model.addAttribute("review", review);
         model.addAttribute("users", userRepository.findByStatus(UserStatus.ACTIVE));
         model.addAttribute("statuses", ReviewStatus.values());
@@ -69,20 +69,20 @@ public class PerformanceReviewController {
     public String save(@ModelAttribute PerformanceReview review,
                        Authentication auth,
                        RedirectAttributes redirectAttributes) {
-        // Gán reviewer là người đang đăng nhập
+        // GÃ¡n reviewer lÃ  ngÆ°á»i Ä‘ang Ä‘Äƒng nháº­p
         User currentUser = authUserHelper.getCurrentUser(auth);
         if (review.getReviewer() == null) {
             review.setReviewer(currentUser);
         }
-        // Set ngày đánh giá nếu chưa có
+        // Set ngÃ y Ä‘Ã¡nh giÃ¡ náº¿u chÆ°a cÃ³
         if (review.getReviewDate() == null) {
             review.setReviewDate(LocalDate.now());
         }
-        // Tính overall score
+        // TÃ­nh overall score
         review.calculateOverallScore();
 
         reviewRepository.save(review);
-        redirectAttributes.addFlashAttribute("successMsg", "✅ Đánh giá đã được lưu!");
+        redirectAttributes.addFlashAttribute("successMsg", "âœ… ÄÃ¡nh giÃ¡ Ä‘Ã£ Ä‘Æ°á»£c lÆ°u!");
         return "redirect:/admin/reviews";
     }
 
@@ -92,7 +92,7 @@ public class PerformanceReviewController {
         PerformanceReview review = reviewRepository.findById(id).orElseThrow();
         review.setStatus(ReviewStatus.APPROVED);
         reviewRepository.save(review);
-        redirectAttributes.addFlashAttribute("successMsg", "✅ Đánh giá đã được duyệt!");
+        redirectAttributes.addFlashAttribute("successMsg", "âœ… ÄÃ¡nh giÃ¡ Ä‘Ã£ Ä‘Æ°á»£c duyá»‡t!");
         return "redirect:/admin/reviews";
     }
 
@@ -100,7 +100,7 @@ public class PerformanceReviewController {
     @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         reviewRepository.deleteById(id);
-        redirectAttributes.addFlashAttribute("successMsg", "🗑️ Đã xoá đánh giá!");
+        redirectAttributes.addFlashAttribute("successMsg", "ðŸ—‘ï¸ ÄÃ£ xoÃ¡ Ä‘Ã¡nh giÃ¡!");
         return "redirect:/admin/reviews";
     }
 
@@ -130,3 +130,5 @@ public class PerformanceReviewController {
         );
     }
 }
+
+

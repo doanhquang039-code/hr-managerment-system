@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Entity tài sản công ty (laptop, monitor, bàn, điện thoại, v.v.).
+ * Entity tÃ i sáº£n cÃ´ng ty (laptop, monitor, bÃ n, Ä‘iá»‡n thoáº¡i, v.v.).
  */
 @Entity
 @Table(name = "company_asset")
@@ -70,7 +70,7 @@ public class CompanyAsset {
     // --- Business Logic ---
 
     /**
-     * Tính giá trị khấu hao (straight-line depreciation, 3 năm).
+     * TÃ­nh giÃ¡ trá»‹ kháº¥u hao (straight-line depreciation, 3 nÄƒm).
      */
     public BigDecimal calculateDepreciation(int usefulLifeYears) {
         if (purchasePrice == null || purchaseDate == null || usefulLifeYears <= 0) {
@@ -86,7 +86,7 @@ public class CompanyAsset {
     }
 
     /**
-     * Cập nhật giá trị hiện tại (current value = purchase - depreciation).
+     * Cáº­p nháº­t giÃ¡ trá»‹ hiá»‡n táº¡i (current value = purchase - depreciation).
      */
     public void updateCurrentValue(int usefulLifeYears) {
         BigDecimal dep = calculateDepreciation(usefulLifeYears);
@@ -94,14 +94,14 @@ public class CompanyAsset {
     }
 
     /**
-     * Kiểm tra bảo hành còn hiệu lực.
+     * Kiá»ƒm tra báº£o hÃ nh cÃ²n hiá»‡u lá»±c.
      */
     public boolean isUnderWarranty() {
         return warrantyExpiry != null && !warrantyExpiry.isBefore(LocalDate.now());
     }
 
     /**
-     * Kiểm tra bảo hành sắp hết (trong 30 ngày).
+     * Kiá»ƒm tra báº£o hÃ nh sáº¯p háº¿t (trong 30 ngÃ y).
      */
     public boolean isWarrantyExpiringSoon() {
         if (warrantyExpiry == null) return false;
@@ -111,28 +111,28 @@ public class CompanyAsset {
     }
 
     /**
-     * Kiểm tra tài sản có sẵn sàng để giao.
+     * Kiá»ƒm tra tÃ i sáº£n cÃ³ sáºµn sÃ ng Ä‘á»ƒ giao.
      */
     public boolean isAvailableForAssignment() {
         return status == AssetStatus.AVAILABLE;
     }
 
     /**
-     * Đánh dấu đã giao.
+     * ÄÃ¡nh dáº¥u Ä‘Ã£ giao.
      */
     public void markAssigned() {
         this.status = AssetStatus.ASSIGNED;
     }
 
     /**
-     * Đánh dấu sẵn sàng (khi trả lại).
+     * ÄÃ¡nh dáº¥u sáºµn sÃ ng (khi tráº£ láº¡i).
      */
     public void markAvailable() {
         this.status = AssetStatus.AVAILABLE;
     }
 
     /**
-     * Tính tuổi tài sản (năm).
+     * TÃ­nh tuá»•i tÃ i sáº£n (nÄƒm).
      */
     public double getAssetAgeYears() {
         if (purchaseDate == null) return 0;
@@ -141,7 +141,7 @@ public class CompanyAsset {
     }
 
     /**
-     * Lấy icon theo loại tài sản.
+     * Láº¥y icon theo loáº¡i tÃ i sáº£n.
      */
     public String getCategoryIcon() {
         if (category == null) return "bi-box";
@@ -157,7 +157,7 @@ public class CompanyAsset {
     }
 
     /**
-     * Tính tỷ lệ khấu hao (%).
+     * TÃ­nh tá»· lá»‡ kháº¥u hao (%).
      */
     public double getDepreciationPercentage(int usefulLifeYears) {
         if (purchasePrice == null || purchasePrice.compareTo(BigDecimal.ZERO) == 0) {
@@ -181,3 +181,5 @@ public class CompanyAsset {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

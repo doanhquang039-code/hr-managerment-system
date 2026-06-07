@@ -2,7 +2,7 @@ package com.example.hr.repository;
 
 import com.example.hr.models.Meeting;
 import com.example.hr.models.User;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -39,3 +39,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
     @Query("SELECT COUNT(m) FROM Meeting m WHERE m.organizer = :organizer AND m.status = :status")
     long countByOrganizerAndStatus(@Param("organizer") User organizer, @Param("status") String status);
 }
+
+

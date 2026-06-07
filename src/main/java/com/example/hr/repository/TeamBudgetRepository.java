@@ -1,7 +1,7 @@
 package com.example.hr.repository;
 
 import com.example.hr.models.TeamBudget;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,3 +34,5 @@ public interface TeamBudgetRepository extends JpaRepository<TeamBudget, Integer>
     @Query("SELECT b FROM TeamBudget b WHERE b.manager = :manager AND b.year = :year AND b.month = :month")
     List<TeamBudget> findByManagerAndYearAndMonth(@Param("manager") User manager, @Param("year") Integer year, @Param("month") Integer month);
 }
+
+

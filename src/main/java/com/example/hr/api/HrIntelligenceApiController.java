@@ -62,3 +62,5 @@ public class HrIntelligenceApiController {
         return ResponseEntity.ok(bankSalaryTransferService.createSalaryTransfers(month, year));
     }
 }
+
+

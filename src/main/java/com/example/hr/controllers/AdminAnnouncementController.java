@@ -1,9 +1,11 @@
 package com.example.hr.controllers;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.AnnouncementPriority;
 import com.example.hr.models.CompanyAnnouncement;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.CloudStorageFacade;
@@ -89,9 +91,9 @@ public class AdminAnnouncementController {
             if (author == null) return "redirect:/login";
             CompanyAnnouncement saved = announcementService.create(
                     author, title.trim(), content.trim(), departmentId, p, published, activeFlag);
-            ra.addFlashAttribute("success", "Đã tạo thông báo.");
+            ra.addFlashAttribute("success", "ÄÃ£ táº¡o thÃ´ng bÃ¡o.");
 
-            // Gửi email broadcast nếu active
+            // Gá»­i email broadcast náº¿u active
             if (activeFlag) {
                 boolean sendEmail = "true".equalsIgnoreCase(
                         ((org.springframework.web.context.request.ServletRequestAttributes)
@@ -107,12 +109,12 @@ public class AdminAnnouncementController {
                     });
                     // Firebase broadcast
                     cloudStorageFacade.broadcastAnnouncement(title.trim(), content.trim());
-                    ra.addFlashAttribute("success", "Đã tạo thông báo và gửi email đến tất cả nhân viên!");
+                    ra.addFlashAttribute("success", "ÄÃ£ táº¡o thÃ´ng bÃ¡o vÃ  gá»­i email Ä‘áº¿n táº¥t cáº£ nhÃ¢n viÃªn!");
                 }
             }
         } else {
             announcementService.update(id, title.trim(), content.trim(), departmentId, p, published, activeFlag);
-            ra.addFlashAttribute("success", "Đã cập nhật thông báo.");
+            ra.addFlashAttribute("success", "ÄÃ£ cáº­p nháº­t thÃ´ng bÃ¡o.");
         }
         return "redirect:/admin/announcements";
     }
@@ -131,7 +133,7 @@ public class AdminAnnouncementController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Integer id, RedirectAttributes ra) {
         announcementService.delete(id);
-        ra.addFlashAttribute("success", "Đã xóa thông báo.");
+        ra.addFlashAttribute("success", "ÄÃ£ xÃ³a thÃ´ng bÃ¡o.");
         return "redirect:/admin/announcements";
     }
 
@@ -143,3 +145,5 @@ public class AdminAnnouncementController {
         }
     }
 }
+
+

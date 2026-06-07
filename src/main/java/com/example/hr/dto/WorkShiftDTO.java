@@ -11,18 +11,18 @@ import java.time.LocalTime;
 @Data
 public class WorkShiftDTO {
 
-    @NotBlank(message = "Tên ca là bắt buộc")
+    @NotBlank(message = "TÃªn ca lÃ  báº¯t buá»™c")
     private String shiftName;
 
-    @NotBlank(message = "Mã ca là bắt buộc")
+    @NotBlank(message = "MÃ£ ca lÃ  báº¯t buá»™c")
     private String shiftCode;
 
     private ShiftType shiftType = ShiftType.REGULAR;
 
-    @NotNull(message = "Giờ bắt đầu là bắt buộc")
+    @NotNull(message = "Giá» báº¯t Ä‘áº§u lÃ  báº¯t buá»™c")
     private LocalTime startTime;
 
-    @NotNull(message = "Giờ kết thúc là bắt buộc")
+    @NotNull(message = "Giá» káº¿t thÃºc lÃ  báº¯t buá»™c")
     private LocalTime endTime;
 
     private Integer breakMinutes = 60;
@@ -33,3 +33,5 @@ public class WorkShiftDTO {
 
     private String description;
 }
+
+

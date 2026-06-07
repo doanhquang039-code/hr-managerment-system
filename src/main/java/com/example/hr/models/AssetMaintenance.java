@@ -37,7 +37,7 @@ public class AssetMaintenance {
     
     private BigDecimal cost;
     
-    private String vendor; // Nhà cung cấp dịch vụ
+    private String vendor; // NhÃ  cung cáº¥p dá»‹ch vá»¥
     
     @Column(nullable = false)
     private String status = "SCHEDULED"; // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
@@ -59,3 +59,5 @@ public class AssetMaintenance {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

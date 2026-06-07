@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,3 +77,5 @@ public class TeamGoal {
         }
     }
 }
+
+

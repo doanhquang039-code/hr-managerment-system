@@ -25,3 +25,5 @@ public interface EmployeeDocumentRepository extends JpaRepository<EmployeeDocume
 
     boolean existsByUserIdAndDocumentType(Integer userId, String documentType);
 }
+
+

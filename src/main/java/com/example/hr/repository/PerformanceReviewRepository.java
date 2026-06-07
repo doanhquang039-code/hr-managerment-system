@@ -30,3 +30,5 @@ public interface PerformanceReviewRepository extends JpaRepository<PerformanceRe
     List<PerformanceReview> findTop10ByOrderByOverallScoreDesc();
     java.util.Optional<PerformanceReview> findTopByEmployeeOrderByReviewDateDesc(User employee);
 }
+
+

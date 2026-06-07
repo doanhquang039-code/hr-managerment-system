@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Service generic approval workflow.
- * Xử lý multi-level approval cho Leave, OT, và các request khác.
+ * Xá»­ lÃ½ multi-level approval cho Leave, OT, vÃ  cÃ¡c request khÃ¡c.
  */
 @Service
 @Transactional
@@ -53,13 +53,13 @@ public class WorkflowApprovalService {
     // ===================== LEAVE APPROVAL =====================
 
     /**
-     * Duyệt nghỉ phép.
+     * Duyá»‡t nghá»‰ phÃ©p.
      */
     public LeaveRequest approveLeave(Integer leaveId, Integer approverId) {
         LeaveRequest leave = leaveRequestRepository.findById(leaveId)
-                .orElseThrow(() -> new ResourceNotFoundException("Đơn nghỉ phép", leaveId));
+                .orElseThrow(() -> new ResourceNotFoundException("ÄÆ¡n nghá»‰ phÃ©p", leaveId));
         User approver = userRepository.findById(approverId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người duyệt", approverId));
+                .orElseThrow(() -> new ResourceNotFoundException("NgÆ°á»i duyá»‡t", approverId));
 
         validateLeaveApproval(leave, approver);
 
@@ -68,12 +68,12 @@ public class WorkflowApprovalService {
         LeaveRequest saved = leaveRequestRepository.save(leave);
 
         // Notify employee
-        sendApprovalNotification(leave.getUser(), "Đơn nghỉ phép", true, null);
+        sendApprovalNotification(leave.getUser(), "ÄÆ¡n nghá»‰ phÃ©p", true, null);
 
         // Audit log
         auditLogService.log(approver.getUsername(), "APPROVE_LEAVE",
                 "LeaveRequest", String.valueOf(leaveId),
-                "Đã duyệt nghỉ phép cho " + leave.getUser().getFullName(), "N/A");
+                "ÄÃ£ duyá»‡t nghá»‰ phÃ©p cho " + leave.getUser().getFullName(), "N/A");
 
         log.info("Leave approved: id={}, user={}, approver={}",
                 leaveId, leave.getUser().getUsername(), approver.getUsername());
@@ -82,18 +82,18 @@ public class WorkflowApprovalService {
     }
 
     /**
-     * Từ chối nghỉ phép.
+     * Tá»« chá»‘i nghá»‰ phÃ©p.
      */
     public LeaveRequest rejectLeave(Integer leaveId, Integer approverId, String reason) {
         LeaveRequest leave = leaveRequestRepository.findById(leaveId)
-                .orElseThrow(() -> new ResourceNotFoundException("Đơn nghỉ phép", leaveId));
+                .orElseThrow(() -> new ResourceNotFoundException("ÄÆ¡n nghá»‰ phÃ©p", leaveId));
         User approver = userRepository.findById(approverId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người duyệt", approverId));
+                .orElseThrow(() -> new ResourceNotFoundException("NgÆ°á»i duyá»‡t", approverId));
 
         validateLeaveApproval(leave, approver);
 
         if (reason == null || reason.isBlank()) {
-            throw new ApprovalWorkflowException("Phải cung cấp lý do từ chối");
+            throw new ApprovalWorkflowException("Pháº£i cung cáº¥p lÃ½ do tá»« chá»‘i");
         }
 
         leave.setStatus(LeaveStatus.REJECTED);
@@ -101,22 +101,22 @@ public class WorkflowApprovalService {
         LeaveRequest saved = leaveRequestRepository.save(leave);
 
         // Notify employee
-        sendApprovalNotification(leave.getUser(), "Đơn nghỉ phép", false, reason);
+        sendApprovalNotification(leave.getUser(), "ÄÆ¡n nghá»‰ phÃ©p", false, reason);
 
         // Audit log
         auditLogService.log(approver.getUsername(), "REJECT_LEAVE",
                 "LeaveRequest", String.valueOf(leaveId),
-                "Đã từ chối nghỉ phép: " + reason, "N/A");
+                "ÄÃ£ tá»« chá»‘i nghá»‰ phÃ©p: " + reason, "N/A");
 
         return saved;
     }
 
     /**
-     * Duyệt hàng loạt nghỉ phép.
+     * Duyá»‡t hÃ ng loáº¡t nghá»‰ phÃ©p.
      */
     public int batchApproveLeaves(List<Integer> leaveIds, Integer approverId) {
         User approver = userRepository.findById(approverId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người duyệt", approverId));
+                .orElseThrow(() -> new ResourceNotFoundException("NgÆ°á»i duyá»‡t", approverId));
         List<LeaveRequest> requests = leaveRequestRepository.findAllById(leaveIds);
         List<LeaveRequest> approvedList = new java.util.ArrayList<>();
         
@@ -127,10 +127,10 @@ public class WorkflowApprovalService {
                 leave.setApprovedBy(approver);
                 approvedList.add(leave);
                 
-                sendApprovalNotification(leave.getUser(), "Đơn nghỉ phép", true, null);
+                sendApprovalNotification(leave.getUser(), "ÄÆ¡n nghá»‰ phÃ©p", true, null);
                 auditLogService.log(approver.getUsername(), "APPROVE_LEAVE",
                     "LeaveRequest", String.valueOf(leave.getId()),
-                    "Đã duyệt nghỉ phép cho " + leave.getUser().getFullName(), "N/A");
+                    "ÄÃ£ duyá»‡t nghá»‰ phÃ©p cho " + leave.getUser().getFullName(), "N/A");
             } catch (Exception e) {
                 log.error("Failed to approve leave {}: {}", leave.getId(), e.getMessage());
             }
@@ -144,25 +144,25 @@ public class WorkflowApprovalService {
     // ===================== OVERTIME APPROVAL =====================
 
     /**
-     * Duyệt OT.
+     * Duyá»‡t OT.
      */
     public OvertimeRequest approveOvertime(Integer overtimeId, Integer approverId) {
         User approver = userRepository.findById(approverId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người duyệt", approverId));
+                .orElseThrow(() -> new ResourceNotFoundException("NgÆ°á»i duyá»‡t", approverId));
         return newOvertimeService.approveRequest(overtimeId, approver);
     }
 
     /**
-     * Từ chối OT.
+     * Tá»« chá»‘i OT.
      */
     public OvertimeRequest rejectOvertime(Integer overtimeId, Integer approverId, String reason) {
         User approver = userRepository.findById(approverId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người duyệt", approverId));
+                .orElseThrow(() -> new ResourceNotFoundException("NgÆ°á»i duyá»‡t", approverId));
         return newOvertimeService.rejectRequest(overtimeId, approver, reason);
     }
 
     /**
-     * Duyệt hàng loạt OT.
+     * Duyá»‡t hÃ ng loáº¡t OT.
      */
     public int batchApproveOvertime(List<Integer> overtimeIds, Integer approverId) {
         int count = 0;
@@ -180,7 +180,7 @@ public class WorkflowApprovalService {
     // ===================== STATISTICS =====================
 
     /**
-     * Thống kê pending approvals.
+     * Thá»‘ng kÃª pending approvals.
      */
     @Transactional(readOnly = true)
     public PendingApprovalStats getPendingStats() {
@@ -204,28 +204,28 @@ public class WorkflowApprovalService {
 
     private void validateLeaveApproval(LeaveRequest leave, User approver) {
         if (leave.getStatus() != LeaveStatus.PENDING) {
-            throw new ApprovalWorkflowException("Chỉ có thể xử lý đơn đang Chờ duyệt. Trạng thái hiện tại: " + leave.getStatus());
+            throw new ApprovalWorkflowException("Chá»‰ cÃ³ thá»ƒ xá»­ lÃ½ Ä‘Æ¡n Ä‘ang Chá» duyá»‡t. Tráº¡ng thÃ¡i hiá»‡n táº¡i: " + leave.getStatus());
         }
         if (leave.getUser().getId().equals(approver.getId())) {
-            throw new ApprovalWorkflowException("Không thể tự duyệt đơn nghỉ phép của mình");
+            throw new ApprovalWorkflowException("KhÃ´ng thá»ƒ tá»± duyá»‡t Ä‘Æ¡n nghá»‰ phÃ©p cá»§a mÃ¬nh");
         }
     }
 
     private void validateOvertimeApproval(OvertimeRequest ot, User approver) {
         if (!ot.getStatus().equals(OvertimeStatus.PENDING.name())) {
-            throw new ApprovalWorkflowException("Chỉ có thể xử lý đơn đang Chờ duyệt. Trạng thái hiện tại: " + ot.getStatus());
+            throw new ApprovalWorkflowException("Chá»‰ cÃ³ thá»ƒ xá»­ lÃ½ Ä‘Æ¡n Ä‘ang Chá» duyá»‡t. Tráº¡ng thÃ¡i hiá»‡n táº¡i: " + ot.getStatus());
         }
         if (ot.getUser().getId().equals(approver.getId())) {
-            throw new ApprovalWorkflowException("Không thể tự duyệt đơn OT của mình");
+            throw new ApprovalWorkflowException("KhÃ´ng thá»ƒ tá»± duyá»‡t Ä‘Æ¡n OT cá»§a mÃ¬nh");
         }
     }
 
     private void sendApprovalNotification(User employee, String requestType, boolean approved, String reason) {
         try {
-            String status = approved ? "đã được duyệt" : "đã bị từ chối";
-            String message = requestType + " của bạn " + status;
+            String status = approved ? "Ä‘Ã£ Ä‘Æ°á»£c duyá»‡t" : "Ä‘Ã£ bá»‹ tá»« chá»‘i";
+            String message = requestType + " cá»§a báº¡n " + status;
             if (reason != null) {
-                message += ". Lý do: " + reason;
+                message += ". LÃ½ do: " + reason;
             }
             notificationService.createNotification(employee, message, NotificationType.INFO, "/user1/dashboard");
         } catch (Exception e) {
@@ -233,3 +233,5 @@ public class WorkflowApprovalService {
         }
     }
 }
+
+

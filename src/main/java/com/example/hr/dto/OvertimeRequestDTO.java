@@ -16,23 +16,25 @@ public class OvertimeRequestDTO {
 
     private Integer id;
 
-    @NotNull(message = "User ID không được để trống")
+    @NotNull(message = "User ID khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private Integer userId;
 
-    @NotNull(message = "Ngày OT không được để trống")
+    @NotNull(message = "NgÃ y OT khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private LocalDate overtimeDate;
 
-    @NotNull(message = "Giờ bắt đầu không được để trống")
+    @NotNull(message = "Giá» báº¯t Ä‘áº§u khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private LocalTime startTime;
 
-    @NotNull(message = "Giờ kết thúc không được để trống")
+    @NotNull(message = "Giá» káº¿t thÃºc khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private LocalTime endTime;
 
     private BigDecimal totalHours;
     private BigDecimal multiplier;
     private String reason;
 
-    // Dùng cho approval/rejection
+    // DÃ¹ng cho approval/rejection
     private Integer approvedById;
     private String rejectionReason;
 }
+
+

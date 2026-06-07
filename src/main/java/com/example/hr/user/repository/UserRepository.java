@@ -1,5 +1,7 @@
 package com.example.hr.user.repository;
 
+
+import com.example.hr.department.entity.Department;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,7 +67,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     long countByCreatedAtGreaterThanEqual(LocalDateTime createdAt);
 
     long countByStatus(UserStatus status);
-    long countByDepartmentAndStatus(com.example.hr.models.Department department, UserStatus status);
+    long countByDepartmentAndStatus(com.example.hr.department.entity.Department department, UserStatus status);
 
     @Query("""
             SELECT COALESCE(d.departmentName, 'Unassigned'), COUNT(u)
@@ -79,18 +81,18 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     // Advanced Analytics methods
     long countByCreatedAtAfter(LocalDateTime createdAt);
     long countByCreatedAtBefore(LocalDateTime createdAt);
-    long countByDepartment(com.example.hr.models.Department department);
-    List<User> findByDepartmentAndStatus(com.example.hr.models.Department department, UserStatus status);
+    long countByDepartment(com.example.hr.department.entity.Department department);
+    List<User> findByDepartmentAndStatus(com.example.hr.department.entity.Department department, UserStatus status);
     List<User> findTop5ByOrderByCreatedAtDesc();
 
     // Additional method for manager tools
-    List<User> findByDepartment(com.example.hr.models.Department department);
+    List<User> findByDepartment(com.example.hr.department.entity.Department department);
 
     @Query("SELECT u FROM User u WHERE u.department = :department AND " +
            "(:keyword IS NULL OR :keyword = '' OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(u.employeeCode) LIKE LOWER(CONCAT('%', :keyword, '%'))) AND " +
            "(:roleEnum IS NULL OR u.role = :roleEnum)")
     List<User> searchDepartmentMembers(
-        @Param("department") com.example.hr.models.Department department,
+        @Param("department") com.example.hr.department.entity.Department department,
         @Param("keyword") String keyword, 
         @Param("roleEnum") com.example.hr.enums.Role roleEnum);
 }

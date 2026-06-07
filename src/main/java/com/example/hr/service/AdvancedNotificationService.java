@@ -196,3 +196,5 @@ public class AdvancedNotificationService {
         return notificationTemplateRepository.findByIsActiveOrderByNameAsc(true);
     }
 }
+
+

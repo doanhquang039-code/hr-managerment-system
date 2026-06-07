@@ -14,3 +14,5 @@ public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Inte
     
     long countByQuiz(Quiz quiz);
 }
+
+

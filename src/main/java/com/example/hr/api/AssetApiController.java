@@ -46,7 +46,7 @@ public class AssetApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Tạo tài sản thành công");
+            response.put("message", "Táº¡o tÃ i sáº£n thÃ nh cÃ´ng");
             response.put("asset", created);
             
             return ResponseEntity.ok(response);
@@ -79,7 +79,7 @@ public class AssetApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Giao tài sản thành công");
+            response.put("message", "Giao tÃ i sáº£n thÃ nh cÃ´ng");
             response.put("assignment", assignment);
             
             return ResponseEntity.ok(response);
@@ -103,7 +103,7 @@ public class AssetApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Thu hồi tài sản thành công");
+            response.put("message", "Thu há»“i tÃ i sáº£n thÃ nh cÃ´ng");
             response.put("assignment", assignment);
             
             return ResponseEntity.ok(response);
@@ -132,7 +132,7 @@ public class AssetApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Lên lịch bảo trì thành công");
+            response.put("message", "LÃªn lá»‹ch báº£o trÃ¬ thÃ nh cÃ´ng");
             response.put("maintenance", maintenance);
             
             return ResponseEntity.ok(response);
@@ -155,7 +155,7 @@ public class AssetApiController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("message", "Hoàn thành bảo trì");
+            response.put("message", "HoÃ n thÃ nh báº£o trÃ¬");
             response.put("maintenance", maintenance);
             
             return ResponseEntity.ok(response);
@@ -175,3 +175,5 @@ public class AssetApiController {
         return ResponseEntity.ok(maintenances);
     }
 }
+
+

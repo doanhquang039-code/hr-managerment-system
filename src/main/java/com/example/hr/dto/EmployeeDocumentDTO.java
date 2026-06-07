@@ -13,13 +13,13 @@ public class EmployeeDocumentDTO {
 
     private Long id;
 
-    @NotNull(message = "User ID không được để trống")
+    @NotNull(message = "User ID khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private Integer userId;
 
-    @NotBlank(message = "Loại tài liệu không được để trống")
+    @NotBlank(message = "Loáº¡i tÃ i liá»‡u khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private String documentType;
 
-    @NotBlank(message = "Tên file không được để trống")
+    @NotBlank(message = "TÃªn file khÃ´ng Ä‘Æ°á»£c Ä‘á»ƒ trá»‘ng")
     private String fileName;
 
     private String fileUrl;
@@ -28,3 +28,5 @@ public class EmployeeDocumentDTO {
     private String description;
     private Boolean isConfidential;
 }
+
+

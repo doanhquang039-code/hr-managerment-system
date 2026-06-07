@@ -17,3 +17,4 @@ public interface ChatbotMessageRepository extends JpaRepository<ChatbotMessage, 
 
     Optional<ChatbotMessage> findByIdAndUser(int id, User user);
 }
+

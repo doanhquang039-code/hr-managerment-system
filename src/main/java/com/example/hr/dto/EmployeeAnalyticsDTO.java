@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * DTO phân tích nhân viên nâng cao.
+ * DTO phÃ¢n tÃ­ch nhÃ¢n viÃªn nÃ¢ng cao.
  */
 @Data
 @NoArgsConstructor
@@ -24,19 +24,19 @@ public class EmployeeAnalyticsDTO {
     private long newHiresThisYear;
     private long terminationsThisYear;
 
-    // Phân bố theo phòng ban
+    // PhÃ¢n bá»‘ theo phÃ²ng ban
     private Map<String, Long> headcountByDepartment;
 
-    // Phân bố theo vị trí
+    // PhÃ¢n bá»‘ theo vá»‹ trÃ­
     private Map<String, Long> headcountByPosition;
 
-    // Phân bố theo trạng thái
+    // PhÃ¢n bá»‘ theo tráº¡ng thÃ¡i
     private Map<String, Long> headcountByStatus;
 
-    // Xu hướng headcount theo tháng (12 tháng)
+    // Xu hÆ°á»›ng headcount theo thÃ¡ng (12 thÃ¡ng)
     private List<MonthlyHeadcount> headcountTrending;
 
-    // Chi phí nhân sự trung bình
+    // Chi phÃ­ nhÃ¢n sá»± trung bÃ¬nh
     private BigDecimal avgSalary;
     private BigDecimal totalSalaryCost;
 
@@ -59,3 +59,5 @@ public class EmployeeAnalyticsDTO {
         private long terminations;
     }
 }
+
+

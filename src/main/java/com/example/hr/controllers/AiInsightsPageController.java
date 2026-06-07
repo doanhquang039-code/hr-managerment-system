@@ -26,3 +26,5 @@ public class AiInsightsPageController {
         return "ai/insights";
     }
 }
+
+

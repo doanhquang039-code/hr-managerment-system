@@ -66,7 +66,7 @@ public class ProfileController {
             if (email != null && !email.isBlank()) {
                 String cleanEmail = email.trim();
                 if (userRepository.existsByEmailAndIdNot(cleanEmail, user.getId())) {
-                    redirectAttributes.addFlashAttribute("errorMsg", "Email này đã được tài khoản khác sử dụng.");
+                    redirectAttributes.addFlashAttribute("errorMsg", "Email nÃ y Ä‘Ã£ Ä‘Æ°á»£c tÃ i khoáº£n khÃ¡c sá»­ dá»¥ng.");
                     return "redirect:/profile";
                 }
                 user.setEmail(cleanEmail);
@@ -86,13 +86,13 @@ public class ProfileController {
             try {
                 user.setDateOfBirth(LocalDate.parse(dateOfBirth));
             } catch (Exception ex) {
-                redirectAttributes.addFlashAttribute("errorMsg", "Ngày sinh không hợp lệ.");
+                redirectAttributes.addFlashAttribute("errorMsg", "NgÃ y sinh khÃ´ng há»£p lá»‡.");
                 return "redirect:/profile";
             }
         }
 
         userRepository.save(user);
-        redirectAttributes.addFlashAttribute("successMsg", "Cập nhật hồ sơ thành công.");
+        redirectAttributes.addFlashAttribute("successMsg", "Cáº­p nháº­t há»“ sÆ¡ thÃ nh cÃ´ng.");
         return "redirect:/profile";
     }
 
@@ -108,21 +108,21 @@ public class ProfileController {
         }
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu hiện tại không đúng.");
+            redirectAttributes.addFlashAttribute("passwordError", "Máº­t kháº©u hiá»‡n táº¡i khÃ´ng Ä‘Ãºng.");
             return "redirect:/profile";
         }
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu mới và xác nhận không khớp.");
+            redirectAttributes.addFlashAttribute("passwordError", "Máº­t kháº©u má»›i vÃ  xÃ¡c nháº­n khÃ´ng khá»›p.");
             return "redirect:/profile";
         }
         if (newPassword.length() < 6) {
-            redirectAttributes.addFlashAttribute("passwordError", "Mật khẩu mới phải có ít nhất 6 ký tự.");
+            redirectAttributes.addFlashAttribute("passwordError", "Máº­t kháº©u má»›i pháº£i cÃ³ Ã­t nháº¥t 6 kÃ½ tá»±.");
             return "redirect:/profile";
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        redirectAttributes.addFlashAttribute("successMsg", "Đổi mật khẩu thành công.");
+        redirectAttributes.addFlashAttribute("successMsg", "Äá»•i máº­t kháº©u thÃ nh cÃ´ng.");
         return "redirect:/profile";
     }
 
@@ -133,3 +133,5 @@ public class ProfileController {
         return "/user1/dashboard";
     }
 }
+
+

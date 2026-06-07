@@ -48,7 +48,7 @@ public class ExitInterview {
     private Boolean wouldRehire = false;
     
     @Column(columnDefinition = "TEXT")
-    private String responses; // JSON của các câu hỏi/trả lời
+    private String responses; // JSON cá»§a cÃ¡c cÃ¢u há»i/tráº£ lá»i
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -64,3 +64,5 @@ public class ExitInterview {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

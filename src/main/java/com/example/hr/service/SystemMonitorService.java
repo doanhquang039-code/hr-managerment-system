@@ -51,7 +51,7 @@ public class SystemMonitorService {
     private final ObjectProvider<EmailFacade> emailFacadeProvider;
 
     /**
-     * Lấy system health metrics
+     * Láº¥y system health metrics
      */
     public Map<String, Object> getSystemHealth() {
         Map<String, Object> health = new HashMap<>();
@@ -290,7 +290,7 @@ public class SystemMonitorService {
 
         if (kafkaProperties.getBootstrapServers() == null || kafkaProperties.getBootstrapServers().isEmpty()) {
             metrics.put("status", "DISABLED");
-            metrics.put("message", "Chưa cấu hình bootstrap server.");
+            metrics.put("message", "ChÆ°a cáº¥u hÃ¬nh bootstrap server.");
             return metrics;
         }
 
@@ -327,7 +327,7 @@ public class SystemMonitorService {
             metrics.put("missingTopics", missingTopics);
         } catch (Exception e) {
             metrics.put("status", "DOWN");
-            metrics.put("message", "Không kết nối được Kafka broker: " + e.getMessage());
+            metrics.put("message", "KhÃ´ng káº¿t ná»‘i Ä‘Æ°á»£c Kafka broker: " + e.getMessage());
             metrics.put("presentConfiguredTopics", 0);
             metrics.put("presentDltTopics", 0);
             metrics.put("missingTopics", configuredTopics);
@@ -355,10 +355,10 @@ public class SystemMonitorService {
         try {
             EmailFacade emailFacade = emailFacadeProvider.getIfAvailable();
             metrics.put("status", emailFacade != null ? "READY" : "DISABLED");
-            metrics.put("provider", emailFacade != null ? emailFacade.getProvider() : "Không có provider");
+            metrics.put("provider", emailFacade != null ? emailFacade.getProvider() : "KhÃ´ng cÃ³ provider");
         } catch (Exception e) {
             metrics.put("status", "ERROR");
-            metrics.put("provider", "Không xác định");
+            metrics.put("provider", "KhÃ´ng xÃ¡c Ä‘á»‹nh");
             metrics.put("message", e.getMessage());
         }
         return metrics;
@@ -434,11 +434,11 @@ public class SystemMonitorService {
 
     private List<Map<String, Object>> getReadinessChecklist() {
         List<Map<String, Object>> items = new ArrayList<>();
-        items.add(readiness("Menu và font", "IN_PROGRESS", "Admin sidebar đã gom về fragment chung, các trang cũ tiếp tục được chuyển dần về cùng layout."));
-        items.add(readiness("Workflow HR chính", "IN_PROGRESS", "Nhân viên, nghỉ phép, chấm công, lương, tuyển dụng và onboarding đã có luồng nền."));
-        items.add(readiness("LMS và React islands", "IN_PROGRESS", "Quản trị khóa học đã dùng React island, chi tiết khóa học có video Cloudinary và cập nhật tiến độ."));
-        items.add(readiness("AI và Health Insight", "READY", "API trả kết quả đồng bộ, cảnh báo và audit chạy qua event pipeline."));
-        items.add(readiness("Kafka/Event-driven", "READY", "Audit và Health Insight đã có topic, retry và dead-letter topic."));
+        items.add(readiness("Menu vÃ  font", "IN_PROGRESS", "Admin sidebar Ä‘Ã£ gom vá» fragment chung, cÃ¡c trang cÅ© tiáº¿p tá»¥c Ä‘Æ°á»£c chuyá»ƒn dáº§n vá» cÃ¹ng layout."));
+        items.add(readiness("Workflow HR chÃ­nh", "IN_PROGRESS", "NhÃ¢n viÃªn, nghá»‰ phÃ©p, cháº¥m cÃ´ng, lÆ°Æ¡ng, tuyá»ƒn dá»¥ng vÃ  onboarding Ä‘Ã£ cÃ³ luá»“ng ná»n."));
+        items.add(readiness("LMS vÃ  React islands", "IN_PROGRESS", "Quáº£n trá»‹ khÃ³a há»c Ä‘Ã£ dÃ¹ng React island, chi tiáº¿t khÃ³a há»c cÃ³ video Cloudinary vÃ  cáº­p nháº­t tiáº¿n Ä‘á»™."));
+        items.add(readiness("AI vÃ  Health Insight", "READY", "API tráº£ káº¿t quáº£ Ä‘á»“ng bá»™, cáº£nh bÃ¡o vÃ  audit cháº¡y qua event pipeline."));
+        items.add(readiness("Kafka/Event-driven", "READY", "Audit vÃ  Health Insight Ä‘Ã£ cÃ³ topic, retry vÃ  dead-letter topic."));
         return items;
     }
 
@@ -450,3 +450,5 @@ public class SystemMonitorService {
         return item;
     }
 }
+
+

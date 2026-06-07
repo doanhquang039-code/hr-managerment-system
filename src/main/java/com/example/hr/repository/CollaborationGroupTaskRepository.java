@@ -25,3 +25,5 @@ public interface CollaborationGroupTaskRepository extends JpaRepository<Collabor
             """)
     List<CollaborationGroupTask> findBoardByGroup(CollaborationGroup group);
 }
+
+

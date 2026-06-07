@@ -1,4 +1,4 @@
-package com.example.hr.models; // 1. Đảm bảo dòng này khớp với thư mục
+package com.example.hr.models; // 1. Äáº£m báº£o dÃ²ng nÃ y khá»›p vá»›i thÆ° má»¥c
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "chatbotmessage")
 @Data
-public class ChatbotMessage { // 2. Tên class PHẢI khớp chính xác với tên file
+public class ChatbotMessage { // 2. TÃªn class PHáº¢I khá»›p chÃ­nh xÃ¡c vá»›i tÃªn file
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -43,3 +43,4 @@ public class ChatbotMessage { // 2. Tên class PHẢI khớp chính xác với t
         updatedAt = LocalDateTime.now();
     }
 }
+

@@ -35,7 +35,7 @@ public class QuizAttempt {
     private Boolean passed = false;
     
     @Column(columnDefinition = "TEXT")
-    private String answers; // JSON của câu trả lời
+    private String answers; // JSON cá»§a cÃ¢u tráº£ lá»i
     
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
@@ -58,3 +58,5 @@ public class QuizAttempt {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

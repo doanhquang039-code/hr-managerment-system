@@ -36,3 +36,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     @Query("UPDATE Notification n SET n.read = true WHERE n.id = :id AND n.user = :user")
     int markReadByIdAndUser(@Param("id") Integer id, @Param("user") User user);
 }
+
+

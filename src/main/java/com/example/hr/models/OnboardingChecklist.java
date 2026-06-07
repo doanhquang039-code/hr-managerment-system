@@ -29,14 +29,14 @@ public class OnboardingChecklist {
     private String description;
     
     @Column(nullable = false)
-    private Integer dayOffset; // Ngày thứ mấy sau khi join (0 = ngày đầu)
+    private Integer dayOffset; // NgÃ y thá»© máº¥y sau khi join (0 = ngÃ y Ä‘áº§u)
     
     @Column(nullable = false)
     private String category; // PAPERWORK, IT_SETUP, TRAINING, INTRODUCTION, OTHER
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to")
-    private User assignedTo; // Người chịu trách nhiệm
+    private User assignedTo; // NgÆ°á»i chá»‹u trÃ¡ch nhiá»‡m
     
     @Column(nullable = false)
     private Boolean isCompleted = false;
@@ -60,3 +60,5 @@ public class OnboardingChecklist {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

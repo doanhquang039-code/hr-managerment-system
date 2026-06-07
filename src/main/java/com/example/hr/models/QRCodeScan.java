@@ -77,3 +77,5 @@ public class QRCodeScan {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.OKRStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -53,7 +55,7 @@ public class OKR {
     private Integer progress = 0; // 0-100
 
     @Column(name = "weight")
-    private Integer weight = 100; // Trọng số
+    private Integer weight = 100; // Trá»ng sá»‘
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
@@ -71,3 +73,5 @@ public class OKR {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 }
+
+

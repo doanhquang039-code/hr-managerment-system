@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * Entity cảnh cáo / kỷ luật nhân viên.
+ * Entity cáº£nh cÃ¡o / ká»· luáº­t nhÃ¢n viÃªn.
  */
 @Entity
 @Table(name = "employee_warning")
@@ -66,7 +66,7 @@ public class EmployeeWarning {
     // --- Business Logic ---
 
     /**
-     * Kiểm tra cảnh cáo còn hiệu lực hay không.
+     * Kiá»ƒm tra cáº£nh cÃ¡o cÃ²n hiá»‡u lá»±c hay khÃ´ng.
      */
     public boolean isActive() {
         if (expiryDate == null) return true;
@@ -74,7 +74,7 @@ public class EmployeeWarning {
     }
 
     /**
-     * Nhân viên xác nhận đã đọc cảnh cáo.
+     * NhÃ¢n viÃªn xÃ¡c nháº­n Ä‘Ã£ Ä‘á»c cáº£nh cÃ¡o.
      */
     public void acknowledge() {
         this.isAcknowledged = true;
@@ -82,7 +82,7 @@ public class EmployeeWarning {
     }
 
     /**
-     * Kiểm tra có cần escalation không (cảnh cáo đã quá 30 ngày mà chưa acknowledge).
+     * Kiá»ƒm tra cÃ³ cáº§n escalation khÃ´ng (cáº£nh cÃ¡o Ä‘Ã£ quÃ¡ 30 ngÃ y mÃ  chÆ°a acknowledge).
      */
     public boolean needsEscalation() {
         if (Boolean.TRUE.equals(isAcknowledged)) return false;
@@ -91,14 +91,14 @@ public class EmployeeWarning {
     }
 
     /**
-     * Lấy mức cảnh cáo tiếp theo nếu cần escalation.
+     * Láº¥y má»©c cáº£nh cÃ¡o tiáº¿p theo náº¿u cáº§n escalation.
      */
     public WarningLevel getNextEscalationLevel() {
         return warningLevel.next();
     }
 
     /**
-     * Kiểm tra có phải level nghiêm trọng không (FINAL hoặc TERMINATION).
+     * Kiá»ƒm tra cÃ³ pháº£i level nghiÃªm trá»ng khÃ´ng (FINAL hoáº·c TERMINATION).
      */
     public boolean isSevere() {
         return warningLevel == WarningLevel.FINAL
@@ -106,7 +106,7 @@ public class EmployeeWarning {
     }
 
     /**
-     * Tính số ngày kể từ khi ban hành.
+     * TÃ­nh sá»‘ ngÃ y ká»ƒ tá»« khi ban hÃ nh.
      */
     public long getDaysSinceIssued() {
         if (issuedDate == null) return 0;
@@ -126,3 +126,5 @@ public class EmployeeWarning {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

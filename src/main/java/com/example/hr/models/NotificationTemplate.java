@@ -55,3 +55,5 @@ public class NotificationTemplate {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

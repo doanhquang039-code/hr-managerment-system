@@ -1,5 +1,7 @@
 package com.example.hr.service;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.AttendanceStatus;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.enums.NotificationType;
@@ -53,7 +55,7 @@ public class AttritionRiskService {
         if (highRisk.isEmpty()) {
             return;
         }
-        String message = "Có " + highRisk.size() + " nhân sự có nguy cơ nghỉ việc cao. Xem API /api/hr-intelligence/attrition-risk.";
+        String message = "CÃ³ " + highRisk.size() + " nhÃ¢n sá»± cÃ³ nguy cÆ¡ nghá»‰ viá»‡c cao. Xem API /api/hr-intelligence/attrition-risk.";
         for (User approver : userRepository.findByRoleInAndStatus(List.of(Role.ADMIN, Role.MANAGER, Role.HIRING), UserStatus.ACTIVE)) {
             notificationService.createNotification(approver, message, NotificationType.WARNING, "/admin/dashboard");
         }
@@ -74,10 +76,10 @@ public class AttritionRiskService {
                 .count();
         if (absentOrLate >= 8) {
             score += 25;
-            reasons.put("attendance", absentOrLate + " lần vắng/muộn/về sớm trong 90 ngày");
+            reasons.put("attendance", absentOrLate + " láº§n váº¯ng/muá»™n/vá» sá»›m trong 90 ngÃ y");
         } else if (absentOrLate >= 4) {
             score += 12;
-            reasons.put("attendance", absentOrLate + " lần vắng/muộn/về sớm trong 90 ngày");
+            reasons.put("attendance", absentOrLate + " láº§n váº¯ng/muá»™n/vá» sá»›m trong 90 ngÃ y");
         }
 
         long recentLeaves = leaves.stream()
@@ -86,25 +88,25 @@ public class AttritionRiskService {
                 .count();
         if (recentLeaves >= 4) {
             score += 20;
-            reasons.put("leave", recentLeaves + " đơn nghỉ đã duyệt trong 90 ngày");
+            reasons.put("leave", recentLeaves + " Ä‘Æ¡n nghá»‰ Ä‘Ã£ duyá»‡t trong 90 ngÃ y");
         }
 
         if (latestReview == null) {
             score += 10;
-            reasons.put("review", "Chưa có đánh giá hiệu suất gần nhất");
+            reasons.put("review", "ChÆ°a cÃ³ Ä‘Ã¡nh giÃ¡ hiá»‡u suáº¥t gáº§n nháº¥t");
         } else if (latestReview.getOverallScore() != null && latestReview.getOverallScore() <= 2) {
             score += 25;
-            reasons.put("review", "Điểm hiệu suất thấp: " + latestReview.getOverallScore());
+            reasons.put("review", "Äiá»ƒm hiá»‡u suáº¥t tháº¥p: " + latestReview.getOverallScore());
         } else if (latestReview.getReviewDate() != null && ChronoUnit.DAYS.between(latestReview.getReviewDate(), today) > 180) {
             score += 8;
-            reasons.put("review", "Đánh giá hiệu suất đã quá 180 ngày");
+            reasons.put("review", "ÄÃ¡nh giÃ¡ hiá»‡u suáº¥t Ä‘Ã£ quÃ¡ 180 ngÃ y");
         }
 
         if (user.getHireDate() != null) {
             long tenureDays = ChronoUnit.DAYS.between(user.getHireDate(), today);
             if (tenureDays < 180) {
                 score += 10;
-                reasons.put("tenure", "Nhân sự mới dưới 6 tháng");
+                reasons.put("tenure", "NhÃ¢n sá»± má»›i dÆ°á»›i 6 thÃ¡ng");
             }
         }
 
@@ -120,3 +122,5 @@ public class AttritionRiskService {
         return result;
     }
 }
+
+

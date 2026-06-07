@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * AWS S3 Service — backup báo cáo, payslip PDF, audit logs.
- * Chỉ active khi aws.s3.enabled=true.
+ * AWS S3 Service â€” backup bÃ¡o cÃ¡o, payslip PDF, audit logs.
+ * Chá»‰ active khi aws.s3.enabled=true.
  */
 @ConditionalOnBean(S3Client.class)
 public class AwsS3Service {
@@ -45,7 +45,7 @@ public class AwsS3Service {
     // ==================== UPLOAD ====================
 
     /**
-     * Upload báo cáo PDF/Excel lên S3.
+     * Upload bÃ¡o cÃ¡o PDF/Excel lÃªn S3.
      * Key format: reports/2026/04/payroll-2026-04.pdf
      */
     public String uploadReport(byte[] data, String fileName, String contentType) {
@@ -54,7 +54,7 @@ public class AwsS3Service {
     }
 
     /**
-     * Upload payslip PDF cho nhân viên.
+     * Upload payslip PDF cho nhÃ¢n viÃªn.
      * Key format: payslips/userId/2026-04-payslip.pdf
      */
     public String uploadPayslip(byte[] data, Integer userId, int month, int year) {
@@ -73,7 +73,7 @@ public class AwsS3Service {
     }
 
     /**
-     * Upload document nhân viên.
+     * Upload document nhÃ¢n viÃªn.
      */
     public String uploadDocument(InputStream inputStream, long size,
                                   String fileName, String contentType) {
@@ -98,7 +98,7 @@ public class AwsS3Service {
     // ==================== DOWNLOAD / URL ====================
 
     /**
-     * Tạo pre-signed URL có thời hạn (mặc định 1 giờ).
+     * Táº¡o pre-signed URL cÃ³ thá»i háº¡n (máº·c Ä‘á»‹nh 1 giá»).
      */
     public String generatePresignedUrl(String key, int expiryMinutes) {
         try (S3Presigner presigner = S3Presigner.builder()
@@ -120,7 +120,7 @@ public class AwsS3Service {
     // ==================== LIST / DELETE ====================
 
     /**
-     * Liệt kê files trong một prefix (folder).
+     * Liá»‡t kÃª files trong má»™t prefix (folder).
      */
     public List<String> listFiles(String prefix) {
         try {
@@ -136,7 +136,7 @@ public class AwsS3Service {
     }
 
     /**
-     * Xóa file trên S3.
+     * XÃ³a file trÃªn S3.
      */
     public void deleteFile(String key) {
         try {
@@ -148,7 +148,7 @@ public class AwsS3Service {
     }
 
     /**
-     * Kiểm tra bucket tồn tại và accessible.
+     * Kiá»ƒm tra bucket tá»“n táº¡i vÃ  accessible.
      */
     public boolean isHealthy() {
         try {
@@ -188,3 +188,5 @@ public class AwsS3Service {
         return String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, key);
     }
 }
+
+

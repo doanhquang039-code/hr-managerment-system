@@ -5,6 +5,8 @@ package com.example.hr.controllers;
 
 
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.leave.entity.LeaveRequest;
 import com.example.hr.leave.repository.LeaveRequestRepository;
@@ -13,6 +15,9 @@ import com.example.hr.attendance.repository.AttendanceRepository;
 import com.example.hr.enums.*;
 import com.example.hr.models.*;
 import com.example.hr.repository.*;
+import com.example.hr.task.entity.Task;
+import com.example.hr.task.repository.TaskAssignmentRepository;
+import com.example.hr.task.repository.TaskRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.EmailFacade;
 import com.example.hr.service.NotificationService;
@@ -126,7 +131,7 @@ public class ManagerController {
             model.addAttribute("today", today.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy")));
             return "manager/dashboard-simple";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lá»—i táº£i dashboard: " + e.getMessage());
+            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i dashboard: " + e.getMessage());
             model.addAttribute("errorDetails", e.getClass().getSimpleName());
             return "error/500";
         }
@@ -154,7 +159,7 @@ public class ManagerController {
         model.addAttribute("members", members);
         // Use LinkedHashMap deduplication by ID to avoid StackOverflow from
         // Lombok @Data hashCode() on bidirectional Department <-> User entities
-        java.util.Map<Integer, com.example.hr.models.Department> deptMap = new java.util.LinkedHashMap<>();
+        java.util.Map<Integer, com.example.hr.department.entity.Department> deptMap = new java.util.LinkedHashMap<>();
         for (User u : members) {
             if (u.getDepartment() != null) {
                 deptMap.putIfAbsent(u.getDepartment().getId(), u.getDepartment());
@@ -392,7 +397,7 @@ public class ManagerController {
             
             return "manager/attendance";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lá»—i táº£i attendance: " + e.getMessage());
+            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i attendance: " + e.getMessage());
             return "error/500";
         }
     }
@@ -429,7 +434,7 @@ public class ManagerController {
             
             return "manager/performance";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lá»—i táº£i performance: " + e.getMessage());
+            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i performance: " + e.getMessage());
             return "error/500";
         }
     }
@@ -461,7 +466,7 @@ public class ManagerController {
             
             return "manager/reports/team";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lá»—i táº£i team reports: " + e.getMessage());
+            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i team reports: " + e.getMessage());
             return "error/500";
         }
     }
@@ -474,7 +479,7 @@ public class ManagerController {
             
             return "manager/reports/budget";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lá»—i táº£i budget reports: " + e.getMessage());
+            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i budget reports: " + e.getMessage());
             return "error/500";
         }
     }
@@ -495,3 +500,5 @@ public class ManagerController {
     }
 
 }
+
+

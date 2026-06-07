@@ -19,3 +19,5 @@ public interface PublicHolidayRepository extends JpaRepository<PublicHoliday, Lo
     @Query("SELECT ph FROM PublicHoliday ph WHERE ph.date = :date AND ph.isActive = true")
     List<PublicHoliday> findByDate(@Param("date") LocalDate date);
 }
+
+

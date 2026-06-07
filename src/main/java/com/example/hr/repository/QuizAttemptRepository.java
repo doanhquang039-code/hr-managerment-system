@@ -34,3 +34,5 @@ public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Intege
     
     long countByUserAndPassed(User user, boolean passed);
 }
+
+

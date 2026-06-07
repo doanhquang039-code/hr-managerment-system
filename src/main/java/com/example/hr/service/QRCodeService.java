@@ -219,3 +219,5 @@ public class QRCodeService {
     // Inner class for statistics
     public record QRCodeStats(long totalQRCodes, long activeQRCodes, long totalScans, long todayScans) {}
 }
+
+

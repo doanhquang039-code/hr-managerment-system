@@ -32,3 +32,5 @@ public class HrAuditLogController {
         return "admin/audit-log-list";
     }
 }
+
+

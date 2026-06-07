@@ -23,10 +23,10 @@ public class FaceRecognitionData {
     private User user;
     
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String faceEncoding; // JSON string của face encoding
+    private String faceEncoding; // JSON string cá»§a face encoding
     
     @Column(nullable = false)
-    private String imageUrl; // URL ảnh khuôn mặt
+    private String imageUrl; // URL áº£nh khuÃ´n máº·t
     
     @Column(nullable = false)
     private Boolean isActive = true;
@@ -45,3 +45,5 @@ public class FaceRecognitionData {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

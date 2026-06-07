@@ -13,3 +13,5 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
     Optional<PasswordResetToken> findByTokenHash(String tokenHash);
     List<PasswordResetToken> findByUserAndUsedAtIsNull(User user);
 }
+
+

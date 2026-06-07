@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST API controller cho Dashboard chính.
+ * REST API controller cho Dashboard chÃ­nh.
  */
 @RestController
 @RequestMapping("/api/dashboard")
@@ -37,3 +37,5 @@ public class DashboardApiController {
         return ResponseEntity.ok(dashboardService.calculateAttritionMetrics(year));
     }
 }
+
+

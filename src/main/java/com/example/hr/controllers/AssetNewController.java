@@ -63,7 +63,7 @@ public class AssetNewController {
     public String saveAsset(@ModelAttribute Asset asset, RedirectAttributes ra) {
         try {
             assetService.createAsset(asset);
-            ra.addFlashAttribute("success", "Tạo tài sản thành công!");
+            ra.addFlashAttribute("success", "Táº¡o tÃ i sáº£n thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -89,7 +89,7 @@ public class AssetNewController {
             user.setId(userId);
             
             assetService.assignAsset(asset, user, assignedBy, LocalDate.parse(assignedDate), notes);
-            ra.addFlashAttribute("success", "Gán tài sản thành công!");
+            ra.addFlashAttribute("success", "GÃ¡n tÃ i sáº£n thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -104,7 +104,7 @@ public class AssetNewController {
                              RedirectAttributes ra) {
         try {
             assetService.returnAsset(assignmentId, condition, notes);
-            ra.addFlashAttribute("success", "Trả tài sản thành công!");
+            ra.addFlashAttribute("success", "Tráº£ tÃ i sáº£n thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -138,10 +138,12 @@ public class AssetNewController {
             LocalDate nextDate = nextMaintenanceDate != null ? LocalDate.parse(nextMaintenanceDate) : null;
             assetService.scheduleMaintenance(asset, type, description, 
                                            LocalDate.parse(maintenanceDate), nextDate);
-            ra.addFlashAttribute("success", "Lên lịch bảo trì thành công!");
+            ra.addFlashAttribute("success", "LÃªn lá»‹ch báº£o trÃ¬ thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/assets/new/admin/maintenance";
     }
 }
+
+

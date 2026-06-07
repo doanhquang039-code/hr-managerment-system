@@ -87,3 +87,5 @@ public class UserGroupController {
         model.addAttribute("groupTasks", hasGroupAccess ? taskService.getDefaultGroupTasks() : java.util.List.of());
     }
 }
+
+

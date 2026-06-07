@@ -2,9 +2,9 @@ package com.example.hr.user.service;
 
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.User;
-import com.example.hr.models.Department;
-import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.JobPositionRepository;
+import com.example.hr.department.entity.Department;
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.recruitment.repository.JobPositionRepository;
 import com.example.hr.service.AuditEncryptionService;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.CloudinaryService;

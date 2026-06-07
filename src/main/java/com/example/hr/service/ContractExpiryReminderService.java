@@ -36,7 +36,7 @@ public class ContractExpiryReminderService {
     private UserRepository userRepository;
 
     /**
-     * Gửi nhắc hết hạn hợp đồng cho nhân viên và Admin/Manager (mỗi mốc 30/14/7 ngày chỉ một lần / hợp đồng).
+     * Gá»­i nháº¯c háº¿t háº¡n há»£p Ä‘á»“ng cho nhÃ¢n viÃªn vÃ  Admin/Manager (má»—i má»‘c 30/14/7 ngÃ y chá»‰ má»™t láº§n / há»£p Ä‘á»“ng).
      */
     @Transactional
     public void sendDueReminders(LocalDate today) {
@@ -58,7 +58,7 @@ public class ContractExpiryReminderService {
                 String employeeName = employee != null ? employee.getFullName() : "N/A";
                 String expiryStr = contract.getExpiryDate() != null ? contract.getExpiryDate().format(fmt) : "";
                 String baseMsg = String.format(
-                        "Hợp đồng #%d (%s) của %s hết hạn sau %d ngày — ngày %s.",
+                        "Há»£p Ä‘á»“ng #%d (%s) cá»§a %s háº¿t háº¡n sau %d ngÃ y â€” ngÃ y %s.",
                         contract.getId(),
                         contract.getContractType() != null ? contract.getContractType() : "",
                         employeeName,
@@ -68,7 +68,7 @@ public class ContractExpiryReminderService {
                 if (employee != null) {
                     notificationService.createNotification(
                             employee,
-                            "📄 " + baseMsg,
+                            "ðŸ“„ " + baseMsg,
                             NotificationType.WARNING,
                             "/user1/profile");
                 }
@@ -76,7 +76,7 @@ public class ContractExpiryReminderService {
                 for (User hr : hrRecipients) {
                     notificationService.createNotification(
                             hr,
-                            "📄 [HR] " + baseMsg,
+                            "ðŸ“„ [HR] " + baseMsg,
                             NotificationType.WARNING,
                             "/admin/contracts");
                 }
@@ -90,3 +90,5 @@ public class ContractExpiryReminderService {
         }
     }
 }
+
+

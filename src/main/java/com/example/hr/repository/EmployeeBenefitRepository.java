@@ -1,5 +1,7 @@
 package com.example.hr.repository;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.BenefitStatus;
 import com.example.hr.enums.BenefitType;
 import com.example.hr.models.EmployeeBenefit;
@@ -51,3 +53,5 @@ public interface EmployeeBenefitRepository extends JpaRepository<EmployeeBenefit
 
     long countByStatus(BenefitStatus status);
 }
+
+

@@ -27,3 +27,5 @@ public class AiAgentResponse {
     private List<String> nextActions;
     private LocalDateTime generatedAt;
 }
+
+

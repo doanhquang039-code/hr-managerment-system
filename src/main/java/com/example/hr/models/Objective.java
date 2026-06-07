@@ -1,5 +1,7 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.OKRStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -85,3 +87,5 @@ public class Objective {
         this.progress = Math.round(totalProgress * 100.0) / 100.0;
     }
 }
+
+

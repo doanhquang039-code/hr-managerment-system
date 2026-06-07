@@ -1,11 +1,13 @@
 package com.example.hr.controllers;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.dto.OKRCreateDTO;
 import com.example.hr.enums.OKRStatus;
 import com.example.hr.models.KeyResult;
 import com.example.hr.models.Objective;
 import com.example.hr.models.User;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.repository.KeyResultRepository;
 import com.example.hr.repository.ObjectiveRepository;
 import com.example.hr.service.OKRService;
@@ -136,3 +138,5 @@ public class OKRController {
         return "redirect:/admin/okr/objectives";
     }
 }
+
+

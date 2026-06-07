@@ -19,3 +19,5 @@ public class AiAdvisorResponse {
     private List<String> recommendations;
     private LocalDateTime generatedAt;
 }
+
+

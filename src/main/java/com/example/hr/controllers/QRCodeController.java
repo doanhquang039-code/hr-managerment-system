@@ -170,3 +170,5 @@ public class QRCodeController {
     // Response DTO
     record ScanResponse(boolean success, String message, String qrCodeName) {}
 }
+
+

@@ -1,5 +1,7 @@
 package com.example.hr.elasticsearch.document;
 
+
+import com.example.hr.department.entity.Department;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

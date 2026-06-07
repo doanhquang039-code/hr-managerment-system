@@ -24,3 +24,5 @@ public interface BenefitEnrollmentRepository extends JpaRepository<BenefitEnroll
     
     long countByBenefitPlanAndStatus(BenefitPlan benefitPlan, String status);
 }
+
+

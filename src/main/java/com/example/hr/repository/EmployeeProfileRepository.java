@@ -14,3 +14,5 @@ public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile
     
     boolean existsByUser(User user);
 }
+
+

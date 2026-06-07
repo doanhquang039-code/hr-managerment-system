@@ -1,7 +1,7 @@
 package com.example.hr.service;
 
 import com.example.hr.models.TeamGoal;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
 import com.example.hr.repository.TeamGoalRepository;
 import lombok.RequiredArgsConstructor;
@@ -156,3 +156,5 @@ public class TeamGoalService {
             double avgProgress
     ) {}
 }
+
+

@@ -33,9 +33,9 @@ public class Shift {
     @Column(nullable = false)
     private LocalTime endTime;
     
-    private Integer gracePeriodMinutes; // Thời gian cho phép đến muộn
+    private Integer gracePeriodMinutes; // Thá»i gian cho phÃ©p Ä‘áº¿n muá»™n
     
-    private Integer overtimeThresholdMinutes; // Ngưỡng tính overtime
+    private Integer overtimeThresholdMinutes; // NgÆ°á»¡ng tÃ­nh overtime
     
     @Column(nullable = false)
     private Boolean isActive = true;
@@ -59,3 +59,5 @@ public class Shift {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

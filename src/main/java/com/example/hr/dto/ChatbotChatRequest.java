@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class ChatbotChatRequest {
     private String message;
-    /** Giữ phiên hội thoại (UUID); nếu trống, server tạo mới. */
+    /** Giá»¯ phiÃªn há»™i thoáº¡i (UUID); náº¿u trá»‘ng, server táº¡o má»›i. */
     private String sessionId;
 }
+
+

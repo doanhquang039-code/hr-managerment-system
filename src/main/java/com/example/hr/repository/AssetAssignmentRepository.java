@@ -28,3 +28,5 @@ public interface AssetAssignmentRepository extends JpaRepository<AssetAssignment
     
     long countByUserAndStatus(User user, String status);
 }
+
+

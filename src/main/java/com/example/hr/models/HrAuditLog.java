@@ -140,3 +140,5 @@ public class HrAuditLog {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
- * DTO báo cáo tổng hợp tháng/năm.
+ * DTO bÃ¡o cÃ¡o tá»•ng há»£p thÃ¡ng/nÄƒm.
  */
 @Data
 @NoArgsConstructor
@@ -30,26 +30,28 @@ public class MonthlyReportDTO {
     private long activeWarnings;
     private BigDecimal totalPayrollAmount;
 
-    // Nhân sự
+    // NhÃ¢n sá»±
     private long totalHeadcount;
     private long newHires;
     private long terminations;
     private double attendanceRate;
 
-    // Tài chính
+    // TÃ i chÃ­nh
     private BigDecimal totalPayroll;
     private BigDecimal totalOvertime;
     private BigDecimal totalBenefitCost;
     private BigDecimal totalTrainingBudget;
 
-    // Hoạt động
+    // Hoáº¡t Ä‘á»™ng
     private long leaveRequestsCount;
     private long overtimeRequestsCount;
     private long warningsIssuedCount;
     private long trainingsCompletedCount;
 
-    // Phân bố theo phòng ban
+    // PhÃ¢n bá»‘ theo phÃ²ng ban
     private Map<String, BigDecimal> payrollByDepartment;
     private Map<String, Long> headcountByDepartment;
     private Map<String, Double> attendanceByDepartment;
 }
+
+

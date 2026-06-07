@@ -55,3 +55,5 @@ public class PasswordResetRequest {
     @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
 }
+
+

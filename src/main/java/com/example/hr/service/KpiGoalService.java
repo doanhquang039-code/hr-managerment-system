@@ -59,7 +59,7 @@ public class KpiGoalService {
         goal.setUpdatedAt(LocalDateTime.now());
         KpiGoal saved = kpiGoalRepository.save(goal);
 
-        // Gửi email thông báo khi tạo KPI mới
+        // Gá»­i email thÃ´ng bÃ¡o khi táº¡o KPI má»›i
         if (isNew && saved.getUser() != null) {
             User u = saved.getUser();
             if (u.getEmail() != null && !u.getEmail().isBlank()) {
@@ -75,14 +75,14 @@ public class KpiGoalService {
         kpiGoalRepository.deleteById(id);
     }
 
-    /** Cập nhật tiến độ KPI */
+    /** Cáº­p nháº­t tiáº¿n Ä‘á»™ KPI */
     public KpiGoal updateProgress(Integer id, BigDecimal currentValue) {
         KpiGoal goal = kpiGoalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("KPI Goal không tồn tại: " + id));
+                .orElseThrow(() -> new RuntimeException("KPI Goal khÃ´ng tá»“n táº¡i: " + id));
         goal.setCurrentValue(currentValue);
         goal.setUpdatedAt(LocalDateTime.now());
 
-        // Tự động đánh dấu COMPLETED nếu đạt 100%
+        // Tá»± Ä‘á»™ng Ä‘Ã¡nh dáº¥u COMPLETED náº¿u Ä‘áº¡t 100%
         if (goal.getTargetValue() != null && goal.getTargetValue().compareTo(BigDecimal.ZERO) > 0) {
             if (currentValue.compareTo(goal.getTargetValue()) >= 0) {
                 goal.setStatus(KpiStatus.COMPLETED);
@@ -100,3 +100,5 @@ public class KpiGoalService {
         return kpiGoalRepository.findByStatus(status).size();
     }
 }
+
+

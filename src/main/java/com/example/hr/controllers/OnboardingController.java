@@ -42,7 +42,7 @@ public class OnboardingController {
     public String completeItem(@PathVariable Integer id, RedirectAttributes ra) {
         try {
             onboardingService.completeItem(id);
-            ra.addFlashAttribute("success", "Đã hoàn thành nhiệm vụ!");
+            ra.addFlashAttribute("success", "ÄÃ£ hoÃ n thÃ nh nhiá»‡m vá»¥!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -96,7 +96,7 @@ public class OnboardingController {
             User hr = authUserHelper.getCurrentUser(auth);
             onboardingService.createStandardOnboardingChecklist(newEmployee, hr);
             
-            ra.addFlashAttribute("success", "Tạo checklist onboarding thành công!");
+            ra.addFlashAttribute("success", "Táº¡o checklist onboarding thÃ nh cÃ´ng!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -139,7 +139,7 @@ public class OnboardingController {
                     reasonForLeaving, satisfactionRating, feedback, suggestions, wouldRecommend, false, null);
             }
             
-            ra.addFlashAttribute("success", "Cảm ơn bạn đã chia sẻ!");
+            ra.addFlashAttribute("success", "Cáº£m Æ¡n báº¡n Ä‘Ã£ chia sáº»!");
         } catch (Exception e) {
             ra.addFlashAttribute("error", e.getMessage());
         }
@@ -156,3 +156,5 @@ public class OnboardingController {
         return "onboarding/admin/exit-interview-list";
     }
 }
+
+

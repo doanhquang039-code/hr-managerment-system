@@ -41,7 +41,7 @@ public class ApprovalReminderService {
             return;
         }
         List<User> approvers = userRepository.findByRoleInAndStatus(List.of(Role.ADMIN, Role.MANAGER), UserStatus.ACTIVE);
-        String message = "Có " + pending.size() + " đơn nghỉ phép đang chờ duyệt.";
+        String message = "CÃ³ " + pending.size() + " Ä‘Æ¡n nghá»‰ phÃ©p Ä‘ang chá» duyá»‡t.";
         for (User approver : approvers) {
             notificationService.createNotification(approver, message, NotificationType.LEAVE_REQUEST, "/admin/leaves?status=PENDING");
         }
@@ -65,13 +65,13 @@ public class ApprovalReminderService {
             String monthText = payroll.getMonth() + "/" + payroll.getYear();
             notificationService.createNotification(
                     user,
-                    "Bảng lương " + monthText + " đã sẵn sàng để xem.",
+                    "Báº£ng lÆ°Æ¡ng " + monthText + " Ä‘Ã£ sáºµn sÃ ng Ä‘á»ƒ xem.",
                     NotificationType.PAYROLL,
                     "/user1/payroll");
             advancedNotificationService.sendEmailNotification(
                     user,
-                    "Bảng lương " + monthText,
-                    "Bảng lương của bạn đã được phát hành trên HRMS. Vui lòng đăng nhập để xem chi tiết.");
+                    "Báº£ng lÆ°Æ¡ng " + monthText,
+                    "Báº£ng lÆ°Æ¡ng cá»§a báº¡n Ä‘Ã£ Ä‘Æ°á»£c phÃ¡t hÃ nh trÃªn HRMS. Vui lÃ²ng Ä‘Äƒng nháº­p Ä‘á»ƒ xem chi tiáº¿t.");
             notified++;
         }
         return Map.of("matchedPayrolls", payrolls.size(), "notifiedEmployees", notified, "publishedAt", LocalDate.now().toString());
@@ -87,3 +87,5 @@ public class ApprovalReminderService {
         return payroll != null && payroll.getPaymentStatus() == PaymentStatus.PAID;
     }
 }
+
+

@@ -24,3 +24,5 @@ public interface CompanyAnnouncementRepository extends JpaRepository<CompanyAnno
 
     List<CompanyAnnouncement> findAllByOrderByPublishedAtDesc();
 }
+
+

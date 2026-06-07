@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Google Drive Service — sync tài liệu nhân viên, hợp đồng, báo cáo.
- * Chỉ active khi google.drive.enabled=true.
+ * Google Drive Service â€” sync tÃ i liá»‡u nhÃ¢n viÃªn, há»£p Ä‘á»“ng, bÃ¡o cÃ¡o.
+ * Chá»‰ active khi google.drive.enabled=true.
  */
 @ConditionalOnBean(Drive.class)
 public class GoogleDriveService {
@@ -38,8 +38,8 @@ public class GoogleDriveService {
     // ==================== UPLOAD ====================
 
     /**
-     * Upload file lên Google Drive.
-     * @return fileId trên Drive
+     * Upload file lÃªn Google Drive.
+     * @return fileId trÃªn Drive
      */
     public String uploadFile(byte[] data, String fileName,
                               String mimeType, String folderId) throws IOException {
@@ -63,17 +63,17 @@ public class GoogleDriveService {
     }
 
     /**
-     * Upload document nhân viên vào subfolder theo userId.
+     * Upload document nhÃ¢n viÃªn vÃ o subfolder theo userId.
      */
     public String uploadEmployeeDocument(byte[] data, String fileName,
                                           String mimeType, Integer userId) throws IOException {
-        // Tạo/lấy subfolder cho nhân viên
+        // Táº¡o/láº¥y subfolder cho nhÃ¢n viÃªn
         String userFolderId = getOrCreateFolder("Employee-" + userId, rootFolderId);
         return uploadFile(data, fileName, mimeType, userFolderId);
     }
 
     /**
-     * Upload báo cáo vào folder Reports.
+     * Upload bÃ¡o cÃ¡o vÃ o folder Reports.
      */
     public String uploadReport(byte[] data, String fileName, String mimeType) throws IOException {
         String reportsFolderId = getOrCreateFolder("Reports", rootFolderId);
@@ -81,7 +81,7 @@ public class GoogleDriveService {
     }
 
     /**
-     * Upload hợp đồng vào folder Contracts.
+     * Upload há»£p Ä‘á»“ng vÃ o folder Contracts.
      */
     public String uploadContract(byte[] data, String fileName, Integer userId) throws IOException {
         String contractsFolderId = getOrCreateFolder("Contracts", rootFolderId);
@@ -92,7 +92,7 @@ public class GoogleDriveService {
     // ==================== SHARE / PERMISSIONS ====================
 
     /**
-     * Share file với email cụ thể (view only).
+     * Share file vá»›i email cá»¥ thá»ƒ (view only).
      */
     public void shareWithUser(String fileId, String email) throws IOException {
         Permission permission = new Permission()
@@ -106,7 +106,7 @@ public class GoogleDriveService {
     }
 
     /**
-     * Tạo public link (anyone with link can view).
+     * Táº¡o public link (anyone with link can view).
      */
     public String makePublicLink(String fileId) throws IOException {
         Permission permission = new Permission()
@@ -123,7 +123,7 @@ public class GoogleDriveService {
     // ==================== LIST / GET ====================
 
     /**
-     * Lấy web view link của file.
+     * Láº¥y web view link cá»§a file.
      */
     public String getWebViewLink(String fileId) throws IOException {
         File file = driveService.files().get(fileId)
@@ -133,7 +133,7 @@ public class GoogleDriveService {
     }
 
     /**
-     * Liệt kê files trong folder.
+     * Liá»‡t kÃª files trong folder.
      */
     public List<java.util.Map<String, String>> listFiles(String folderId) throws IOException {
         String query = "'" + folderId + "' in parents and trashed=false";
@@ -156,7 +156,7 @@ public class GoogleDriveService {
     // ==================== DELETE ====================
 
     /**
-     * Xóa file trên Drive.
+     * XÃ³a file trÃªn Drive.
      */
     public void deleteFile(String fileId) throws IOException {
         driveService.files().delete(fileId).execute();
@@ -177,10 +177,10 @@ public class GoogleDriveService {
     // ==================== PRIVATE ====================
 
     /**
-     * Lấy folder ID nếu đã tồn tại, hoặc tạo mới.
+     * Láº¥y folder ID náº¿u Ä‘Ã£ tá»“n táº¡i, hoáº·c táº¡o má»›i.
      */
     private String getOrCreateFolder(String folderName, String parentId) throws IOException {
-        // Tìm folder đã tồn tại
+        // TÃ¬m folder Ä‘Ã£ tá»“n táº¡i
         String query = String.format(
                 "name='%s' and mimeType='application/vnd.google-apps.folder' and trashed=false",
                 folderName);
@@ -197,7 +197,7 @@ public class GoogleDriveService {
             return result.getFiles().get(0).getId();
         }
 
-        // Tạo folder mới
+        // Táº¡o folder má»›i
         File folderMetadata = new File();
         folderMetadata.setName(folderName);
         folderMetadata.setMimeType("application/vnd.google-apps.folder");
@@ -212,3 +212,5 @@ public class GoogleDriveService {
         return folder.getId();
     }
 }
+
+

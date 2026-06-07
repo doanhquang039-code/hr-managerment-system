@@ -25,7 +25,7 @@ public class ExpenseClaim {
     private User user;
     
     @Column(nullable = false)
-    private String claimNumber; // Mã đơn
+    private String claimNumber; // MÃ£ Ä‘Æ¡n
     
     @Column(nullable = false)
     private String category; // TRAVEL, MEAL, EQUIPMENT, TRAINING, OTHER
@@ -42,7 +42,7 @@ public class ExpenseClaim {
     @Column(nullable = false)
     private LocalDate expenseDate;
     
-    private String receiptUrl; // URL hóa đơn
+    private String receiptUrl; // URL hÃ³a Ä‘Æ¡n
     
     @Column(nullable = false)
     private String status = "PENDING"; // PENDING, APPROVED, REJECTED, PAID
@@ -71,3 +71,5 @@ public class ExpenseClaim {
         updatedAt = LocalDateTime.now();
     }
 }
+
+

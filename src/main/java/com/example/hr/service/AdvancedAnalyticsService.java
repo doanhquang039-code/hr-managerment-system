@@ -7,27 +7,75 @@ package com.example.hr.service;
 
 
 
+
+
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.department.entity.Department;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.user.repository.UserRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.payroll.entity.Payroll;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.leave.entity.LeaveRequest;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.attendance.entity.Attendance;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.attendance.repository.AttendanceRepository;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.dto.AnalyticsDashboardDTO;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.enums.AttendanceStatus;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.enums.LeaveStatus;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.enums.UserStatus;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import com.example.hr.models.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
+import com.example.hr.recruitment.repository.CandidateRepository;
+import com.example.hr.recruitment.repository.JobPostingRepository;
 import com.example.hr.repository.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import lombok.RequiredArgsConstructor;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import org.springframework.stereotype.Service;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.time.LocalDate;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.time.LocalDateTime;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.time.format.DateTimeFormatter;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.util.*;
+import com.example.hr.training.repository.TrainingEnrollmentRepository;
+import com.example.hr.training.repository.TrainingProgramRepository;
 import java.util.stream.Collectors;
 
 @Service
@@ -350,3 +398,5 @@ public class AdvancedAnalyticsService {
         return colors[new Random().nextInt(colors.length)];
     }
 }
+
+

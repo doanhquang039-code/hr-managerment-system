@@ -9,24 +9,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LanguageController {
 
     /**
-     * Đổi ngôn ngữ và redirect về trang trước.
-     * Dùng khi JS không available.
+     * Äá»•i ngÃ´n ngá»¯ vÃ  redirect vá» trang trÆ°á»›c.
+     * DÃ¹ng khi JS khÃ´ng available.
      */
     @GetMapping("/change-lang")
     public String changeLang(@RequestParam String lang,
                               @RequestParam(required = false) String redirect,
                               HttpServletRequest request) {
-        // LocaleChangeInterceptor đã xử lý việc set locale qua ?lang=
-        // Chỉ cần redirect về trang trước
+        // LocaleChangeInterceptor Ä‘Ã£ xá»­ lÃ½ viá»‡c set locale qua ?lang=
+        // Chá»‰ cáº§n redirect vá» trang trÆ°á»›c
         String referer = request.getHeader("Referer");
         if (redirect != null && !redirect.isBlank()) {
             return "redirect:" + redirect;
         }
         if (referer != null && !referer.isBlank()) {
-            // Thêm ?lang= vào referer URL
+            // ThÃªm ?lang= vÃ o referer URL
             String separator = referer.contains("?") ? "&" : "?";
             return "redirect:" + referer + separator + "lang=" + lang;
         }
         return "redirect:/home";
     }
 }
+
+

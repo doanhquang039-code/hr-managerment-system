@@ -17,3 +17,5 @@ public interface NotificationTemplateRepository extends JpaRepository<Notificati
     
     List<NotificationTemplate> findByIsActiveOrderByNameAsc(Boolean isActive);
 }
+
+

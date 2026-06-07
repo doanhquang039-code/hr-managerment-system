@@ -1,5 +1,7 @@
 package com.example.hr.leave.controller;
 
+
+import com.example.hr.department.entity.Department;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,7 +16,7 @@ import com.example.hr.enums.UserStatus;
 import com.example.hr.leave.entity.LeaveRequest;
 import com.example.hr.models.User;
 import com.example.hr.leave.repository.LeaveRequestRepository;
-import com.example.hr.repository.DepartmentRepository;
+import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.HrAuditLogService;
 import com.example.hr.service.NotificationService;

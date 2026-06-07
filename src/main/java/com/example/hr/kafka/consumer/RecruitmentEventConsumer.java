@@ -3,7 +3,7 @@ package com.example.hr.kafka.consumer;
 import com.example.hr.kafka.events.NotificationEvent;
 import com.example.hr.kafka.events.RecruitmentEvent;
 import com.example.hr.kafka.producer.HREventProducer;
-import com.example.hr.service.CandidateService;
+import com.example.hr.recruitment.service.CandidateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

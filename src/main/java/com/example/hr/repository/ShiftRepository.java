@@ -13,3 +13,5 @@ public interface ShiftRepository extends JpaRepository<Shift, Integer> {
     
     List<Shift> findByNameContainingIgnoreCase(String name);
 }
+
+

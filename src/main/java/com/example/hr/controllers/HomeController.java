@@ -1,7 +1,7 @@
 package com.example.hr.controllers;
 
 import com.example.hr.security.LoginVerificationCodeFilter;
-import com.example.hr.service.SystemSettingService;
+import com.example.hr.system.service.SystemSettingService;
 import jakarta.servlet.http.HttpSession;
 import java.security.SecureRandom;
 import java.util.Set;
@@ -47,8 +47,8 @@ public class HomeController {
 
     @GetMapping("/")
     public String index() {
-        // Trả về file index.html trong thư mục static
-        // Spring Boot tự động nhận diện file index trong static là trang chủ
+        // Tráº£ vá» file index.html trong thÆ° má»¥c static
+        // Spring Boot tá»± Ä‘á»™ng nháº­n diá»‡n file index trong static lÃ  trang chá»§
         return "forward:/index.html";
     }
     @GetMapping("/home")
@@ -86,3 +86,5 @@ public class HomeController {
         return code.toString();
     }
 }
+
+

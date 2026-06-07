@@ -1,5 +1,7 @@
 package com.example.hr.kafka.consumer;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.kafka.events.EmployeeLifecycleEvent;
 import com.example.hr.kafka.events.NotificationEvent;
 import com.example.hr.kafka.producer.HREventProducer;

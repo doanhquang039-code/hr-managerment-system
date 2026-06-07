@@ -1,7 +1,10 @@
 package com.example.hr.models;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
+import com.example.hr.recruitment.entity.JobPosition;
 import com.example.hr.security.SensitiveStringCryptoConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "user")
 @Getter
 @Setter
-@NoArgsConstructor  // Cần thiết cho JPA
+@NoArgsConstructor  // Cáº§n thiáº¿t cho JPA
 @AllArgsConstructor
 public class User {
 
@@ -85,13 +88,13 @@ private String password;
     @Column(name = "updated_by_encrypted", length = 1000)
     private String updatedByEncrypted;
 
-    /** Firebase Cloud Messaging token — dùng cho push notifications */
+    /** Firebase Cloud Messaging token â€” dÃ¹ng cho push notifications */
     @Column(name = "fcm_token", length = 500)
     private String fcmToken;
 
     public String getMaskedCccd() {
         if (cccd == null || cccd.isBlank()) {
-            return "Chưa có CCCD";
+            return "ChÆ°a cÃ³ CCCD";
         }
         if (cccd.length() <= 6) {
             return "******";
@@ -99,3 +102,5 @@ private String password;
         return cccd.substring(0, 3) + "******" + cccd.substring(cccd.length() - 3);
     }
 }
+
+

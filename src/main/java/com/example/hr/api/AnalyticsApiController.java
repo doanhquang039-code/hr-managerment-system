@@ -1,6 +1,8 @@
 package com.example.hr.api;
 
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.payroll.entity.Payroll;
 import com.example.hr.dto.EmployeeAnalyticsDTO;
 import com.example.hr.payroll.dto.PayrollSummaryDTO;
@@ -72,3 +74,5 @@ public class AnalyticsApiController {
         return ResponseEntity.ok(payrollService.calculateAllPayrolls(month, year));
     }
 }
+
+

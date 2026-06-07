@@ -17,3 +17,5 @@ public class AiStatusResponse {
     private String mode;
     private String message;
 }
+
+

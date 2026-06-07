@@ -14,11 +14,11 @@ import com.example.hr.enums.AttendanceStatus;
 import com.example.hr.enums.LeaveStatus;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.attendance.entity.Attendance;
-import com.example.hr.models.Department;
+import com.example.hr.department.entity.Department;
 import com.example.hr.models.User;
 import com.example.hr.attendance.repository.AttendanceRepository;
-import com.example.hr.repository.DepartmentRepository;
-import com.example.hr.repository.JobPositionRepository;
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.recruitment.repository.JobPositionRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
 import com.example.hr.payment.repository.PaymentRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
@@ -26,7 +26,7 @@ import com.example.hr.repository.PerformanceReviewRepository;
 import com.example.hr.repository.QuizAttemptRepository;
 import com.example.hr.sales.repository.SalesOrderRepository;
 import com.example.hr.sales.repository.SalesProductRepository;
-import com.example.hr.repository.TaskRepository;
+import com.example.hr.task.repository.TaskRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.payment.service.PaymentService;
 import com.example.hr.service.PasswordResetService;
@@ -77,7 +77,7 @@ public class AdminController {
         model.addAttribute("pendingResetRequests", passwordResetService.countPendingRequests());
         model.addAttribute("today", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        // === CHART 1: Chấm công 7 ngày gần nhất ===
+        // === CHART 1: Cháº¥m cÃ´ng 7 ngÃ y gáº§n nháº¥t ===
         List<String> attLabels = new ArrayList<>();
         List<Integer> attPresent = new ArrayList<>();
         List<Integer> attLate    = new ArrayList<>();
@@ -103,7 +103,7 @@ public class AdminController {
         model.addAttribute("attLate",    attLate);
         model.addAttribute("attAbsent",  attAbsent);
 
-        // === CHART 2: Nhân viên theo phòng ban (Pie/Doughnut) ===
+        // === CHART 2: NhÃ¢n viÃªn theo phÃ²ng ban (Pie/Doughnut) ===
         List<Department> depts = departmentRepository.findAll();
         List<String> deptNames  = new ArrayList<>();
         List<Long> deptCounts   = new ArrayList<>();
@@ -204,3 +204,5 @@ public class AdminController {
         return actual != null && actual.trim().equalsIgnoreCase(expected);
     }
 }
+
+

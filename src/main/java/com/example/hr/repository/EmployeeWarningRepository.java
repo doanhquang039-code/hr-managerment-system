@@ -1,5 +1,7 @@
 package com.example.hr.repository;
 
+
+import com.example.hr.department.entity.Department;
 import com.example.hr.enums.WarningLevel;
 import com.example.hr.models.EmployeeWarning;
 import org.springframework.data.domain.Pageable;
@@ -52,3 +54,5 @@ public interface EmployeeWarningRepository extends JpaRepository<EmployeeWarning
 
     List<EmployeeWarning> findAllByOrderByIssuedDateDesc(Pageable pageable);
 }
+
+

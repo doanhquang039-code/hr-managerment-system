@@ -1,6 +1,10 @@
 package com.example.hr.service;
 
 
+
+
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.department.entity.Department;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.dto.OKRCreateDTO;
 import com.example.hr.enums.OKRStatus;
@@ -165,3 +169,5 @@ public class OKRService {
         return objectiveRepository.save(objective);
     }
 }
+
+

@@ -21,3 +21,5 @@ public class AiInsightResponse {
     private List<String> recommendations;
     private LocalDateTime generatedAt;
 }
+
+

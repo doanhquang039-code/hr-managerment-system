@@ -24,3 +24,5 @@ public interface HrAuditLogRepository extends JpaRepository<HrAuditLog, Long> {
             """)
     Page<HrAuditLog> search(@Param("q") String q, Pageable pageable);
 }
+
+

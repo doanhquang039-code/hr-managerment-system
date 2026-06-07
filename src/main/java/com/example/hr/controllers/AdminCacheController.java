@@ -37,7 +37,7 @@ public class AdminCacheController {
 
     @GetMapping
     public String dashboard(Model model) {
-        // Thống kê cache keys — fail-safe: nếu Redis offline chỉ log, không crash
+        // Thá»‘ng kÃª cache keys â€” fail-safe: náº¿u Redis offline chá»‰ log, khÃ´ng crash
         boolean redisOnline = false;
         try {
             Set<String> allKeys = cacheService.keys("*");
@@ -57,7 +57,7 @@ public class AdminCacheController {
             model.addAttribute("deptKeys",      0L);
             model.addAttribute("videoKeys",     0L);
             model.addAttribute("kpiKeys",       0L);
-            model.addAttribute("redisError", "Redis không kết nối được: " + e.getMessage());
+            model.addAttribute("redisError", "Redis khÃ´ng káº¿t ná»‘i Ä‘Æ°á»£c: " + e.getMessage());
         }
         model.addAttribute("redisOnline", redisOnline);
 
@@ -77,9 +77,9 @@ public class AdminCacheController {
                 case "all"          -> cacheService.evictAll();
                 default             -> cacheService.delete(cacheName);
             }
-            ra.addFlashAttribute("success", "Đã xóa cache: " + cacheName);
+            ra.addFlashAttribute("success", "ÄÃ£ xÃ³a cache: " + cacheName);
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi xóa cache: " + e.getMessage());
+            ra.addFlashAttribute("error", "Lá»—i xÃ³a cache: " + e.getMessage());
         }
         return "redirect:/admin/cache";
     }
@@ -88,10 +88,12 @@ public class AdminCacheController {
     public String evictAll(RedirectAttributes ra) {
         try {
             cacheService.evictAll();
-            ra.addFlashAttribute("success", "Đã xóa toàn bộ cache!");
+            ra.addFlashAttribute("success", "ÄÃ£ xÃ³a toÃ n bá»™ cache!");
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            ra.addFlashAttribute("error", "Lá»—i: " + e.getMessage());
         }
         return "redirect:/admin/cache";
     }
 }
+
+

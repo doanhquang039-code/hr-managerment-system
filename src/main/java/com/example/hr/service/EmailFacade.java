@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 /**
- * Facade thống nhất email — tự động dùng SendGrid nếu có,
- * fallback về JavaMailSender (Gmail SMTP) nếu không.
+ * Facade thá»‘ng nháº¥t email â€” tá»± Ä‘á»™ng dÃ¹ng SendGrid náº¿u cÃ³,
+ * fallback vá» JavaMailSender (Gmail SMTP) náº¿u khÃ´ng.
  */
 @Service
 public class EmailFacade {
@@ -130,3 +130,5 @@ public class EmailFacade {
         return hasSendGrid() ? "SendGrid" : "Gmail SMTP";
     }
 }
+
+

@@ -81,7 +81,7 @@ public class SelfServiceApiController {
         request.setReason(body.getOrDefault("reason", ""));
         request.setStatus(LeaveStatus.PENDING);
         LeaveRequest saved = leaveRequestRepository.save(request);
-        notificationService.createNotification(user, "Đơn nghỉ phép đã được gửi và đang chờ duyệt.", NotificationType.LEAVE_REQUEST, "/user/leaves");
+        notificationService.createNotification(user, "ÄÆ¡n nghá»‰ phÃ©p Ä‘Ã£ Ä‘Æ°á»£c gá»­i vÃ  Ä‘ang chá» duyá»‡t.", NotificationType.LEAVE_REQUEST, "/user/leaves");
         return ResponseEntity.ok(Map.of("id", saved.getId(), "status", saved.getStatus().name()));
     }
 
@@ -118,3 +118,5 @@ public class SelfServiceApiController {
         return user;
     }
 }
+
+

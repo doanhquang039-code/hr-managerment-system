@@ -54,3 +54,5 @@ public class ShiftAssignment {
         updatedAt = LocalDateTime.now();
     }
 }
+
+
