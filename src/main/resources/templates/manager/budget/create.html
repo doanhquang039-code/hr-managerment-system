@@ -22,7 +22,8 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="card-body">
-                                <form method="post" action="/manager/budget/create" th:object="${budget}">
+                                <form method="post" th:action="@{/manager/budget/create}" th:object="${budget}">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Category *</label>

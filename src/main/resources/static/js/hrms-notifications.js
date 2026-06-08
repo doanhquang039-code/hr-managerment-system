@@ -42,7 +42,7 @@
     btn.title = 'Thông báo';
     btn.style.cssText = [
       'position:fixed',
-      'bottom:104px',
+      'bottom:184px',
       'right:24px',
       'z-index:8999',
       'width:48px',
@@ -79,7 +79,7 @@
     fetchNotificationList().then(function (notifications) {
       var panel = document.createElement('div');
       panel.id = 'hrms-notif-panel';
-      panel.style.cssText = 'position:fixed;bottom:166px;right:24px;z-index:9500;width:340px;background:#1e293b;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;';
+      panel.style.cssText = 'position:fixed;bottom:246px;right:24px;z-index:9500;width:340px;background:#1e293b;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;';
 
       var notifHtml = notifications.length === 0
         ? '<div style="text-align:center;padding:32px;color:#94a3b8;"><div style="font-size:2rem;margin-bottom:8px;"><i class="bi bi-bell"></i></div><div>Chưa có thông báo</div></div>'

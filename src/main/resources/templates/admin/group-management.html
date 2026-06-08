@@ -19,21 +19,25 @@
     .panel-head h2 { font-size:1.1rem; font-weight:800; margin:0 0 4px; }
     .panel-body { padding:24px; }
     .section-title { color:#475569; font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; margin:0 0 12px; }
-    .permission-table { border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:24px; }
-    .permission-row { display:grid; grid-template-columns:minmax(180px,1.1fr) repeat(3,minmax(150px,1fr)); }
+    .permission-table { border:1px solid #e2e8f0; border-radius:10px; overflow:auto; margin-bottom:24px; }
+    .permission-row { display:grid; grid-template-columns:minmax(180px,1.1fr) repeat(8,minmax(132px,1fr)); min-width:1220px; }
     .permission-row + .permission-row { border-top:1px solid #edf2f7; }
     .permission-cell { min-height:58px; padding:12px 14px; display:flex; align-items:center; gap:10px; }
     .permission-cell + .permission-cell { border-left:1px solid #edf2f7; }
     .permission-head { background:#f8fafc; color:#475569; font-size:.76rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
     .permission-check { cursor:pointer; font-weight:700; }
     .member-list { border:1px solid #e2e8f0; border-radius:10px; overflow:auto; max-height:440px; }
-    .member-row { display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:12px; align-items:center; padding:12px 14px; border-bottom:1px solid #edf2f7; cursor:pointer; }
+    .member-row { display:grid; grid-template-columns:28px minmax(180px,1fr) minmax(360px,1.6fr) auto; gap:12px; align-items:center; padding:12px 14px; border-bottom:1px solid #edf2f7; }
     .member-row:last-child { border-bottom:0; }
     .member-row:hover { background:#f8fafc; }
+    .member-access { cursor:pointer; }
+    .member-perms { display:flex; flex-wrap:wrap; gap:8px; }
+    .member-perm { display:inline-flex; align-items:center; gap:6px; border:1px solid #e2e8f0; border-radius:8px; padding:6px 8px; background:#fff; font-size:.78rem; font-weight:700; color:#334155; cursor:pointer; }
+    .member-perm:hover { border-color:#93c5fd; background:#eff6ff; }
     .role-badge { border-radius:999px; background:#e0f2fe; color:#075985; padding:4px 10px; font-size:.72rem; font-weight:800; }
     .summary-card { border:1px solid #e2e8f0; border-radius:12px; padding:16px; background:#f8fafc; height:100%; }
     .summary-card strong { display:block; font-size:1.5rem; }
-    @media (max-width: 991px) { .page-head,.panel-head { flex-direction:column; align-items:stretch; } .permission-row { grid-template-columns:1fr; } .permission-cell + .permission-cell { border-left:0; border-top:1px solid #edf2f7; } }
+    @media (max-width: 991px) { .page-head,.panel-head { flex-direction:column; align-items:stretch; } .permission-row { grid-template-columns:1fr; min-width:0; } .permission-cell + .permission-cell { border-left:0; border-top:1px solid #edf2f7; } .member-row { grid-template-columns:28px minmax(0,1fr); } .member-perms,.role-badge { grid-column:2; } }
   </style>
 </head>
 <body>
@@ -55,8 +59,8 @@
 
   <div class="row g-3 mb-4">
     <div class="col-md-4"><div class="summary-card"><span class="text-muted small fw-bold">GROUP HIỆN TẠI</span><strong th:text="${group.name}">HR Collaboration Group</strong></div></div>
-    <div class="col-md-4"><div class="summary-card"><span class="text-muted small fw-bold">THÀNH VIÊN NGOẠI LỆ</span><strong th:text="${#sets.size(memberIds)}">0</strong></div></div>
-    <div class="col-md-4"><div class="summary-card"><span class="text-muted small fw-bold">TÍNH NĂNG</span><strong th:text="${#arrays.length(features)}">0</strong></div></div>
+    <div class="col-md-4"><div class="summary-card"><span class="text-muted small fw-bold">THÀNH VIÊN HIỆU LỰC</span><strong th:text="${effectiveMemberCount}">0</strong><span class="text-muted small" th:text="${#sets.size(memberIds)} + ' ngoại lệ'">0 ngoại lệ</span></div></div>
+    <div class="col-md-4"><div class="summary-card"><span class="text-muted small fw-bold">QUYỀN ĐANG BẬT</span><strong th:text="${enabledPermissionCount}">0</strong><span class="text-muted small" th:text="${#arrays.length(features)} + ' tính năng'">0 tính năng</span></div></div>
   </div>
 
   <form id="groupForm" th:action="@{/admin/groups/save}" method="post" class="panel">
@@ -82,15 +86,21 @@
       </div>
 
       <div class="d-flex justify-content-between align-items-end mb-3">
-        <div><h3 class="section-title mb-1">Thành viên ngoại lệ</h3><div class="text-muted small">Chọn user riêng lẻ nếu muốn cho phép ngoài role đã bật.</div></div>
+        <div><h3 class="section-title mb-1">Thành viên và quyền riêng từng user</h3><div class="text-muted small">Tick user để cho vào group, hoặc tick từng tính năng để cấp quyền riêng không ảnh hưởng tài khoản khác.</div></div>
         <div class="text-muted small"><span th:text="${#sets.size(memberIds)}">0</span> đang chọn</div>
       </div>
       <div class="member-list">
-        <label class="member-row" th:each="user : ${users}">
-          <input class="form-check-input" type="checkbox" name="memberIds" th:value="${user.id}" th:checked="${memberIds.contains(user.id)}">
+        <div class="member-row" th:each="user : ${users}">
+          <input class="form-check-input member-access" type="checkbox" name="memberIds" th:value="${user.id}" th:checked="${memberIds.contains(user.id)}">
           <span><span class="fw-semibold" th:text="${user.fullName}">User name</span><span class="d-block text-muted small" th:text="${user.email != null ? user.email : user.username}">email</span></span>
+          <div class="member-perms">
+            <label class="member-perm" th:each="feature : ${features}">
+              <input class="form-check-input m-0" type="checkbox" name="memberPermissions" th:value="${user.id + ':' + feature.name()}" th:checked="${enabledMemberPermissionKeys.contains(user.id + ':' + feature.name())}">
+              <span th:text="${feature.displayName}">Feature</span>
+            </label>
+          </div>
           <span class="role-badge" th:text="${user.role != null ? user.role.name() : 'NO_ROLE'}">USER</span>
-        </label>
+        </div>
       </div>
     </div>
   </form>

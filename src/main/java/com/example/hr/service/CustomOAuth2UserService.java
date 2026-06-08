@@ -9,12 +9,17 @@ import com.example.hr.user.repository.UserRepository;
 import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -50,20 +55,34 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         // 3. Gá»i hÃ m lÆ°u hoáº·c cáº­p nháº­t vÃ o Database
-        saveOrUpdateUser(email, name, picture);
+        User user = saveOrUpdateUser(email, name, picture);
 
-        return oAuth2User;
+        Set<GrantedAuthority> authorities = new LinkedHashSet<>(oAuth2User.getAuthorities());
+        if (user.getRole() != null) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        }
+
+        String userNameAttributeName = userRequest.getClientRegistration()
+                .getProviderDetails()
+                .getUserInfoEndpoint()
+                .getUserNameAttributeName();
+        if (userNameAttributeName == null || userNameAttributeName.isBlank()) {
+            userNameAttributeName = "sub";
+        }
+
+        return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), userNameAttributeName);
     }
 
     // HÃ m phá»¥ trá»£ Ä‘á»ƒ xá»­ lÃ½ lÆ°u Database cho Ä‘á»¡ rá»‘i code á»Ÿ trÃªn
-    private void saveOrUpdateUser(String email, String name, String picture) {
+    private User saveOrUpdateUser(String email, String name, String picture) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
             User existingUser = userOptional.get();
             existingUser.setProfileImage(picture);
-            userRepository.save(existingUser);
+            User savedUser = userRepository.save(existingUser);
             System.out.println("--- Cáº­p nháº­t thÃ nh viÃªn: " + email);
+            return savedUser;
         } else {
             User newUser = new User();
             newUser.setEmail(email);
@@ -80,8 +99,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setDepartment(defaultDept);
             newUser.setPosition(defaultPos);
 
-            userRepository.save(newUser);
+            User savedUser = userRepository.save(newUser);
             System.out.println("--- ÄÃ£ Ä‘Äƒng kÃ½ thÃ nh viÃªn má»›i: " + email);
+            return savedUser;
         }
     }
 }

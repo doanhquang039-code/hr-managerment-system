@@ -4,6 +4,9 @@ import com.example.hr.service.HrAuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +33,18 @@ public class HrAuditLogController {
         model.addAttribute("page", logs);
         model.addAttribute("q", q);
         return "admin/audit-log-list";
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<String> exportAuditLogs(@RequestParam(required = false) String q,
+                                                  @RequestParam(defaultValue = "5000") int limit) {
+        String csv = hrAuditLogService.exportCsv(q, limit);
+        String filename = q == null || q.isBlank() ? "hr-audit-log.csv" : "hr-audit-log-filtered.csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+                .body('\uFEFF' + csv);
     }
 }
 

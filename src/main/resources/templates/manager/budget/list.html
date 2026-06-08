@@ -84,8 +84,8 @@
                                         </div>
                                         <div class="progress mt-2" style="height: 8px;">
                                             <div class="progress-bar" 
-                                                 th:classappend="${budget.spentBudget.divide(budget.allocatedBudget, 2, T(java.math.RoundingMode).HALF_UP).multiply(T(java.math.BigDecimal).valueOf(100)).doubleValue() > 90} ? 'bg-danger' : 'bg-success'"
-                                                 th:style="'width: ' + ${budget.spentBudget.divide(budget.allocatedBudget, 2, T(java.math.RoundingMode).HALF_UP).multiply(T(java.math.BigDecimal).valueOf(100)).doubleValue()} + '%'"></div>
+                                                 th:classappend="${budget.utilizationPercent > 90} ? 'bg-danger' : 'bg-success'"
+                                                 th:style="'width: ' + ${budget.utilizationPercent} + '%'"></div>
                                         </div>
                                         <div class="mt-2">
                                             <button class="btn btn-sm btn-outline-primary" 
@@ -106,6 +106,9 @@
                         <h5 class="mb-0">All Budgets</h5>
                     </div>
                     <div class="card-body">
+                        <div th:if="${budgets.empty}" class="text-center text-muted py-4">
+                            No budgets yet. <a href="/manager/budget/create">Create the first budget</a>
+                        </div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -159,6 +162,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <form method="post" th:action="@{/manager/budget/spend/{id}(id=${budget.id})}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                 <div class="modal-body">
                                     <p><strong th:text="${budget.category}">Category</strong> - 
                                        <span th:text="${budget.month} + '/' + ${budget.year}">04/2026</span></p>

@@ -22,6 +22,7 @@ import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.EmailFacade;
 import com.example.hr.service.NotificationService;
 import com.example.hr.service.NewOvertimeService;
+import com.example.hr.service.TeamBudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -54,6 +55,7 @@ public class ManagerController {
     @Autowired private EmailFacade emailFacade;
     @Autowired private AuthUserHelper authUserHelper;
     @Autowired private MeetingRepository meetingRepository;
+    @Autowired private TeamBudgetService teamBudgetService;
 
     // ==================== DASHBOARD ====================
 
@@ -472,10 +474,31 @@ public class ManagerController {
     }
 
     @GetMapping("/reports/budget")
-    public String budgetReports(Model model) {
+    public String budgetReports(Authentication auth, Model model) {
         try {
-            // TODO: Implement budget reports
-            model.addAttribute("message", "Budget reports feature coming soon");
+            User manager = authUserHelper.getCurrentUser(auth);
+            if (manager == null) return "redirect:/login";
+
+            int currentYear = LocalDate.now().getYear();
+            var budgets = manager.getDepartment() == null
+                    ? teamBudgetService.getAllBudgets()
+                    : teamBudgetService.getBudgetsByDepartment(manager.getDepartment());
+            var budgetStats = manager.getDepartment() == null
+                    ? teamBudgetService.getBudgetStatistics(currentYear)
+                    : teamBudgetService.getBudgetStatistics(manager.getDepartment(), currentYear);
+
+            var overBudget = budgets.stream()
+                    .filter(TeamBudget::isOverBudget)
+                    .collect(Collectors.toList());
+            var activeBudgets = budgets.stream()
+                    .filter(b -> "ACTIVE".equalsIgnoreCase(b.getStatus()))
+                    .collect(Collectors.toList());
+
+            model.addAttribute("budgets", budgets);
+            model.addAttribute("budgetStats", budgetStats);
+            model.addAttribute("overBudget", overBudget);
+            model.addAttribute("activeBudgets", activeBudgets);
+            model.addAttribute("currentYear", currentYear);
             
             return "manager/reports/budget";
         } catch (Exception e) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,46 +7,104 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background:#f6f8fb; }
-        .shell { max-width:1040px; margin:0 auto; padding:2rem 1rem; }
-        .panel { background:#fff; border:1px solid #e5e7eb; border-radius:12px; box-shadow:0 10px 28px rgba(15,23,42,.06); overflow:hidden; }
+        body { background:#f6f8fb; color:#111827; }
+        .shell { max-width:1120px; margin:0 auto; padding:2rem 1rem 3rem; }
+        .panel { background:#fff; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 10px 28px rgba(15,23,42,.06); overflow:hidden; }
+        .metric { border:1px solid #e5e7eb; border-radius:8px; background:#fff; padding:1rem; min-height:96px; }
+        .avatar { width:38px; height:38px; border-radius:50%; background:#e0f2fe; color:#0369a1; display:grid; place-items:center; font-weight:800; }
+        .table td, .table th { vertical-align:middle; }
+        .badge-soft { background:#eef2ff; color:#3730a3; }
     </style>
 </head>
 <body>
 <main class="shell">
-    <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
-            <h1 class="h3 mb-1">Group members</h1>
-            <p class="text-muted mb-0" th:text="${group.name}">HR Collaboration Group</p>
+            <div class="text-uppercase text-primary fw-semibold small mb-1">Group Members</div>
+            <h1 class="h3 mb-1" th:text="${group.name}">HR Collaboration Group</h1>
+            <p class="text-muted mb-0">Effective members include users enabled by role permissions plus explicit member exceptions.</p>
         </div>
         <a th:href="${groupBasePath}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Back
         </a>
     </div>
 
+    <section class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="metric">
+                <div class="text-muted small">Effective members</div>
+                <div class="h3 mb-0" th:text="${effectiveMembers != null ? effectiveMembers.size() : 0}">0</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="metric">
+                <div class="text-muted small">Filtered results</div>
+                <div class="h3 mb-0" th:text="${members != null ? members.size() : 0}">0</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="metric">
+                <div class="text-muted small">Explicit exceptions</div>
+                <div class="h3 mb-0" th:text="${group.members.size()}">0</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel mb-4 p-3">
+        <form th:action="${groupBasePath + '/members'}" method="get" class="row g-2 align-items-end">
+            <div class="col-md-9">
+                <label class="form-label small text-muted">Search members</label>
+                <input class="form-control" type="search" name="q" th:value="${q}" placeholder="Name, username, email, department">
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button class="btn btn-primary flex-fill" type="submit"><i class="bi bi-search me-1"></i>Search</button>
+                <a th:href="${groupBasePath + '/members'}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </section>
+
     <section class="panel">
-        <table class="table align-middle mb-0">
-            <thead class="table-light">
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Department</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="member : ${group.members}">
-                <td class="fw-semibold" th:text="${member.fullName}">Member</td>
-                <td th:text="${member.email != null ? member.email : member.username}">email</td>
-                <td><span class="badge bg-primary-subtle text-primary" th:text="${member.role != null ? member.role.name() : 'NO_ROLE'}">USER</span></td>
-                <td th:text="${member.department != null ? member.department.departmentName : 'Unassigned'}">Department</td>
-            </tr>
-            <tr th:if="${group.members.isEmpty()}">
-                <td colspan="4" class="text-center text-muted py-4">No members selected yet.</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Access source</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="member : ${members}">
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar" th:text="${#strings.substring(!#strings.isEmpty(member.fullName) ? member.fullName : member.username, 0, 1)}">M</div>
+                            <div>
+                                <div class="fw-semibold" th:text="${!#strings.isEmpty(member.fullName) ? member.fullName : member.username}">Member</div>
+                                <div class="small text-muted" th:text="${member.username}">username</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td th:text="${member.email != null ? member.email : '-'}">email</td>
+                    <td><span class="badge badge-soft" th:text="${member.role != null ? member.role.name() : 'NO_ROLE'}">USER</span></td>
+                    <td th:text="${member.department != null ? member.department.departmentName : 'Unassigned'}">Department</td>
+                    <td>
+                        <span th:if="${group.members.contains(member)}" class="badge bg-success-subtle text-success">Explicit</span>
+                        <span th:unless="${group.members.contains(member)}" class="badge bg-primary-subtle text-primary">Role permission</span>
+                    </td>
+                </tr>
+                <tr th:if="${members == null || members.isEmpty()}">
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="bi bi-people d-block mb-2" style="font-size:2rem;"></i>
+                        No members match this search.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -63,6 +64,20 @@ public class TeamBudget {
         if (allocatedBudget != null && spentBudget != null) {
             this.remainingBudget = allocatedBudget.subtract(spentBudget);
         }
+    }
+
+    public double getUtilizationPercent() {
+        if (allocatedBudget == null || spentBudget == null || allocatedBudget.compareTo(BigDecimal.ZERO) <= 0) {
+            return 0.0;
+        }
+        BigDecimal percent = spentBudget
+                .divide(allocatedBudget, 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+        return Math.min(100.0, percent.doubleValue());
+    }
+
+    public boolean isOverBudget() {
+        return remainingBudget != null && remainingBudget.compareTo(BigDecimal.ZERO) < 0;
     }
 }
 

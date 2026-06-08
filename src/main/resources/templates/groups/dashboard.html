@@ -20,6 +20,8 @@
         .quick-action { display:flex; align-items:center; gap:.8rem; padding:.95rem; border:1px solid #e5e7eb; border-radius:8px; color:#111827; text-decoration:none; background:#fff; height:100%; }
         .quick-action:hover { border-color:#93c5fd; background:#f8fafc; color:#111827; }
         .quick-action .icon { width:36px; height:36px; display:grid; place-items:center; border-radius:8px; background:#ecfdf5; color:#047857; font-size:1.1rem; flex:0 0 auto; }
+        .quick-action.locked { color:#6b7280; background:#f8fafc; pointer-events:none; }
+        .quick-action.locked .icon { background:#f1f5f9; color:#94a3b8; }
         .post-item, .task-item { border:1px solid #e5e7eb; border-radius:8px; padding:1rem; background:#fff; }
         .post-meta { color:#6b7280; font-size:.85rem; }
         .task-status { min-width:96px; text-align:center; }
@@ -50,6 +52,7 @@
     </div>
 
     <div th:if="${successMsg}" class="alert alert-success" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-danger" th:text="${errorMsg}"></div>
 
     <section class="panel p-4 mb-4" th:if="${hasGroupAccess == false}">
         <div class="d-flex align-items-start gap-3">
@@ -66,31 +69,31 @@
             <div class="col-md-4">
                 <div class="metric">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="text-muted small">Selected members</span>
+                        <span class="text-muted small">Effective members</span>
                         <span class="icon"><i class="bi bi-people"></i></span>
                     </div>
-                    <div class="h3 mb-0" th:text="${group.members.size()}">0</div>
-                    <div class="small text-muted">Users added by admin</div>
+                    <div class="h3 mb-0" th:text="${effectiveMembers != null ? effectiveMembers.size() : 0}">0</div>
+                    <div class="small text-muted">Role access plus selected users</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="metric">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="text-muted small">Enabled features</span>
-                        <span class="icon"><i class="bi bi-grid-1x2"></i></span>
+                        <span class="text-muted small">Open tasks</span>
+                        <span class="icon"><i class="bi bi-kanban"></i></span>
                     </div>
-                    <div class="h3 mb-0" th:text="${group.features.size()}">0</div>
-                    <div class="small text-muted">Dashboard, members, notes</div>
+                    <div class="h3 mb-0" th:text="${taskCount - doneTaskCount}">0</div>
+                    <div class="small text-muted" th:text="${doneTaskCount + ' completed'}">0 completed</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="metric">
                     <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="text-muted small">Role permissions</span>
-                        <span class="icon"><i class="bi bi-shield-check"></i></span>
+                        <span class="text-muted small">Updates</span>
+                        <span class="icon"><i class="bi bi-chat-square-text"></i></span>
                     </div>
-                    <div class="h3 mb-0" th:text="${group.rolePermissions.size()}">0</div>
-                    <div class="small text-muted">Rules configured by admin</div>
+                    <div class="h3 mb-0" th:text="${postCount}">0</div>
+                    <div class="small text-muted">Group feed posts</div>
                 </div>
             </div>
         </section>
@@ -163,40 +166,84 @@
             </div>
             <div class="row g-3">
                 <div class="col-md-3 col-sm-6">
-                    <a href="/user1/my-tasks" class="quick-action">
+                    <a th:if="${canUseTasks}" href="#group-tasks" class="quick-action">
                         <span class="icon"><i class="bi bi-check2-square"></i></span>
                         <span>
                             <span class="fw-semibold d-block">Tasks</span>
                             <span class="small text-muted">Assigned work</span>
                         </span>
                     </a>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <a href="/user1/leave-request" class="quick-action">
-                        <span class="icon"><i class="bi bi-calendar2-check"></i></span>
+                    <div th:unless="${canUseTasks}" class="quick-action locked">
+                        <span class="icon"><i class="bi bi-lock"></i></span>
                         <span>
-                            <span class="fw-semibold d-block">Leave</span>
-                            <span class="small text-muted">Leave requests</span>
+                            <span class="fw-semibold d-block">Tasks</span>
+                            <span class="small">Locked by admin</span>
                         </span>
-                    </a>
+                    </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
-                    <a href="/user1/documents" class="quick-action">
+                    <div th:if="${canUseMeetings}" class="quick-action">
+                        <span class="icon"><i class="bi bi-camera-video"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Meetings</span>
+                            <span class="small text-muted">Team schedule</span>
+                        </span>
+                    </div>
+                    <div th:unless="${canUseMeetings}" class="quick-action locked">
+                        <span class="icon"><i class="bi bi-lock"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Meetings</span>
+                            <span class="small">Locked by admin</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <a th:if="${canUseFiles}" href="/user1/documents" class="quick-action">
                         <span class="icon"><i class="bi bi-folder2-open"></i></span>
                         <span>
                             <span class="fw-semibold d-block">Documents</span>
                             <span class="small text-muted">Employee files</span>
                         </span>
                     </a>
+                    <div th:unless="${canUseFiles}" class="quick-action locked">
+                        <span class="icon"><i class="bi bi-lock"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Documents</span>
+                            <span class="small">Locked by admin</span>
+                        </span>
+                    </div>
                 </div>
                 <div class="col-md-3 col-sm-6">
-                    <a href="/user1/announcements" class="quick-action">
+                    <a th:if="${canUseAnnouncements}" href="/user1/announcements" class="quick-action">
                         <span class="icon"><i class="bi bi-megaphone"></i></span>
                         <span>
                             <span class="fw-semibold d-block">Announcements</span>
                             <span class="small text-muted">Company updates</span>
                         </span>
                     </a>
+                    <div th:unless="${canUseAnnouncements}" class="quick-action locked">
+                        <span class="icon"><i class="bi bi-lock"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Announcements</span>
+                            <span class="small">Locked by admin</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div th:if="${canUseRecognition}" class="quick-action">
+                        <span class="icon"><i class="bi bi-stars"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Recognition</span>
+                            <span class="small text-muted">Team praise</span>
+                        </span>
+                    </div>
+                    <div th:unless="${canUseRecognition}" class="quick-action locked">
+                        <span class="icon"><i class="bi bi-lock"></i></span>
+                        <span>
+                            <span class="fw-semibold d-block">Recognition</span>
+                            <span class="small">Locked by admin</span>
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -210,12 +257,12 @@
                             View all
                         </a>
                     </div>
-                    <div th:if="${group.members.isEmpty()}" class="text-center text-muted py-4">
+                    <div th:if="${effectiveMembers == null || effectiveMembers.isEmpty()}" class="text-center text-muted py-4">
                         <i class="bi bi-person-plus d-block mb-2" style="font-size:2rem;"></i>
-                        No members have been selected yet.
+                        No members can access this group yet.
                     </div>
-                    <div class="vstack gap-3" th:unless="${group.members.isEmpty()}">
-                        <div class="d-flex align-items-center gap-3" th:each="member, iterStat : ${group.members}" th:if="${iterStat.index < 5}">
+                    <div class="vstack gap-3" th:unless="${effectiveMembers == null || effectiveMembers.isEmpty()}">
+                        <div class="d-flex align-items-center gap-3" th:each="member, iterStat : ${effectiveMembers}" th:if="${iterStat.index < 5}">
                             <div class="member-avatar" th:text="${#strings.substring(!#strings.isEmpty(member.fullName) ? member.fullName : member.username, 0, 1)}">M</div>
                             <div class="flex-grow-1">
                                 <div class="fw-semibold" th:text="${!#strings.isEmpty(member.fullName) ? member.fullName : member.username}">Member</div>
@@ -245,7 +292,7 @@
 
         <section class="row g-4">
             <div class="col-lg-7">
-                <div class="panel p-4 h-100">
+                <div id="group-tasks" class="panel p-4 h-100">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                         <div>
                             <h2 class="h5 mb-1">Group tasks</h2>
@@ -253,7 +300,7 @@
                         </div>
                     </div>
 
-                    <form th:if="${canUseDashboard}" th:action="${groupBasePath + '/tasks'}" method="post" class="row g-2 mb-4">
+                    <form th:if="${canUseTasks}" th:action="${groupBasePath + '/tasks'}" method="post" class="row g-2 mb-4">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                         <div class="col-md-5">
                             <input type="text" name="title" class="form-control" maxlength="160" required placeholder="Task title">
@@ -261,7 +308,7 @@
                         <div class="col-md-3">
                             <select name="assigneeId" class="form-select">
                                 <option value="">Unassigned</option>
-                                <option th:each="member : ${group.members}" th:value="${member.id}" th:text="${!#strings.isEmpty(member.fullName) ? member.fullName : member.username}">Member</option>
+                                <option th:each="member : ${effectiveMembers}" th:value="${member.id}" th:text="${!#strings.isEmpty(member.fullName) ? member.fullName : member.username}">Member</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -293,7 +340,7 @@
                                     <span class="badge task-status"
                                           th:classappend="${task.status == 'DONE' ? ' bg-success' : (task.status == 'IN_PROGRESS' ? ' bg-warning text-dark' : ' bg-secondary')}"
                                           th:text="${task.status == 'IN_PROGRESS' ? 'IN PROGRESS' : task.status}">TODO</span>
-                                    <form th:if="${canUseDashboard}" th:action="${groupBasePath + '/tasks/' + task.id + '/status'}" method="post" class="d-flex gap-2">
+                                    <form th:if="${canUseTasks}" th:action="${groupBasePath + '/tasks/' + task.id + '/status'}" method="post" class="d-flex gap-2">
                                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                                         <select name="status" class="form-select form-select-sm compact-select">
                                             <option value="TODO" th:selected="${task.status == 'TODO'}">Todo</option>

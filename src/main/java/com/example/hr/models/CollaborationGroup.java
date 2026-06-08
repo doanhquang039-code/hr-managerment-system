@@ -75,6 +75,9 @@ public class CollaborationGroup {
 
     @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private Set<CollaborationGroupRolePermission> rolePermissions = new HashSet<>();
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    private Set<CollaborationGroupMemberPermission> memberPermissions = new HashSet<>();
 }
 
 

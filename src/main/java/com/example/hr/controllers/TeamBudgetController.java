@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Controller
 @RequestMapping("/manager/budget")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('MANAGER')")
+@PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
 public class TeamBudgetController {
 
     private final TeamBudgetService teamBudgetService;
@@ -34,17 +34,20 @@ public class TeamBudgetController {
         User manager = authUserHelper.getCurrentUser(authentication);
         if (manager == null) return "redirect:/login";
 
-        if (manager.getDepartment() == null) {
-            model.addAttribute("errorMessage", "Manager must be assigned to a department");
-            return "error/403";
-        }
-
-        var budgets = teamBudgetService.getBudgetsByManager(manager);
-        var currentBudgets = teamBudgetService.getCurrentMonthBudgets(manager);
-        
-        // Budget statistics for current year
         int currentYear = LocalDateTime.now().getYear();
-        var budgetStats = teamBudgetService.getBudgetStatistics(manager.getDepartment(), currentYear);
+        int currentMonth = LocalDateTime.now().getMonthValue();
+        var budgets = manager.getDepartment() == null
+                ? teamBudgetService.getAllBudgets()
+                : teamBudgetService.getBudgetsByManager(manager);
+        var currentBudgets = manager.getDepartment() == null
+                ? budgets.stream()
+                        .filter(b -> b.getYear() != null && b.getYear() == currentYear
+                                && b.getMonth() != null && b.getMonth() == currentMonth)
+                        .toList()
+                : teamBudgetService.getCurrentMonthBudgets(manager);
+        var budgetStats = manager.getDepartment() == null
+                ? teamBudgetService.getBudgetStatistics(currentYear)
+                : teamBudgetService.getBudgetStatistics(manager.getDepartment(), currentYear);
         
         model.addAttribute("budgets", budgets);
         model.addAttribute("currentBudgets", currentBudgets);
@@ -189,14 +192,13 @@ public class TeamBudgetController {
         User manager = authUserHelper.getCurrentUser(authentication);
         if (manager == null) return "redirect:/login";
 
-        if (manager.getDepartment() == null) {
-            model.addAttribute("errorMessage", "Manager must be assigned to a department");
-            return "error/403";
-        }
-
         int currentYear = LocalDateTime.now().getYear();
-        var budgetStats = teamBudgetService.getBudgetStatistics(manager.getDepartment(), currentYear);
-        var allBudgets = teamBudgetService.getBudgetsByDepartment(manager.getDepartment());
+        var budgetStats = manager.getDepartment() == null
+                ? teamBudgetService.getBudgetStatistics(currentYear)
+                : teamBudgetService.getBudgetStatistics(manager.getDepartment(), currentYear);
+        var allBudgets = manager.getDepartment() == null
+                ? teamBudgetService.getAllBudgets()
+                : teamBudgetService.getBudgetsByDepartment(manager.getDepartment());
         
         model.addAttribute("budgetStats", budgetStats);
         model.addAttribute("allBudgets", allBudgets);

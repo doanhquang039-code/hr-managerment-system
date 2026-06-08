@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/admin/groups")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ADMIN') or @groupAccessService.isCurrentUserAdmin()")
 public class AdminGroupController {
 
     private final GroupAccessService groupAccessService;
@@ -34,16 +34,22 @@ public class AdminGroupController {
         model.addAttribute("roles", groupAccessService.getAllRoles());
         model.addAttribute("users", groupAccessService.getAssignableUsers());
         model.addAttribute("features", groupAccessService.getAllFeatures());
-        model.addAttribute("enabledPermissionKeys", groupAccessService.getEnabledPermissionKeys(group));
+        var enabledPermissionKeys = groupAccessService.getEnabledPermissionKeys(group);
+        var enabledMemberPermissionKeys = groupAccessService.getEnabledMemberPermissionKeys(group);
+        model.addAttribute("enabledPermissionKeys", enabledPermissionKeys);
+        model.addAttribute("enabledMemberPermissionKeys", enabledMemberPermissionKeys);
+        model.addAttribute("effectiveMemberCount", groupAccessService.getEffectiveMembers().size());
+        model.addAttribute("enabledPermissionCount", enabledPermissionKeys.size() + enabledMemberPermissionKeys.size());
         return "admin/group-management";
     }
 
     @PostMapping("/save")
     public String saveGroup(@RequestParam(name = "memberIds", required = false) Set<Integer> memberIds,
                             @RequestParam(name = "rolePermissions", required = false) Set<String> rolePermissions,
+                            @RequestParam(name = "memberPermissions", required = false) Set<String> memberPermissions,
                             RedirectAttributes redirectAttributes) {
-        groupAccessService.updateDefaultGroup(memberIds, rolePermissions);
-        redirectAttributes.addFlashAttribute("successMsg", "Group roles and permissions updated successfully.");
+        groupAccessService.updateDefaultGroup(memberIds, rolePermissions, memberPermissions);
+        redirectAttributes.addFlashAttribute("successMsg", "Group roles, members and user permissions updated successfully.");
         return "redirect:/admin/groups";
     }
 }

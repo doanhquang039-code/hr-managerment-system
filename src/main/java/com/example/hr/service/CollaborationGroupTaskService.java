@@ -59,7 +59,12 @@ public class CollaborationGroupTaskService {
         task.setDueDate(dueDate);
 
         if (assigneeId != null) {
-            userRepository.findById(assigneeId).ifPresent(task::setAssignee);
+            if (!groupAccessService.canAssignToDefaultGroup(assigneeId)) {
+                throw new IllegalArgumentException("Assignee must be a group member.");
+            }
+            User assignee = userRepository.findById(assigneeId)
+                    .orElseThrow(() -> new IllegalArgumentException("Assignee not found."));
+            task.setAssignee(assignee);
         }
 
         return taskRepository.save(task);

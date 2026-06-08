@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -128,7 +129,7 @@ public class TeamBudgetService {
         
         BigDecimal remaining = totalAllocated.subtract(totalSpent);
         double utilizationRate = totalAllocated.compareTo(BigDecimal.ZERO) > 0
-                ? totalSpent.divide(totalAllocated, 4, BigDecimal.ROUND_HALF_UP)
+                ? totalSpent.divide(totalAllocated, 4, RoundingMode.HALF_UP)
                         .multiply(BigDecimal.valueOf(100)).doubleValue()
                 : 0.0;
         
@@ -138,6 +139,27 @@ public class TeamBudgetService {
                 remaining,
                 utilizationRate
         );
+    }
+
+    public BudgetStatistics getBudgetStatistics(Integer year) {
+        BigDecimal totalAllocated = BigDecimal.ZERO;
+        BigDecimal totalSpent = BigDecimal.ZERO;
+
+        for (TeamBudget budget : teamBudgetRepository.findAll()) {
+            if (budget.getYear() == null || !budget.getYear().equals(year)) {
+                continue;
+            }
+            totalAllocated = totalAllocated.add(budget.getAllocatedBudget() != null ? budget.getAllocatedBudget() : BigDecimal.ZERO);
+            totalSpent = totalSpent.add(budget.getSpentBudget() != null ? budget.getSpentBudget() : BigDecimal.ZERO);
+        }
+
+        BigDecimal remaining = totalAllocated.subtract(totalSpent);
+        double utilizationRate = totalAllocated.compareTo(BigDecimal.ZERO) > 0
+                ? totalSpent.divide(totalAllocated, 4, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100)).doubleValue()
+                : 0.0;
+
+        return new BudgetStatistics(totalAllocated, totalSpent, remaining, utilizationRate);
     }
 
     public record BudgetStatistics(
