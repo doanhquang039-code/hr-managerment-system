@@ -1,0 +1,90 @@
+package com.example.hr.config;
+
+import com.example.hr.service.GroupRoleService;
+import com.example.hr.service.GroupAccessService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import java.util.List;
+
+
+/**
+ * Runs after application startup to seed required data.
+ * Seeds default GroupRoles and migrates legacy data (handling 0 values created by ddl-auto).
+ */
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class DataInitializer implements ApplicationRunner {
+
+    private final GroupRoleService groupRoleService;
+    private final GroupAccessService groupAccessService;
+    private final JdbcTemplate jdbcTemplate;
+
+    @Override
+    public void run(ApplicationArguments args) {
+        try {
+            // 1. Seed dynamic roles if empty
+            groupRoleService.seedDefaultRolesIfEmpty();
+            log.info("[DataInitializer] GroupRole seed completed.");
+
+            // 2. Ensure default group exists
+            var defaultGroup = groupAccessService.getDefaultGroup();
+
+            // 3. Migrate legacy user roles from `role` column to `group_role_id`
+            try {
+                jdbcTemplate.execute(
+                    "UPDATE user SET group_role_id = (SELECT id FROM group_roles WHERE name = role) " +
+                    "WHERE group_role_id IS NULL OR group_role_id = 0"
+                );
+                // Set any remaining invalid '0' ids to NULL
+                jdbcTemplate.execute("UPDATE user SET group_role_id = NULL WHERE group_role_id = 0");
+                log.info("[DataInitializer] Migrated legacy user roles to group_role_id.");
+            } catch (Exception e) {
+                log.warn("[DataInitializer] User role migration warning: {}", e.getMessage());
+            }
+
+            // 4. Migrate legacy group role permissions from `role` column to `group_role_id`
+            try {
+                jdbcTemplate.execute(
+                    "UPDATE collaboration_group_role_permissions SET group_role_id = (SELECT id FROM group_roles WHERE name = role) " +
+                    "WHERE group_role_id IS NULL OR group_role_id = 0"
+                );
+                // Delete any remaining invalid '0' or NULL rows in permissions table to prevent entity resolving crash
+                jdbcTemplate.execute("DELETE FROM collaboration_group_role_permissions WHERE group_role_id = 0 OR group_role_id IS NULL");
+                log.info("[DataInitializer] Migrated legacy group role permissions to group_role_id.");
+            } catch (Exception e) {
+                log.warn("[DataInitializer] Group role permissions migration warning: {}", e.getMessage());
+            }
+
+            // 5. Seed default permissions for the default group if empty
+            try {
+                Integer permCount = jdbcTemplate.queryForObject(
+                    "SELECT COUNT(*) FROM collaboration_group_role_permissions WHERE group_id = ?",
+                    Integer.class,
+                    defaultGroup.getId()
+                );
+                if (permCount == null || permCount == 0) {
+                    List<Integer> roleIds = jdbcTemplate.queryForList("SELECT id FROM group_roles", Integer.class);
+                    for (Integer roleId : roleIds) {
+                        for (String feature : java.util.List.of("DASHBOARD", "MEMBERS", "NOTES")) {
+                            jdbcTemplate.update(
+                                "INSERT INTO collaboration_group_role_permissions (group_id, group_role_id, feature) VALUES (?, ?, ?)",
+                                defaultGroup.getId(), roleId, feature
+                            );
+                        }
+                    }
+                    log.info("[DataInitializer] Seeded default permissions (DASHBOARD, MEMBERS, NOTES) for default group.");
+                }
+            } catch (Exception e) {
+                log.warn("[DataInitializer] Default group permissions seeding warning: {}", e.getMessage());
+            }
+
+        } catch (Exception e) {
+            log.warn("[DataInitializer] Seed or migration failed: {}", e.getMessage());
+        }
+    }
+}

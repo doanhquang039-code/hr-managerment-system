@@ -2,6 +2,7 @@ package com.example.hr.user.service;
 
 import com.example.hr.enums.UserStatus;
 import com.example.hr.models.User;
+import com.example.hr.repository.GroupRoleRepository;
 import com.example.hr.department.entity.Department;
 import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.recruitment.repository.JobPositionRepository;
@@ -32,6 +33,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final JobPositionRepository positionRepository;
+    private final GroupRoleRepository groupRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
     private final AuthUserHelper authUserHelper;
@@ -41,6 +43,7 @@ public class UserService {
             UserRepository userRepository,
             DepartmentRepository departmentRepository,
             JobPositionRepository positionRepository,
+            GroupRoleRepository groupRoleRepository,
             PasswordEncoder passwordEncoder,
             CloudinaryService cloudinaryService,
             AuthUserHelper authUserHelper,
@@ -48,6 +51,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.departmentRepository = departmentRepository;
         this.positionRepository = positionRepository;
+        this.groupRoleRepository = groupRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.cloudinaryService = cloudinaryService;
         this.authUserHelper = authUserHelper;
@@ -105,6 +109,7 @@ public class UserService {
                               MultipartFile file,
                               Integer departmentId,
                               Integer positionId,
+                              Integer groupRoleId,
                               String phoneNumber,
                               String gender,
                               String dateOfBirth,
@@ -112,7 +117,7 @@ public class UserService {
                               String employeeCode,
                               String cccd,
                               String hireDate) throws IOException {
-        return saveAdminUser(user, file, departmentId, positionId, phoneNumber, gender, dateOfBirth,
+        return saveAdminUser(user, file, departmentId, positionId, groupRoleId, phoneNumber, gender, dateOfBirth,
                 address, employeeCode, cccd, hireDate, null);
     }
 
@@ -121,6 +126,7 @@ public class UserService {
                               MultipartFile file,
                               Integer departmentId,
                               Integer positionId,
+                              Integer groupRoleId,
                               String phoneNumber,
                               String gender,
                               String dateOfBirth,
@@ -132,7 +138,7 @@ public class UserService {
         User existing = user.getId() != null ? getUserById(user.getId()) : null;
         Department oldDepartment = existing != null ? existing.getDepartment() : null;
 
-        applyRelations(user, departmentId, positionId);
+        applyRelations(user, departmentId, positionId, groupRoleId);
         applyEditableFields(user, phoneNumber, gender, dateOfBirth, address, employeeCode, cccd, hireDate, existing);
         handleProfileImage(user, file, existing);
         handlePassword(user, existing);
@@ -154,7 +160,7 @@ public class UserService {
         refreshDepartmentEmployeeCount(oldDepartment);
     }
 
-    private void applyRelations(User user, Integer departmentId, Integer positionId) {
+    private void applyRelations(User user, Integer departmentId, Integer positionId, Integer groupRoleId) {
         if (departmentId != null) {
             departmentRepository.findById(departmentId).ifPresent(user::setDepartment);
         } else {
@@ -165,6 +171,19 @@ public class UserService {
             positionRepository.findById(positionId).ifPresent(user::setPosition);
         } else {
             user.setPosition(null);
+        }
+
+        if (groupRoleId != null) {
+            groupRoleRepository.findById(groupRoleId).ifPresent(gr -> {
+                user.setGroupRole(gr);
+                try {
+                    user.setRole(com.example.hr.enums.Role.valueOf(gr.getName()));
+                } catch (IllegalArgumentException e) {
+                    user.setRole(com.example.hr.enums.Role.USER);
+                }
+            });
+        } else {
+            user.setGroupRole(null);
         }
     }
 

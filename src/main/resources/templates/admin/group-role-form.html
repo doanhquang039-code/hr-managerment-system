@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${formTitle} + ' - HRMS Admin'">Cấu hình Role</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin:0; background:#eef3f9; color:#0f172a; }
+    .main { padding: 34px 40px; }
+    .form-card { max-width: 720px; margin: 0 auto; background: #fff; border-radius: 18px; box-shadow: 0 18px 50px rgba(15,23,42,.08); overflow: hidden; }
+    .form-card-header { background: linear-gradient(135deg, #4f46e5, #6366f1); color: #fff; padding: 24px 28px; }
+    .form-card-header h5 { margin: 0; font-weight: 800; }
+    .form-card-body { padding: 28px; }
+    .section-title { color: #64748b; border-bottom: 1px solid #e5e7eb; font-size: .78rem; font-weight: 800; letter-spacing: .08em; margin: 22px 0 14px; padding-bottom: 8px; text-transform: uppercase; }
+    .form-label { font-weight: 700; font-size: .88rem; color: #1f2937; }
+    .form-control, .form-select { border-radius: 10px; padding: 10px 13px; border-color: #d7dee8; }
+    .form-control:focus, .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 .22rem rgba(99,102,241,.12); }
+    .pwd-hint { color: #64748b; font-size: .78rem; margin-top: 5px; }
+    .btn-save { background: #4f46e5; color: #fff; border: 0; border-radius: 11px; padding: 11px 22px; font-weight: 800; transition: background 0.2s; }
+    .btn-save:hover { background: #4338ca; color: #fff; }
+    
+    .preset-color-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.1s; position: relative; }
+    .preset-color-badge:hover { transform: scale(1.15); }
+    .preset-color-badge.selected { border-color: #4f46e5; transform: scale(1.1); box-shadow: 0 0 0 2px #fff, 0 0 0 4px #4f46e5; }
+    .preset-color-inner { width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); }
+    
+    .preview-area { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; }
+    .preview-badge { display: inline-block; padding: 8px 18px; border-radius: 999px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+<div th:replace="fragments/admin-sidebar :: sidebar"></div>
+<main class="admin-main">
+  <div class="mb-3">
+    <a th:href="@{/admin/group-roles}" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+    </a>
+  </div>
+
+  <section class="form-card">
+    <div class="form-card-header">
+      <h5>
+        <i class="bi bi-shield-lock me-2"></i>
+        <span th:text="${formTitle}">Cấu hình Role</span>
+      </h5>
+    </div>
+    <div class="form-card-body">
+      <form th:action="${formAction}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <input type="hidden" name="id" th:value="${role.id}">
+
+        <div class="section-title">Thông tin Role</div>
+        
+        <div class="mb-3">
+          <label class="form-label" for="nameInput">Mã Role (Spring Security Authority) <span class="text-danger">*</span></label>
+          <!-- Only allow input on creation. For editing, show name as read-only. -->
+          <input th:if="${role.id == null}" type="text" id="nameInput" name="name" class="form-control" required th:value="${role.name}" placeholder="VD: MANAGER, AUDITOR (Chỉ chữ hoa và dấu gạch dưới)">
+          <input th:unless="${role.id == null}" type="text" id="nameInput" name="name" class="form-control bg-light" readonly th:value="${role.name}">
+          <div class="pwd-hint"><i class="bi bi-info-circle"></i> Mã Role được hệ thống viết hoa tự động, ví dụ: <code>MANAGER</code> sẽ tạo Authority <code>ROLE_MANAGER</code>.</div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="displayNameInput">Tên hiển thị (Tiếng Việt) <span class="text-danger">*</span></label>
+          <input type="text" id="displayNameInput" name="displayName" class="form-control" required th:value="${role.displayName}" placeholder="VD: Quản lý chi nhánh">
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label" for="sortOrderInput">Thứ tự sắp xếp</label>
+            <input type="number" id="sortOrderInput" name="sortOrder" class="form-control" th:value="${role.sortOrder != null ? role.sortOrder : 99}" required>
+            <div class="pwd-hint">Thứ tự hiển thị trên danh sách và cấu hình. Số nhỏ hơn đứng trước.</div>
+          </div>
+        </div>
+
+        <div class="section-title">Màu sắc Badge hiển thị</div>
+        
+        <div class="mb-3">
+          <label class="form-label">Chọn Preset màu hài hòa</label>
+          <div class="d-flex flex-wrap gap-3 mb-3">
+            <div class="preset-color-badge" data-bg="#eff6ff" data-text="#1d4ed8" title="Blue">
+              <div class="preset-color-inner" style="background: #3b82f6;"></div>
+            </div>
+            <div class="preset-color-badge" data-bg="#fee2e2" data-text="#991b1b" title="Red">
+              <div class="preset-color-inner" style="background: #ef4444;"></div>
+            </div>
+            <div class="preset-color-badge" data-bg="#fef9c3" data-text="#854d0e" title="Yellow/Amber">
+              <div class="preset-color-inner" style="background: #f59e0b;"></div>
+            </div>
+            <div class="preset-color-badge" data-bg="#f0fdf4" data-text="#166534" title="Green">
+              <div class="preset-color-inner" style="background: #10b981;"></div>
+            </div>
+            <div class="preset-color-badge" data-bg="#faf5ff" data-text="#6b21a8" title="Purple">
+              <div class="preset-color-inner" style="background: #a855f7;"></div>
+            </div>
+            <div class="preset-color-badge" data-bg="#fdf2f8" data-text="#9d174d" title="Pink">
+              <div class="preset-color-inner" style="background: #ec4899;"></div>
+            </div>
+            <div class="preset-color-badge" data-bg="#f1f5f9" data-text="#334155" title="Slate">
+              <div class="preset-color-inner" style="background: #64748b;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="form-label" for="colorInput">Màu nền Badge (HEX)</label>
+            <div class="input-group">
+              <input type="color" class="form-control form-control-color" id="bgColorPicker" style="width: 50px; max-width: 50px; padding: 4px;" th:value="${role.color != null ? role.color : '#eff6ff'}">
+              <input type="text" id="colorInput" name="color" class="form-control" th:value="${role.color != null ? role.color : '#eff6ff'}" placeholder="#ffffff">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="textColorInput">Màu chữ Badge (HEX)</label>
+            <div class="input-group">
+              <input type="color" class="form-control form-control-color" id="textColorPicker" style="width: 50px; max-width: 50px; padding: 4px;" th:value="${role.textColor != null ? role.textColor : '#1d4ed8'}">
+              <input type="text" id="textColorInput" name="textColor" class="form-control" th:value="${role.textColor != null ? role.textColor : '#1d4ed8'}" placeholder="#000000">
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Xem trước Badge</label>
+          <div class="preview-area">
+            <span id="badgePreview" class="preview-badge">Tên hiển thị</span>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 pt-3" style="border-top:1px solid #f1f5f9;">
+          <button type="submit" class="btn-save btn">
+            <i class="bi bi-check-lg me-2"></i>Lưu cấu hình
+          </button>
+          <a th:href="@{/admin/group-roles}" class="btn btn-outline-secondary" style="border-radius:11px;padding:11px 22px;">Hủy</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const nameInput = document.getElementById('nameInput');
+    const displayNameInput = document.getElementById('displayNameInput');
+    const colorInput = document.getElementById('colorInput');
+    const textColorInput = document.getElementById('textColorInput');
+    const bgColorPicker = document.getElementById('bgColorPicker');
+    const textColorPicker = document.getElementById('textColorPicker');
+    const badgePreview = document.getElementById('badgePreview');
+    const presets = document.querySelectorAll('.preset-color-badge');
+
+    function updatePreview() {
+      const text = displayNameInput.value.trim() || 'Badge Preview';
+      badgePreview.textContent = text;
+      badgePreview.style.backgroundColor = colorInput.value;
+      badgePreview.style.color = textColorInput.value;
+    }
+
+    // Input handlers
+    displayNameInput.addEventListener('input', updatePreview);
+    
+    colorInput.addEventListener('input', function() {
+      bgColorPicker.value = colorInput.value;
+      updatePreview();
+      clearPresetsSelection();
+    });
+    
+    textColorInput.addEventListener('input', function() {
+      textColorPicker.value = textColorInput.value;
+      updatePreview();
+      clearPresetsSelection();
+    });
+
+    bgColorPicker.addEventListener('input', function() {
+      colorInput.value = bgColorPicker.value;
+      updatePreview();
+      clearPresetsSelection();
+    });
+
+    textColorPicker.addEventListener('input', function() {
+      textColorInput.value = textColorPicker.value;
+      updatePreview();
+      clearPresetsSelection();
+    });
+
+    // Preset color badges click handler
+    presets.forEach(preset => {
+      preset.addEventListener('click', function() {
+        clearPresetsSelection();
+        preset.classList.add('selected');
+        
+        const bg = preset.getAttribute('data-bg');
+        const text = preset.getAttribute('data-text');
+        
+        colorInput.value = bg;
+        bgColorPicker.value = bg;
+        textColorInput.value = text;
+        textColorPicker.value = text;
+        
+        updatePreview();
+      });
+    });
+
+    function clearPresetsSelection() {
+      presets.forEach(p => p.classList.remove('selected'));
+    }
+
+    // Normalize role name as user types
+    if (nameInput && !nameInput.readOnly) {
+      nameInput.addEventListener('input', function() {
+        const cursorPosition = nameInput.selectionStart;
+        const value = nameInput.value.toUpperCase().replace(/\s+/g, '_');
+        nameInput.value = value;
+        nameInput.setSelectionRange(cursorPosition, cursorPosition);
+      });
+    }
+
+    // Initial load
+    updatePreview();
+  });
+</script>
+</body>
+</html>

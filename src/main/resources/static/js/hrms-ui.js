@@ -577,7 +577,7 @@
     btn.id = 'hrms-back-top';
     btn.innerHTML = '↑';
     btn.title = 'Back to top';
-    btn.style.cssText = 'position:fixed;bottom:252px;right:30px;z-index:8998;width:36px;height:36px;border-radius:50%;background:rgba(99,102,241,0.3);border:1px solid rgba(99,102,241,0.5);color:#6366f1;font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all 0.2s;font-weight:700;';
+    btn.style.cssText = 'position:fixed;bottom:248px;right:30px;z-index:8998;width:36px;height:36px;border-radius:50%;background:rgba(99,102,241,0.3);border:1px solid rgba(99,102,241,0.5);color:#6366f1;font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all 0.2s;font-weight:700;';
     btn.addEventListener('click', function() { window.scrollTo({ top: 0, behavior: 'smooth' }); });
     btn.addEventListener('mouseenter', function() { this.style.background = '#6366f1'; this.style.color = 'white'; });
     btn.addEventListener('mouseleave', function() { this.style.background = 'rgba(99,102,241,0.3)'; this.style.color = '#6366f1'; });

@@ -5,6 +5,9 @@ import com.example.hr.service.CollaborationGroupTaskService;
 import com.example.hr.service.GroupAccessService;
 import com.example.hr.models.CollaborationGroupPost;
 import com.example.hr.models.CollaborationGroupTask;
+import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.MeetingService;
+import com.example.hr.engagement.service.EmployeeEngagementService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -27,13 +30,22 @@ public class UserGroupController {
     private final GroupAccessService groupAccessService;
     private final CollaborationGroupPostService postService;
     private final CollaborationGroupTaskService taskService;
+    private final MeetingService meetingService;
+    private final EmployeeEngagementService engagementService;
+    private final AuthUserHelper authUserHelper;
 
     public UserGroupController(GroupAccessService groupAccessService,
                                CollaborationGroupPostService postService,
-                               CollaborationGroupTaskService taskService) {
+                               CollaborationGroupTaskService taskService,
+                               MeetingService meetingService,
+                               EmployeeEngagementService engagementService,
+                               AuthUserHelper authUserHelper) {
         this.groupAccessService = groupAccessService;
         this.postService = postService;
         this.taskService = taskService;
+        this.meetingService = meetingService;
+        this.engagementService = engagementService;
+        this.authUserHelper = authUserHelper;
     }
 
     @GetMapping
@@ -48,6 +60,23 @@ public class UserGroupController {
         addGroupModel(model);
         addMemberFilter(model, q);
         return "groups/members";
+    }
+
+    @GetMapping("/meetings")
+    @PreAuthorize("@groupAccessService.hasCurrentUserAccess() and @groupAccessService.hasFeature('MEETINGS')")
+    public String meetings(org.springframework.security.core.Authentication authentication, Model model) {
+        addGroupModel(model);
+        var user = authUserHelper.getCurrentUser(authentication);
+        model.addAttribute("meetings", user != null ? meetingService.getMeetingsForUser(user) : java.util.List.of());
+        return "groups/meetings";
+    }
+
+    @GetMapping("/recognition")
+    @PreAuthorize("@groupAccessService.hasCurrentUserAccess() and @groupAccessService.hasFeature('RECOGNITION')")
+    public String recognition(Model model) {
+        addGroupModel(model);
+        model.addAttribute("recognitions", engagementService.getPublicRecognitions());
+        return "groups/recognition";
     }
 
     @PostMapping("/notes")
@@ -112,6 +141,7 @@ public class UserGroupController {
         model.addAttribute("postCount", posts.size());
         model.addAttribute("taskCount", tasks.size());
         model.addAttribute("doneTaskCount", tasks.stream().filter(task -> "DONE".equals(task.getStatus())).count());
+        model.addAttribute("currentPermissionSummary", groupAccessService.getCurrentUserPermissionSummary());
     }
 
     private void addMemberFilter(Model model, String query) {

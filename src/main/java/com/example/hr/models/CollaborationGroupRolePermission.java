@@ -1,28 +1,20 @@
 package com.example.hr.models;
 
 import com.example.hr.enums.GroupFeature;
-import com.example.hr.enums.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Maps a GroupRole to a GroupFeature within a CollaborationGroup.
+ * Replaces the old enum-based Role with dynamic GroupRole entity.
+ */
 @Entity
 @Table(
         name = "collaboration_group_role_permissions",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"group_id", "role", "feature"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"group_id", "group_role_id", "feature"})
 )
 @Getter
 @Setter
@@ -38,13 +30,12 @@ public class CollaborationGroupRolePermission {
     @JoinColumn(name = "group_id", nullable = false)
     private CollaborationGroup group;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private Role role;
+    /** Dynamic role from DB */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_role_id", nullable = false)
+    private GroupRole groupRole;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private GroupFeature feature;
 }
-
-

@@ -21,13 +21,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .or(() -> userRepository.findByEmail(username))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .authorities("ROLE_" + user.getRole())
-                .disabled(user.getStatus() != UserStatus.ACTIVE)
-                .build();
+        // Use CustomUserDetails which resolves authority via getEffectiveRoleName()
+        // (prefers groupRole.name over legacy Role enum)
+        return new CustomUserDetails(user);
     }
 }
-
-

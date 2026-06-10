@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Recognition - HRMS</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background:#f6f8fb; color:#111827; }
+        .shell { max-width:1100px; margin:0 auto; padding:2rem 1rem 3rem; }
+        .panel { background:#fff; border:1px solid #e5e7eb; border-radius:8px; box-shadow:0 10px 28px rgba(15,23,42,.06); }
+        .recognition-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+        .recognition-card { border:1px solid #e5e7eb; border-radius:8px; padding:16px; background:#fff; }
+    </style>
+</head>
+<body>
+<main class="shell">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <div class="text-uppercase text-primary fw-semibold small mb-1">Group Workspace</div>
+            <h1 class="h3 mb-1">Recognition</h1>
+            <p class="text-muted mb-0">Public recognitions available through your group permission.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/engagement/recognition/give" class="btn btn-primary"><i class="bi bi-stars me-1"></i> Give praise</a>
+            <a th:href="${groupBasePath}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Back</a>
+        </div>
+    </div>
+
+    <section class="panel p-4">
+        <div th:if="${recognitions == null || recognitions.isEmpty()}" class="text-center text-muted py-5">
+            <i class="bi bi-stars d-block mb-2" style="font-size:2rem;"></i>
+            No public recognitions yet.
+        </div>
+        <div class="recognition-grid" th:unless="${recognitions == null || recognitions.isEmpty()}">
+            <article class="recognition-card" th:each="recognition : ${recognitions}">
+                <div class="d-flex justify-content-between gap-2 mb-2">
+                    <span class="badge text-bg-success" th:text="${recognition.type}">GREAT_JOB</span>
+                    <span class="small fw-bold text-primary" th:text="${recognition.points + ' pts'}">10 pts</span>
+                </div>
+                <h2 class="h6 fw-bold mb-2" th:text="${recognition.title}">Recognition title</h2>
+                <p class="text-muted small mb-3" th:text="${recognition.message}">Message</p>
+                <div class="small">
+                    <span th:text="${recognition.giver != null ? (!#strings.isEmpty(recognition.giver.fullName) ? recognition.giver.fullName : recognition.giver.username) : 'Someone'}">Giver</span>
+                    <span class="text-muted">to</span>
+                    <span class="fw-semibold" th:text="${recognition.recipient != null ? (!#strings.isEmpty(recognition.recipient.fullName) ? recognition.recipient.fullName : recognition.recipient.username) : 'Recipient'}">Recipient</span>
+                </div>
+            </article>
+        </div>
+    </section>
+</main>
+</body>
+</html>

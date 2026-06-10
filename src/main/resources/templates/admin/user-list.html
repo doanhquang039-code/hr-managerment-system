@@ -330,6 +330,14 @@
                             <i class="bi bi-person-badge"></i>
                             <span th:text="${u.username}">username</span>
                         </span>
+                        <div class="mt-1" th:if="${u.groupRole != null}">
+                            <span style="display:inline-block; padding:2px 8px; border-radius:999px; font-weight:800; font-size:.65rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid rgba(0,0,0,.04);"
+                                  th:style="'background-color: ' + ${u.groupRole.color} + '; color: ' + ${u.groupRole.textColor} + '; display:inline-block; padding:2px 8px; border-radius:999px; font-weight:800; font-size:.65rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid rgba(0,0,0,.04);'"
+                                  th:text="${u.groupRole.displayName}">Quản lý</span>
+                        </div>
+                        <div class="mt-1" th:unless="${u.groupRole != null}">
+                            <span class="badge bg-light text-muted border px-2 py-0.5" style="font-size:0.65rem;" th:text="${u.role != null ? u.role.name() : 'USER'}">USER</span>
+                        </div>
                     </td>
                     <td>
                         <span class="badge-soft" style="background:#f1f5f9;color:#475569;">

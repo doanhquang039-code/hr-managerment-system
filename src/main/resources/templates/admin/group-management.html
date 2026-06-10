@@ -37,6 +37,12 @@
     .role-badge { border-radius:999px; background:#e0f2fe; color:#075985; padding:4px 10px; font-size:.72rem; font-weight:800; }
     .summary-card { border:1px solid #e2e8f0; border-radius:12px; padding:16px; background:#f8fafc; height:100%; }
     .summary-card strong { display:block; font-size:1.5rem; }
+    .activity-list { border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; background:#fff; }
+    .activity-row { display:grid; grid-template-columns:150px 160px minmax(0,1fr); gap:12px; padding:12px 14px; border-bottom:1px solid #edf2f7; align-items:start; }
+    .activity-row:last-child { border-bottom:0; }
+    .activity-time { color:#64748b; font-size:.78rem; font-weight:700; }
+    .activity-action { color:#0f172a; font-size:.78rem; font-weight:800; }
+    .activity-detail { color:#475569; font-size:.82rem; overflow-wrap:anywhere; }
     @media (max-width: 991px) { .page-head,.panel-head { flex-direction:column; align-items:stretch; } .permission-row { grid-template-columns:1fr; min-width:0; } .permission-cell + .permission-cell { border-left:0; border-top:1px solid #edf2f7; } .member-row { grid-template-columns:28px minmax(0,1fr); } .member-perms,.role-badge { grid-column:2; } }
   </style>
 </head>
@@ -77,9 +83,9 @@
           <div class="permission-cell" th:each="feature : ${features}" th:text="${feature.displayName}">Tính năng</div>
         </div>
         <div class="permission-row" th:each="role : ${roles}">
-          <div class="permission-cell"><span><span class="fw-bold d-block" th:text="${role.name()}">ROLE</span><span class="text-muted small" th:text="${role.displayName}">Role name</span></span></div>
+          <div class="permission-cell"><span><span class="fw-bold d-block" th:text="${role.name}">ROLE</span><span class="text-muted small" th:text="${role.displayName}">Role name</span></span></div>
           <label class="permission-cell permission-check" th:each="feature : ${features}">
-            <input class="form-check-input" type="checkbox" name="rolePermissions" th:value="${role.name() + ':' + feature.name()}" th:checked="${enabledPermissionKeys.contains(role.name() + ':' + feature.name())}">
+            <input class="form-check-input" type="checkbox" name="rolePermissions" th:value="${role.id + ':' + feature.name()}" th:checked="${enabledPermissionKeys.contains(role.id + ':' + feature.name())}">
             <span th:text="${feature.displayName}">Tính năng</span>
           </label>
         </div>
@@ -89,17 +95,55 @@
         <div><h3 class="section-title mb-1">Thành viên và quyền riêng từng user</h3><div class="text-muted small">Tick user để cho vào group, hoặc tick từng tính năng để cấp quyền riêng không ảnh hưởng tài khoản khác.</div></div>
         <div class="text-muted small"><span th:text="${#sets.size(memberIds)}">0</span> đang chọn</div>
       </div>
-      <div class="member-list">
-        <div class="member-row" th:each="user : ${users}">
-          <input class="form-check-input member-access" type="checkbox" name="memberIds" th:value="${user.id}" th:checked="${memberIds.contains(user.id)}">
-          <span><span class="fw-semibold" th:text="${user.fullName}">User name</span><span class="d-block text-muted small" th:text="${user.email != null ? user.email : user.username}">email</span></span>
-          <div class="member-perms">
-            <label class="member-perm" th:each="feature : ${features}">
-              <input class="form-check-input m-0" type="checkbox" name="memberPermissions" th:value="${user.id + ':' + feature.name()}" th:checked="${enabledMemberPermissionKeys.contains(user.id + ':' + feature.name())}">
-              <span th:text="${feature.displayName}">Feature</span>
-            </label>
+      
+      <div th:each="r : ${roles}" class="mb-4">
+        <div class="d-flex align-items-center flex-wrap gap-2 mb-2 ps-1 w-100">
+          <span style="display:inline-block; padding:4px 10px; border-radius:999px; font-weight:800; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid rgba(0,0,0,.04);" 
+                th:style="'background-color: ' + ${r.color} + '; color: ' + ${r.textColor} + '; display:inline-block; padding:4px 10px; border-radius:999px; font-weight:800; font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid rgba(0,0,0,.04);'" 
+                th:text="${r.displayName}">Quản trị viên</span>
+          <span class="text-muted small fw-semibold" th:text="'(Mã role: ' + ${r.name} + ')'">(Mã role: ADMIN)</span>
+          <div class="ms-md-auto d-flex align-items-center gap-1">
+            <span class="text-muted small fw-semibold">Quyền kế thừa:</span>
+            <th:block th:each="feat : ${group.getFeaturesForRole(r)}">
+              <span class="badge bg-light text-dark border px-2 py-1" style="font-size:0.7rem;" th:text="${feat.displayName}">Feature</span>
+            </th:block>
+            <span th:if="${#lists.isEmpty(group.getFeaturesForRole(r))}" class="text-danger small fw-bold"><i class="bi bi-exclamation-circle-fill me-1"></i>Chưa được cấp quyền</span>
           </div>
-          <span class="role-badge" th:text="${user.role != null ? user.role.name() : 'NO_ROLE'}">USER</span>
+        </div>
+        <div class="member-list">
+          <!-- Filter users of this role in Thymeleaf -->
+          <th:block th:each="user : ${users}">
+            <div class="member-row" th:if="${user.getEffectiveRoleName() == r.name}">
+              <input class="form-check-input member-access" type="checkbox" name="memberIds" th:value="${user.id}" th:checked="${memberIds.contains(user.id)}">
+              <span>
+                <span class="fw-semibold text-dark" th:text="${user.fullName}">User name</span>
+                <span class="d-block text-muted small" th:text="${user.email != null ? user.email : user.username}">email</span>
+              </span>
+              <div class="member-perms">
+                <label class="member-perm" th:each="feature : ${features}">
+                  <input class="form-check-input m-0" type="checkbox" name="memberPermissions" th:value="${user.id + ':' + feature.name()}" th:checked="${enabledMemberPermissionKeys.contains(user.id + ':' + feature.name())}">
+                  <span th:text="${feature.displayName}">Feature</span>
+                </label>
+              </div>
+            </div>
+          </th:block>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <h3 class="section-title">Lịch sử cấp quyền gần đây</h3>
+        <div class="activity-list">
+          <div class="activity-row" th:if="${permissionActivity == null || permissionActivity.isEmpty()}">
+            <div class="activity-detail text-muted" style="grid-column:1 / -1;">Chưa có log cấp quyền group.</div>
+          </div>
+          <div class="activity-row" th:each="log : ${permissionActivity}">
+            <div class="activity-time" th:text="${#temporals.format(log.createdAt, 'dd/MM HH:mm')}">10/06 09:00</div>
+            <div class="activity-action" th:text="${log.action}">GROUP_PERMISSION_UPDATE</div>
+            <div>
+              <div class="activity-detail" th:text="${log.detail}">Updated group permissions</div>
+              <div class="text-muted small" th:text="${'By ' + log.actorUsername}">By admin</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

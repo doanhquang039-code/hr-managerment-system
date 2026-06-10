@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Roles - HRMS Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { margin:0; background:#eef3f9; color:#0f172a; }
+    .page-head { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; margin-bottom:24px; }
+    .breadcrumb-lite { color:#64748b; font-size:.9rem; margin-bottom:6px; }
+    .page-title { display:flex; align-items:center; gap:10px; font-size:1.75rem; font-weight:800; margin:0; }
+    .page-subtitle { margin-top:6px; color:#64748b; font-size:.95rem; }
+    
+    .panel { background:#fff; border:1px solid #e2e8f0; border-radius:14px; box-shadow:0 12px 28px rgba(15,23,42,.06); overflow:hidden; }
+    .panel-head { padding:20px 24px; display:flex; justify-content:space-between; gap:16px; align-items:center; border-bottom:1px solid #e2e8f0; background:#fbfdff; }
+    .panel-head h2 { font-size:1.1rem; font-weight:800; margin:0; }
+    .panel-body { padding:24px; }
+    
+    .table-wrap { overflow-x: auto; }
+    .role-preview-badge { display:inline-block; padding:6px 14px; border-radius:999px; font-weight:800; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; border:1px solid rgba(0,0,0,.04); }
+    
+    .btn-action { padding:6px 12px; font-size:.84rem; font-weight:700; border-radius:8px; display:inline-flex; align-items:center; gap:6px; text-decoration:none; }
+    .action-edit { color:#0f766e; background:#f0fdfa; border:1px solid #ccfbf1; }
+    .action-edit:hover { background:#ccfbf1; }
+    .action-delete { color:#be123c; background:#fff1f2; border:1px solid #ffe4e6; }
+    .action-delete:hover { background:#ffe4e6; }
+    .action-locked { color:#64748b; background:#f1f5f9; border:1px solid #e2e8f0; cursor:not-allowed; }
+    
+    .badge-type { font-size:.72rem; font-weight:800; padding:4px 8px; border-radius:6px; text-transform:uppercase; }
+    .badge-builtin { background:#fef3c7; color:#d97706; }
+    .badge-custom { background:#f0fdf4; color:#16a34a; }
+    
+    .empty-state { text-align:center; padding:48px 16px; color:#64748b; }
+    .empty-state i { font-size:3rem; color:#94a3b8; display:block; margin-bottom:12px; }
+    
+    @media (max-width: 991px) {
+      .page-head { flex-direction:column; align-items:stretch; }
+    }
+  </style>
+</head>
+<body>
+<div th:replace="fragments/admin-sidebar :: sidebar"></div>
+<main class="admin-main">
+  <div class="page-head">
+    <div>
+      <div class="breadcrumb-lite">
+        <a th:href="@{/admin/dashboard}" class="text-decoration-none">Dashboard</a> / 
+        <a th:href="@{/admin/groups}" class="text-decoration-none">Groups</a> / 
+        Roles
+      </div>
+      <h1 class="page-title"><i class="bi bi-shield-lock text-primary"></i>Quản lý Role cấu hình</h1>
+      <div class="page-subtitle">Quản lý danh sách vai trò (Role) động dùng cho phân quyền chức năng trong Groups.</div>
+    </div>
+    <div>
+      <a th:href="@{/admin/group-roles/create}" class="btn btn-primary fw-bold">
+        <i class="bi bi-plus-lg me-1"></i>Tạo Role mới
+      </a>
+    </div>
+  </div>
+
+  <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${successMsg}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  
+  <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <span th:text="${errorMsg}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Danh sách các Role trong hệ thống</h2>
+        <p class="text-muted small mb-0">Các role hệ thống (built-in) không thể xóa để tránh lỗi vận hành.</p>
+      </div>
+    </div>
+    <div class="panel-body p-0">
+      <div class="table-wrap">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="ps-4" style="width: 80px;">ID</th>
+              <th>Mã Role</th>
+              <th>Tên hiển thị</th>
+              <th>Preview Badge</th>
+              <th style="width: 140px;">Thứ tự sắp xếp</th>
+              <th style="width: 140px;">Loại</th>
+              <th class="text-end pe-4" style="width: 200px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:if="${#lists.isEmpty(roles)}">
+              <td colspan="7" class="empty-state">
+                <i class="bi bi-shield-slash"></i>
+                Chưa có role nào được định nghĩa trong hệ thống.
+              </td>
+            </tr>
+            <tr th:each="r : ${roles}">
+              <td class="ps-4 fw-bold text-muted" th:text="${'#' + r.id}">#1</td>
+              <td>
+                <code class="fw-bold" th:text="${r.name}">ADMIN</code>
+              </td>
+              <td>
+                <span class="fw-semibold" th:text="${r.displayName}">Quản trị viên</span>
+              </td>
+              <td>
+                <span class="role-preview-badge" 
+                      th:style="'background-color: ' + ${r.color} + '; color: ' + ${r.textColor}" 
+                      th:text="${r.displayName}">Quản trị viên</span>
+              </td>
+              <td class="text-center">
+                <span class="badge bg-secondary" th:text="${r.sortOrder}">0</span>
+              </td>
+              <td>
+                <span th:if="${r.builtIn}" class="badge-type badge-builtin">Hệ thống</span>
+                <span th:unless="${r.builtIn}" class="badge-type badge-custom">Tự tạo</span>
+              </td>
+              <td class="text-end pe-4">
+                <div class="d-inline-flex gap-2">
+                  <a th:href="@{/admin/group-roles/{id}/edit(id=${r.id})}" class="btn-action action-edit">
+                    <i class="bi bi-pencil-square"></i>Sửa
+                  </a>
+                  
+                  <form th:unless="${r.builtIn}" th:action="@{/admin/group-roles/{id}/delete(id=${r.id})}" method="post" 
+                        onclick="return confirm('Bạn có chắc chắn muốn xóa role này? Các cấu hình phân quyền liên quan sẽ bị gỡ bỏ.')">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="btn btn-link btn-action action-delete border-0 p-2">
+                      <i class="bi bi-trash3"></i>Xóa
+                    </button>
+                  </form>
+                  
+                  <span th:if="${r.builtIn}" class="btn-action action-locked" title="Role hệ thống không được xóa">
+                    <i class="bi bi-lock-fill"></i>Khóa
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

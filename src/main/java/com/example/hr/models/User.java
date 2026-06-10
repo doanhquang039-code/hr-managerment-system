@@ -1,6 +1,5 @@
 package com.example.hr.models;
 
-
 import com.example.hr.department.entity.Department;
 import com.example.hr.enums.Role;
 import com.example.hr.enums.UserStatus;
@@ -14,11 +13,12 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "user")
 @Getter
 @Setter
-@NoArgsConstructor  // Cáº§n thiáº¿t cho JPA
+@NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
@@ -32,8 +32,9 @@ public class User {
     @Column(name = "employee_code", unique = true, length = 30)
     private String employeeCode;
 
-@Column(nullable = false, length = 255)
-private String password;
+    @Column(nullable = false, length = 255)
+    private String password;
+
     @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
@@ -62,8 +63,14 @@ private String password;
     @Column(name = "profile_image")
     private String profileImage = "default_avatar.png";
 
+    /** Legacy enum role — kept for backward compatibility. Use groupRole when set. */
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    /** Dynamic role from DB — overrides legacy enum when set */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "group_role_id")
+    private GroupRole groupRole;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
@@ -88,13 +95,24 @@ private String password;
     @Column(name = "updated_by_encrypted", length = 1000)
     private String updatedByEncrypted;
 
-    /** Firebase Cloud Messaging token â€” dÃ¹ng cho push notifications */
+    /** Firebase Cloud Messaging token — dùng cho push notifications */
     @Column(name = "fcm_token", length = 500)
     private String fcmToken;
 
+    /**
+     * Returns the effective role name for Spring Security authority resolution.
+     * Prefers groupRole.name (dynamic DB role) over legacy enum.
+     */
+    public String getEffectiveRoleName() {
+        if (groupRole != null && groupRole.getName() != null) {
+            return groupRole.getName();
+        }
+        return role != null ? role.name() : "USER";
+    }
+
     public String getMaskedCccd() {
         if (cccd == null || cccd.isBlank()) {
-            return "ChÆ°a cÃ³ CCCD";
+            return "Chưa có CCCD";
         }
         if (cccd.length() <= 6) {
             return "******";
@@ -102,5 +120,3 @@ private String password;
         return cccd.substring(0, 3) + "******" + cccd.substring(cccd.length() - 3);
     }
 }
-
-

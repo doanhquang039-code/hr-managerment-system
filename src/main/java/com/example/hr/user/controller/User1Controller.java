@@ -20,6 +20,7 @@ import com.example.hr.task.repository.TaskAssignmentRepository;
 import com.example.hr.task.repository.TaskRepository;
 import com.example.hr.service.AuthUserHelper;
 import com.example.hr.service.CloudinaryService;
+import com.example.hr.service.GroupAccessService;
 import com.example.hr.service.NewOvertimeService;
 import com.example.hr.service.NotificationService;
 
@@ -57,6 +58,7 @@ public class User1Controller {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private AuthUserHelper authUserHelper;
     @Autowired private NotificationService notificationService;
+    @Autowired private GroupAccessService groupAccessService;
     @Autowired private CloudinaryService cloudinaryService;
     @Autowired private NewOvertimeService overtimeService;
     @Autowired private OvertimeRequestRepository overtimeRepository;
@@ -129,6 +131,15 @@ public class User1Controller {
         model.addAttribute("latestPayrollYear", latestSalary != null ? latestSalary.getYear() : null);
         model.addAttribute("today", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         model.addAttribute("unreadNotifications", notificationService.countUnread(user));
+        boolean hasGroupAccess = groupAccessService.hasCurrentUserAccess();
+        model.addAttribute("hasGroupAccess", hasGroupAccess);
+        model.addAttribute("canUseGroupDashboard", hasGroupAccess && groupAccessService.hasFeature("DASHBOARD"));
+        model.addAttribute("canUseGroupTasks", hasGroupAccess && groupAccessService.hasFeature("TASKS"));
+        model.addAttribute("canUseGroupFiles", hasGroupAccess && groupAccessService.hasFeature("FILES"));
+        model.addAttribute("canUseGroupMeetings", hasGroupAccess && groupAccessService.hasFeature("MEETINGS"));
+        model.addAttribute("canUseGroupAnnouncements", hasGroupAccess && groupAccessService.hasFeature("ANNOUNCEMENTS"));
+        model.addAttribute("canUseGroupRecognition", hasGroupAccess && groupAccessService.hasFeature("RECOGNITION"));
+        model.addAttribute("groupPermissionSummary", groupAccessService.getCurrentUserPermissionSummary());
 
         return "user1/dashboard";
     }

@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import com.example.hr.repository.GroupRoleRepository;
 import java.util.List;
 
 @Controller
@@ -53,6 +54,9 @@ public class UserController {
 
     @Autowired
     private JobPositionRepository positionRepository;
+
+    @Autowired
+    private GroupRoleRepository groupRoleRepository;
 
     @GetMapping
     public String listUsers(@RequestParam(name = "keyword", required = false) String keyword,
@@ -191,6 +195,7 @@ public class UserController {
         model.addAttribute("user", new User());
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("positions", positionRepository.findByActiveTrue());
+        model.addAttribute("groupRoles", groupRoleRepository.findAllByOrderBySortOrderAscNameAsc());
         return "admin/user-form";
     }
 
@@ -199,6 +204,7 @@ public class UserController {
                            @RequestParam("image") MultipartFile file,
                            @RequestParam(value = "departmentId", required = false) Integer departmentId,
                            @RequestParam(value = "positionId", required = false) Integer positionId,
+                           @RequestParam(value = "groupRoleId", required = false) Integer groupRoleId,
                            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
                            @RequestParam(value = "gender", required = false) String gender,
                            @RequestParam(value = "dateOfBirth", required = false) String dateOfBirth,
@@ -207,7 +213,7 @@ public class UserController {
                            @RequestParam(value = "cccd", required = false) String cccd,
                            @RequestParam(value = "hireDate", required = false) String hireDate,
                            Authentication authentication) throws IOException {
-        userService.saveAdminUser(user, file, departmentId, positionId, phoneNumber, gender, dateOfBirth, address, employeeCode, cccd, hireDate, authentication);
+        userService.saveAdminUser(user, file, departmentId, positionId, groupRoleId, phoneNumber, gender, dateOfBirth, address, employeeCode, cccd, hireDate, authentication);
         return "redirect:/admin/users";
     }
 
@@ -216,6 +222,7 @@ public class UserController {
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("positions", positionRepository.findByActiveTrue());
+        model.addAttribute("groupRoles", groupRoleRepository.findAllByOrderBySortOrderAscNameAsc());
         return "admin/user-form";
     }
 

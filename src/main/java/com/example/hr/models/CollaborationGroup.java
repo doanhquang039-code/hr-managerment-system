@@ -1,22 +1,7 @@
 package com.example.hr.models;
 
 import com.example.hr.enums.GroupFeature;
-import com.example.hr.enums.Role;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +11,11 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * CollaborationGroup — supports multiple independent groups.
+ * Each group has its own role-feature permissions and explicit member list.
+ * Admins can CRUD groups from /admin/groups UI.
+ */
 @Entity
 @Table(name = "collaboration_group")
 @Getter
@@ -44,9 +34,13 @@ public class CollaborationGroup {
     @Column(length = 500)
     private String description;
 
+    @Column(name = "icon_class", length = 50)
+    private String iconClass = "bi-diagram-3";
+
     @Column(nullable = false)
     private boolean active = true;
 
+    /** Explicit members added by admin regardless of role */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "collaboration_group_members",
@@ -55,17 +49,19 @@ public class CollaborationGroup {
     )
     private Set<User> members = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "collaboration_group_roles", joinColumns = @JoinColumn(name = "group_id"))
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 50)
-    private Set<Role> roles = new HashSet<>();
+    /**
+     * Role-level feature permissions: which GroupRole can access which GroupFeature.
+     * When a user's groupRole matches a permission here, they get that feature.
+     */
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CollaborationGroupRolePermission> rolePermissions = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "collaboration_group_features", joinColumns = @JoinColumn(name = "group_id"))
-    @Enumerated(EnumType.STRING)
-    @Column(name = "feature", nullable = false, length = 50)
-    private Set<GroupFeature> features = new HashSet<>();
+    /**
+     * Per-user feature overrides: individual users granted specific features
+     * regardless of their role (e.g., a USER role user who gets TASKS access).
+     */
+    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CollaborationGroupMemberPermission> memberPermissions = new HashSet<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -73,11 +69,23 @@ public class CollaborationGroup {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
-    private Set<CollaborationGroupRolePermission> rolePermissions = new HashSet<>();
+    /** Convenience: compute which GroupRoles are represented in rolePermissions */
+    public Set<GroupRole> getConfiguredRoles() {
+        Set<GroupRole> roles = new HashSet<>();
+        for (CollaborationGroupRolePermission p : rolePermissions) {
+            if (p.getGroupRole() != null) roles.add(p.getGroupRole());
+        }
+        return roles;
+    }
 
-    @OneToMany(mappedBy = "group", fetch = FetchType.EAGER, cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
-    private Set<CollaborationGroupMemberPermission> memberPermissions = new HashSet<>();
+    /** Convenience: compute which features are enabled for a given GroupRole */
+    public Set<GroupFeature> getFeaturesForRole(GroupRole role) {
+        Set<GroupFeature> features = new HashSet<>();
+        for (CollaborationGroupRolePermission p : rolePermissions) {
+            if (p.getGroupRole() != null && p.getGroupRole().getId().equals(role.getId())) {
+                features.add(p.getFeature());
+            }
+        }
+        return features;
+    }
 }
-
-

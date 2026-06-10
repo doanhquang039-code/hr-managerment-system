@@ -137,12 +137,10 @@
                 <div class="section-title">Phân quyền & Tổ chức</div>
                 <div class="row g-3">
                     <div class="col-md-4">
-                        <label class="form-label">Quyền hạn</label>
-                        <select name="role" class="form-select">
-                            <option value="ADMIN" th:selected="${user.role != null and user.role.name() == 'ADMIN'}">ADMIN</option>
-                            <option value="MANAGER" th:selected="${user.role != null and user.role.name() == 'MANAGER'}">MANAGER</option>
-                            <option value="HIRING" th:selected="${user.role != null and user.role.name() == 'HIRING'}">HIRING</option>
-                            <option value="USER" th:selected="${user.role == null or user.role.name() == 'USER'}">USER</option>
+                        <label class="form-label">Quyền hạn (Role)</label>
+                        <select name="groupRoleId" class="form-select" required>
+                            <option value="">-- Chọn Role --</option>
+                            <option th:each="gr : ${groupRoles}" th:value="${gr.id}" th:text="${gr.displayName}" th:selected="${(user.groupRole != null and user.groupRole.id == gr.id) or (user.groupRole == null and user.role != null and user.role.name() == gr.name)}"></option>
                         </select>
                     </div>
                     <div class="col-md-4">

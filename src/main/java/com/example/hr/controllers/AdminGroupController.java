@@ -1,6 +1,8 @@
 package com.example.hr.controllers;
 
 import com.example.hr.service.GroupAccessService;
+import com.example.hr.service.HrAuditLogService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,9 +21,12 @@ import java.util.Set;
 public class AdminGroupController {
 
     private final GroupAccessService groupAccessService;
+    private final HrAuditLogService hrAuditLogService;
 
-    public AdminGroupController(GroupAccessService groupAccessService) {
+    public AdminGroupController(GroupAccessService groupAccessService,
+                                HrAuditLogService hrAuditLogService) {
         this.groupAccessService = groupAccessService;
+        this.hrAuditLogService = hrAuditLogService;
     }
 
     @GetMapping
@@ -40,6 +45,7 @@ public class AdminGroupController {
         model.addAttribute("enabledMemberPermissionKeys", enabledMemberPermissionKeys);
         model.addAttribute("effectiveMemberCount", groupAccessService.getEffectiveMembers().size());
         model.addAttribute("enabledPermissionCount", enabledPermissionKeys.size() + enabledMemberPermissionKeys.size());
+        model.addAttribute("permissionActivity", hrAuditLogService.findLogs("GROUP_ACCESS", PageRequest.of(0, 6)).getContent());
         return "admin/group-management";
     }
 
