@@ -35,7 +35,7 @@ public class CollaborationGroupRolePermission {
     @JoinColumn(name = "group_role_id", nullable = false)
     private GroupRole groupRole;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
+    @jakarta.persistence.Convert(converter = com.example.hr.config.GroupFeatureConverter.class)
     private GroupFeature feature;
 }

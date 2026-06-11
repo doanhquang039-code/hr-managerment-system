@@ -24,8 +24,8 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
             <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
                 <div>
-                    <h1 class="h3 fw-bold mb-0"><i class="bi bi-speedometer2 me-2 text-primary"></i>Advanced Dashboard</h1>
-                    <small class="text-muted">Team Analytics &amp; Real-time Metrics</small>
+                    <h1 class="h3 fw-bold mb-0"><i class="bi bi-search me-2 text-primary"></i>Advanced SEO Dashboard</h1>
+                    <small class="text-muted">SEO Campaigns, Organic Keywords &amp; Web Vitals Performance</small>
                 </div>
                 <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
                     <i class="bi bi-arrow-clockwise me-1"></i>Refresh
@@ -37,20 +37,20 @@
                 <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${errorMessage}"></span>
             </div>
 
-            <!-- Team Overview -->
-            <p class="text-uppercase text-muted small fw-bold mb-3"><i class="bi bi-people me-1"></i>Team Overview</p>
+            <!-- SEO Operations Overview -->
+            <p class="text-uppercase text-muted small fw-bold mb-3"><i class="bi bi-people me-1"></i>SEO Team &amp; Operations Overview</p>
             <div class="row mb-4 g-3">
                 <div class="col-md-3">
                     <div class="card metric-card primary">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <p class="text-muted small mb-1">Team Members</p>
+                                    <p class="text-muted small mb-1">SEO Specialists &amp; Writers</p>
                                     <h3 class="fw-bold mb-0" th:text="${teamOverview?.totalMembers ?: 0}">0</h3>
                                 </div>
                                 <i class="bi bi-people fs-1 text-primary opacity-75"></i>
                             </div>
-                            <small class="text-success"><span th:text="${teamOverview?.activeMembers ?: 0}">0</span> active</small>
+                            <small class="text-success"><span th:text="${teamOverview?.activeMembers ?: 0}">0</span> hoạt động</small>
                         </div>
                     </div>
                 </div>
@@ -59,13 +59,13 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <p class="text-muted small mb-1">Attendance Today</p>
+                                    <p class="text-muted small mb-1">SEO Visibility Score</p>
                                     <h3 class="fw-bold mb-0"
                                         th:text="${teamOverview != null ? #numbers.formatDecimal(teamOverview.attendanceRate,1,1)+'%' : '0%'}">0%</h3>
                                 </div>
-                                <i class="bi bi-calendar-check fs-1 text-success opacity-75"></i>
+                                <i class="bi bi-globe fs-1 text-success opacity-75"></i>
                             </div>
-                            <small class="text-muted"><span th:text="${teamOverview?.presentToday ?: 0}">0</span> present</small>
+                            <small class="text-muted"><span th:text="${teamOverview?.presentToday ?: 0}">0</span> crawled pages</small>
                         </div>
                     </div>
                 </div>
@@ -74,12 +74,12 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <p class="text-muted small mb-1">Pending Leaves</p>
+                                    <p class="text-muted small mb-1">Pending SEO Approvals</p>
                                     <h3 class="fw-bold mb-0" th:text="${teamOverview?.pendingLeaves ?: 0}">0</h3>
                                 </div>
-                                <i class="bi bi-calendar-x fs-1 text-warning opacity-75"></i>
+                                <i class="bi bi-journal-check fs-1 text-warning opacity-75"></i>
                             </div>
-                            <small class="text-muted">Requires approval</small>
+                            <small class="text-muted">Cần duyệt</small>
                         </div>
                     </div>
                 </div>
@@ -88,30 +88,30 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <p class="text-muted small mb-1">Active Goals</p>
+                                    <p class="text-muted small mb-1">Keywords in Top 10</p>
                                     <h3 class="fw-bold mb-0" th:text="${teamOverview?.activeGoals ?: 0}">0</h3>
                                 </div>
                                 <i class="bi bi-bullseye fs-1 text-info opacity-75"></i>
                             </div>
                             <small class="text-muted"
-                                   th:text="${teamOverview != null ? #numbers.formatDecimal(teamOverview.avgGoalProgress,1,1)+'% avg' : '0%'}">0%</small>
+                                   th:text="${teamOverview != null ? #numbers.formatDecimal(teamOverview.avgGoalProgress,1,1)+'% visibility' : '0%'}">0%</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Goals & Meetings -->
+            <!-- SEO Campaigns & Syncs -->
             <div class="row mb-4 g-3">
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="bi bi-bullseye me-2"></i>Active Goals</h6>
+                            <h6 class="mb-0"><i class="bi bi-bullseye me-2"></i>Active SEO OKRs &amp; Targets</h6>
                             <a href="/manager/goals" class="btn btn-sm btn-light">View All</a>
                         </div>
                         <div class="card-body">
                             <div th:if="${activeGoals == null or activeGoals.empty}" class="text-center text-muted py-4">
                                 <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                                No active goals. <a href="/manager/goals/create">Create one</a>
+                                Chưa có mục tiêu hoạt động. <a href="/manager/goals/create">Tạo mới mục tiêu</a>
                             </div>
                             <div th:each="goal : ${activeGoals}" class="mb-3 pb-3 border-bottom">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -131,13 +131,13 @@
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="bi bi-calendar-event me-2"></i>Upcoming Meetings</h6>
+                            <h6 class="mb-0"><i class="bi bi-calendar-event me-2"></i>SEO &amp; Content Sync Meetings</h6>
                             <a href="/manager/meetings" class="btn btn-sm btn-light">View All</a>
                         </div>
                         <div class="card-body">
                             <div th:if="${upcomingMeetings == null or upcomingMeetings.empty}" class="text-center text-muted py-4">
                                 <i class="bi bi-calendar2-x fs-2 d-block mb-2"></i>
-                                No upcoming meetings. <a href="/manager/meetings/create">Schedule one</a>
+                                Không có cuộc họp sắp tới. <a href="/manager/meetings/create">Lên lịch họp mới</a>
                             </div>
                             <div th:each="meeting : ${upcomingMeetings}"
                                  class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
@@ -158,13 +158,13 @@
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0"><i class="bi bi-cash-stack me-2"></i>Current Month Budgets</h6>
+                            <h6 class="mb-0"><i class="bi bi-cash-stack me-2"></i>SEO Tools &amp; Linkbuilding Budgets</h6>
                             <a href="/manager/budget" class="btn btn-sm btn-dark">View All</a>
                         </div>
                         <div class="card-body">
                             <div th:if="${currentBudgets == null or currentBudgets.empty}" class="text-center text-muted py-4">
                                 <i class="bi bi-wallet2 fs-2 d-block mb-2"></i>
-                                No budgets. <a href="/manager/budget/create">Create one</a>
+                                Chưa có phân bổ ngân sách. <a href="/manager/budget/create">Tạo ngân sách mới</a>
                             </div>
                             <div th:each="budget : ${currentBudgets}" class="mb-3 pb-2 border-bottom">
                                 <div class="d-flex justify-content-between">
@@ -190,11 +190,11 @@
                 <div class="col-md-6">
                     <div class="card h-100">
                         <div class="card-header bg-info text-white">
-                            <h6 class="mb-0"><i class="bi bi-graph-up-arrow me-2"></i>Performance Metrics</h6>
+                            <h6 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>Campaign Performance Metrics</h6>
                         </div>
                         <div class="card-body">
                             <div th:if="${performanceMetrics != null}">
-                                <p class="small text-muted mb-1">Avg Performance Score</p>
+                                <p class="small text-muted mb-1">Avg Campaign Success Rate</p>
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="progress flex-grow-1 me-2" style="height:8px;">
                                         <div class="progress-bar bg-info"
@@ -202,7 +202,7 @@
                                     </div>
                                     <strong th:text="${#numbers.formatDecimal(performanceMetrics.avgPerformanceScore,1,1)}">0</strong>
                                 </div>
-                                <p class="small text-muted mb-1">Goals Completion Rate</p>
+                                <p class="small text-muted mb-1">Target Keyword Ranking Progress</p>
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="progress flex-grow-1 me-2" style="height:8px;">
                                         <div class="progress-bar bg-success"
@@ -214,29 +214,29 @@
                                     <div class="col-6">
                                         <div class="bg-light rounded p-2">
                                             <h5 class="fw-bold text-primary mb-0" th:text="${performanceMetrics.totalGoals}">0</h5>
-                                            <small class="text-muted">Total Goals</small>
+                                            <small class="text-muted">Total Targets</small>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="bg-light rounded p-2">
                                             <h5 class="fw-bold text-success mb-0" th:text="${performanceMetrics.completedGoals}">0</h5>
-                                            <small class="text-muted">Completed</small>
+                                            <small class="text-muted">Achieved</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div th:if="${performanceMetrics == null}" class="text-center text-muted py-4">
-                                <i class="bi bi-bar-chart fs-2 d-block mb-2"></i>No data available.
+                                <i class="bi bi-bar-chart fs-2 d-block mb-2"></i>Không có dữ liệu.
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Attendance Chart -->
+            <!-- SERP Visibility Trends Chart -->
             <div class="card mb-4">
                 <div class="card-header">
-                    <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>Attendance Trends (Last 7 Days)</h6>
+                    <h6 class="mb-0"><i class="bi bi-graph-up me-2"></i>SERP Visibility Trends (Last 7 Days)</h6>
                 </div>
                 <div class="card-body">
                     <canvas id="attendanceChart" height="80"></canvas>
@@ -255,7 +255,7 @@
         data: {
             labels: trends.map(d => d.date || ''),
             datasets: [{
-                label: 'Attendance Rate (%)',
+                label: 'SERP Visibility Index (%)',
                 data: trends.map(d => d.rate || 0),
                 borderColor: 'rgb(79,110,247)',
                 backgroundColor: 'rgba(79,110,247,0.12)',

@@ -17,16 +17,19 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/admin/groups")
-@PreAuthorize("hasRole('ADMIN') or @groupAccessService.isCurrentUserAdmin()")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER') or @groupAccessService.isCurrentUserAdmin()")
 public class AdminGroupController {
 
     private final GroupAccessService groupAccessService;
     private final HrAuditLogService hrAuditLogService;
+    private final com.example.hr.repository.CustomGroupFeatureRepository customGroupFeatureRepository;
 
     public AdminGroupController(GroupAccessService groupAccessService,
-                                HrAuditLogService hrAuditLogService) {
+                                HrAuditLogService hrAuditLogService,
+                                com.example.hr.repository.CustomGroupFeatureRepository customGroupFeatureRepository) {
         this.groupAccessService = groupAccessService;
         this.hrAuditLogService = hrAuditLogService;
+        this.customGroupFeatureRepository = customGroupFeatureRepository;
     }
 
     @GetMapping
@@ -56,6 +59,36 @@ public class AdminGroupController {
                             RedirectAttributes redirectAttributes) {
         groupAccessService.updateDefaultGroup(memberIds, rolePermissions, memberPermissions);
         redirectAttributes.addFlashAttribute("successMsg", "Group roles, members and user permissions updated successfully.");
+        return "redirect:/admin/groups";
+    }
+
+    @PostMapping("/add-feature")
+    public String addFeature(@RequestParam String name,
+                             @RequestParam String displayName,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            String cleanName = name.trim().toUpperCase();
+            if (cleanName.isEmpty() || displayName.trim().isEmpty()) {
+                throw new IllegalArgumentException("Mã tính năng và Tên hiển thị không được để trống");
+            }
+            if (java.util.Arrays.stream(com.example.hr.enums.GroupFeature.values())
+                    .anyMatch(f -> f.name().equalsIgnoreCase(cleanName))) {
+                throw new IllegalArgumentException("Tính năng với mã '" + cleanName + "' đã tồn tại!");
+            }
+
+            // Save to Database
+            com.example.hr.models.CustomGroupFeature customFeature = new com.example.hr.models.CustomGroupFeature();
+            customFeature.setName(cleanName);
+            customFeature.setDisplayName(displayName.trim());
+            customGroupFeatureRepository.save(customFeature);
+
+            // Register dynamically in-memory
+            com.example.hr.enums.GroupFeature.register(cleanName, displayName.trim());
+
+            redirectAttributes.addFlashAttribute("successMsg", "Đã thêm tính năng mới '" + displayName + "' thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMsg", "Lỗi: " + e.getMessage());
+        }
         return "redirect:/admin/groups";
     }
 }

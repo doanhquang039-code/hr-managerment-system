@@ -23,10 +23,22 @@ public class DataInitializer implements ApplicationRunner {
     private final GroupRoleService groupRoleService;
     private final GroupAccessService groupAccessService;
     private final JdbcTemplate jdbcTemplate;
+    private final com.example.hr.repository.CustomGroupFeatureRepository customGroupFeatureRepository;
 
     @Override
     public void run(ApplicationArguments args) {
         try {
+            // 0. Seed custom features
+            try {
+                var customFeatures = customGroupFeatureRepository.findAll();
+                for (var f : customFeatures) {
+                    com.example.hr.enums.GroupFeature.register(f.getName(), f.getDisplayName());
+                }
+                log.info("[DataInitializer] Custom features loaded: " + customFeatures.size());
+            } catch (Exception e) {
+                log.warn("[DataInitializer] Dynamic group features load failed: " + e.getMessage());
+            }
+
             // 1. Seed dynamic roles if empty
             groupRoleService.seedDefaultRolesIfEmpty();
             log.info("[DataInitializer] GroupRole seed completed.");
@@ -60,24 +72,30 @@ public class DataInitializer implements ApplicationRunner {
                 log.warn("[DataInitializer] Group role permissions migration warning: {}", e.getMessage());
             }
 
-            // 5. Seed default permissions for the default group if empty
+            // 5. Seed default permissions for the default group
             try {
-                Integer permCount = jdbcTemplate.queryForObject(
-                    "SELECT COUNT(*) FROM collaboration_group_role_permissions WHERE group_id = ?",
-                    Integer.class,
-                    defaultGroup.getId()
-                );
-                if (permCount == null || permCount == 0) {
-                    List<Integer> roleIds = jdbcTemplate.queryForList("SELECT id FROM group_roles", Integer.class);
-                    for (Integer roleId : roleIds) {
-                        for (String feature : java.util.List.of("DASHBOARD", "MEMBERS", "NOTES")) {
+                List<Integer> roleIds = jdbcTemplate.queryForList("SELECT id FROM group_roles", Integer.class);
+                int countSeeded = 0;
+                for (Integer roleId : roleIds) {
+                    for (String feature : java.util.List.of(
+                            "DASHBOARD", "MEMBERS", "NOTES", "TASKS", "FILES", "MEETINGS", "ANNOUNCEMENTS", "RECOGNITION"
+                    )) {
+                        Integer exists = jdbcTemplate.queryForObject(
+                            "SELECT COUNT(*) FROM collaboration_group_role_permissions WHERE group_id = ? AND group_role_id = ? AND feature = ?",
+                            Integer.class,
+                            defaultGroup.getId(), roleId, feature
+                        );
+                        if (exists == null || exists == 0) {
                             jdbcTemplate.update(
                                 "INSERT INTO collaboration_group_role_permissions (group_id, group_role_id, feature) VALUES (?, ?, ?)",
                                 defaultGroup.getId(), roleId, feature
                             );
+                            countSeeded++;
                         }
                     }
-                    log.info("[DataInitializer] Seeded default permissions (DASHBOARD, MEMBERS, NOTES) for default group.");
+                }
+                if (countSeeded > 0) {
+                    log.info("[DataInitializer] Seeded {} missing default permissions for default group.", countSeeded);
                 }
             } catch (Exception e) {
                 log.warn("[DataInitializer] Default group permissions seeding warning: {}", e.getMessage());

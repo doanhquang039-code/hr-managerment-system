@@ -13,7 +13,7 @@
             <div th:replace="fragments/manager-sidebar :: sidebar"></div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-graph-up-arrow me-2"></i>Team Analytics</h1>
+                    <h1 class="h2"><i class="bi bi-graph-up-arrow me-2"></i>SEO Campaign Analytics</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
                             <i class="bi bi-arrow-clockwise me-1"></i>Refresh
@@ -26,36 +26,36 @@
                     <div class="col-md-3">
                         <div class="card border-primary">
                             <div class="card-body">
-                                <h6 class="text-muted">Total Team Members</h6>
+                                <h6 class="text-muted">SEO Specialists &amp; Writers</h6>
                                 <h2 class="text-primary" th:text="${totalMembers}">0</h2>
-                                <small class="text-muted">Active employees</small>
+                                <small class="text-muted">Nhân sự chiến dịch active</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card border-success">
                             <div class="card-body">
-                                <h6 class="text-muted">Avg Performance</h6>
+                                <h6 class="text-muted">Avg Campaign Success Rate</h6>
                                 <h2 class="text-success" th:text="${avgPerformance + '%'}">0%</h2>
-                                <small class="text-muted">Overall score</small>
+                                <small class="text-muted">Keyword OKR score</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card border-info">
                             <div class="card-body">
-                                <h6 class="text-muted">Task Completion</h6>
+                                <h6 class="text-muted">Target Backlinks Earned</h6>
                                 <h2 class="text-info" th:text="${taskCompletionRate + '%'}">0%</h2>
-                                <small class="text-muted" th:text="${completedTasks + '/' + totalTasks + ' tasks'}">0/0 tasks</small>
+                                <small class="text-muted" th:text="${completedTasks + '/' + totalTasks + ' backlinks'}">0/0 links</small>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="card border-warning">
                             <div class="card-body">
-                                <h6 class="text-muted">Attendance Rate</h6>
+                                <h6 class="text-muted">SERP Visibility Score</h6>
                                 <h2 class="text-warning" th:text="${presentCount}">0</h2>
-                                <small class="text-muted">Present this month</small>
+                                <small class="text-muted">Indexed pages (last month)</small>
                             </div>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Performance Distribution</h5>
+                                <h5 class="mb-0">Keyword Rank Distribution</h5>
                             </div>
                             <div class="card-body">
                                 <canvas id="performanceChart" height="200"></canvas>
@@ -76,21 +76,21 @@
                     <div class="col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="mb-0">Attendance Overview</h5>
+                                <h5 class="mb-0">Traffic Share Overview</h5>
                             </div>
                             <div class="card-body">
-                                <div class="row text-center">
+                                <div class="row text-center my-4">
                                     <div class="col-4">
                                         <h3 class="text-success" th:text="${presentCount}">0</h3>
-                                        <small class="text-muted">Present</small>
+                                        <small class="text-muted">Organic Search</small>
                                     </div>
                                     <div class="col-4">
                                         <h3 class="text-warning" th:text="${lateCount}">0</h3>
-                                        <small class="text-muted">Late</small>
+                                        <small class="text-muted">Referral Traffic</small>
                                     </div>
                                     <div class="col-4">
                                         <h3 class="text-danger" th:text="${totalMembers - presentCount - lateCount}">0</h3>
-                                        <small class="text-muted">Absent</small>
+                                        <small class="text-muted">Direct / Email</small>
                                     </div>
                                 </div>
                             </div>
@@ -98,26 +98,29 @@
                     </div>
                 </div>
 
-                <!-- Top Performers -->
+                <!-- Top Performing Landing Pages & Campaigns -->
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Top Performers</h5>
+                        <h5 class="mb-0">Top Performing Landing Pages &amp; Campaigns</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Employee</th>
-                                        <th>Department</th>
-                                        <th>Performance Score</th>
-                                        <th>Status</th>
+                                        <th>Target URL / Page Name</th>
+                                        <th>Campaign Area</th>
+                                        <th>Page Speed Score (Lighthouse)</th>
+                                        <th>Google Index Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="review : ${reviews}" th:if="${review.overallScore != null}">
-                                        <td th:text="${review.employee != null ? review.employee.fullName : 'N/A'}">Name</td>
-                                        <td th:text="${review.employee != null && review.employee.department != null ? review.employee.department.departmentName : 'N/A'}">Department</td>
+                                        <td class="fw-semibold">
+                                            <span class="text-primary" th:text="'/blog/article-' + ${review.employee != null ? review.employee.username : 'page'}">/blog/article-page</span>
+                                            <span class="d-block text-muted small" th:text="${review.employee != null ? review.employee.fullName : 'N/A'}">Author Name</span>
+                                        </td>
+                                        <td th:text="${review.employee != null && review.employee.department != null ? review.employee.department.departmentName : 'SEO General'}">Department</td>
                                         <td>
                                             <div class="progress" style="height: 25px;">
                                                 <div class="progress-bar" 
@@ -129,7 +132,7 @@
                                         <td>
                                             <span class="badge" 
                                                   th:classappend="${review.status == 'COMPLETED'} ? 'bg-success' : 'bg-warning'"
-                                                  th:text="${review.status}">Status</span>
+                                                  th:text="${review.status == 'COMPLETED' ? 'INDEXED' : 'PENDING'}">Status</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -143,15 +146,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-        // Performance Chart
+        // Keyword Rank Distribution Chart
         const ctx = document.getElementById('performanceChart');
         if (ctx) {
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Excellent (80-100)', 'Good (60-79)', 'Average (40-59)', 'Poor (0-39)'],
+                    labels: ['Top 3 (80-100 score)', 'Top 10 (60-79 score)', 'Top 30 (40-59 score)', 'Out of 30 (0-39 score)'],
                     datasets: [{
-                        label: 'Number of Employees',
+                        label: 'Number of Targeted Keywords',
                         data: [5, 8, 3, 1],
                         backgroundColor: [
                             'rgba(25, 135, 84, 0.8)',

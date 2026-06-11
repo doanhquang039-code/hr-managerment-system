@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS custom_group_features (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    display_name VARCHAR(100) NOT NULL
+);
