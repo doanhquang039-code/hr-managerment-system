@@ -4,6 +4,8 @@ import com.example.hr.enums.NotificationType;
 import com.example.hr.models.Notification;
 import com.example.hr.models.User;
 import com.example.hr.repository.NotificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,10 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+
+    /** Lazy để tránh circular dependency (NotificationPushService -> UserRepository -> ...) */
+    @Autowired @Lazy
+    private NotificationPushService notificationPushService;
 
     public NotificationService(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
@@ -30,6 +36,12 @@ public class NotificationService {
         notif.setRead(false);
         notif.setCreatedAt(LocalDateTime.now());
         notificationRepository.save(notif);
+        // Push real-time WebSocket notification ngay sau khi lưu DB
+        try {
+            notificationPushService.pushToUser(user, notif);
+        } catch (Exception e) {
+            // WebSocket push failure không được làm hỏng flow chính
+        }
     }
 
     public void notify(User user, String message) {

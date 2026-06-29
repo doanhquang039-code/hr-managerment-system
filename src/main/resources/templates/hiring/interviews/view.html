@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,10 +18,11 @@
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <div th:replace="fragments/hiring-sidebar :: sidebar"></div>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+<div th:class="${#authorization.expression('hasRole(''ADMIN'')') ? '' : 'container-fluid'}">
+    <div th:class="${#authorization.expression('hasRole(''ADMIN'')') ? '' : 'row'}">
+        <div sec:authorize="hasRole('ADMIN')" th:replace="fragments/admin-sidebar :: sidebar"></div>
+        <div sec:authorize="!hasRole('ADMIN')" th:replace="fragments/hiring-sidebar :: sidebar"></div>
+        <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4'}">
 
             <!-- Flash messages -->
             <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">

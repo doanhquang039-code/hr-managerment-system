@@ -32,6 +32,16 @@ public class SalesProduct {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
+    // ===== Payment / QR fields =====
+    @Column(name = "qr_image_url", length = 500)
+    private String qrImageUrl;
+
+    @Column(name = "payment_provider", length = 30)
+    private String paymentProvider = "BANKING"; // BANKING, MOMO, ZALOPAY
+
+    @Column(name = "payment_note", columnDefinition = "TEXT")
+    private String paymentNote; // Nội dung chuyển tiền gợi ý
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private User seller;

@@ -36,6 +36,11 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2"><i class="bi bi-speedometer2 me-2"></i>Manager Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/sales/cart" class="btn btn-sm btn-outline-primary position-relative me-2" title="Gio hang">
+                            <i class="bi bi-cart3"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                  th:if="${cartCount != null and cartCount > 0}" th:text="${cartCount}">0</span>
+                        </a>
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
                             <i class="bi bi-arrow-clockwise me-1"></i>Refresh
                         </button>

@@ -19,10 +19,22 @@ import com.example.hr.task.entity.Task;
 import com.example.hr.task.repository.TaskAssignmentRepository;
 import com.example.hr.task.repository.TaskRepository;
 import com.example.hr.service.AuthUserHelper;
+import com.example.hr.service.BulkOperationService;
 import com.example.hr.service.EmailFacade;
 import com.example.hr.service.NotificationService;
 import com.example.hr.service.NewOvertimeService;
 import com.example.hr.service.TeamBudgetService;
+import com.example.hr.sales.entity.SalesOrder;
+import com.example.hr.sales.entity.SalesProduct;
+import com.example.hr.sales.service.SalesService;
+import com.example.hr.payment.dto.CartDto;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import java.io.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -30,6 +42,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.example.hr.recruitment.repository.CandidateRepository;
+import com.example.hr.recruitment.repository.JobPostingRepository;
+import com.example.hr.recruitment.entity.JobPosting;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,11 +71,15 @@ public class ManagerController {
     @Autowired private AuthUserHelper authUserHelper;
     @Autowired private MeetingRepository meetingRepository;
     @Autowired private TeamBudgetService teamBudgetService;
+    @Autowired private SalesService salesService;
+    @Autowired private BulkOperationService bulkOperationService;
+    @Autowired private CandidateRepository candidateRepository;
+    @Autowired private JobPostingRepository jobPostingRepository;
 
     // ==================== DASHBOARD ====================
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(Model model, HttpSession session) {
         try {
             LocalDate today = LocalDate.now();
 
@@ -131,12 +150,42 @@ public class ManagerController {
             model.addAttribute("attLate",        attLate);
             model.addAttribute("attAbsent",      attAbsent);
             model.addAttribute("today", today.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy")));
+            model.addAttribute("cartCount", getCartCount(session));
+
+            // === Recruitment stats ===
+            List<JobPosting> activePostings = jobPostingRepository.findAll();
+            List<String> recruitPositions = new ArrayList<>();
+            List<Long> recruitApplicants = new ArrayList<>();
+            List<JobPosting> sortedPostings = activePostings.stream()
+                    .sorted((a, b) -> Integer.compare(
+                            candidateRepository.findByJobPostingOrderByAppliedAtDesc(b).size(),
+                            candidateRepository.findByJobPostingOrderByAppliedAtDesc(a).size()
+                    ))
+                    .limit(8)
+                    .collect(Collectors.toList());
+            for (JobPosting jp : sortedPostings) {
+                long count = candidateRepository.findByJobPostingOrderByAppliedAtDesc(jp).size();
+                recruitPositions.add(jp.getTitle());
+                recruitApplicants.add(count);
+            }
+            if (recruitPositions.isEmpty()) {
+                recruitPositions = List.of("Java Dev", "Frontend", "Marketing", "HR", "Sales", "DevOps");
+                recruitApplicants = List.of(0L, 0L, 0L, 0L, 0L, 0L);
+            }
+            model.addAttribute("recruitPositions", recruitPositions);
+            model.addAttribute("recruitApplicants", recruitApplicants);
+
             return "manager/dashboard-simple";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i dashboard: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lỗi tải dashboard: " + e.getMessage());
             model.addAttribute("errorDetails", e.getClass().getSimpleName());
             return "error/500";
         }
+    }
+
+    private int getCartCount(HttpSession session) {
+        CartDto cart = (CartDto) session.getAttribute("salesCart");
+        return cart == null ? 0 : cart.getTotalItems();
     }
 
     // ==================== TEAM MANAGEMENT ====================
@@ -312,6 +361,119 @@ public class ManagerController {
         model.addAttribute("rejectedCount", rejectedLeaves.size());
         model.addAttribute("totalCount", allLeaves.size());
         return "manager/leave-requests";
+    }
+
+    @GetMapping("/approvals")
+    public String approvals(Model model, HttpSession session) {
+        List<LeaveRequest> pendingLeaves = leaveRepository.findAllWithUser(null).stream()
+                .filter(l -> l.getStatus() == LeaveStatus.PENDING)
+                .collect(Collectors.toList());
+        List<SalesProduct> pendingProducts = salesService.getPendingProducts();
+        List<SalesOrder> pendingOrders = salesService.getPendingOrders();
+
+        model.addAttribute("pendingLeaves", pendingLeaves);
+        model.addAttribute("pendingProducts", pendingProducts);
+        model.addAttribute("pendingOrders", pendingOrders);
+        model.addAttribute("pendingLeaveCount", pendingLeaves.size());
+        model.addAttribute("pendingProductCount", pendingProducts.size());
+        model.addAttribute("pendingOrderCount", pendingOrders.size());
+        model.addAttribute("totalApprovalCount", pendingLeaves.size() + pendingProducts.size() + pendingOrders.size());
+        model.addAttribute("cartCount", getCartCount(session));
+        return "manager/approvals";
+    }
+
+    @PostMapping("/approvals/products/{id}/approve")
+    public String approveSalesProductFromApprovals(@PathVariable Integer id,
+                                                   Authentication auth,
+                                                   RedirectAttributes ra) {
+        try {
+            salesService.approveProduct(id, authUserHelper.getCurrentUser(auth));
+            ra.addFlashAttribute("success", "Da duyet san pham");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Khong the duyet san pham: " + e.getMessage());
+        }
+        return "redirect:/manager/approvals";
+    }
+
+    @PostMapping("/approvals/products/{id}/reject")
+    public String rejectSalesProductFromApprovals(@PathVariable Integer id,
+                                                  Authentication auth,
+                                                  RedirectAttributes ra) {
+        try {
+            salesService.rejectProduct(id, authUserHelper.getCurrentUser(auth));
+            ra.addFlashAttribute("success", "Da tu choi san pham");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Khong the tu choi san pham: " + e.getMessage());
+        }
+        return "redirect:/manager/approvals";
+    }
+
+    @PostMapping("/approvals/orders/{id}/approve")
+    public String approveSalesOrderFromApprovals(@PathVariable Integer id, RedirectAttributes ra) {
+        try {
+            salesService.approveOrder(id);
+            ra.addFlashAttribute("success", "Da duyet don hang");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Khong the duyet don hang: " + e.getMessage());
+        }
+        return "redirect:/manager/approvals";
+    }
+
+    @PostMapping("/approvals/orders/{id}/reject")
+    public String rejectSalesOrderFromApprovals(@PathVariable Integer id, RedirectAttributes ra) {
+        try {
+            salesService.rejectOrder(id);
+            ra.addFlashAttribute("success", "Da tu choi don hang");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Khong the tu choi don hang: " + e.getMessage());
+        }
+        return "redirect:/manager/approvals";
+    }
+
+    @PostMapping("/approvals/leaves/{id}/approve")
+    public String approveLeaveFromApprovals(@PathVariable Integer id, RedirectAttributes ra) {
+        return processLeaveFromApprovals(id, "APPROVE", null, ra);
+    }
+
+    @PostMapping("/approvals/leaves/{id}/reject")
+    public String rejectLeaveFromApprovals(@PathVariable Integer id,
+                                           @RequestParam(required = false) String rejectionReason,
+                                           RedirectAttributes ra) {
+        return processLeaveFromApprovals(id, "REJECT", rejectionReason, ra);
+    }
+
+    private String processLeaveFromApprovals(Integer id,
+                                             String action,
+                                             String rejectionReason,
+                                             RedirectAttributes ra) {
+        try {
+            LeaveRequest leave = leaveRepository.findById(id).orElse(null);
+            if (leave == null) {
+                ra.addFlashAttribute("error", "Khong tim thay don nghi");
+                return "redirect:/manager/approvals";
+            }
+            if ("APPROVE".equals(action)) {
+                leave.setStatus(LeaveStatus.APPROVED);
+                ra.addFlashAttribute("success", "Da duyet don nghi");
+            } else {
+                leave.setStatus(LeaveStatus.REJECTED);
+                ra.addFlashAttribute("success", "Da tu choi don nghi");
+            }
+            leaveRepository.save(leave);
+            try {
+                notificationService.createNotification(
+                        leave.getUser(),
+                        "Don nghi cua ban da duoc xu ly: " + ("APPROVE".equals(action) ? "APPROVED" : "REJECTED"),
+                        NotificationType.LEAVE_REQUEST,
+                        "/user/leaves"
+                );
+            } catch (Exception e) {
+                System.err.println("Failed to send leave approval notification: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Khong the xu ly don nghi: " + e.getMessage());
+        }
+        return "redirect:/manager/approvals";
     }
 
     @PostMapping("/leave-approve/{id}")
@@ -502,8 +664,89 @@ public class ManagerController {
             
             return "manager/reports/budget";
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "LÃ¡Â»â€”i tÃ¡ÂºÂ£i budget reports: " + e.getMessage());
+            model.addAttribute("errorMessage", "Lỗi tải budget reports: " + e.getMessage());
             return "error/500";
+        }
+    }
+
+    // ==================== MY DEPARTMENT ====================
+
+    @GetMapping("/my-department")
+    public String myDepartment(Authentication authentication, Model model) {
+        User manager = authUserHelper.getCurrentUser(authentication);
+        if (manager == null) return "redirect:/login";
+
+        Department department = manager.getDepartment();
+        if (department == null) {
+            model.addAttribute("errorMessage", "Bạn chưa được gán vào phòng ban nào.");
+            return "error/403";
+        }
+
+        List<User> members = userRepository.findByDepartment(department);
+        // Department managers: users in the same department with role/groupRole MANAGER
+        List<User> managers = members.stream()
+                .filter(u -> u.getRole() == Role.MANAGER || (u.getGroupRole() != null && "MANAGER".equalsIgnoreCase(u.getGroupRole().getName())))
+                .collect(Collectors.toList());
+        List<User> hirings = members.stream()
+                .filter(u -> u.getRole() == Role.HIRING || (u.getGroupRole() != null && "HIRING".equalsIgnoreCase(u.getGroupRole().getName())))
+                .collect(Collectors.toList());
+
+        model.addAttribute("department", department);
+        model.addAttribute("members", members);
+        model.addAttribute("managers", managers);
+        model.addAttribute("hirings", hirings);
+        model.addAttribute("user", manager);
+        return "manager/my-department";
+    }
+
+    @PostMapping("/my-department/import")
+    public String importDepartmentUsers(@RequestParam("file") MultipartFile file,
+                                        Authentication authentication,
+                                        RedirectAttributes redirectAttributes) {
+        User manager = authUserHelper.getCurrentUser(authentication);
+        if (manager == null) return "redirect:/login";
+
+        Department department = manager.getDepartment();
+        if (department == null) {
+            redirectAttributes.addFlashAttribute("error", "Bạn chưa được gán vào phòng ban nào.");
+            return "redirect:/manager/my-department";
+        }
+
+        try {
+            var result = bulkOperationService.importUsersToDepartmentFromExcel(file, department);
+            redirectAttributes.addFlashAttribute("success",
+                    String.format("Đã nhập thành công %d nhân viên. Có %d lỗi.",
+                            result.getSuccessCount(), result.getErrorCount()));
+            if (result.getErrorCount() > 0) {
+                redirectAttributes.addFlashAttribute("errors", result.getErrors().values());
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi nhập file Excel: " + e.getMessage());
+        }
+
+        return "redirect:/manager/my-department";
+    }
+
+    @GetMapping("/my-department/export")
+    public ResponseEntity<ByteArrayResource> exportDepartmentUsers(Authentication authentication) {
+        User manager = authUserHelper.getCurrentUser(authentication);
+        if (manager == null) return ResponseEntity.status(401).build();
+
+        Department department = manager.getDepartment();
+        if (department == null) return ResponseEntity.status(403).build();
+
+        try {
+            List<User> members = userRepository.findByDepartment(department);
+            ByteArrayOutputStream out = bulkOperationService.exportUsersToExcel(members);
+            ByteArrayResource resource = new ByteArrayResource(out.toByteArray());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=department_members.xlsx")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(resource.contentLength())
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -523,5 +766,3 @@ public class ManagerController {
     }
 
 }
-
-

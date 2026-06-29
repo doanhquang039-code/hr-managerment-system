@@ -1,0 +1,68 @@
+services:
+  notification-db:
+    image: mysql:8.0
+    container_name: hr_notification_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${NOTIFICATION_DB_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${NOTIFICATION_DB_NAME:-hr_notification_service}
+      MYSQL_USER: ${NOTIFICATION_DB_USER:-notification_user}
+      MYSQL_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-notification_password}
+    ports:
+      - "3310:3306"
+    volumes:
+      - notification_db_data:/var/lib/mysql
+    networks:
+      - hr_microservices
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: hr_notification_service
+    depends_on:
+      notification-db:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8082
+      SPRING_DATASOURCE_URL: jdbc:mysql://notification-db:3306/${NOTIFICATION_DB_NAME:-hr_notification_service}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh
+      SPRING_DATASOURCE_USERNAME: ${NOTIFICATION_DB_USER:-notification_user}
+      SPRING_DATASOURCE_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-notification_password}
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${MICROSERVICE_KAFKA_BOOTSTRAP_SERVERS:-host.docker.internal:29092}
+      HRMS_NOTIFICATION_TOPIC: ${HRMS_NOTIFICATION_TOPIC:-hr-notifications}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8082:8082"
+    networks:
+      - hr_microservices
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: hr_api_gateway
+    depends_on:
+      - notification-service
+    environment:
+      SERVER_PORT: 8088
+      NOTIFICATION_SERVICE_URL: http://notification-service:8082
+      HRMS_MONOLITH_URL: ${HRMS_MONOLITH_URL:-http://host.docker.internal:8080}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "8088:8088"
+    networks:
+      - hr_microservices
+    restart: unless-stopped
+
+volumes:
+  notification_db_data:
+
+networks:
+  hr_microservices:
+    driver: bridge

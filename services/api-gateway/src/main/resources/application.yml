@@ -1,0 +1,33 @@
+server:
+  port: ${SERVER_PORT:8088}
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - AddResponseHeader=X-Gateway, HRMS API Gateway
+      routes:
+        - id: notification-service
+          uri: ${NOTIFICATION_SERVICE_URL:http://localhost:8082}
+          predicates:
+            - Path=/api/notifications/**
+        - id: hrms-monolith-api
+          uri: ${HRMS_MONOLITH_URL:http://localhost:8080}
+          predicates:
+            - Path=/api/hrms/**
+          filters:
+            - RewritePath=/api/hrms/(?<segment>.*), /$\{segment}
+        - id: hrms-monolith-web
+          uri: ${HRMS_MONOLITH_URL:http://localhost:8080}
+          predicates:
+            - Path=/hrms/**
+          filters:
+            - RewritePath=/hrms/(?<segment>.*), /$\{segment}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway

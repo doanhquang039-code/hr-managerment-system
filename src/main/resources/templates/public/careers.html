@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tuyển Dụng – HR Management System</title>
+  <meta name="description" content="Khám phá các vị trí tuyển dụng hấp dẫn và nộp CV trực tuyến ngay hôm nay."/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4338ca;
+      --primary-light: #e0e7ff;
+      --accent: #f59e0b;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text-light: #94a3b8;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: var(--bg-dark);
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+
+    /* ===== NAVBAR ===== */
+    .pub-navbar {
+      background: rgba(15,23,42,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(99,102,241,0.2);
+      padding: 14px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .pub-navbar .brand {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pub-navbar .brand .dot { color: var(--primary); }
+    .pub-navbar .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 8px;
+      transition: all .2s;
+    }
+    .pub-navbar .nav-links a:hover { color: #fff; background: rgba(99,102,241,.15); }
+    .pub-navbar .nav-links a.active { color: #fff; background: rgba(99,102,241,.2); }
+    .btn-login {
+      background: var(--primary);
+      color: #fff !important;
+      border-radius: 8px;
+      padding: 8px 20px !important;
+      font-weight: 600;
+    }
+    .btn-login:hover { background: var(--primary-dark) !important; }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 100px 0 80px;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%);
+      top: -200px; left: 50%; transform: translateX(-50%);
+    }
+    .hero .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99,102,241,.15);
+      border: 1px solid rgba(99,102,241,.3);
+      color: #a5b4fc;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: .85rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { 
+      background: linear-gradient(135deg, var(--primary), #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-light);
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+
+    /* ===== STATS ===== */
+    .stats-bar {
+      background: rgba(30,41,59,.8);
+      border-top: 1px solid rgba(99,102,241,.15);
+      border-bottom: 1px solid rgba(99,102,241,.15);
+      padding: 28px 0;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #a5b4fc;
+      line-height: 1;
+    }
+    .stat-item .label { color: var(--text-light); font-size: .85rem; margin-top: 4px; }
+
+    /* ===== SEARCH BAR ===== */
+    .search-section { padding: 48px 0 24px; }
+    .search-card {
+      background: rgba(30,41,59,.9);
+      border: 1px solid rgba(99,102,241,.2);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .search-card .form-control, .search-card .form-select {
+      background: rgba(15,23,42,.8);
+      border: 1px solid rgba(99,102,241,.25);
+      color: #f1f5f9;
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+    .search-card .form-control:focus, .search-card .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.2);
+      background: rgba(15,23,42,.95);
+      color: #f1f5f9;
+    }
+    .search-card .form-select option { background: #1e293b; }
+    .btn-search {
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 28px;
+      font-weight: 600;
+      transition: all .2s;
+    }
+    .btn-search:hover { opacity: .9; transform: translateY(-1px); color: #fff; }
+
+    /* ===== JOB CARDS ===== */
+    .jobs-section { padding: 0 0 80px; }
+    .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; }
+    .job-card {
+      background: rgba(30,41,59,.8);
+      border: 1px solid rgba(99,102,241,.15);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all .25s;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+    }
+    .job-card:hover {
+      border-color: rgba(99,102,241,.5);
+      background: rgba(30,41,59,1);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(99,102,241,.15);
+      color: inherit;
+    }
+    .job-card .company-logo {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .job-card .job-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .job-card .job-dept {
+      color: #a5b4fc;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+    .job-card .job-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(99,102,241,.1);
+      border: 1px solid rgba(99,102,241,.2);
+      color: #c7d2fe;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: .78rem;
+      font-weight: 500;
+    }
+    .meta-pill.green { background: rgba(16,185,129,.1); border-color: rgba(16,185,129,.2); color: #6ee7b7; }
+    .meta-pill.amber { background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.2); color: #fcd34d; }
+    .job-card .job-desc {
+      color: var(--text-light);
+      font-size: .87rem;
+      line-height: 1.6;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .job-card .job-footer {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .job-card .salary {
+      color: var(--success);
+      font-weight: 700;
+      font-size: .9rem;
+    }
+    .btn-apply-card {
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: .85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-apply-card:hover { opacity: .88; color: #fff; transform: translateY(-1px); }
+
+    .no-jobs {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-light);
+    }
+    .no-jobs i { font-size: 4rem; color: rgba(99,102,241,.4); margin-bottom: 16px; }
+
+    /* ===== MODAL NỘP CV ===== */
+    .apply-modal .modal-content {
+      background: #1e293b;
+      border: 1px solid rgba(99,102,241,.25);
+      border-radius: 20px;
+    }
+    .apply-modal .modal-header {
+      border-bottom: 1px solid rgba(99,102,241,.15);
+      padding: 20px 24px;
+    }
+    .apply-modal .modal-title { font-weight: 700; font-size: 1.2rem; }
+    .apply-modal .modal-body { padding: 24px; }
+    .apply-modal .form-label { color: #cbd5e1; font-size: .88rem; font-weight: 600; }
+    .apply-modal .form-control, .apply-modal .form-select {
+      background: rgba(15,23,42,.8);
+      border: 1px solid rgba(99,102,241,.25);
+      color: #f1f5f9;
+      border-radius: 10px;
+    }
+    .apply-modal .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.2);
+      background: rgba(15,23,42,.95);
+      color: #f1f5f9;
+    }
+    .apply-modal .btn-submit {
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      padding: 12px 30px;
+      border-radius: 10px;
+      width: 100%;
+    }
+    .apply-modal .btn-close { filter: invert(1); }
+
+    /* ===== TOAST ===== */
+    .toast-success {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff;
+      padding: 16px 24px;
+      border-radius: 14px;
+      font-weight: 600;
+      z-index: 9999;
+      display: none;
+      max-width: 380px;
+      box-shadow: 0 8px 30px rgba(16,185,129,.3);
+      animation: slideInRight .4s ease;
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* ===== FOOTER ===== */
+    .pub-footer {
+      background: rgba(15,23,42,.9);
+      border-top: 1px solid rgba(99,102,241,.15);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-light);
+      font-size: .9rem;
+    }
+    .pub-footer a { color: #a5b4fc; text-decoration: none; }
+    .pub-footer a:hover { color: #fff; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero { padding: 60px 0 50px; }
+      .hero h1 { font-size: 2rem; }
+    }
+
+    /* ===== FLOATING CV BUTTON ===== */
+    .floating-apply-btn {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      z-index: 1000;
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: #fff !important;
+      border: none;
+      border-radius: 50px;
+      padding: 16px 28px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(99,102,241,.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      transition: all .3s ease;
+    }
+    .floating-apply-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(99,102,241,.6);
+      color: #fff;
+    }
+    .floating-apply-btn i { font-size: 1.25rem; }
+    
+    .nav-links a.nav-link:hover { color: #fff !important; }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="pub-navbar">
+  <div class="container d-flex align-items-center justify-content-between">
+    <a href="/" class="brand">
+      <i class="bi bi-building-fill-check" style="color: var(--primary)"></i>
+      HR<span class="dot">MS</span> Careers
+    </a>
+    <div class="nav-links d-flex align-items-center gap-2">
+      <a href="/" class="nav-link me-2" style="color:#94a3b8; text-decoration:none;"><i class="bi bi-house-door me-1"></i>Trang Chủ</a>
+      <a href="/careers" class="active">Tuyển Dụng</a>
+      <a href="/login" class="btn-login">Đăng nhập</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container position-relative">
+    <div class="badge-pill">
+      <i class="bi bi-stars"></i>
+      <span>Cơ hội nghề nghiệp hấp dẫn đang chờ bạn</span>
+    </div>
+    <h1>Gia nhập đội ngũ <span>HRMS</span><br/>và phát triển sự nghiệp</h1>
+    <p>Chúng tôi là nơi tài năng được trân trọng, sáng tạo được khuyến khích và mỗi nhân viên đều có cơ hội phát triển tối đa.</p>
+    <a href="#jobs" class="btn btn-lg px-5 py-3 fw-bold"
+       style="background: linear-gradient(135deg, var(--primary), #7c3aed); color: #fff; border-radius: 12px; text-decoration: none;">
+      <i class="bi bi-search me-2"></i>Xem vị trí tuyển dụng
+    </a>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="row g-4 justify-content-center">
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="num" th:text="${totalJobs}">0</div>
+          <div class="label">Vị trí đang tuyển</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="num">500+</div>
+          <div class="label">Nhân viên hạnh phúc</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="num">10+</div>
+          <div class="label">Năm kinh nghiệm</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-item">
+          <div class="num">95%</div>
+          <div class="label">Độ hài lòng nhân viên</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH SECTION -->
+<section class="search-section" id="jobs">
+  <div class="container">
+    <form class="search-card" method="get" action="/careers">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-5">
+          <label class="form-label text-secondary small mb-1">Tìm kiếm vị trí</label>
+          <div class="input-group">
+            <span class="input-group-text" style="background: rgba(15,23,42,.8); border: 1px solid rgba(99,102,241,.25); border-right: none; color: #6366f1;">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="keyword" class="form-control" style="border-left: none;"
+                   th:value="${keyword}" placeholder="Java Developer, Marketing Manager..."/>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <label class="form-label text-secondary small mb-1">Loại công việc</label>
+          <select name="type" class="form-select">
+            <option value="">Tất cả</option>
+            <option value="FULL_TIME" th:selected="${selectedType == 'FULL_TIME'}">Toàn thời gian</option>
+            <option value="PART_TIME" th:selected="${selectedType == 'PART_TIME'}">Bán thời gian</option>
+            <option value="CONTRACT" th:selected="${selectedType == 'CONTRACT'}">Hợp đồng</option>
+            <option value="INTERNSHIP" th:selected="${selectedType == 'INTERNSHIP'}">Thực tập</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label text-secondary small mb-1">Cấp độ</label>
+          <select name="level" class="form-select">
+            <option value="">Tất cả</option>
+            <option value="ENTRY" th:selected="${selectedLevel == 'ENTRY'}">Entry</option>
+            <option value="MID" th:selected="${selectedLevel == 'MID'}">Mid</option>
+            <option value="SENIOR" th:selected="${selectedLevel == 'SENIOR'}">Senior</option>
+            <option value="EXECUTIVE" th:selected="${selectedLevel == 'EXECUTIVE'}">Executive</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-2">
+          <button type="submit" class="btn-search w-100">
+            <i class="bi bi-search me-1"></i>Tìm kiếm
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- JOB LISTINGS -->
+<section class="jobs-section">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h2 class="section-title mb-0">
+        <i class="bi bi-briefcase-fill me-2" style="color: var(--primary)"></i>
+        Vị trí đang tuyển
+        <span class="badge ms-2" style="background: rgba(99,102,241,.2); color: #a5b4fc; font-size: .75rem;" th:text="${totalJobs}">0</span>
+      </h2>
+      <a href="/careers" class="text-secondary small" th:if="${keyword != null or selectedType != null or selectedLevel != null}">
+        <i class="bi bi-x-circle me-1"></i>Xóa bộ lọc
+      </a>
+    </div>
+
+    <!-- Success message -->
+    <div th:if="${successMessage}" class="alert mb-4"
+         style="background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.3); color: #6ee7b7; border-radius: 12px; padding: 16px 20px;">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Error message -->
+    <div th:if="${errorMessage}" class="alert mb-4"
+         style="background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3); color: #fca5a5; border-radius: 12px; padding: 16px 20px;">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <span th:text="${errorMessage}"></span>
+    </div>
+
+    <!-- No jobs -->
+    <div class="no-jobs" th:if="${#lists.isEmpty(jobs)}">
+      <div><i class="bi bi-briefcase"></i></div>
+      <h5 class="text-white mb-2">Không tìm thấy vị trí phù hợp</h5>
+      <p>Hãy thử tìm kiếm với từ khóa khác hoặc <a href="/careers" class="text-primary">xem tất cả vị trí</a>.</p>
+    </div>
+
+    <!-- Job grid -->
+    <div class="row g-4" th:if="${not #lists.isEmpty(jobs)}">
+      <div class="col-12 col-md-6 col-lg-4" th:each="job : ${jobs}">
+        <a th:href="@{/careers/job/{id}(id=${job.id})}" class="job-card">
+          <div class="d-flex align-items-start gap-3 mb-3">
+            <div class="company-logo">
+              <i class="bi bi-building text-white"></i>
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <div class="job-title" th:text="${job.title}">Tên vị trí</div>
+              <div class="job-dept">
+                <i class="bi bi-diagram-3 me-1"></i>
+                <span th:text="${job.department != null ? job.department.departmentName : 'Chưa xác định'}">Phòng ban</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="job-meta">
+            <span class="meta-pill" th:if="${job.location}">
+              <i class="bi bi-geo-alt"></i>
+              <span th:text="${job.location}">Hà Nội</span>
+            </span>
+            <span class="meta-pill green" th:if="${job.employmentType}">
+              <i class="bi bi-clock"></i>
+              <span th:switch="${job.employmentType}">
+                <span th:case="'FULL_TIME'">Toàn thời gian</span>
+                <span th:case="'PART_TIME'">Bán thời gian</span>
+                <span th:case="'INTERNSHIP'">Thực tập</span>
+                <span th:case="'CONTRACT'">Hợp đồng</span>
+                <span th:case="*" th:text="${job.employmentType}">Khác</span>
+              </span>
+            </span>
+            <span class="meta-pill amber" th:if="${job.experienceLevel}">
+              <i class="bi bi-bar-chart"></i>
+              <span th:text="${job.experienceLevel}">Mid</span>
+            </span>
+            <span class="meta-pill" th:if="${job.remoteAllowed}">
+              <i class="bi bi-wifi"></i>Remote OK
+            </span>
+          </div>
+
+          <p class="job-desc" th:text="${job.description}">Mô tả công việc...</p>
+
+          <div class="job-footer">
+            <div class="salary" th:if="${job.salaryMin != null or job.salaryMax != null}">
+              <i class="bi bi-currency-dollar"></i>
+              <span th:if="${job.salaryMin != null and job.salaryMax != null}"
+                    th:text="${#numbers.formatDecimal(job.salaryMin, 0, 'COMMA', 0, 'POINT') + ' – ' + #numbers.formatDecimal(job.salaryMax, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+              </span>
+              <span th:if="${job.salaryMin != null and job.salaryMax == null}"
+                    th:text="${'Từ ' + #numbers.formatDecimal(job.salaryMin, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">
+              </span>
+            </div>
+            <div class="salary" th:if="${job.salaryMin == null and job.salaryMax == null}">
+              <i class="bi bi-currency-dollar"></i> Thỏa thuận
+            </div>
+            <span class="btn-apply-card">Ứng tuyển →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY JOIN US -->
+<section style="background: rgba(30,41,59,.5); padding: 80px 0; border-top: 1px solid rgba(99,102,241,.1);">
+  <div class="container">
+    <h2 class="text-center mb-2" style="font-size: 2rem; font-weight: 800;">Tại sao chọn HRMS?</h2>
+    <p class="text-center mb-5" style="color: var(--text-light);">Môi trường làm việc năng động, phúc lợi tuyệt vời và đội ngũ tuyệt hảo</p>
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="text-center p-4" style="background: rgba(99,102,241,.08); border: 1px solid rgba(99,102,241,.15); border-radius: 16px;">
+          <div style="font-size: 2.5rem; margin-bottom: 12px;">🚀</div>
+          <h5 class="fw-700 mb-2">Phát triển nhanh</h5>
+          <p class="text-secondary small mb-0">Cơ hội học hỏi không giới hạn và thăng tiến dựa trên năng lực</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="text-center p-4" style="background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.15); border-radius: 16px;">
+          <div style="font-size: 2.5rem; margin-bottom: 12px;">💰</div>
+          <h5 class="fw-700 mb-2">Thu nhập hấp dẫn</h5>
+          <p class="text-secondary small mb-0">Lương cạnh tranh, thưởng hiệu suất và các phúc lợi đặc biệt</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="text-center p-4" style="background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.15); border-radius: 16px;">
+          <div style="font-size: 2.5rem; margin-bottom: 12px;">🌟</div>
+          <h5 class="fw-700 mb-2">Văn hóa tuyệt vời</h5>
+          <p class="text-secondary small mb-0">Đội ngũ đa dạng, gắn kết và luôn hỗ trợ lẫn nhau</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-3">
+        <div class="text-center p-4" style="background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.15); border-radius: 16px;">
+          <div style="font-size: 2.5rem; margin-bottom: 12px;">⚖️</div>
+          <h5 class="fw-700 mb-2">Work-Life Balance</h5>
+          <p class="text-secondary small mb-0">Chính sách nghỉ phép linh hoạt và hỗ trợ làm việc từ xa</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pub-footer">
+  <div class="container">
+    <div class="mb-3">
+      <span style="font-size: 1.2rem; font-weight: 800; color: #fff;">
+        <i class="bi bi-building-fill-check me-2" style="color: var(--primary)"></i>HRMS Careers
+      </span>
+    </div>
+    <p class="mb-2">📧 careers@hrms.com &nbsp;|&nbsp; 📞 (028) 1234-5678 &nbsp;|&nbsp; 📍 TP. Hồ Chí Minh</p>
+    <p class="mb-0">&copy; 2025 HR Management System. All rights reserved. &nbsp;|&nbsp;
+      <a href="/login">Đăng nhập nội bộ</a>
+    </p>
+  </div>
+</footer>
+
+<!-- TOAST khi nộp thành công -->
+
+<!-- Floating Apply FAB -->
+<button class="floating-apply-btn" data-bs-toggle="modal" data-bs-target="#quickApplyModal">
+  <i class="bi bi-file-earmark-arrow-up-fill"></i>
+  <span>Nộp CV Nhanh</span>
+</button>
+
+<!-- Quick Apply Modal -->
+<div class="modal fade apply-modal" id="quickApplyModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <form th:action="@{/careers/apply}" method="post" enctype="multipart/form-data" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-white"><i class="bi bi-file-earmark-arrow-up me-2"></i>Nộp CV Ứng Tuyển Nhanh</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="jobId" class="form-label">Vị trí ứng tuyển <span class="text-danger">*</span></label>
+              <select class="form-select" id="jobId" name="jobId" required>
+                <option value="" disabled selected>Chọn vị trí muốn ứng tuyển...</option>
+                <option th:each="job : ${jobs}" th:value="${job.id}" th:text="${job.title}">Vị trí</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="fullName" name="fullName" required placeholder="Nguyễn Văn A">
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" id="email" name="email" required placeholder="nguyenvana@gmail.com">
+            </div>
+            <div class="col-md-6">
+              <label for="phoneNumber" class="form-label">Số điện thoại</label>
+              <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="0901234567">
+            </div>
+            <div class="col-md-6">
+              <label for="linkedinUrl" class="form-label">LinkedIn Profile URL</label>
+              <input type="url" class="form-control" id="linkedinUrl" name="linkedinUrl" placeholder="https://linkedin.com/in/username">
+            </div>
+            <div class="col-md-6">
+              <label for="yearsOfExperience" class="form-label">Số năm kinh nghiệm</label>
+              <input type="number" class="form-control" id="yearsOfExperience" name="yearsOfExperience" min="0" placeholder="Ví dụ: 2">
+            </div>
+            <div class="col-md-6">
+              <label for="expectedSalary" class="form-label">Mức lương mong muốn (VNĐ)</label>
+              <input type="number" class="form-control" id="expectedSalary" name="expectedSalary" min="0" placeholder="Ví dụ: 15000000">
+            </div>
+            <div class="col-12">
+              <label for="skills" class="form-label">Kỹ năng chuyên môn</label>
+              <input type="text" class="form-control" id="skills" name="skills" placeholder="Ví dụ: Java, Spring Boot, MySQL, Git (cách nhau bằng dấu phẩy)">
+            </div>
+            <div class="col-12">
+              <label for="cvFile" class="form-label">Tải lên CV (PDF, DOCX) <span class="text-danger">*</span></label>
+              <input type="file" class="form-control" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" required>
+              <div class="form-text text-muted" style="font-size: 0.78rem;">Chấp nhận file PDF, Word dung lượng dưới 5MB.</div>
+            </div>
+            <div class="col-12">
+              <label for="coverLetter" class="form-label">Thư giới thiệu bản thân (Cover Letter)</label>
+              <textarea class="form-control" id="coverLetter" name="coverLetter" rows="4" placeholder="Giới thiệu ngắn gọn kinh nghiệm nổi bật và lý do bạn muốn gia nhập HRMS..."></textarea>
+            </div>
+          </div>
+        </div>
+      <div class="modal-footer" style="border-top: 1px solid rgba(99,102,241,.15); padding: 16px 24px;">
+        <button type="button" class="btn btn-outline-secondary text-light border-opacity-25" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-submit" style="width: auto;">Gửi hồ sơ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toastSuccess" class="toast-success" th:if="${param.applied}">
+  <i class="bi bi-check-circle-fill me-2"></i>
+  CV của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ sớm.
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Hiển thị toast khi query param applied=true
+  (function() {
+    const toast = document.getElementById('toastSuccess');
+    if (toast) {
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity .5s';
+        setTimeout(() => toast.remove(), 500);
+      }, 5000);
+    }
+  })();
+</script>
+</body>
+</html>

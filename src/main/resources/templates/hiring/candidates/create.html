@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,171 +8,171 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div th:replace="fragments/hiring-sidebar :: sidebar"></div>
+<div th:class="${#authorization.expression('hasRole(''ADMIN'')') ? '' : 'container-fluid'}">
+    <div th:class="${#authorization.expression('hasRole(''ADMIN'')') ? '' : 'row'}">
+        <!-- Sidebar -->
+        <div sec:authorize="hasRole('ADMIN')" th:replace="fragments/admin-sidebar :: sidebar"></div>
+        <div sec:authorize="!hasRole('ADMIN')" th:replace="fragments/hiring-sidebar :: sidebar"></div>
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-person-plus me-2"></i>Add Candidate</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/hiring/candidates" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-1"></i>Back to Candidates
-                        </a>
-                    </div>
+        <!-- Main Content -->
+        <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-9 ms-sm-auto col-lg-10 px-md-4'}">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-person-plus me-2"></i>Add Candidate</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/hiring/candidates" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Candidates
+                    </a>
                 </div>
+            </div>
 
-                <!-- Candidate Form -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Candidate Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <form th:action="@{/hiring/candidates/create}" th:object="${candidate}" method="post">
-                            <div class="row">
-                                <!-- Personal Information -->
-                                <div class="col-md-6">
-                                    <h6 class="text-muted mb-3">Personal Information</h6>
-                                    
-                                    <div class="mb-3">
-                                        <label for="fullName" class="form-label">Full Name *</label>
-                                        <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email *</label>
-                                        <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="phoneNumber" class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="jobPosting" class="form-label">Job Applied For *</label>
-                                        <select class="form-select" id="jobPosting" th:field="*{jobPosting}" required>
-                                            <option value="">Select Job</option>
-                                            <option th:each="job : ${jobPostings}" th:value="${job.id}" th:text="${job.title}">Software Engineer</option>
-                                        </select>
-                                    </div>
+            <!-- Candidate Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Candidate Information</h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/hiring/candidates/create}" th:object="${candidate}" method="post">
+                        <div class="row">
+                            <!-- Personal Information -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Personal Information</h6>
+                                
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
                                 </div>
 
-                                <!-- Professional Information -->
-                                <div class="col-md-6">
-                                    <h6 class="text-muted mb-3">Professional Information</h6>
-                                    
-                                    <div class="mb-3">
-                                        <label for="yearsOfExperience" class="form-label">Years of Experience</label>
-                                        <input type="number" class="form-control" id="yearsOfExperience" th:field="*{yearsOfExperience}" min="0" max="50">
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label for="currentCompany" class="form-label">Current Company</label>
-                                        <input type="text" class="form-control" id="currentCompany" th:field="*{currentCompany}">
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}">
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label for="currentPosition" class="form-label">Current Position</label>
-                                        <input type="text" class="form-control" id="currentPosition" th:field="*{currentPosition}">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="expectedSalary" class="form-label">Expected Salary (USD)</label>
-                                        <input type="number" class="form-control" id="expectedSalary" th:field="*{expectedSalary}" min="0" step="100">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="availabilityDate" class="form-label">Availability Date</label>
-                                        <input type="text" class="form-control" id="availabilityDate" th:field="*{availabilityDate}" placeholder="e.g., Immediately, 2 weeks notice">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="source" class="form-label">Source</label>
-                                        <select class="form-select" id="source" th:field="*{source}">
-                                            <option value="">Select Source</option>
-                                            <option value="WEBSITE">Company Website</option>
-                                            <option value="LINKEDIN">LinkedIn</option>
-                                            <option value="REFERRAL">Employee Referral</option>
-                                            <option value="AGENCY">Recruitment Agency</option>
-                                        </select>
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="jobPosting" class="form-label">Job Applied For *</label>
+                                    <select class="form-select" id="jobPosting" th:field="*{jobPosting.id}" required>
+                                        <option value="">Select Job</option>
+                                        <option th:each="job : ${jobPostings}" th:value="${job.id}" th:text="${job.title}">Software Engineer</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <!-- Links & Documents -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <h6 class="text-muted mb-3">Links & Documents</h6>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="resumeUrl" class="form-label">Resume URL</label>
-                                                <input type="url" class="form-control" id="resumeUrl" th:field="*{resumeUrl}" placeholder="https://...">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="linkedinUrl" class="form-label">LinkedIn Profile</label>
-                                                <input type="url" class="form-control" id="linkedinUrl" th:field="*{linkedinUrl}" placeholder="https://linkedin.com/in/...">
-                                            </div>
+                            <!-- Professional Information -->
+                            <div class="col-md-6">
+                                <h6 class="text-muted mb-3">Professional Information</h6>
+                                
+                                <div class="mb-3">
+                                    <label for="yearsOfExperience" class="form-label">Years of Experience</label>
+                                    <input type="number" class="form-control" id="yearsOfExperience" th:field="*{yearsOfExperience}" min="0" max="50">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="currentCompany" class="form-label">Current Company</label>
+                                    <input type="text" class="form-control" id="currentCompany" th:field="*{currentCompany}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="currentPosition" class="form-label">Current Position</label>
+                                    <input type="text" class="form-control" id="currentPosition" th:field="*{currentPosition}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="expectedSalary" class="form-label">Expected Salary (USD)</label>
+                                    <input type="number" class="form-control" id="expectedSalary" th:field="*{expectedSalary}" min="0" step="100">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="availabilityDate" class="form-label">Availability Date</label>
+                                    <input type="text" class="form-control" id="availabilityDate" th:field="*{availabilityDate}" placeholder="e.g., Immediately, 2 weeks notice">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="source" class="form-label">Source</label>
+                                    <select class="form-select" id="source" th:field="*{source}">
+                                        <option value="">Select Source</option>
+                                        <option value="WEBSITE">Company Website</option>
+                                        <option value="LINKEDIN">LinkedIn</option>
+                                        <option value="REFERRAL">Employee Referral</option>
+                                        <option value="AGENCY">Recruitment Agency</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Links & Documents -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-muted mb-3">Links & Documents</h6>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="resumeUrl" class="form-label">Resume URL</label>
+                                            <input type="url" class="form-control" id="resumeUrl" th:field="*{resumeUrl}" placeholder="https://...">
                                         </div>
                                     </div>
-
-                                    <div class="mb-3">
-                                        <label for="portfolioUrl" class="form-label">Portfolio URL</label>
-                                        <input type="url" class="form-control" id="portfolioUrl" th:field="*{portfolioUrl}" placeholder="https://...">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="linkedinUrl" class="form-label">LinkedIn Profile</label>
+                                            <input type="url" class="form-control" id="linkedinUrl" th:field="*{linkedinUrl}" placeholder="https://linkedin.com/in/...">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Additional Information -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <h6 class="text-muted mb-3">Additional Information</h6>
-                                    
-                                    <div class="mb-3">
-                                        <label for="skills" class="form-label">Skills</label>
-                                        <textarea class="form-control" id="skills" th:field="*{skills}" rows="3" placeholder="List relevant skills, technologies, certifications..."></textarea>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="education" class="form-label">Education</label>
-                                        <textarea class="form-control" id="education" th:field="*{education}" rows="3" placeholder="Educational background, degrees, institutions..."></textarea>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="coverLetter" class="form-label">Cover Letter / Notes</label>
-                                        <textarea class="form-control" id="coverLetter" th:field="*{coverLetter}" rows="4" placeholder="Cover letter or additional notes about the candidate..."></textarea>
-                                    </div>
+                                <div class="mb-3">
+                                    <label for="portfolioUrl" class="form-label">Portfolio URL</label>
+                                    <input type="url" class="form-control" id="portfolioUrl" th:field="*{portfolioUrl}" placeholder="https://...">
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Form Actions -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <hr>
-                                    <div class="d-flex justify-content-between">
-                                        <a href="/hiring/candidates" class="btn btn-outline-secondary">
-                                            <i class="bi bi-x-circle me-1"></i>Cancel
-                                        </a>
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-check-circle me-1"></i>Add Candidate
-                                        </button>
-                                    </div>
+                        <!-- Additional Information -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h6 class="text-muted mb-3">Additional Information</h6>
+                                
+                                <div class="mb-3">
+                                    <label for="skills" class="form-label">Skills</label>
+                                    <textarea class="form-control" id="skills" th:field="*{skills}" rows="3" placeholder="List relevant skills, technologies, certifications..."></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="education" class="form-label">Education</label>
+                                    <textarea class="form-control" id="education" th:field="*{education}" rows="3" placeholder="Educational background, degrees, institutions..."></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="coverLetter" class="form-label">Cover Letter / Notes</label>
+                                    <textarea class="form-control" id="coverLetter" th:field="*{coverLetter}" rows="4" placeholder="Cover letter or additional notes about the candidate..."></textarea>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                                <div class="d-flex justify-content-between">
+                                    <a href="/hiring/candidates" class="btn btn-outline-secondary">
+                                        <i class="bi bi-x-circle me-1"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-circle me-1"></i>Add Candidate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
+            </div>
 
-            </main>
-        </div>
+        </main>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,5 +1,12 @@
 package com.example.hr.config;
 
+import com.example.hr.recruitment.repository.JobPostingRepository;
+import com.example.hr.recruitment.entity.JobPosting;
+import com.example.hr.department.repository.DepartmentRepository;
+import com.example.hr.department.entity.Department;
+import java.time.LocalDate;
+
+
 import com.example.hr.service.GroupRoleService;
 import com.example.hr.service.GroupAccessService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +31,8 @@ public class DataInitializer implements ApplicationRunner {
     private final GroupAccessService groupAccessService;
     private final JdbcTemplate jdbcTemplate;
     private final com.example.hr.repository.CustomGroupFeatureRepository customGroupFeatureRepository;
+    private final JobPostingRepository jobPostingRepository;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -70,6 +79,81 @@ public class DataInitializer implements ApplicationRunner {
                 log.info("[DataInitializer] Migrated legacy group role permissions to group_role_id.");
             } catch (Exception e) {
                 log.warn("[DataInitializer] Group role permissions migration warning: {}", e.getMessage());
+            }
+
+            // 4.5 Seed default active Job Postings if empty
+            try {
+                if (jobPostingRepository.count() == 0) {
+                    List<Department> depts = departmentRepository.findAll();
+                    Department hrDept = depts.stream().filter(d -> d.getDepartmentName().contains("Nhân Sự")).findFirst().orElse(null);
+                    Department techDept = depts.stream().filter(d -> d.getDepartmentName().contains("Kỹ Thuật")).findFirst().orElse(null);
+                    Department salesDept = depts.stream().filter(d -> d.getDepartmentName().contains("Kinh Doanh")).findFirst().orElse(null);
+
+                    if (hrDept == null && !depts.isEmpty()) {
+                        hrDept = depts.get(0);
+                    }
+                    if (techDept == null && !depts.isEmpty()) {
+                        techDept = depts.size() > 1 ? depts.get(1) : depts.get(0);
+                    }
+                    if (salesDept == null && !depts.isEmpty()) {
+                        salesDept = depts.size() > 2 ? depts.get(2) : depts.get(0);
+                    }
+
+                    // Seeding Java Developer
+                    JobPosting javaDev = new JobPosting();
+                    javaDev.setTitle("Lập Trình Viên Java (Spring Boot)");
+                    javaDev.setDescription("Phát triển các ứng dụng backend chất lượng cao sử dụng Spring Boot, Hibernate và MySQL.");
+                    javaDev.setRequirements("Có từ 2 năm kinh nghiệm làm việc với Java/Spring Boot. Hiểu biết tốt về RESTful API và Hibernate.");
+                    javaDev.setDepartment(techDept);
+                    javaDev.setEmploymentType("FULL_TIME");
+                    javaDev.setExperienceLevel("MID");
+                    javaDev.setSalaryMin(new java.math.BigDecimal("15000000"));
+                    javaDev.setSalaryMax(new java.math.BigDecimal("30000000"));
+                    javaDev.setLocation("TP. Hồ Chí Minh");
+                    javaDev.setRemoteAllowed(true);
+                    javaDev.setPostingDate(LocalDate.now());
+                    javaDev.setClosingDate(LocalDate.now().plusMonths(3));
+                    javaDev.setStatus("ACTIVE");
+                    jobPostingRepository.save(javaDev);
+
+                    // Seeding Frontend Developer
+                    JobPosting feDev = new JobPosting();
+                    feDev.setTitle("Lập Trình Viên Frontend (ReactJS)");
+                    feDev.setDescription("Xây dựng giao diện ứng dụng web tối ưu, hiện đại, mượt mà sử dụng ReactJS.");
+                    feDev.setRequirements("Thành thạo ReactJS, Javascript (ES6), HTML5/CSS3. Ưu tiên có kinh nghiệm về Tailwind CSS.");
+                    feDev.setDepartment(techDept);
+                    feDev.setEmploymentType("FULL_TIME");
+                    feDev.setExperienceLevel("MID");
+                    feDev.setSalaryMin(new java.math.BigDecimal("12000000"));
+                    feDev.setSalaryMax(new java.math.BigDecimal("25000000"));
+                    feDev.setLocation("Hà Nội");
+                    feDev.setRemoteAllowed(false);
+                    feDev.setPostingDate(LocalDate.now());
+                    feDev.setClosingDate(LocalDate.now().plusMonths(2));
+                    feDev.setStatus("ACTIVE");
+                    jobPostingRepository.save(feDev);
+
+                    // Seeding HR Specialist
+                    JobPosting hrSpec = new JobPosting();
+                    hrSpec.setTitle("Chuyên Viên Tuyển Dụng Nhân Sự");
+                    hrSpec.setDescription("Tìm kiếm, tuyển chọn và đồng hành cùng các tài năng gia nhập công ty.");
+                    hrSpec.setRequirements("Có từ 1 năm kinh nghiệm tuyển dụng. Kỹ năng giao tiếp xuất sắc và nhạy bén với nhân tài.");
+                    hrSpec.setDepartment(hrDept);
+                    hrSpec.setEmploymentType("FULL_TIME");
+                    hrSpec.setExperienceLevel("ENTRY");
+                    hrSpec.setSalaryMin(new java.math.BigDecimal("10000000"));
+                    hrSpec.setSalaryMax(new java.math.BigDecimal("18000000"));
+                    hrSpec.setLocation("TP. Hồ Chí Minh");
+                    hrSpec.setRemoteAllowed(true);
+                    hrSpec.setPostingDate(LocalDate.now());
+                    hrSpec.setClosingDate(LocalDate.now().plusMonths(1));
+                    hrSpec.setStatus("ACTIVE");
+                    jobPostingRepository.save(hrSpec);
+
+                    log.info("[DataInitializer] Seeded 3 default active Job Postings.");
+                }
+            } catch (Exception e) {
+                log.warn("[DataInitializer] Job posting seeding warning: {}", e.getMessage());
             }
 
             // 5. Seed default permissions for the default group

@@ -3,7 +3,9 @@
 .idea
 .settings
 .vscode
-target
+target/*
+!target/
+!target/*.jar
 node_modules
 .m2
 .env

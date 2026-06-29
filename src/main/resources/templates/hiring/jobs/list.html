@@ -9,10 +9,10 @@
 </head>
 <body>
 <div class="container-fluid">
-    <div class="row">
-        <div th:replace="fragments/hiring-sidebar :: sidebar"></div>
+        <div sec:authorize="hasRole('ADMIN')" th:replace="fragments/admin-sidebar :: sidebar"></div>
+        <div sec:authorize="!hasRole('ADMIN')" th:replace="fragments/hiring-sidebar :: sidebar"></div>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-9 ms-sm-auto col-lg-10 px-md-4'}">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2"><i class="bi bi-briefcase me-2"></i>Job Postings</h1>
                 <a th:href="@{/hiring/jobs/create}" class="btn btn-primary">

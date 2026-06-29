@@ -34,7 +34,9 @@ body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
 <body>
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-2 d-none d-md-block sidebar shadow">
+    <!-- Sidebar -->
+    <div sec:authorize="hasRole('ADMIN')" th:replace="fragments/admin-sidebar :: sidebar"></div>
+    <nav sec:authorize="!hasRole('ADMIN')" class="col-md-2 d-none d-md-block sidebar shadow">
       <div class="sidebar-logo">🎯 HIRING</div>
       <hr style="border-color:rgba(255,255,255,.15)"/>
       <a th:href="@{/hiring}"><i class="bi bi-speedometer2"></i> Dashboard</a>
@@ -73,7 +75,7 @@ body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
       </form>
     </nav>
 
-    <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+    <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-10 ms-sm-auto px-md-4 pt-4'}">
       <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
         <h1 class="h3 mb-0">
           <i class="bi bi-megaphone text-primary me-2"></i>
@@ -103,16 +105,22 @@ body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-semibold">Phòng ban</label>
-                    <select th:field="*{department.id}" class="form-select">
+                    <select name="departmentId" id="departmentId" class="form-select">
                       <option value="">-- Chọn phòng ban --</option>
-                      <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.departmentName}"></option>
+                      <option th:each="d : ${departments}" 
+                              th:value="${d.id}" 
+                              th:text="${d.departmentName}"
+                              th:selected="${posting.department != null and posting.department.id == d.id}"></option>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-semibold">Chức vụ</label>
-                    <select th:field="*{position.id}" class="form-select">
+                    <select name="positionId" id="positionId" class="form-select">
                       <option value="">-- Chọn chức vụ --</option>
-                      <option th:each="p : ${positions}" th:value="${p.id}" th:text="${p.positionName}"></option>
+                      <option th:each="p : ${positions}" 
+                              th:value="${p.id}" 
+                              th:text="${p.positionName}"
+                              th:selected="${posting.position != null and posting.position.id == p.id}"></option>
                     </select>
                   </div>
                   <div class="col-md-6">
@@ -125,7 +133,8 @@ body { background: #f0f2f5; font-family: 'Inter', sans-serif; }
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-semibold">Hạn nộp hồ sơ</label>
-                    <input type="date" th:field="*{deadline}" class="form-control"/>
+                    <input type="date" name="closingDate" id="closingDate" class="form-control" 
+                           th:value="${posting.closingDate}"/>
                   </div>
                   <div class="col-md-6">
                     <label class="form-label fw-semibold">Trạng thái</label>

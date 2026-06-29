@@ -17,6 +17,16 @@
         </style>
         <div class="position-sticky pt-3">
             <ul class="nav flex-column">
+                <!-- Header với notification bell -->
+                <li class="nav-item d-flex align-items-center px-3 pb-2" style="border-bottom:1px solid rgba(0,0,0,.08); margin-bottom:8px;">
+                  <a href="/" style="text-decoration:none;color:inherit;"><strong style="font-size:.9rem;"><i class="bi bi-briefcase me-1 text-primary"></i>HIRING</strong></a>
+                  <a href="/hiring/notifications" id="hiringNotifBell" class="ms-auto position-relative" title="Thông báo"
+                     style="color:#6366f1; text-decoration:none; font-size:1.3rem; padding:4px 6px;">
+                    <i class="bi bi-bell-fill"></i>
+                    <span id="hiringNotifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          style="font-size:.58rem; min-width:16px; display:none; padding:3px 5px;">0</span>
+                  </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/hiring/dashboard">
                         <i class="bi bi-person-plus me-2"></i>Hiring Dashboard
@@ -27,6 +37,11 @@
                         <i class="bi bi-diagram-3 me-2"></i>Nhóm của tôi
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/hiring/my-department">
+                        <i class="bi bi-building me-2"></i>Phòng ban của tôi
+                    </a>
+                </li>
                 
                 <li class="nav-item">
                     <a class="nav-link" href="/hiring/minigame">
@@ -34,9 +49,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/sales/products">
-                        <i class="bi bi-shop me-2"></i>S&#7843;n ph&#7849;m
+                    <a class="nav-link hiring-nav-parent" data-submenu-toggle="hiring-sales-options">
+                        <span class="left"><i class="bi bi-shop me-2"></i>Bán hàng</span>
+                        <i class="bi bi-caret-down-fill"></i>
                     </a>
+                    <div id="hiring-sales-options" class="hiring-submenu">
+                        <a class="nav-link" href="/sales/products">Sản phẩm công ty</a>
+                        <a class="nav-link" href="/sales/cart">Giỏ hàng</a>
+                        <a class="nav-link" href="/sales/orders">Đơn hàng</a>
+                    </div>
                 </li>
 
                 <!-- Job Management -->
@@ -202,6 +223,44 @@
         <script th:src="@{/js/hrms-settings.js}"></script>
         <script th:src="@{/js/role-menu-i18n.js}"></script>
         <script th:src="@{/js/chatbot-widget.js}"></script>
+        <!-- SockJS + STOMP real-time notifications -->
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
+        <script th:inline="javascript">
+          (function() {
+            const badge = document.getElementById('hiringNotifBadge');
+            let count = 0;
+            function showToast(msg) {
+              const t = document.createElement('div');
+              t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#6366f1,#7c3aed);color:#fff;padding:14px 20px;border-radius:14px;font-size:.9rem;font-weight:600;z-index:99999;max-width:340px;box-shadow:0 8px 28px rgba(99,102,241,.35);cursor:pointer;animation:sIn .35s ease';
+              t.innerHTML = '<i class="bi bi-bell-fill me-2"></i>' + msg;
+              const s = document.createElement('style');
+              s.textContent = '@keyframes sIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}';
+              document.head.appendChild(s);
+              document.body.appendChild(t);
+              t.onclick = () => window.location.href = '/hiring/notifications';
+              setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); }, 5000);
+            }
+            try {
+              const client = new StompJs.Client({
+                webSocketFactory: () => new SockJS('/ws'),
+                reconnectDelay: 5000,
+                onConnect: () => {
+                  client.subscribe('/user/queue/notifications', (f) => {
+                    const d = JSON.parse(f.body);
+                    count++;
+                    badge.textContent = count;
+                    badge.style.display = 'inline-flex';
+                    showToast(d.message || 'Bạn có thông báo mới');
+                  });
+                  fetch('/notifications/count').then(r=>r.json()).then(n=>{ if(n>0){count=n;badge.textContent=n;badge.style.display='inline-flex';} }).catch(()=>{});
+                },
+                onStompError: () => {}
+              });
+              client.activate();
+            } catch(e) {}
+          })();
+        </script>
     </nav>
 </body>
 </html>

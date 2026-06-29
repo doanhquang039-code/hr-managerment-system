@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Duyet yeu cau - HRMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background:#f4f7fb; color:#0f172a; }
+        .approval-shell { max-width:1280px; margin:0 auto; padding:28px 18px 56px; }
+        .approval-header { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:18px; }
+        .approval-title h1 { margin:0; font-size:1.9rem; font-weight:800; }
+        .approval-title p { margin:4px 0 0; color:#64748b; }
+        .header-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .metric-grid { display:grid; grid-template-columns:repeat(4,minmax(160px,1fr)); gap:12px; margin-bottom:18px; }
+        .metric { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:16px; box-shadow:0 8px 20px rgba(15,23,42,.05); }
+        .metric span { color:#64748b; font-size:.82rem; font-weight:700; text-transform:uppercase; }
+        .metric strong { display:block; font-size:2rem; line-height:1.1; margin-top:8px; }
+        .approval-card { background:#fff; border:1px solid #dbe3ef; border-radius:8px; box-shadow:0 10px 24px rgba(15,23,42,.06); overflow:hidden; }
+        .table th { font-size:.8rem; text-transform:uppercase; color:#475569; background:#f8fafc; white-space:nowrap; }
+        .table td { vertical-align:middle; }
+        .tabs-wrap { background:#fff; border:1px solid #dbe3ef; border-radius:8px; padding:8px; margin-bottom:14px; }
+        .nav-pills .nav-link { border-radius:7px; color:#334155; font-weight:700; }
+        .nav-pills .nav-link.active { background:#0f766e; }
+        .empty-state { padding:48px 18px; text-align:center; color:#64748b; }
+        .empty-state i { font-size:2.3rem; display:block; margin-bottom:10px; color:#94a3b8; }
+        .cell-main { font-weight:800; }
+        .cell-sub { color:#64748b; font-size:.86rem; margin-top:2px; }
+        .action-row { display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; }
+        @media (max-width: 900px) { .metric-grid { grid-template-columns:repeat(2,minmax(150px,1fr)); } }
+        @media (max-width: 560px) { .metric-grid { grid-template-columns:1fr; } .approval-title h1 { font-size:1.5rem; } }
+    </style>
+</head>
+<body>
+<main class="approval-shell">
+    <section class="approval-header">
+        <div class="approval-title">
+            <h1><i class="bi bi-ui-checks-grid me-2"></i>Trung tam duyet</h1>
+            <p>Quan ly san pham, don hang va nghi phep dang cho Manager xu ly.</p>
+        </div>
+        <div class="header-actions">
+            <a href="/sales/cart" class="btn btn-outline-primary position-relative">
+                <i class="bi bi-cart3 me-1"></i> Gio hang
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      th:if="${cartCount != null and cartCount > 0}" th:text="${cartCount}">0</span>
+            </a>
+            <a href="/manager/dashboard" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Dashboard</a>
+        </div>
+    </section>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section class="metric-grid">
+        <div class="metric"><span>Tong cho duyet</span><strong th:text="${totalApprovalCount}">0</strong></div>
+        <div class="metric"><span>San pham</span><strong th:text="${pendingProductCount}">0</strong></div>
+        <div class="metric"><span>Don hang</span><strong th:text="${pendingOrderCount}">0</strong></div>
+        <div class="metric"><span>Nghi phep</span><strong th:text="${pendingLeaveCount}">0</strong></div>
+    </section>
+
+    <div class="tabs-wrap">
+        <ul class="nav nav-pills gap-2" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#products" type="button">
+                    San pham <span class="badge text-bg-warning" th:text="${pendingProductCount}">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orders" type="button">
+                    Don hang <span class="badge text-bg-warning" th:text="${pendingOrderCount}">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#leaves" type="button">
+                    Nghi phep <span class="badge text-bg-warning" th:text="${pendingLeaveCount}">0</span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        <section id="products" class="tab-pane fade show active">
+            <div class="approval-card">
+                <div class="table-responsive" th:if="${!#lists.isEmpty(pendingProducts)}">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Nguoi dang</th><th>San pham</th><th>Gia</th><th>Ton</th><th>Ngay dang</th><th class="text-end">Thao tac</th></tr></thead>
+                        <tbody>
+                        <tr th:each="p : ${pendingProducts}">
+                            <td><div class="cell-main" th:text="${p.seller != null ? p.seller.fullName : 'N/A'}">Seller</div><div class="cell-sub" th:text="${p.seller != null ? p.seller.email : ''}">email</div></td>
+                            <td><div class="cell-main" th:text="${p.name}">Product</div><div class="cell-sub" th:text="${p.sku}">SKU</div></td>
+                            <td th:text="${#numbers.formatDecimal(p.price,1,'COMMA',0,'POINT')}">0</td>
+                            <td th:text="${p.stockQuantity}">0</td>
+                            <td th:text="${p.createdAt != null ? #temporals.format(p.createdAt, 'dd/MM/yyyy HH:mm') : ''}">Date</td>
+                            <td>
+                                <div class="action-row">
+                                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/sales/products/{id}(id=${p.id})}">Xem</a>
+                                    <form th:action="@{/manager/approvals/products/{id}/approve(id=${p.id})}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-success">Duyet</button>
+                                    </form>
+                                    <form th:action="@{/manager/approvals/products/{id}/reject(id=${p.id})}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-outline-danger">Tu choi</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(pendingProducts)}"><i class="bi bi-check2-circle"></i>Khong co san pham cho duyet.</div>
+            </div>
+        </section>
+
+        <section id="orders" class="tab-pane fade">
+            <div class="approval-card">
+                <div class="table-responsive" th:if="${!#lists.isEmpty(pendingOrders)}">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Ma don</th><th>Khach hang</th><th>Tong tien</th><th>Thanh toan</th><th>Ngay tao</th><th class="text-end">Thao tac</th></tr></thead>
+                        <tbody>
+                        <tr th:each="o : ${pendingOrders}">
+                            <td><div class="cell-main" th:text="${o.orderCode}">SO</div><div class="cell-sub" th:text="${#lists.size(o.items) + ' san pham'}">items</div></td>
+                            <td><div class="cell-main" th:text="${o.customer != null ? o.customer.name : 'N/A'}">Customer</div><div class="cell-sub" th:text="${o.customer != null ? o.customer.email : ''}">email</div></td>
+                            <td th:text="${#numbers.formatDecimal(o.totalAmount,1,'COMMA',0,'POINT')}">0</td>
+                            <td><span class="badge text-bg-light" th:text="${o.paymentMethod}">COD</span></td>
+                            <td th:text="${o.createdAt != null ? #temporals.format(o.createdAt, 'dd/MM/yyyy HH:mm') : ''}">Date</td>
+                            <td>
+                                <div class="action-row">
+                                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/sales/orders/{id}(id=${o.id})}">Xem</a>
+                                    <form th:action="@{/manager/approvals/orders/{id}/approve(id=${o.id})}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-success">Duyet</button>
+                                    </form>
+                                    <form th:action="@{/manager/approvals/orders/{id}/reject(id=${o.id})}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-outline-danger">Tu choi</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(pendingOrders)}"><i class="bi bi-check2-circle"></i>Khong co don hang cho duyet.</div>
+            </div>
+        </section>
+
+        <section id="leaves" class="tab-pane fade">
+            <div class="approval-card">
+                <div class="table-responsive" th:if="${!#lists.isEmpty(pendingLeaves)}">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Nhan vien</th><th>Loai nghi</th><th>Thoi gian</th><th>Ly do</th><th class="text-end">Thao tac</th></tr></thead>
+                        <tbody>
+                        <tr th:each="l : ${pendingLeaves}">
+                            <td><div class="cell-main" th:text="${l.user != null ? l.user.fullName : 'N/A'}">User</div><div class="cell-sub" th:text="${l.user != null ? l.user.employeeCode : ''}">EMP</div></td>
+                            <td><span class="badge text-bg-primary" th:text="${l.leaveType}">ANNUAL</span></td>
+                            <td>
+                                <div th:text="${#temporals.format(l.startDate, 'dd/MM/yyyy') + ' - ' + #temporals.format(l.endDate, 'dd/MM/yyyy')}">Date</div>
+                                <div class="cell-sub"><span th:text="${#temporals.until(l.startDate, l.endDate, T(java.time.temporal.ChronoUnit).DAYS) + 1}">1</span> ngay</div>
+                            </td>
+                            <td class="text-truncate" style="max-width:280px;" th:text="${l.reason}">Reason</td>
+                            <td>
+                                <div class="action-row">
+                                    <form th:action="@{/manager/approvals/leaves/{id}/approve(id=${l.id})}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button class="btn btn-sm btn-success">Duyet</button>
+                                    </form>
+                                    <form th:action="@{/manager/approvals/leaves/{id}/reject(id=${l.id})}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <input type="hidden" name="rejectionReason" value="Rejected from manager approvals">
+                                        <button class="btn btn-sm btn-outline-danger">Tu choi</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(pendingLeaves)}"><i class="bi bi-check2-circle"></i>Khong co don nghi cho duyet.</div>
+            </div>
+        </section>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

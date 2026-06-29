@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,253 +20,253 @@
     </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div th:replace="fragments/hiring-sidebar :: sidebar"></div>
+<div th:class="${#authorization.expression('hasRole(''ADMIN'')') ? '' : 'container-fluid'}">
+    <div th:class="${#authorization.expression('hasRole(''ADMIN'')') ? '' : 'row'}">
+        <!-- Sidebar -->
+        <div sec:authorize="hasRole('ADMIN')" th:replace="fragments/admin-sidebar :: sidebar"></div>
+        <div sec:authorize="!hasRole('ADMIN')" th:replace="fragments/hiring-sidebar :: sidebar"></div>
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="bi bi-people me-2"></i>Candidates</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/hiring/candidates/create" class="btn btn-primary">
-                            <i class="bi bi-person-plus me-1"></i>Add Candidate
-                        </a>
-                    </div>
+        <!-- Main Content -->
+        <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-9 ms-sm-auto col-lg-10 px-md-4'}">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-people me-2"></i>Candidates</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/hiring/candidates/create" class="btn btn-primary">
+                        <i class="bi bi-person-plus me-1"></i>Add Candidate
+                    </a>
                 </div>
+            </div>
 
-                <!-- Statistics Cards -->
-                <div class="row mb-4">
-                    <div class="col-md-2">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h4 class="text-primary" th:text="${statistics.totalCandidates}">45</h4>
-                                <small class="text-muted">Total</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h4 class="text-secondary" th:text="${statistics.candidatesByStage.APPLIED ?: 0}">12</h4>
-                                <small class="text-muted">Applied</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h4 class="text-info" th:text="${statistics.candidatesByStage.SCREENING ?: 0}">8</h4>
-                                <small class="text-muted">Screening</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h4 class="text-warning" th:text="${statistics.candidatesByStage.INTERVIEW ?: 0}">5</h4>
-                                <small class="text-muted">Interview</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h4 class="text-success" th:text="${statistics.candidatesByStage.HIRED ?: 0}">3</h4>
-                                <small class="text-muted">Hired</small>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h4 class="text-danger" th:text="${statistics.candidatesByStage.REJECTED ?: 0}">7</h4>
-                                <small class="text-muted">Rejected</small>
-                            </div>
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 class="text-primary" th:text="${statistics.totalCandidates}">45</h4>
+                            <small class="text-muted">Total</small>
                         </div>
                     </div>
                 </div>
-
-                <!-- Filters -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <form method="get" class="row g-3">
-                            <div class="col-md-4">
-                                <label for="search" class="form-label">Search</label>
-                                <input type="text" class="form-control" id="search" name="search" 
-                                       th:value="${searchKeyword}" placeholder="Search candidates...">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="stage" class="form-label">Stage</label>
-                                <select class="form-select" id="stage" name="stage">
-                                    <option value="">All Stages</option>
-                                    <option value="APPLIED" th:selected="${selectedStage == 'APPLIED'}">Applied</option>
-                                    <option value="SCREENING" th:selected="${selectedStage == 'SCREENING'}">Screening</option>
-                                    <option value="INTERVIEW" th:selected="${selectedStage == 'INTERVIEW'}">Interview</option>
-                                    <option value="OFFER" th:selected="${selectedStage == 'OFFER'}">Offer</option>
-                                    <option value="HIRED" th:selected="${selectedStage == 'HIRED'}">Hired</option>
-                                    <option value="REJECTED" th:selected="${selectedStage == 'REJECTED'}">Rejected</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary me-2">
-                                    <i class="bi bi-search me-1"></i>Filter
-                                </button>
-                                <a href="/hiring/candidates" class="btn btn-outline-secondary">
-                                    <i class="bi bi-x-circle me-1"></i>Clear
-                                </a>
-                            </div>
-                        </form>
+                <div class="col-md-2">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 class="text-secondary" th:text="${statistics.candidatesByStage.APPLIED ?: 0}">12</h4>
+                            <small class="text-muted">Applied</small>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Candidates Grid -->
-                <div th:if="${candidates.empty}" class="text-center py-5">
-                    <i class="bi bi-people fs-1 text-muted"></i>
-                    <p class="text-muted mt-2">No candidates found.</p>
-                    <a href="/hiring/candidates/create" class="btn btn-primary">Add First Candidate</a>
+                <div class="col-md-2">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 class="text-info" th:text="${statistics.candidatesByStage.SCREENING ?: 0}">8</h4>
+                            <small class="text-muted">Screening</small>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-md-2">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 class="text-warning" th:text="${statistics.candidatesByStage.INTERVIEW ?: 0}">5</h4>
+                            <small class="text-muted">Interview</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 class="text-success" th:text="${statistics.candidatesByStage.HIRED ?: 0}">3</h4>
+                            <small class="text-muted">Hired</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h4 class="text-danger" th:text="${statistics.candidatesByStage.REJECTED ?: 0}">7</h4>
+                            <small class="text-muted">Rejected</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <div class="row" th:if="${!candidates.empty}">
-                    <div class="col-md-6 col-lg-4 mb-4" th:each="candidate : ${candidates}">
-                        <div class="card candidate-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="card-title mb-0" th:text="${candidate.fullName}">John Doe</h5>
-                                    <span class="badge stage-badge" 
-                                          th:classappend="${candidate.currentStage == 'HIRED'} ? 'bg-success' : (${candidate.currentStage == 'REJECTED'} ? 'bg-danger' : (${candidate.currentStage == 'INTERVIEW'} ? 'bg-warning text-dark' : (${candidate.currentStage == 'SCREENING'} ? 'bg-info' : 'bg-secondary')))"
-                                          th:text="${candidate.currentStage}">APPLIED</span>
-                                </div>
-                                
-                                <p class="card-text">
-                                    <small class="text-muted">
-                                        <i class="bi bi-briefcase me-1"></i>
-                                        <span th:text="${candidate.jobPosting?.title ?: 'No Job'}">Software Engineer</span>
-                                    </small>
-                                </p>
-                                
-                                <div class="mb-2">
-                                    <small class="text-muted">
-                                        <i class="bi bi-envelope me-1"></i>
-                                        <span th:text="${candidate.email}">john@example.com</span>
-                                    </small>
-                                </div>
-                                
-                                <div class="mb-2" th:if="${candidate.phoneNumber}">
-                                    <small class="text-muted">
-                                        <i class="bi bi-telephone me-1"></i>
-                                        <span th:text="${candidate.phoneNumber}">+84 123 456 789</span>
-                                    </small>
-                                </div>
-                                
-                                <div class="mb-2" th:if="${candidate.yearsOfExperience}">
-                                    <small class="text-muted">
-                                        <i class="bi bi-clock me-1"></i>
-                                        <span th:text="${candidate.yearsOfExperience} + ' years experience'">3 years experience</span>
-                                    </small>
-                                </div>
-                                
-                                <div class="mb-3" th:if="${candidate.overallScore}">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Score:</small>
-                                        <span class="badge" 
-                                              th:classappend="${candidate.overallScore >= 80} ? 'bg-success' : (${candidate.overallScore >= 60} ? 'bg-warning text-dark' : 'bg-danger')"
-                                              th:text="${candidate.overallScore}">85</span>
-                                    </div>
-                                    <div class="progress mt-1" style="height: 4px;">
-                                        <div class="progress-bar" 
-                                             th:classappend="${candidate.overallScore >= 80} ? 'bg-success' : (${candidate.overallScore >= 60} ? 'bg-warning' : 'bg-danger')"
-                                             th:style="'width: ' + ${candidate.overallScore} + '%'"></div>
-                                    </div>
-                                </div>
-                                
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                   th:value="${searchKeyword}" placeholder="Search candidates...">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="stage" class="form-label">Stage</label>
+                            <select class="form-select" id="stage" name="stage">
+                                <option value="">All Stages</option>
+                                <option value="APPLIED" th:selected="${selectedStage == 'APPLIED'}">Applied</option>
+                                <option value="SCREENING" th:selected="${selectedStage == 'SCREENING'}">Screening</option>
+                                <option value="INTERVIEW" th:selected="${selectedStage == 'INTERVIEW'}">Interview</option>
+                                <option value="OFFER" th:selected="${selectedStage == 'OFFER'}">Offer</option>
+                                <option value="HIRED" th:selected="${selectedStage == 'HIRED'}">Hired</option>
+                                <option value="REJECTED" th:selected="${selectedStage == 'REJECTED'}">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="bi bi-search me-1"></i>Filter
+                            </button>
+                            <a href="/hiring/candidates" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Candidates Grid -->
+            <div th:if="${candidates.empty}" class="text-center py-5">
+                <i class="bi bi-people fs-1 text-muted"></i>
+                <p class="text-muted mt-2">No candidates found.</p>
+                <a href="/hiring/candidates/create" class="btn btn-primary">Add First Candidate</a>
+            </div>
+
+            <div class="row" th:if="${!candidates.empty}">
+                <div class="col-md-6 col-lg-4 mb-4" th:each="candidate : ${candidates}">
+                    <div class="card candidate-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0" th:text="${candidate.fullName}">John Doe</h5>
+                                <span class="badge stage-badge" 
+                                      th:classappend="${candidate.currentStage == 'HIRED'} ? 'bg-success' : (${candidate.currentStage == 'REJECTED'} ? 'bg-danger' : (${candidate.currentStage == 'INTERVIEW'} ? 'bg-warning text-dark' : (${candidate.currentStage == 'SCREENING'} ? 'bg-info' : 'bg-secondary')))"
+                                      th:text="${candidate.currentStage}">APPLIED</span>
+                            </div>
+                            
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="bi bi-briefcase me-1"></i>
+                                    <span th:text="${candidate.jobPosting?.title ?: 'No Job'}">Software Engineer</span>
+                                </small>
+                            </p>
+                            
+                            <div class="mb-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-envelope me-1"></i>
+                                    <span th:text="${candidate.email}">john@example.com</span>
+                                </small>
+                            </div>
+                            
+                            <div class="mb-2" th:if="${candidate.phoneNumber}">
+                                <small class="text-muted">
+                                    <i class="bi bi-telephone me-1"></i>
+                                    <span th:text="${candidate.phoneNumber}">+84 123 456 789</span>
+                                </small>
+                            </div>
+                            
+                            <div class="mb-2" th:if="${candidate.yearsOfExperience}">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>
+                                    <span th:text="${candidate.yearsOfExperience} + ' years experience'">3 years experience</span>
+                                </small>
+                            </div>
+                            
+                            <div class="mb-3" th:if="${candidate.overallScore}">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <small class="text-muted" th:text="${#temporals.format(candidate.appliedAt, 'dd/MM/yyyy')}">30/04/2026</small>
-                                    <div class="btn-group" role="group">
-                                        <a th:href="@{/hiring/candidates/{id}(id=${candidate.id})}" class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a th:href="@{/hiring/candidates/{id}/edit(id=${candidate.id})}" class="btn btn-sm btn-outline-secondary">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="bi bi-gear"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li th:if="${candidate.currentStage == 'APPLIED'}">
-                                                    <form th:action="@{/hiring/candidates/{id}/move-stage(id=${candidate.id})}" method="post" style="display: inline;">
-                                                        <input type="hidden" name="stage" value="SCREENING">
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-arrow-right me-2"></i>Move to Screening
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                                <li th:if="${candidate.currentStage == 'SCREENING'}">
-                                                    <form th:action="@{/hiring/candidates/{id}/move-stage(id=${candidate.id})}" method="post" style="display: inline;">
-                                                        <input type="hidden" name="stage" value="INTERVIEW">
-                                                        <button type="submit" class="dropdown-item">
-                                                            <i class="bi bi-arrow-right me-2"></i>Move to Interview
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                                <li th:if="${candidate.currentStage == 'INTERVIEW'}">
-                                                    <a th:href="@{/hiring/interviews/create(candidateId=${candidate.id})}" class="dropdown-item">
-                                                        <i class="bi bi-calendar-plus me-2"></i>Schedule Interview
-                                                    </a>
-                                                </li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li th:if="${candidate.isActive()}">
-                                                    <form th:action="@{/hiring/candidates/{id}/hire(id=${candidate.id})}" method="post" style="display: inline;">
-                                                        <button type="submit" class="dropdown-item text-success">
-                                                            <i class="bi bi-check-circle me-2"></i>Hire
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                                <li th:if="${candidate.isActive()}">
-                                                    <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" th:data-bs-target="'#rejectModal' + ${candidate.id}">
-                                                        <i class="bi bi-x-circle me-2"></i>Reject
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                    <small class="text-muted">Score:</small>
+                                    <span class="badge" 
+                                          th:classappend="${candidate.overallScore >= 80} ? 'bg-success' : (${candidate.overallScore >= 60} ? 'bg-warning text-dark' : 'bg-danger')"
+                                          th:text="${candidate.overallScore}">85</span>
+                                </div>
+                                <div class="progress mt-1" style="height: 4px;">
+                                    <div class="progress-bar" 
+                                         th:classappend="${candidate.overallScore >= 80} ? 'bg-success' : (${candidate.overallScore >= 60} ? 'bg-warning' : 'bg-danger')"
+                                         th:style="'width: ' + ${candidate.overallScore} + '%'"></div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Reject Modal -->
-                        <div class="modal fade" th:id="'rejectModal' + ${candidate.id}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Reject Candidate</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted" th:text="${#temporals.format(candidate.appliedAt, 'dd/MM/yyyy')}">30/04/2026</small>
+                                <div class="btn-group" role="group">
+                                    <a th:href="@{/hiring/candidates/{id}(id=${candidate.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/hiring/candidates/{id}/edit(id=${candidate.id})}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
+                                            <i class="bi bi-gear"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li th:if="${candidate.currentStage == 'APPLIED'}">
+                                                <form th:action="@{/hiring/candidates/{id}/move-stage(id=${candidate.id})}" method="post" style="display: inline;">
+                                                    <input type="hidden" name="stage" value="SCREENING">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-arrow-right me-2"></i>Move to Screening
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li th:if="${candidate.currentStage == 'SCREENING'}">
+                                                <form th:action="@{/hiring/candidates/{id}/move-stage(id=${candidate.id})}" method="post" style="display: inline;">
+                                                    <input type="hidden" name="stage" value="INTERVIEW">
+                                                    <button type="submit" class="dropdown-item">
+                                                        <i class="bi bi-arrow-right me-2"></i>Move to Interview
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li th:if="${candidate.currentStage == 'INTERVIEW'}">
+                                                <a th:href="@{/hiring/interviews/create(candidateId=${candidate.id})}" class="dropdown-item">
+                                                    <i class="bi bi-calendar-plus me-2"></i>Schedule Interview
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li th:if="${candidate.isActive()}">
+                                                <form th:action="@{/hiring/candidates/{id}/hire(id=${candidate.id})}" method="post" style="display: inline;">
+                                                    <button type="submit" class="dropdown-item text-success">
+                                                        <i class="bi bi-check-circle me-2"></i>Hire
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li th:if="${candidate.isActive()}">
+                                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" th:data-bs-target="'#rejectModal' + ${candidate.id}">
+                                                    <i class="bi bi-x-circle me-2"></i>Reject
+                                                </button>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <form th:action="@{/hiring/candidates/{id}/reject(id=${candidate.id})}" method="post">
-                                        <div class="modal-body">
-                                            <p>Are you sure you want to reject <strong th:text="${candidate.fullName}">this candidate</strong>?</p>
-                                            <div class="mb-3">
-                                                <label for="reason" class="form-label">Reason for rejection:</label>
-                                                <textarea class="form-control" name="reason" rows="3" required></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" class="btn btn-danger">Reject Candidate</button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Reject Modal -->
+                    <div class="modal fade" th:id="'rejectModal' + ${candidate.id}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Reject Candidate</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form th:action="@{/hiring/candidates/{id}/reject(id=${candidate.id})}" method="post">
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to reject <strong th:text="${candidate.fullName}">this candidate</strong>?</p>
+                                        <div class="mb-3">
+                                            <label for="reason" class="form-label">Reason for rejection:</label>
+                                            <textarea class="form-control" name="reason" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-danger">Reject Candidate</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-            </main>
-        </div>
+        </main>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

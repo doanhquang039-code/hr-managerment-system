@@ -33,6 +33,9 @@ public class KeyResult {
     @Column(name = "metric_type", length = 50)
     private String metricType; // NUMBER, PERCENTAGE, BOOLEAN, CURRENCY
 
+    @Column(name = "measurement_type", length = 50)
+    private String measurementType;
+
     @Column(name = "start_value", precision = 15, scale = 2)
     private BigDecimal startValue;
 
@@ -81,6 +84,7 @@ public class KeyResult {
     }
 
     public void setMeasurementType(String measurementType) {
+        this.measurementType = measurementType;
         this.metricType = measurementType;
     }
 

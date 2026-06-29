@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sản phẩm - Sales</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San pham - HRMS Marketplace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body { background:#eef3f8; color:#0f172a; }
-        .market-hero { background:linear-gradient(135deg,#0f766e,#2563eb); color:#fff; border-radius:8px; padding:26px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; gap:18px; box-shadow:0 18px 44px rgba(37,99,235,.18); }
+        .market-hero { background:linear-gradient(135deg,#0f766e,#2563eb); color:#fff; border-radius:10px; padding:26px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; gap:18px; box-shadow:0 18px 44px rgba(37,99,235,.18); }
         .market-hero h1 { font-size:1.7rem; font-weight:850; margin:0 0 6px; }
-        .hero-copy { color:rgba(255,255,255,.82); margin:0; }
-        .hero-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+        .hero-copy { color:rgba(255,255,255,.86); margin:0; }
+        .hero-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
         .market-tabs { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:8px; }
         .market-tabs .nav-link { border-radius:6px; font-weight:750; color:#475569; }
         .market-tabs .nav-link.active { background:#0f766e; color:#fff; }
-        .product-card { border:1px solid #e2e8f0; border-radius:8px; background:#fff; height:100%; box-shadow:0 8px 24px rgba(15,23,42,.06); transition:.18s ease; }
+        .product-card { border:1px solid #e2e8f0; border-radius:10px; background:#fff; height:100%; box-shadow:0 8px 24px rgba(15,23,42,.06); display:flex; flex-direction:column; }
         .product-card:hover { transform:translateY(-3px); box-shadow:0 16px 34px rgba(15,23,42,.1); }
-        .product-card .price { color:#0f766e; font-weight:800; font-size:1.1rem; }
-        .seller { color:#64748b; font-size:.86rem; }
         .product-thumb { width:56px; height:56px; border-radius:8px; background:linear-gradient(135deg,#dbeafe,#ccfbf1); display:flex; align-items:center; justify-content:center; color:#0f766e; font-size:1.3rem; flex:0 0 auto; overflow:hidden; }
         .product-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+        .seller { color:#64748b; font-size:.86rem; }
+        .price { color:#0f766e; font-weight:800; font-size:1.1rem; }
+        .card-body-grow { flex:1; }
+        .btn-add-cart { background:linear-gradient(135deg,#0f766e,#2563eb); color:#fff; border:none; border-radius:7px; padding:6px 14px; font-size:.82rem; font-weight:700; white-space:nowrap; }
+        .btn-add-cart:hover { color:#fff; }
         @media (max-width: 768px) { .market-hero { flex-direction:column; align-items:flex-start; } .hero-actions { justify-content:flex-start; } }
     </style>
 </head>
@@ -27,13 +31,23 @@
 <main class="container py-4">
     <section class="market-hero">
         <div>
-            <div style="font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.76rem;opacity:.82;">HRMS Marketplace</div>
-            <h1>S&#7843;n ph&#7849;m n&#7897;i b&#7897;</h1>
-            <p class="hero-copy">M&#7885;i nh&#226;n vi&#234;n c&#243; th&#7875; &#273;&#259;ng s&#7843;n ph&#7849;m. Manager duy&#7879;t tr&#432;&#7899;c khi hi&#7875;n th&#7883; c&#244;ng khai.</p>
+            <div style="font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:.76rem;opacity:.86;">HRMS Marketplace</div>
+            <h1>San pham noi bo</h1>
+            <p class="hero-copy">Nhan vien dang san pham, Manager duyet truoc khi hien thi cong khai.</p>
         </div>
         <div class="hero-actions">
-            <a href="/sales" class="btn btn-light">Sales</a>
-            <a href="/sales/products/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> &#272;&#259;ng s&#7843;n ph&#7849;m</a>
+            <a th:if="${canApproveSalesProducts}" href="/sales" class="btn btn-light">Dashboard Sales</a>
+            <a href="/home" class="btn btn-outline-light"><i class="bi bi-house-door me-1"></i> Trang chu</a>
+            <a href="/sales/cart" class="btn btn-light position-relative">
+                <i class="bi bi-cart3 me-1"></i> Gio hang
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      th:if="${cartCount != null and cartCount > 0}" th:text="${cartCount}">0</span>
+            </a>
+            <button th:if="${canApproveSalesProducts}" class="btn btn-warning" data-bs-toggle="tab" data-bs-target="#pending" type="button">
+                <i class="bi bi-hourglass-split me-1"></i> Cho duyet
+                <span class="badge text-bg-dark" th:text="${pendingProductCount}">0</span>
+            </button>
+            <a href="/sales/products/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Dang san pham</a>
         </div>
     </section>
 
@@ -41,65 +55,94 @@
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
     <ul class="nav market-tabs mb-3" role="tablist">
-        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#approved" type="button">T&#7845;t c&#7843; &#273;&#227; duy&#7879;t</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#mine" type="button">S&#7843;n ph&#7849;m c&#7911;a t&#244;i</button></li>
-        <li class="nav-item" th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pending" type="button">Ch&#7901; duy&#7879;t <span class="badge text-bg-warning" th:text="${#lists.size(pendingProducts)}">0</span></button>
+        <li class="nav-item">
+            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#approved" type="button">San pham cong ty</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#mine" type="button">San pham cua toi</button>
+        </li>
+        <li class="nav-item" th:if="${canApproveSalesProducts}">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pending" type="button">
+                Cho duyet <span class="badge text-bg-warning" th:text="${pendingProductCount}">0</span>
+            </button>
         </li>
     </ul>
 
     <div class="tab-content">
         <section class="tab-pane fade show active" id="approved">
+            <form action="/sales/products" method="get" class="mb-4 d-flex gap-2 align-items-center" style="max-width:500px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Tim kiem san pham..." th:value="${searchQuery}" autocomplete="off">
+                </div>
+                <button type="submit" class="btn btn-primary px-4">Tim</button>
+                <a th:if="${searchQuery != null and searchQuery != ''}" href="/sales/products" class="btn btn-outline-secondary">Xoa</a>
+            </form>
+
             <div class="row g-3">
                 <div class="col-md-6 col-lg-4" th:each="p : ${products}">
                     <div class="product-card p-3">
-                        <div class="d-flex justify-content-between gap-2">
-                            <div class="d-flex gap-3">
-                                <div class="product-thumb">
-                                    <img th:if="${p.imageUrl != null and !#strings.isEmpty(p.imageUrl)}" th:src="${p.imageUrl}" alt="">
-                                    <i th:if="${p.imageUrl == null or #strings.isEmpty(p.imageUrl)}" class="bi bi-box-seam"></i>
+                        <div class="card-body-grow">
+                            <div class="d-flex justify-content-between gap-2 mb-2">
+                                <div class="d-flex gap-3">
+                                    <div class="product-thumb">
+                                        <img th:if="${p.imageUrl != null and p.imageUrl != ''}" th:src="${p.imageUrl}" alt="">
+                                        <i th:if="${p.imageUrl == null or p.imageUrl == ''}" class="bi bi-box-seam"></i>
+                                    </div>
+                                    <div>
+                                        <h2 class="h5 fw-bold mb-1 text-truncate" style="max-width:150px" th:text="${p.name}">Product</h2>
+                                        <div class="seller">Nguoi dang: <span th:text="${p.seller != null ? p.seller.fullName : 'N/A'}">Seller</span></div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h2 class="h5 fw-bold mb-1" th:text="${p.name}">Product</h2>
-                                    <div class="seller">Ng&#432;&#7901;i &#273;&#259;ng: <span th:text="${p.seller != null ? p.seller.fullName : 'N/A'}">Seller</span></div>
-                                </div>
+                                <span class="badge text-bg-light" th:text="${p.approvalStatus}">APPROVED</span>
                             </div>
-                            <span class="badge text-bg-success">APPROVED</span>
+                            <p class="text-muted small mb-3" th:if="${p.description != null and p.description != ''}" th:text="${p.description}">Description</p>
+                            <p class="text-muted small mb-3" th:if="${p.description == null or p.description == ''}">Chua co mo ta</p>
                         </div>
-                        <p class="text-muted mt-2 mb-3" th:text="${p.description != null and !#strings.isEmpty(p.description) ? p.description : 'Chua co mo ta'}">Description</p>
-                        <div class="d-flex justify-content-between align-items-end">
+                        <div class="d-flex justify-content-between align-items-end mt-2">
                             <div>
-                                <div class="price" th:text="${#numbers.formatDecimal(p.price,1,'COMMA',0,'POINT')}">0</div>
-                                <div class="small text-muted">T&#7891;n kho: <span th:text="${p.stockQuantity}">0</span></div>
+                                <div class="price"><span th:text="${#numbers.formatDecimal(p.price,1,'COMMA',0,'POINT')}">0</span> VND</div>
+                                <div class="small text-muted">Ton: <span th:text="${p.stockQuantity}">0</span></div>
                             </div>
-                            <div class="text-end">
-                                <span class="badge text-bg-light d-block mb-2" th:text="${p.sku}">SKU</span>
-                                <a class="btn btn-sm btn-outline-primary" th:href="@{/sales/products/{id}(id=${p.id})}">Chi ti&#7871;t</a>
+                            <div class="d-flex gap-1 flex-wrap justify-content-end">
+                                <a class="btn btn-sm btn-outline-primary" th:href="@{/sales/products/{id}(id=${p.id})}">Chi tiet</a>
+                                <form th:action="@{/sales/cart/add}" method="post" class="d-inline"
+                                      th:if="${p.approvalStatus == 'APPROVED' and p.stockQuantity != null and p.stockQuantity > 0}">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <input type="hidden" name="productId" th:value="${p.id}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button class="btn-add-cart btn btn-sm" title="Them vao gio hang"><i class="bi bi-cart-plus"></i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div th:if="${#lists.isEmpty(products)}" class="col-12"><div class="text-center text-muted py-5 bg-white border rounded">Ch&#432;a c&#243; s&#7843;n ph&#7849;m &#273;&#227; duy&#7879;t.</div></div>
+                <div th:if="${#lists.isEmpty(products)}" class="col-12">
+                    <div class="text-center text-muted py-5 bg-white border rounded">Chua co san pham.</div>
+                </div>
             </div>
         </section>
 
         <section class="tab-pane fade" id="mine">
             <div class="card"><div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead><tr><th>SKU</th><th>T&#234;n</th><th>Gi&#225;</th><th>T&#7891;n</th><th>Duy&#7879;t</th><th>Ng&#224;y &#273;&#259;ng</th><th>Thao t&#225;c</th></tr></thead>
+                    <thead><tr><th>SKU</th><th>Ten</th><th>Gia</th><th>Ton</th><th>QR</th><th>Duyet</th><th>Ngay dang</th><th>Thao tac</th></tr></thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(myProducts)}"><td colspan="7" class="text-center text-muted py-4">B&#7841;n ch&#432;a &#273;&#259;ng s&#7843;n ph&#7849;m n&#224;o.</td></tr>
+                    <tr th:if="${#lists.isEmpty(myProducts)}"><td colspan="8" class="text-center text-muted py-4">Ban chua dang san pham nao.</td></tr>
                     <tr th:each="p : ${myProducts}">
-                        <td th:text="${p.sku}">SKU</td><td class="fw-bold" th:text="${p.name}">Name</td>
-                        <td th:text="${#numbers.formatDecimal(p.price,1,'COMMA',0,'POINT')}">0</td><td th:text="${p.stockQuantity}">0</td>
-                        <td><span class="badge" th:classappend="${p.approvalStatus == 'APPROVED' ? ' text-bg-success' : (p.approvalStatus == 'REJECTED' ? ' text-bg-danger' : ' text-bg-warning')}" th:text="${p.approvalStatus}">PENDING</span></td>
+                        <td th:text="${p.sku}">SKU</td>
+                        <td class="fw-bold" th:text="${p.name}">Name</td>
+                        <td th:text="${#numbers.formatDecimal(p.price,1,'COMMA',0,'POINT')}">0</td>
+                        <td th:text="${p.stockQuantity}">0</td>
+                        <td><span th:if="${p.qrImageUrl != null and p.qrImageUrl != ''}" class="badge text-bg-success"><i class="bi bi-qr-code"></i></span></td>
+                        <td><span class="badge text-bg-warning" th:text="${p.approvalStatus}">PENDING</span></td>
                         <td th:text="${p.createdAt != null ? #temporals.format(p.createdAt, 'dd/MM/yyyy HH:mm') : ''}">Date</td>
                         <td>
                             <a class="btn btn-sm btn-outline-primary" th:href="@{/sales/products/{id}(id=${p.id})}">Xem</a>
-                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/sales/products/{id}/edit(id=${p.id})}">S&#7917;a</a>
+                            <a class="btn btn-sm btn-outline-secondary" th:href="@{/sales/products/{id}/edit(id=${p.id})}">Sua</a>
                             <form class="d-inline" th:action="@{/sales/products/{id}/delete(id=${p.id})}" method="post">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('An san pham nay?')">Ẩn</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('An san pham nay?')">An</button>
                             </form>
                         </td>
                     </tr>
@@ -108,25 +151,26 @@
             </div></div>
         </section>
 
-        <section class="tab-pane fade" id="pending" th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}">
+        <section class="tab-pane fade" id="pending" th:if="${canApproveSalesProducts}">
             <div class="card"><div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead><tr><th>Ng&#432;&#7901;i &#273;&#259;ng</th><th>S&#7843;n ph&#7849;m</th><th>Gi&#225;</th><th>T&#7891;n</th><th>Thao t&#225;c</th></tr></thead>
+                    <thead><tr><th>Nguoi dang</th><th>San pham</th><th>Gia</th><th>Ton</th><th>QR</th><th>Thao tac</th></tr></thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(pendingProducts)}"><td colspan="5" class="text-center text-muted py-4">Kh&#244;ng c&#243; s&#7843;n ph&#7849;m ch&#7901; duy&#7879;t.</td></tr>
+                    <tr th:if="${#lists.isEmpty(pendingProducts)}"><td colspan="6" class="text-center text-muted py-4">Khong co san pham cho duyet.</td></tr>
                     <tr th:each="p : ${pendingProducts}">
                         <td th:text="${p.seller != null ? p.seller.fullName : 'N/A'}">Seller</td>
                         <td><strong th:text="${p.name}">Product</strong><div class="text-muted small" th:text="${p.description}"></div></td>
                         <td th:text="${#numbers.formatDecimal(p.price,1,'COMMA',0,'POINT')}">0</td>
                         <td th:text="${p.stockQuantity}">0</td>
+                        <td><span th:if="${p.qrImageUrl != null and p.qrImageUrl != ''}" class="badge text-bg-success"><i class="bi bi-qr-code"></i> QR</span></td>
                         <td>
                             <form th:action="@{/sales/products/{id}/approve(id=${p.id})}" method="post" class="d-inline">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button class="btn btn-sm btn-success">Duy&#7879;t</button>
+                                <button class="btn btn-sm btn-success">Duyet</button>
                             </form>
                             <form th:action="@{/sales/products/{id}/reject(id=${p.id})}" method="post" class="d-inline">
                                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button class="btn btn-sm btn-outline-danger">T&#7915; ch&#7889;i</button>
+                                <button class="btn btn-sm btn-outline-danger">Tu choi</button>
                             </form>
                         </td>
                     </tr>

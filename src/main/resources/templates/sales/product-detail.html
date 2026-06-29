@@ -2,61 +2,333 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết sản phẩm - Sales</title>
+    <title th:text="${product.name} + ' - HRMS Marketplace'">Chi tiết sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background:#eef3f8; }
-        .detail-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; box-shadow:0 14px 36px rgba(15,23,42,.08); }
-        .product-media { min-height:320px; background:linear-gradient(135deg,#dbeafe,#ccfbf1); display:flex; align-items:center; justify-content:center; }
+        body { background: #eef3f8; }
+        .detail-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-shadow:0 14px 36px rgba(15,23,42,.08); }
+        .product-media { min-height:320px; background:linear-gradient(135deg,#dbeafe,#ccfbf1); display:flex; align-items:center; justify-content:center; position:relative; }
         .product-media img { width:100%; height:100%; min-height:320px; object-fit:cover; }
+        .price-display { color:#0f766e; font-weight:800; font-size:2rem; }
+
+        /* Cart button */
+        .btn-cart { background:linear-gradient(135deg,#0f766e,#2563eb); color:#fff; border:none; border-radius:10px; padding:12px 24px; font-weight:700; font-size:1rem; transition:.2s; }
+        .btn-cart:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(37,99,235,.35); color:#fff; }
+
+        /* QR Payment section */
+        .payment-section { background:linear-gradient(135deg,#f0fdf4,#eff6ff); border:1px solid #d1fae5; border-radius:12px; padding:20px; margin-top:20px; }
+        .payment-section .section-title { font-weight:800; font-size:1rem; color:#0f766e; margin-bottom:14px; }
+        .qr-img-box { width:160px; height:160px; border:2px solid #bbf7d0; border-radius:10px; overflow:hidden; background:#fff; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+        .qr-img-box img { width:100%; height:100%; object-fit:contain; }
+        .payment-note-box { background:#fff; border:1px solid #d1d5db; border-radius:8px; padding:10px 14px; font-family:monospace; font-size:.93rem; color:#1e293b; flex:1; min-width:0; }
+        .copy-btn { background:#0f766e; color:#fff; border:none; border-radius:6px; padding:6px 14px; font-size:.83rem; font-weight:700; white-space:nowrap; transition:.15s; }
+        .copy-btn:hover { background:#0d6b64; }
+        .chat-msg-box { background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; font-size:.9rem; color:#374151; position:relative; }
+        .chat-msg-box::before { content:'💬'; position:absolute; top:-12px; left:14px; font-size:1.2rem; }
+        .provider-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:.78rem; font-weight:700; }
+        .provider-banking { background:#dbeafe; color:#1d4ed8; }
+        .provider-momo { background:#fce7f3; color:#be185d; }
+        .provider-zalopay { background:#e0f2fe; color:#0369a1; }
+
+        /* Rating & Review Section */
+        .reviews-section { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:30px; margin-top:30px; box-shadow:0 10px 25px rgba(15,23,42,.05); }
+        .rating-num { font-size:3.5rem; font-weight:800; color:#0f766e; line-height:1; }
+        .star-rating { color:#fbbf24; }
+        .star-rating-interactive { font-size:1.8rem; color:#cbd5e1; cursor:pointer; transition:.15s; }
+        .star-rating-interactive.active { color:#fbbf24; }
+        .review-item { border-bottom:1px solid #f1f5f9; padding:20px 0; }
+        .review-item:last-child { border-bottom:none; }
     </style>
 </head>
 <body>
 <main class="container py-4">
+
+    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><div class="text-muted small">Sales / Product</div><h1 class="h3 fw-bold mb-0" th:text="${product.name}">Product</h1></div>
-        <a href="/sales/products" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay l&#7841;i</a>
+        <div>
+            <div class="text-muted small">Sales / <a href="/sales/products" class="text-muted">Sản phẩm</a></div>
+            <h1 class="h3 fw-bold mb-0" th:text="${product.name}">Product</h1>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <!-- Cart icon badge -->
+            <a href="/sales/cart" class="btn btn-outline-secondary position-relative">
+                <i class="bi bi-cart3 fs-5"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      th:text="${cartCount > 0 ? cartCount : ''}"
+                      th:if="${cartCount > 0}" th:id="'cart-badge'">0</span>
+            </a>
+            <a href="/sales/products" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+        </div>
     </div>
+
+    <!-- Flash messages -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
     <section class="detail-card">
         <div class="row g-0">
+            <!-- Left: Product image -->
             <div class="col-lg-5">
                 <div class="product-media">
-                    <img th:if="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)}" th:src="${product.imageUrl}" alt="">
-                    <i th:if="${product.imageUrl == null or #strings.isEmpty(product.imageUrl)}" class="bi bi-box-seam" style="font-size:4rem;color:#0f766e"></i>
+                    <img th:if="${product.imageUrl != null and !#strings.isEmpty(product.imageUrl)}"
+                         th:src="${product.imageUrl}" alt="">
+                    <i th:if="${product.imageUrl == null or #strings.isEmpty(product.imageUrl)}"
+                       class="bi bi-box-seam" style="font-size:4rem;color:#0f766e"></i>
+                </div>
+                
+                <!-- QR Code chia sẻ sản phẩm -->
+                <div th:if="${shareQrCode != null}" class="p-3 text-center" style="border-top:1px solid #e2e8f0;background:#f8fafc;">
+                    <div style="font-size:0.75rem;font-weight:700;color:#64748b;" class="mb-2">
+                        <i class="bi bi-share-fill me-1"></i> Quét mã để chia sẻ / mua nhanh
+                    </div>
+                    <img th:src="'data:image/png;base64,' + ${shareQrCode}" alt="QR Code chia sẻ" style="width:140px;height:140px;border:1px solid #cbd5e1;padding:6px;border-radius:10px;background:#fff;">
                 </div>
             </div>
+
+            <!-- Right: Product info -->
             <div class="col-lg-7">
                 <div class="p-4">
-                    <div class="d-flex gap-2 mb-3">
-                        <span class="badge" th:classappend="${product.approvalStatus == 'APPROVED' ? ' text-bg-success' : (product.approvalStatus == 'REJECTED' ? ' text-bg-danger' : ' text-bg-warning')}" th:text="${product.approvalStatus}">PENDING</span>
+                    <!-- Status badges -->
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <span class="badge"
+                              th:classappend="${product.approvalStatus == 'APPROVED' ? ' text-bg-success' : (product.approvalStatus == 'REJECTED' ? ' text-bg-danger' : ' text-bg-warning')}"
+                              th:text="${product.approvalStatus}">PENDING</span>
                         <span class="badge text-bg-light" th:text="${product.sku}">SKU</span>
+                        <span th:if="${product.paymentProvider != null}"
+                              class="provider-badge"
+                              th:classappend="${product.paymentProvider == 'MOMO' ? ' provider-momo' : (product.paymentProvider == 'ZALOPAY' ? ' provider-zalopay' : ' provider-banking')}">
+                            <span th:text="${product.paymentProvider == 'MOMO' ? '🍑 MoMo' : (product.paymentProvider == 'ZALOPAY' ? '💙 ZaloPay' : '🏦 Banking')}">Banking</span>
+                        </span>
                     </div>
+
                     <h2 class="fw-bold" th:text="${product.name}">Product</h2>
-                    <div class="text-muted mb-3">Ng&#432;&#7901;i &#273;&#259;ng: <span th:text="${product.seller != null ? product.seller.fullName : 'N/A'}">Seller</span></div>
-                    <div class="display-6 fw-bold text-success mb-2" th:text="${#numbers.formatDecimal(product.price,1,'COMMA',0,'POINT')}">0</div>
-                    <div class="mb-4">T&#7891;n kho: <strong th:text="${product.stockQuantity}">0</strong></div>
-                    <p class="text-muted" th:text="${product.description != null and !#strings.isEmpty(product.description) ? product.description : 'Chua co mo ta'}">Description</p>
-                    <div class="d-flex gap-2 flex-wrap mt-4">
-                        <a th:if="${canManage}" class="btn btn-outline-primary" th:href="@{/sales/products/{id}/edit(id=${product.id})}"><i class="bi bi-pencil-square"></i> S&#7917;a</a>
+                    <div class="text-muted mb-2">Người đăng: <strong th:text="${product.seller != null ? product.seller.fullName : 'N/A'}">Seller</strong></div>
+                    <div class="price-display mb-1" th:text="${#numbers.formatDecimal(product.price,1,'COMMA',0,'POINT') + ' ₫'}">0 ₫</div>
+                    <div class="mb-3">Tồn kho: <strong th:text="${product.stockQuantity}">0</strong> sản phẩm</div>
+                    <p class="text-muted" th:text="${product.description != null and !#strings.isEmpty(product.description) ? product.description : 'Chưa có mô tả'}">Description</p>
+
+                    <!-- Action buttons -->
+                    <div class="d-flex gap-2 flex-wrap mt-3">
+                        <!-- Add to cart -->
+                        <form th:if="${product.approvalStatus == 'APPROVED'}"
+                              th:action="@{/sales/cart/add}" method="post" class="d-flex gap-2 align-items-center">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+                            <input type="number" name="quantity" value="1" min="1"
+                                   th:max="${product.stockQuantity}"
+                                   class="form-control form-control-sm" style="width:70px">
+                            <button class="btn-cart"><i class="bi bi-cart-plus me-1"></i>Thêm vào giỏ</button>
+                        </form>
+
+                        <!-- Manage buttons -->
+                        <a th:if="${canManage}" class="btn btn-outline-primary"
+                           th:href="@{/sales/products/{id}/edit(id=${product.id})}">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
                         <form th:if="${canManage}" th:action="@{/sales/products/{id}/delete(id=${product.id})}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            <button class="btn btn-outline-danger" onclick="return confirm('An san pham nay?')"><i class="bi bi-eye-slash"></i> &#7848;n</button>
+                            <button class="btn btn-outline-danger" onclick="return confirm('Ẩn sản phẩm này?')"><i class="bi bi-eye-slash"></i> Ẩn</button>
                         </form>
-                        <form th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}" th:action="@{/sales/products/{id}/approve(id=${product.id})}" method="post">
+                        <form th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}"
+                              th:action="@{/sales/products/{id}/approve(id=${product.id})}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            <button class="btn btn-success"><i class="bi bi-check2-circle"></i> Duy&#7879;t</button>
+                            <button class="btn btn-success"><i class="bi bi-check2-circle"></i> Duyệt</button>
                         </form>
-                        <form th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}" th:action="@{/sales/products/{id}/reject(id=${product.id})}" method="post">
+                        <form th:if="${currentRole == 'MANAGER' or currentRole == 'ADMIN'}"
+                              th:action="@{/sales/products/{id}/reject(id=${product.id})}" method="post">
                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                            <button class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> T&#7915; ch&#7889;i</button>
+                            <button class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Từ chối</button>
                         </form>
                     </div>
+
+                    <!-- ===== QR PAYMENT SECTION ===== -->
+                    <div class="payment-section" th:if="${product.approvalStatus == 'APPROVED'}">
+                        <div class="section-title"><i class="bi bi-qr-code me-2"></i>Thanh toán nhanh</div>
+
+                        <div class="d-flex gap-3 flex-wrap align-items-start">
+                            <!-- QR Image -->
+                            <div>
+                                <div class="qr-img-box">
+                                    <!-- Custom QR (MoMo, ZaloPay, hoặc QR tùy chỉnh) -->
+                                    <img th:if="${product.qrImageUrl != null and !#strings.isEmpty(product.qrImageUrl)}"
+                                         th:src="${product.qrImageUrl}" alt="QR Code">
+                                    <!-- Auto VietQR cho Banking -->
+                                    <img th:if="${(product.qrImageUrl == null or #strings.isEmpty(product.qrImageUrl)) and vietQrUrl != null}"
+                                         th:src="${vietQrUrl}" alt="VietQR">
+                                    <!-- Placeholder -->
+                                    <div th:if="${(product.qrImageUrl == null or #strings.isEmpty(product.qrImageUrl)) and vietQrUrl == null}"
+                                         class="text-center text-muted p-2">
+                                        <i class="bi bi-qr-code fs-2 d-block mb-1"></i>
+                                        <span class="small">Chưa có QR</span>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-1 small text-muted"
+                                     th:text="${product.paymentProvider == 'MOMO' ? '🍑 MoMo' : (product.paymentProvider == 'ZALOPAY' ? '💙 ZaloPay' : '🏦 Banking')}">
+                                </div>
+                            </div>
+
+                            <!-- Payment info & copy -->
+                            <div class="flex-1" style="min-width:0;">
+                                <div class="mb-3">
+                                    <div class="small fw-bold text-muted mb-1">💳 Số tiền cần chuyển</div>
+                                    <div class="fw-bold fs-5 text-success"
+                                         th:text="${#numbers.formatDecimal(product.price,1,'COMMA',0,'POINT') + ' ₫'}">0 ₫</div>
+                                </div>
+
+                                <div th:if="${product.paymentNote != null and !#strings.isEmpty(product.paymentNote)}" class="mb-3">
+                                    <div class="small fw-bold text-muted mb-1">📋 Nội dung chuyển tiền</div>
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <div class="payment-note-box" id="paymentNoteText" th:text="${product.paymentNote}">Note</div>
+                                        <button class="copy-btn" onclick="copyPaymentNote()">
+                                            <i class="bi bi-clipboard me-1"></i>Copy
+                                        </button>
+                                    </div>
+                                    <div id="copyFeedback" class="small text-success mt-1" style="display:none;">✅ Đã copy!</div>
+                                </div>
+
+                                <!-- Chat message template -->
+                                <div class="mb-2">
+                                    <div class="small fw-bold text-muted mb-1">💬 Tin nhắn xác nhận (copy & gửi cho người bán)</div>
+                                    <div class="chat-msg-box mt-2" id="chatMsgBox">
+                                        Mình đã chuyển khoản
+                                        <strong th:text="${#numbers.formatDecimal(product.price,1,'COMMA',0,'POINT') + ' ₫'}">0₫</strong>
+                                        để mua "<em th:text="${product.name}">sản phẩm</em>".
+                                        Nội dung CK:
+                                        <code th:text="${product.paymentNote != null ? product.paymentNote : 'HRMS ORDER'}">note</code>.
+                                        Nhờ bạn xác nhận giúp mình nhé! 🙏
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary mt-2" onclick="copyChatMsg()">
+                                        <i class="bi bi-chat-dots me-1"></i>Copy tin nhắn
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End QR section -->
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== RATING & REVIEW SECTION ===== -->
+    <section class="reviews-section">
+        <h3 class="fw-bold mb-4"><i class="bi bi-chat-square-text me-2"></i>Đánh giá sản phẩm</h3>
+
+        <div class="row g-4">
+            <!-- Left: Stats overview & Add review form -->
+            <div class="col-md-5">
+                <div class="card border-0 bg-light p-4 mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rating-num" th:text="${avgRating}">0.0</div>
+                        <div>
+                            <div class="star-rating fs-4">
+                                <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}"
+                                   th:classappend="${avgRating >= i ? 'bi-star-fill' : (avgRating >= i - 0.5 ? 'bi-star-half' : 'bi-star')}"></i>
+                            </div>
+                            <div class="small text-muted" th:text="${reviews.size() + ' đánh giá'}">0 đánh giá</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add review form -->
+                <div class="card border-0 bg-light p-4">
+                    <h5 class="fw-bold mb-3">Gửi đánh giá của bạn</h5>
+                    <form th:action="@{/sales/products/{id}/review(id=${product.id})}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Chọn số sao:</label>
+                            <div class="d-flex gap-2">
+                                <i class="bi bi-star-fill star-rating-interactive" data-val="1"></i>
+                                <i class="bi bi-star-fill star-rating-interactive" data-val="2"></i>
+                                <i class="bi bi-star-fill star-rating-interactive" data-val="3"></i>
+                                <i class="bi bi-star-fill star-rating-interactive" data-val="4"></i>
+                                <i class="bi bi-star-fill star-rating-interactive" data-val="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="ratingInput" value="5">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewComment" class="form-label small fw-bold text-muted">Nội dung đánh giá:</label>
+                            <textarea class="form-control" id="reviewComment" name="comment" rows="3" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Gửi đánh giá</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Review list -->
+            <div class="col-md-7">
+                <h5 class="fw-bold mb-3 border-bottom pb-2">Ý kiến khách hàng</h5>
+                
+                <div th:if="${reviews.isEmpty()}" class="text-center py-5 text-muted">
+                    <i class="bi bi-chat-square-dots fs-1 d-block mb-2"></i>
+                    <span>Chưa có đánh giá nào cho sản phẩm này. Hãy là người đầu tiên đánh giá!</span>
+                </div>
+
+                <div th:each="rev : ${reviews}" class="review-item">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <strong th:text="${rev.buyer != null ? rev.buyer.fullName : 'Người dùng ẩn danh'}">Full Name</strong>
+                            <div class="star-rating small mt-1">
+                                <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}"
+                                   th:classappend="${rev.rating >= i ? 'bi-star-fill' : 'bi-star'}"></i>
+                            </div>
+                        </div>
+                        <span class="small text-muted" th:text="${#temporals.format(rev.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+                    </div>
+                    <p class="mb-0 text-secondary" th:text="${rev.comment != null and !#strings.isEmpty(rev.comment) ? rev.comment : 'Không có bình luận.'}">Comment</p>
                 </div>
             </div>
         </div>
     </section>
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function copyPaymentNote() {
+    const el = document.getElementById('paymentNoteText');
+    if (!el) return;
+    navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        const fb = document.getElementById('copyFeedback');
+        if (fb) { fb.style.display = 'block'; setTimeout(() => fb.style.display = 'none', 2000); }
+    });
+}
+function copyChatMsg() {
+    const el = document.getElementById('chatMsgBox');
+    if (!el) return;
+    navigator.clipboard.writeText(el.innerText.trim()).then(() => {
+        const btn = event.target.closest('button');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check2 me-1"></i>Đã copy!';
+        btn.classList.add('btn-success');
+        btn.classList.remove('btn-outline-secondary');
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-success'); btn.classList.add('btn-outline-secondary'); }, 2000);
+    });
+}
+
+// Interactive Star Rating Logic
+document.querySelectorAll('.star-rating-interactive').forEach(star => {
+    star.addEventListener('click', function() {
+        const val = parseInt(this.getAttribute('data-val'));
+        document.getElementById('ratingInput').value = val;
+        document.querySelectorAll('.star-rating-interactive').forEach(s => {
+            const sVal = parseInt(s.getAttribute('data-val'));
+            if (sVal <= val) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+    });
+});
+// Set default active stars
+document.querySelectorAll('.star-rating-interactive').forEach(s => {
+    s.classList.add('active');
+});
+</script>
 </body>
 </html>

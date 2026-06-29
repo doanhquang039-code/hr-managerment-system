@@ -71,6 +71,58 @@ public class BulkOperationService {
     }
 
     /**
+     * Import users from Excel file to a specific department
+     */
+    @Transactional
+    public BulkImportResult importUsersToDepartmentFromExcel(MultipartFile file, Department department) {
+        BulkImportResult result = new BulkImportResult();
+        
+        try (InputStream is = file.getInputStream();
+             Workbook workbook = new XSSFWorkbook(is)) {
+            
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rowIterator = sheet.iterator();
+            
+            // Skip header row
+            if (rowIterator.hasNext()) {
+                rowIterator.next();
+            }
+            
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                if (row == null) {
+                    continue;
+                }
+                
+                Cell firstCell = row.getCell(0);
+                if (firstCell == null || firstCell.getCellType() == CellType.BLANK) {
+                    continue;
+                }
+                
+                try {
+                    User user = parseUserFromRow(row);
+                    if (user.getUsername() == null || user.getUsername().isBlank()) {
+                        continue;
+                    }
+                    user.setDepartment(department);
+                    user.setRole(com.example.hr.enums.Role.USER);
+                    userRepository.save(user);
+                    result.addSuccess(user.getUsername());
+                } catch (Exception e) {
+                    result.addError(row.getRowNum(), e.getMessage());
+                    log.error("Error importing user at row {}", row.getRowNum(), e);
+                }
+            }
+            
+        } catch (Exception e) {
+            log.error("Error importing users from Excel to department {}", department.getId(), e);
+            throw new RuntimeException("Failed to import users: " + e.getMessage());
+        }
+        
+        return result;
+    }
+
+    /**
      * Export users to Excel file
      */
     public ByteArrayOutputStream exportUsersToExcel(List<User> users) {

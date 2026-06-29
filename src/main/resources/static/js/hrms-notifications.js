@@ -42,8 +42,8 @@
     btn.title = 'Thông báo';
     btn.style.cssText = [
       'position:fixed',
-      'bottom:180px',
-      'right:24px',
+      'bottom:246px',
+      'right:27px',
       'z-index:8999',
       'width:48px',
       'height:48px',
@@ -79,7 +79,7 @@
     fetchNotificationList().then(function (notifications) {
       var panel = document.createElement('div');
       panel.id = 'hrms-notif-panel';
-      panel.style.cssText = 'position:fixed;bottom:242px;right:24px;z-index:9500;width:340px;background:#1e293b;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;';
+      panel.style.cssText = 'position:fixed;bottom:308px;right:24px;z-index:9500;width:340px;background:#1e293b;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);overflow:hidden;';
 
       var notifHtml = notifications.length === 0
         ? '<div style="text-align:center;padding:32px;color:#94a3b8;"><div style="font-size:2rem;margin-bottom:8px;"><i class="bi bi-bell"></i></div><div>Chưa có thông báo</div></div>'
@@ -133,9 +133,94 @@
     return match ? decodeURIComponent(match[1]) : '';
   }
 
+  function loadWebSocketLibraries(callback) {
+    if (window.SockJS && window.Stomp) {
+      callback();
+      return;
+    }
+    var sockJsScript = document.createElement('script');
+    sockJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js';
+    sockJsScript.onload = function() {
+      var stompScript = document.createElement('script');
+      stompScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js';
+      stompScript.onload = callback;
+      document.head.appendChild(stompScript);
+    };
+    document.head.appendChild(sockJsScript);
+  }
+
+  function initWebSocket() {
+    loadWebSocketLibraries(function() {
+      try {
+        var socket = new SockJS('/ws');
+        var stompClient = Stomp.over(socket);
+        stompClient.debug = null; // Tắt debug log
+        stompClient.connect({}, function (frame) {
+          stompClient.subscribe('/user/queue/notifications', function (messageOutput) {
+            try {
+              var notif = JSON.parse(messageOutput.body);
+              handleRealTimeNotification(notif);
+            } catch (ex) {}
+          });
+        }, function(error) {
+          setTimeout(initWebSocket, 10000); // Thử kết nối lại sau 10s
+        });
+      } catch (e) {
+        setTimeout(initWebSocket, 10000);
+      }
+    });
+  }
+
+  function handleRealTimeNotification(notif) {
+    unreadCount++;
+    updateBadge(unreadCount);
+    showToastNotification(notif.message, notif.link);
+  }
+
+  function showToastNotification(message, link) {
+    var container = document.getElementById('hrms-toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'hrms-toast-container';
+      container.style.cssText = 'position:fixed;top:24px;right:24px;z-index:10000;display:flex;flex-direction:column;gap:10px;';
+      document.body.appendChild(container);
+    }
+    
+    var toast = document.createElement('div');
+    toast.style.cssText = 'background:#1e293b;color:#e2e8f0;border-left:4px solid #f59e0b;padding:16px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:280px;max-width:360px;animation:slideInNotif 0.3s ease-out;cursor:pointer;font-family:inherit;font-size:0.85rem;';
+    toast.innerHTML = '<div style="flex:1;">' + message + '</div><button style="background:transparent;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;">&times;</button>';
+    
+    toast.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'BUTTON') {
+        window.location.href = link || '/notifications';
+      } else {
+        toast.remove();
+      }
+    });
+    
+    container.appendChild(toast);
+    
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-20px)';
+      toast.style.transition = 'all 0.5s ease';
+      setTimeout(function() { toast.remove(); }, 500);
+    }, 6000);
+  }
+
+  function injectToastStyle() {
+    if (document.getElementById('hrms-toast-style')) return;
+    var style = document.createElement('style');
+    style.id = 'hrms-toast-style';
+    style.innerHTML = '@keyframes slideInNotif { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }';
+    document.head.appendChild(style);
+  }
+
   function init() {
     createNotifButton();
     fetchNotifications();
+    injectToastStyle();
+    initWebSocket();
     setInterval(fetchNotifications, POLL_INTERVAL);
   }
 

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<a th:fragment="fab"
+   href="/sales/cart"
+   class="sales-cart-fab"
+   title="Gio hang"
+   aria-label="Gio hang">
+    <i class="bi bi-cart3"></i>
+    <span th:if="${cartCount != null and cartCount > 0}" th:text="${cartCount}">0</span>
+    <style>
+        .sales-cart-fab {
+            position: fixed;
+            right: 28px;
+            bottom: 32px;
+            z-index: 10025;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg,#0f766e,#2563eb);
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 16px 34px rgba(37,99,235,.32);
+            font-size: 1.35rem;
+        }
+        .sales-cart-fab:hover { color:#fff; transform: translateY(-2px); }
+        .sales-cart-fab span {
+            position:absolute;
+            top:-4px;
+            right:-4px;
+            min-width:22px;
+            height:22px;
+            border-radius:999px;
+            background:#ef4444;
+            color:#fff;
+            font-size:.72rem;
+            font-weight:800;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:2px solid #fff;
+        }
+    </style>
+</a>
+</body>
+</html>

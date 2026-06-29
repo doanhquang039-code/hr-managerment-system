@@ -49,7 +49,8 @@ public class SecurityConfig {
                         "/admin/payments/ipn/momo", "/admin/payment/ipn/momo",
                         "/admin/payments/ipn/vnpay", "/admin/payment/ipn/vnpay",
                         "/admin/course/save",
-                        "/api/lifestyle/health-insights"))
+                        "/api/lifestyle/health-insights",
+                        "/careers/apply", "/careers/apply/**"))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/index.html", "/login", "/login/**",
@@ -57,7 +58,11 @@ public class SecurityConfig {
                     "/css/**", "/js/**", "/images/**",
                     "/oauth2/**", "/login/oauth2/code/**",
                     "/admin/payments/callback/**", "/admin/payments/ipn/**",
-                    "/admin/payment/callback/**", "/admin/payment/ipn/**"
+                    "/admin/payment/callback/**", "/admin/payment/ipn/**",
+                    // Trang tuyển dụng công khai - không cần đăng nhập
+                    "/careers", "/careers/**",
+                    // WebSocket endpoint
+                    "/ws/**"
                 ).permitAll()
                 .requestMatchers(
                     "/swagger-ui/**",

@@ -22,7 +22,7 @@ public class CaffeineConfig {
     @Primary
     public CacheManager caffeineCacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-                "users", "departments", "positions", "settings", "videoLibrary"
+                "users", "departments", "positions", "settings", "videoLibrary", "marketplaceProducts"
         );
         
         cacheManager.setCaffeine(Caffeine.newBuilder()

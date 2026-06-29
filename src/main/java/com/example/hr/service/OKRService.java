@@ -68,6 +68,7 @@ public class OKRService {
                 keyResult.setTitle(krDto.getTitle());
                 keyResult.setDescription(krDto.getDescription());
                 keyResult.setMeasurementType(krDto.getMeasurementType());
+                keyResult.setStartValue(BigDecimal.ZERO);
                 keyResult.setTargetValue(krDto.getTargetValue() != null ? BigDecimal.valueOf(krDto.getTargetValue()) : BigDecimal.ZERO);
                 keyResult.setCurrentValue(BigDecimal.ZERO);
                 keyResult.setUnit(krDto.getUnit() != null ? krDto.getUnit() : "");

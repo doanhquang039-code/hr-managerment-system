@@ -5,6 +5,7 @@ import com.example.hr.department.entity.Department;
 import com.example.hr.recruitment.entity.Candidate;
 import com.example.hr.enums.Role;
 import com.example.hr.recruitment.entity.JobPosting;
+import com.example.hr.recruitment.entity.JobPosition;
 import com.example.hr.models.User;
 import com.example.hr.enums.UserStatus;
 import com.example.hr.recruitment.repository.CandidateRepository;
@@ -12,13 +13,20 @@ import com.example.hr.department.repository.DepartmentRepository;
 import com.example.hr.recruitment.repository.JobPostingRepository;
 import com.example.hr.recruitment.repository.JobPositionRepository;
 import com.example.hr.user.repository.UserRepository;
+import com.example.hr.payment.dto.CartDto;
+import jakarta.servlet.http.HttpSession;
+import com.example.hr.service.AuthUserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.List;
 
@@ -32,6 +40,7 @@ public class RecruitmentController {
     @Autowired private DepartmentRepository departmentRepository;
     @Autowired private JobPositionRepository jobPositionRepository;
     @Autowired private UserRepository userRepository;
+    @Autowired private AuthUserHelper authUserHelper;
 
     // ==================== DASHBOARD ====================
 
@@ -41,12 +50,12 @@ public class RecruitmentController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(Model model, HttpSession session) {
         // Job postings statistics
         List<JobPosting> postings = jobPostingRepository.findAll();
         long totalJobs = postings.size();
         long activeJobs = postings.stream().filter(p -> "OPEN".equals(p.getStatus())).count();
-        
+
         // Candidate statistics
         long totalCandidates = candidateRepository.count();
         long newCandidates = candidateRepository.countByCurrentStage("NEW");
@@ -61,9 +70,9 @@ public class RecruitmentController {
         hiringOverview.setTotalJobs(totalJobs);
         hiringOverview.setActiveJobs(activeJobs);
         hiringOverview.setTotalCandidates(totalCandidates);
-        hiringOverview.setTotalInterviews(interviewCount); // Simplified
+        hiringOverview.setTotalInterviews(interviewCount);
         hiringOverview.setAvgApplicationsPerJob(activeJobs > 0 ? (double) totalCandidates / activeJobs : 0);
-        hiringOverview.setAvgCandidateScore(75.0); // TODO: Calculate from actual scores
+        hiringOverview.setAvgCandidateScore(75.0);
 
         // Candidate Pipeline
         java.util.Map<String, Long> candidatePipeline = new java.util.HashMap<>();
@@ -74,21 +83,21 @@ public class RecruitmentController {
         candidatePipeline.put("HIRED", hiredCount);
         candidatePipeline.put("REJECTED", rejectedCount);
 
-        // Recent job postings (last 5) â€“ null-safe sort
+        // Recent job postings (last 5) – null-safe sort
         List<JobPosting> recentJobs = postings.stream()
                 .filter(p -> p.getCreatedAt() != null)
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                 .limit(5)
                 .collect(java.util.stream.Collectors.toList());
 
-        // Recent candidates (last 10) â€“ null-safe sort
+        // Recent candidates (last 10) – null-safe sort
         List<Candidate> recentCandidates = candidateRepository.findAll().stream()
                 .filter(c -> c.getAppliedAt() != null)
                 .sorted((a, b) -> b.getAppliedAt().compareTo(a.getAppliedAt()))
                 .limit(10)
                 .collect(java.util.stream.Collectors.toList());
 
-        // Upcoming interviews - empty for now (TODO: implement Interview entity)
+        // Upcoming interviews - empty for now
         List<Object> upcomingInterviews = new java.util.ArrayList<>();
 
         model.addAttribute("hiringOverview", hiringOverview);
@@ -96,7 +105,7 @@ public class RecruitmentController {
         model.addAttribute("recentJobs", recentJobs);
         model.addAttribute("recentCandidates", recentCandidates);
         model.addAttribute("upcomingInterviews", upcomingInterviews);
-        
+
         // Legacy attributes for backward compatibility
         model.addAttribute("postings", postings);
         model.addAttribute("openCount", activeJobs);
@@ -107,15 +116,21 @@ public class RecruitmentController {
         model.addAttribute("offerCount", offerCount);
         model.addAttribute("hiredCount", hiredCount);
         model.addAttribute("rejectedCount", rejectedCount);
-        
+        model.addAttribute("cartCount", getCartCount(session));
+
         return "hiring/dashboard";
+    }
+
+    private int getCartCount(HttpSession session) {
+        CartDto cart = (CartDto) session.getAttribute("salesCart");
+        return cart == null ? 0 : cart.getTotalItems();
     }
 
     @GetMapping("/users")
     public String hiringUsers() {
         return "redirect:/admin/users?role=HIRING";
     }
-    
+
     // Inner class for Hiring Overview DTO
     public static class HiringOverview {
         private long totalJobs;
@@ -124,7 +139,7 @@ public class RecruitmentController {
         private long totalInterviews;
         private double avgApplicationsPerJob;
         private double avgCandidateScore;
-        
+
         public long getTotalJobs() { return totalJobs; }
         public void setTotalJobs(long totalJobs) { this.totalJobs = totalJobs; }
         public long getActiveJobs() { return activeJobs; }
@@ -138,6 +153,8 @@ public class RecruitmentController {
         public double getAvgCandidateScore() { return avgCandidateScore; }
         public void setAvgCandidateScore(double avgCandidateScore) { this.avgCandidateScore = avgCandidateScore; }
     }
+
+    // ==================== JOB POSTINGS ====================
 
     @GetMapping("/postings")
     public String listPostings(@RequestParam(required = false) String keyword,
@@ -166,10 +183,10 @@ public class RecruitmentController {
                             || "INTERN".equalsIgnoreCase(p.getExperienceLevel());
                     case "JUNIOR" -> "ENTRY".equalsIgnoreCase(p.getExperienceLevel())
                             || "JUNIOR".equalsIgnoreCase(p.getExperienceLevel());
-                    case "SECURITY" -> containsIgnoreCase(p.getTitle(), "báº£o vá»‡")
+                    case "SECURITY" -> containsIgnoreCase(p.getTitle(), "bảo vệ")
                             || containsIgnoreCase(p.getTitle(), "bao ve")
                             || (p.getPosition() != null
-                            && (containsIgnoreCase(p.getPosition().getPositionName(), "báº£o vá»‡")
+                            && (containsIgnoreCase(p.getPosition().getPositionName(), "bảo vệ")
                             || containsIgnoreCase(p.getPosition().getPositionName(), "bao ve")));
                     default -> true;
                 })
@@ -191,17 +208,69 @@ public class RecruitmentController {
     @GetMapping("/postings/edit/{id}")
     public String showEditPosting(@PathVariable Integer id, Model model) {
         JobPosting posting = jobPostingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("KhÃ´ng tÃ¬m tháº¥y tin tuyá»ƒn dá»¥ng: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tin tuyển dụng: " + id));
         model.addAttribute("posting", posting);
         model.addAttribute("departments", departmentRepository.findAll());
         model.addAttribute("positions", jobPositionRepository.findAll());
         return "hiring/posting-form";
     }
 
+    /**
+     * Save or update a job posting.
+     * Uses @RequestParam instead of @ModelAttribute to properly resolve
+     * ManyToOne relations (Department, JobPosition) from their IDs.
+     */
     @PostMapping("/postings/save")
-    public String savePosting(@ModelAttribute JobPosting posting, RedirectAttributes ra) {
-        jobPostingRepository.save(posting);
-        ra.addFlashAttribute("successMsg", "âœ… Tin tuyá»ƒn dá»¥ng Ä‘Ã£ Ä‘Æ°á»£c lÆ°u!");
+    public String savePosting(
+            @RequestParam(value = "id", required = false) Integer id,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "requirements", required = false) String requirements,
+            @RequestParam(value = "departmentId", required = false) Integer departmentId,
+            @RequestParam(value = "positionId", required = false) Integer positionId,
+            @RequestParam(value = "salaryMin", required = false) BigDecimal salaryMin,
+            @RequestParam(value = "salaryMax", required = false) BigDecimal salaryMax,
+            @RequestParam(value = "closingDate", required = false) String closingDateStr,
+            @RequestParam(value = "status", required = false) String status,
+            RedirectAttributes ra) {
+        try {
+            JobPosting posting = (id != null)
+                    ? jobPostingRepository.findById(id).orElse(new JobPosting())
+                    : new JobPosting();
+
+            posting.setTitle(title);
+            posting.setDescription(description);
+            posting.setRequirements(requirements);
+            posting.setSalaryMin(salaryMin);
+            posting.setSalaryMax(salaryMax);
+            posting.setStatus(status != null ? status : "OPEN");
+
+            if (closingDateStr != null && !closingDateStr.isBlank()) {
+                posting.setClosingDate(LocalDate.parse(closingDateStr));
+            }
+
+            if (departmentId != null) {
+                departmentRepository.findById(departmentId).ifPresent(posting::setDepartment);
+            } else {
+                posting.setDepartment(null);
+            }
+
+            if (positionId != null) {
+                jobPositionRepository.findById(positionId).ifPresent(posting::setPosition);
+            } else {
+                posting.setPosition(null);
+            }
+
+            if (posting.getCreatedAt() == null) {
+                posting.setCreatedAt(LocalDateTime.now());
+            }
+            posting.setUpdatedAt(LocalDateTime.now());
+
+            jobPostingRepository.save(posting);
+            ra.addFlashAttribute("successMsg", "✅ Tin tuyển dụng đã được lưu!");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMsg", "❌ Lỗi khi lưu tin tuyển dụng: " + e.getMessage());
+        }
         return "redirect:/hiring/postings";
     }
 
@@ -210,14 +279,14 @@ public class RecruitmentController {
         JobPosting posting = jobPostingRepository.findById(id).orElseThrow();
         posting.setStatus("CLOSED");
         jobPostingRepository.save(posting);
-        ra.addFlashAttribute("successMsg", "ÄÃ£ Ä‘Ã³ng tin tuyá»ƒn dá»¥ng.");
+        ra.addFlashAttribute("successMsg", "Đã đóng tin tuyển dụng.");
         return "redirect:/hiring/postings";
     }
 
     @GetMapping("/postings/delete/{id}")
     public String deletePosting(@PathVariable Integer id, RedirectAttributes ra) {
         jobPostingRepository.deleteById(id);
-        ra.addFlashAttribute("successMsg", "ðŸ—‘ï¸ ÄÃ£ xoÃ¡ tin tuyá»ƒn dá»¥ng.");
+        ra.addFlashAttribute("successMsg", "🗑️ Đã xoá tin tuyển dụng.");
         return "redirect:/hiring/postings";
     }
 
@@ -226,19 +295,19 @@ public class RecruitmentController {
     @GetMapping("/jobs/list")
     public String jobsList(Model model) {
         List<JobPosting> allJobs = jobPostingRepository.findAll();
-        
+
         List<JobPosting> activeJobsList = allJobs.stream()
                 .filter(j -> "OPEN".equals(j.getStatus()))
                 .collect(java.util.stream.Collectors.toList());
-        
+
         List<JobPosting> draftJobsList = allJobs.stream()
                 .filter(j -> "DRAFT".equals(j.getStatus()))
                 .collect(java.util.stream.Collectors.toList());
-        
+
         List<JobPosting> closedJobsList = allJobs.stream()
                 .filter(j -> "CLOSED".equals(j.getStatus()))
                 .collect(java.util.stream.Collectors.toList());
-        
+
         long totalApplications = candidateRepository.count();
 
         model.addAttribute("activeJobsList", activeJobsList);
@@ -255,6 +324,33 @@ public class RecruitmentController {
     // ==================== CANDIDATES ====================
     // NOTE: Candidate management has been moved to CandidateController
     // All /hiring/candidates/* endpoints are now handled by CandidateController
+
+    // ==================== MY DEPARTMENT ====================
+
+    @GetMapping("/my-department")
+    public String myDepartment(Authentication authentication, Model model) {
+        User user = authUserHelper.getCurrentUser(authentication);
+        if (user == null) return "redirect:/login";
+
+        Department department = user.getDepartment();
+        if (department == null) {
+            model.addAttribute("errorMessage", "Bạn chưa được gán vào phòng ban nào.");
+            return "error/403";
+        }
+
+        List<User> members = userRepository.findByDepartment(department);
+        List<User> managers = members.stream()
+                .filter(u -> u.getRole() == Role.MANAGER || (u.getGroupRole() != null && "MANAGER".equalsIgnoreCase(u.getGroupRole().getName())))
+                .collect(java.util.stream.Collectors.toList());
+        List<User> hirings = members.stream()
+                .filter(u -> u.getRole() == Role.HIRING || (u.getGroupRole() != null && "HIRING".equalsIgnoreCase(u.getGroupRole().getName())))
+                .collect(java.util.stream.Collectors.toList());
+
+        model.addAttribute("department", department);
+        model.addAttribute("members", members);
+        model.addAttribute("managers", managers);
+        model.addAttribute("hirings", hirings);
+        model.addAttribute("user", user);
+        return "hiring/my-department";
+    }
 }
-
-

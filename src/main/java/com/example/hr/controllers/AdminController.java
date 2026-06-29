@@ -30,6 +30,9 @@ import com.example.hr.task.repository.TaskRepository;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.payment.service.PaymentService;
 import com.example.hr.service.PasswordResetService;
+import com.example.hr.recruitment.repository.CandidateRepository;
+import com.example.hr.recruitment.repository.JobPostingRepository;
+import com.example.hr.recruitment.entity.JobPosting;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -56,6 +59,8 @@ public class AdminController {
     @Autowired private SalesProductRepository salesProductRepository;
     @Autowired private SalesOrderRepository salesOrderRepository;
     @Autowired private QuizAttemptRepository quizAttemptRepository;
+    @Autowired private CandidateRepository candidateRepository;
+    @Autowired private JobPostingRepository jobPostingRepository;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
@@ -196,6 +201,29 @@ public class AdminController {
                 .filter(p -> p.getStockQuantity() != null && p.getStockQuantity() <= 5)
                 .limit(5)
                 .collect(Collectors.toList()));
+
+        // === CHART 4: Recruitment stats (dynamic from DB) ===
+        List<JobPosting> activePostings = jobPostingRepository.findAll();
+        List<String> recruitPositions = new ArrayList<>();
+        List<Long> recruitApplicants = new ArrayList<>();
+        List<JobPosting> sortedPostings = activePostings.stream()
+                .sorted((a, b) -> Integer.compare(
+                        candidateRepository.findByJobPostingOrderByAppliedAtDesc(b).size(),
+                        candidateRepository.findByJobPostingOrderByAppliedAtDesc(a).size()
+                ))
+                .limit(8)
+                .collect(Collectors.toList());
+        for (JobPosting jp : sortedPostings) {
+            long count = candidateRepository.findByJobPostingOrderByAppliedAtDesc(jp).size();
+            recruitPositions.add(jp.getTitle());
+            recruitApplicants.add(count);
+        }
+        if (recruitPositions.isEmpty()) {
+            recruitPositions = List.of("Java Dev", "Frontend", "Marketing", "HR", "Sales", "DevOps");
+            recruitApplicants = List.of(0L, 0L, 0L, 0L, 0L, 0L);
+        }
+        model.addAttribute("recruitPositions", recruitPositions);
+        model.addAttribute("recruitApplicants", recruitApplicants);
 
         return "admin/dashboard";
     }

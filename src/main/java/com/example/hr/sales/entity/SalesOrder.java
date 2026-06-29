@@ -1,5 +1,6 @@
 package com.example.hr.sales.entity;
 
+import com.example.hr.models.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,6 +37,19 @@ public class SalesOrder {
 
     @Column(columnDefinition = "TEXT")
     private String notes;
+
+    @Column(name = "payment_method", length = 30)
+    private String paymentMethod = "COD"; // COD, BANKING, MOMO, ZALOPAY
+
+    @Column(name = "buyer_note", columnDefinition = "TEXT")
+    private String buyerNote; // Ghi chú từ người mua khi checkout
+
+    @Column(name = "payment_proof_url", length = 500)
+    private String paymentProofUrl; // Link ảnh minh chứng thanh toán (Google Drive)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SalesOrderItem> items = new ArrayList<>();

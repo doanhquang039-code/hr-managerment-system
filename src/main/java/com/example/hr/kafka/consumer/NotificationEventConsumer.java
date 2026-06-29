@@ -9,6 +9,7 @@ import com.example.hr.user.repository.UserRepository;
 import com.example.hr.service.EmailService;
 import com.example.hr.service.FirebaseNotificationService;
 import com.example.hr.service.NotificationService;
+import com.example.hr.websocket.NotificationWebSocketController;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class NotificationEventConsumer {
     private final NotificationService notificationService;
     private final EmailService emailService;
     private final ObjectProvider<FirebaseNotificationService> firebaseNotificationServiceProvider;
+    private final NotificationWebSocketController webSocketController;
 
     @KafkaListener(topics = "${kafka.topics.notifications}", groupId = "${spring.kafka.consumer.group-id}")
     public void consumeNotificationEvent(NotificationEvent event) {
@@ -87,6 +89,17 @@ public class NotificationEventConsumer {
     private void sendInAppNotification(NotificationEvent event) {
         for (User user : recipients(event)) {
             notificationService.createNotification(user, event.getMessage(), toNotificationType(event), linkFor(event));
+            
+            // Gửi qua WebSocket real-time
+            try {
+                java.util.Map<String, Object> wsData = new java.util.HashMap<>();
+                wsData.put("message", event.getMessage());
+                wsData.put("link", linkFor(event));
+                wsData.put("type", toNotificationType(event).name());
+                webSocketController.sendToUser(user.getUsername(), wsData);
+            } catch (Exception e) {
+                log.error("Failed to send WebSocket notification to user: {}", user.getUsername(), e);
+            }
         }
     }
 
@@ -125,6 +138,7 @@ public class NotificationEventConsumer {
             case "RECRUITMENT" -> "/hiring/dashboard";
             case "PERFORMANCE" -> "/user1/reviews";
             case "TRAINING" -> "/lms/my-courses";
+            case "MARKETPLACE" -> "/sales/orders";
             default -> "/notifications";
         };
     }

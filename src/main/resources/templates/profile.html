@@ -45,7 +45,7 @@
         }
     </style>
 </head>
-<body th:attr="data-settings-scope=${user.role.name() == 'MANAGER' ? 'manager-dashboard' : (user.role.name() == 'HIRING' ? 'hiring-dashboard' : (user.role.name() == 'ADMIN' ? 'admin-dashboard' : 'user-dashboard'))}">
+<body th:attr="data-settings-scope=${user.getEffectiveRoleName() == 'MANAGER' ? 'manager-dashboard' : (user.getEffectiveRoleName() == 'HIRING' ? 'hiring-dashboard' : (user.getEffectiveRoleName() == 'ADMIN' ? 'admin-dashboard' : 'user-dashboard'))}">
 <main class="page">
     <div class="topbar">
         <div>
@@ -73,9 +73,9 @@
                     <span th:text="${user.department != null ? user.department.departmentName : 'Chưa có phòng ban'}">IT</span>
                 </div>
                 <div class="chip-row">
-                    <span th:class="'chip ' + ${#strings.toLowerCase(user.role.name())}">
+                    <span th:class="'chip ' + ${#strings.toLowerCase(user.getEffectiveRoleName())}">
                         <i class="bi bi-shield-check"></i>
-                        <span th:text="${user.role}">USER</span>
+                        <span th:text="${user.getEffectiveRoleName()}">USER</span>
                     </span>
                     <span class="chip"><i class="bi bi-person"></i><span th:text="${user.username}">username</span></span>
                     <span class="chip"><i class="bi bi-envelope"></i><span th:text="${user.email ?: 'Chưa có email'}">email</span></span>

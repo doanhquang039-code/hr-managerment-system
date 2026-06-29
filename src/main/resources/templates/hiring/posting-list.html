@@ -29,7 +29,9 @@
 <body>
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-2 d-none d-md-block sidebar shadow">
+    <!-- Sidebar -->
+    <div sec:authorize="hasRole('ADMIN')" th:replace="fragments/admin-sidebar :: sidebar"></div>
+    <nav sec:authorize="!hasRole('ADMIN')" class="col-md-2 d-none d-md-block sidebar shadow">
       <div class="sidebar-logo">🎯 HIRING</div>
       <hr style="border-color:rgba(255,255,255,.15)"/>
       <a th:href="@{/hiring}"><i class="bi bi-speedometer2"></i> Dashboard</a>
@@ -68,7 +70,7 @@
       </form>
     </nav>
 
-    <main class="col-md-10 ms-sm-auto px-md-4 pt-4">
+    <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-10 ms-sm-auto px-md-4 pt-4'}">
       <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
         <div>
           <h1 class="h3 mb-0"><i class="bi bi-megaphone text-primary me-2"></i>Tin Tuyển Dụng</h1>
@@ -137,9 +139,9 @@
                     <span class="text-muted small" th:unless="${p.salaryMin != null}">Thương lượng</span>
                   </td>
                   <td>
-                    <span th:if="${p.deadline != null}"
-                          th:text="${p.deadline}">--</span>
-                    <span class="text-muted" th:unless="${p.deadline != null}">--</span>
+                    <span th:if="${p.closingDate != null}"
+                          th:text="${p.closingDate}">--</span>
+                    <span class="text-muted" th:unless="${p.closingDate != null}">--</span>
                   </td>
                   <td class="text-center">
                     <span class="badge rounded-pill px-3"

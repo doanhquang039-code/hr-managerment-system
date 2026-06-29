@@ -5,6 +5,7 @@ package com.example.hr.user.controller;
 
 
 
+import com.example.hr.department.entity.Department;
 import com.example.hr.user.repository.UserRepository;
 import com.example.hr.payroll.repository.PayrollRepository;
 import com.example.hr.leave.repository.LeaveRequestRepository;
@@ -352,5 +353,32 @@ public class User1Controller {
         }
 
         return "redirect:/user1/overtime";
+    }
+
+    @GetMapping("/my-department")
+    public String myDepartment(Authentication authentication, Model model) {
+        User user = getCurrentUser(authentication);
+        if (user == null) return "redirect:/login";
+
+        Department department = user.getDepartment();
+        if (department == null) {
+            model.addAttribute("errorMessage", "Bạn chưa được gán vào phòng ban nào.");
+            return "error/403";
+        }
+
+        List<User> members = userRepository.findByDepartment(department);
+        List<User> managers = members.stream()
+                .filter(u -> u.getRole() == Role.MANAGER || (u.getGroupRole() != null && "MANAGER".equalsIgnoreCase(u.getGroupRole().getName())))
+                .collect(Collectors.toList());
+        List<User> hirings = members.stream()
+                .filter(u -> u.getRole() == Role.HIRING || (u.getGroupRole() != null && "HIRING".equalsIgnoreCase(u.getGroupRole().getName())))
+                .collect(Collectors.toList());
+
+        model.addAttribute("department", department);
+        model.addAttribute("members", members);
+        model.addAttribute("managers", managers);
+        model.addAttribute("hirings", hirings);
+        model.addAttribute("user", user);
+        return "user1/my-department";
     }
 }
