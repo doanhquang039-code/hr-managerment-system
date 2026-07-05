@@ -13,7 +13,8 @@ import org.springframework.context.annotation.Configuration;
  * RabbitMQ Configuration
  * Cấu hình RabbitMQ cho message queue
  */
-@Configuration
+//@Configuration
+//@EnableRabbit
 public class RabbitMQConfig {
 
     @Value("${rabbitmq.queue.email}")

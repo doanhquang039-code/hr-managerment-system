@@ -28,6 +28,7 @@
 @REM ----------------------------------------------------------------------------
 
 @IF "%__MVNW_ARG0_NAME__%"=="" (SET __MVNW_ARG0_NAME__=%~nx0)
+@SET JAVA_HOME=C:\Program Files\Java\jdk-23
 @SET __MVNW_CMD__=
 @SET __MVNW_ERROR__=
 @SET __MVNW_PSMODULEP_SAVE=%PSModulePath%
@@ -45,6 +46,7 @@
 @GOTO :EOF
 : end batch / begin powershell #>
 
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-23"
 $ErrorActionPreference = "Stop"
 if ($env:MVNW_VERBOSE -eq "true") {
   $VerbosePreference = "Continue"

@@ -4,6 +4,7 @@ package com.example.hr.config;
 
 import com.example.hr.security.LoginVerificationCodeFilter;
 import com.example.hr.service.CustomOAuth2UserService;
+import com.example.hr.service.CustomOidcUserService;
 import com.example.hr.system.service.SystemSettingService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +25,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final CustomOAuth2UserService oAuth2UserService;
+    private final CustomOidcUserService oidcUserService;
     private final SystemSettingService settingService;
     private final ObjectProvider<ClientRegistrationRepository> clientRegistrationRepository;
 
     public SecurityConfig(CustomOAuth2UserService oAuth2UserService,
+                          CustomOidcUserService oidcUserService,
                           SystemSettingService settingService,
                           ObjectProvider<ClientRegistrationRepository> clientRegistrationRepository) {
         this.oAuth2UserService = oAuth2UserService;
+        this.oidcUserService = oidcUserService;
         this.settingService = settingService;
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
@@ -120,7 +124,10 @@ public class SecurityConfig {
         if (clientRegistrationRepository.getIfAvailable() != null) {
             http.oauth2Login(oauth -> oauth
                 .loginPage("/login")
-                .userInfoEndpoint(u -> u.userService(oAuth2UserService))
+                .userInfoEndpoint(u -> u
+                    .userService(oAuth2UserService)
+                    .oidcUserService(oidcUserService)
+                )
                 .defaultSuccessUrl("/user1/dashboard", true)
             );
         }

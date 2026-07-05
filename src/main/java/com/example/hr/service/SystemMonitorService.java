@@ -42,7 +42,7 @@ public class SystemMonitorService {
     private final DataSource dataSource;
     private final RedisTemplate<String, Object> redisTemplate;
     private final CacheManager cacheManager;
-    private final KafkaProperties kafkaProperties;
+    private final ObjectProvider<KafkaProperties> kafkaPropertiesProvider;
     private final Environment environment;
     private final HrAuditLogRepository hrAuditLogRepository;
     private final HrAuditLogService hrAuditLogService;
@@ -282,17 +282,18 @@ public class SystemMonitorService {
         List<String> configuredTopics = configuredKafkaTopics();
         List<String> dltTopics = configuredTopics.stream().map(topic -> topic + ".DLT").toList();
 
+        KafkaProperties kafkaProperties = kafkaPropertiesProvider.getIfAvailable();
+        if (kafkaProperties == null || kafkaProperties.getBootstrapServers() == null || kafkaProperties.getBootstrapServers().isEmpty()) {
+            metrics.put("status", "DISABLED");
+            metrics.put("message", "Chưa cấu hình Kafka hoặc bootstrap server.");
+            return metrics;
+        }
+
         metrics.put("bootstrapServers", kafkaProperties.getBootstrapServers());
         metrics.put("configuredTopics", configuredTopics);
         metrics.put("dltTopics", dltTopics);
         metrics.put("configuredTopicCount", configuredTopics.size());
         metrics.put("dltTopicCount", dltTopics.size());
-
-        if (kafkaProperties.getBootstrapServers() == null || kafkaProperties.getBootstrapServers().isEmpty()) {
-            metrics.put("status", "DISABLED");
-            metrics.put("message", "ChÆ°a cáº¥u hÃ¬nh bootstrap server.");
-            return metrics;
-        }
 
         Properties props = new Properties();
         props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, String.join(",", kafkaProperties.getBootstrapServers()));

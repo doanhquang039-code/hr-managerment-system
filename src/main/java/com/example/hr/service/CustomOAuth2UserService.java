@@ -41,6 +41,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String clientName = userRequest.getClientRegistration().getRegistrationId();
         
         String email = oAuth2User.getAttribute("email");
+        if (email == null) {
+            email = oAuth2User.getAttribute("preferred_username");
+        }
+        if (email == null) {
+            email = oAuth2User.getAttribute("mail");
+        }
         String name = oAuth2User.getAttribute("name");
         String picture = oAuth2User.getAttribute("picture");
 
@@ -74,7 +80,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     // HÃ m phá»¥ trá»£ Ä‘á»ƒ xá»­ lÃ½ lÆ°u Database cho Ä‘á»¡ rá»‘i code á»Ÿ trÃªn
-    private User saveOrUpdateUser(String email, String name, String picture) {
+    public User saveOrUpdateUser(String email, String name, String picture) {
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {

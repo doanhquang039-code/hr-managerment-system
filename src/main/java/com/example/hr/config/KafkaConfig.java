@@ -12,7 +12,8 @@ import org.springframework.kafka.config.TopicBuilder;
  * Kafka Configuration
  * Tạo các topic cho HR Management System
  */
-@Configuration
+//@Configuration
+//@EnableKafka
 public class KafkaConfig {
 
     @Value("${kafka.topics.attendance}")

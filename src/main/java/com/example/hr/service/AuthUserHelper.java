@@ -36,6 +36,12 @@ public class AuthUserHelper {
         if (auth instanceof OAuth2AuthenticationToken) {
             OAuth2User oAuth2User = ((OAuth2AuthenticationToken) auth).getPrincipal();
             String email = oAuth2User.getAttribute("email");
+            if (email == null) {
+                email = oAuth2User.getAttribute("preferred_username");
+            }
+            if (email == null) {
+                email = oAuth2User.getAttribute("mail");
+            }
             if (email != null) {
                 return userRepository.findByEmail(email).orElse(null);
             }

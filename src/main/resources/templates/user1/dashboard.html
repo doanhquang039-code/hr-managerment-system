@@ -502,9 +502,9 @@
                              th:class="${a.status.name() == 'DONE' ? 'task-dot done' : (a.status.name() == 'IN_PROGRESS' ? 'task-dot progress' : 'task-dot pending')}">
                         </div>
                         <div style="flex:1;">
-                            <div class="task-name" th:text="${a.task.taskName}">Tên công việc</div>
+                            <div class="task-name" th:text="${a.task != null ? a.task.taskName : 'Công việc'}">Tên công việc</div>
                             <div class="task-meta">
-                                <i class="bi bi-tag"></i> <span th:text="${a.task.taskType}">Loại</span>
+                                <i class="bi bi-tag"></i> <span th:text="${a.task != null ? a.task.taskType : 'N/A'}">Loại</span>
                                 &nbsp;·&nbsp;
                                 <i class="bi bi-calendar"></i> <span th:text="${a.assignedDate}">01/01</span>
                             </div>
