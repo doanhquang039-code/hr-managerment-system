@@ -15,7 +15,7 @@
         <main th:class="${#authorization.expression('hasRole(''ADMIN'')') ? 'admin-main' : 'col-md-9 ms-sm-auto col-lg-10 px-md-4'}">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2"><i class="bi bi-briefcase me-2"></i>Job Postings</h1>
-                <a th:href="@{/hiring/jobs/create}" class="btn btn-primary">
+                <a th:href="@{|${hiringPath}/jobs/create|}" class="btn btn-primary">
                     <i class="bi bi-plus-circle me-1"></i>Create Job
                 </a>
             </div>
@@ -101,7 +101,7 @@
                         <input type="hidden" name="sortDir" th:value="${sortDir}">
                         <div class="col-lg-3">
                             <button class="btn btn-primary me-2" type="submit"><i class="bi bi-search me-1"></i>Filter</button>
-                            <a th:href="@{/hiring/jobs}" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-1"></i>Clear</a>
+                            <a th:href="@{|${hiringPath}/jobs|}" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-1"></i>Clear</a>
                         </div>
                     </form>
                 </div>
@@ -121,13 +121,13 @@
                     <div class="table-responsive" th:if="${!jobs.empty}">
                         <table class="table table-hover align-middle">
                             <thead>
-                            <tr>
-                                <th><a th:href="@{/hiring/jobs(search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy='title',sortDir=${sortField == 'title' ? reverseSortDir : 'asc'})}">Title</a></th>
+                             <tr>
+                                <th><a th:href="@{|${hiringPath}/jobs|(search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy='title',sortDir=${sortField == 'title' ? reverseSortDir : 'asc'})}">Title</a></th>
                                 <th>Department</th>
                                 <th>Type</th>
                                 <th>Status</th>
-                                <th><a th:href="@{/hiring/jobs(search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy='applicationsCount',sortDir=${sortField == 'applicationsCount' ? reverseSortDir : 'desc'})}">Applications</a></th>
-                                <th><a th:href="@{/hiring/jobs(search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy='closingDate',sortDir=${sortField == 'closingDate' ? reverseSortDir : 'asc'})}">Closing</a></th>
+                                <th><a th:href="@{|${hiringPath}/jobs|(search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy='applicationsCount',sortDir=${sortField == 'applicationsCount' ? reverseSortDir : 'desc'})}">Applications</a></th>
+                                <th><a th:href="@{|${hiringPath}/jobs|(search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy='closingDate',sortDir=${sortField == 'closingDate' ? reverseSortDir : 'asc'})}">Closing</a></th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -151,15 +151,15 @@
                                 <td th:text="${job.closingDate != null ? #temporals.format(job.closingDate, 'dd/MM/yyyy') : 'N/A'}">N/A</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a th:href="@{/hiring/jobs/{id}(id=${job.id})}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
-                                        <a th:href="@{/hiring/jobs/{id}/edit(id=${job.id})}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
-                                        <form th:if="${job.status == 'DRAFT'}" th:action="@{/hiring/jobs/{id}/publish(id=${job.id})}" method="post">
+                                        <a th:href="@{|${hiringPath}/jobs/${job.id}|}" class="btn btn-outline-primary"><i class="bi bi-eye"></i></a>
+                                        <a th:href="@{|${hiringPath}/jobs/${job.id}/edit|}" class="btn btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                        <form th:if="${job.status == 'DRAFT'}" th:action="@{|${hiringPath}/jobs/${job.id}/publish|}" method="post">
                                             <button class="btn btn-outline-success" type="submit"><i class="bi bi-upload"></i></button>
                                         </form>
-                                        <form th:if="${job.status == 'ACTIVE'}" th:action="@{/hiring/jobs/{id}/close(id=${job.id})}" method="post">
+                                        <form th:if="${job.status == 'ACTIVE'}" th:action="@{|${hiringPath}/jobs/${job.id}/close|}" method="post">
                                             <button class="btn btn-outline-warning" type="submit"><i class="bi bi-lock"></i></button>
                                         </form>
-                                        <form th:action="@{/hiring/jobs/{id}/delete(id=${job.id})}" method="post"
+                                        <form th:action="@{|${hiringPath}/jobs/${job.id}/delete|}" method="post"
                                               onsubmit="return confirm('Delete this job posting?');">
                                             <button class="btn btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
                                         </form>
@@ -173,15 +173,15 @@
                     <nav th:if="${totalPages > 1}" class="mt-3">
                         <ul class="pagination justify-content-center">
                             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                <a class="page-link" th:href="@{/hiring/jobs(page=${currentPage - 1},size=10,search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy=${sortField},sortDir=${sortDir})}">Previous</a>
+                                <a class="page-link" th:href="@{|${hiringPath}/jobs|(page=${currentPage - 1},size=10,search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy=${sortField},sortDir=${sortDir})}">Previous</a>
                             </li>
                             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                                 th:classappend="${i == currentPage} ? 'active'">
                                 <a class="page-link" th:text="${i + 1}"
-                                   th:href="@{/hiring/jobs(page=${i},size=10,search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy=${sortField},sortDir=${sortDir})}">1</a>
+                                   th:href="@{|${hiringPath}/jobs|(page=${i},size=10,search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy=${sortField},sortDir=${sortDir})}">1</a>
                             </li>
                             <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-                                <a class="page-link" th:href="@{/hiring/jobs(page=${currentPage + 1},size=10,search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy=${sortField},sortDir=${sortDir})}">Next</a>
+                                <a class="page-link" th:href="@{|${hiringPath}/jobs|(page=${currentPage + 1},size=10,search=${searchKeyword},status=${selectedStatus},employmentType=${selectedEmploymentType},experienceLevel=${selectedExperienceLevel},departmentId=${selectedDepartmentId},sortBy=${sortField},sortDir=${sortDir})}">Next</a>
                             </li>
                         </ul>
                     </nav>

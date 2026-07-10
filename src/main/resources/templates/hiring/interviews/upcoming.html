@@ -26,7 +26,7 @@
                     </h1>
                     <small class="text-muted">Next 2 weeks schedule</small>
                 </div>
-                <a href="/hiring/interviews/create" class="btn btn-primary">
+                <a th:href="@{|${hiringPath}/interviews/create|}" class="btn btn-primary">
                     <i class="bi bi-plus-circle me-1"></i>Schedule Interview
                 </a>
             </div>
@@ -36,7 +36,7 @@
                 <div class="card p-5">
                     <i class="bi bi-calendar2-x text-muted display-4 mb-3"></i>
                     <h5 class="text-muted">No upcoming interviews in the next 2 weeks</h5>
-                    <a href="/hiring/interviews/create" class="btn btn-primary mt-3">
+                    <a th:href="@{|${hiringPath}/interviews/create|}" class="btn btn-primary mt-3">
                         <i class="bi bi-plus-circle me-1"></i>Schedule an Interview
                     </a>
                 </div>
@@ -75,7 +75,7 @@
                                 <tbody>
                                     <tr th:each="interview : ${interviews}" class="interview-row">
                                         <td>
-                                            <a th:href="@{/hiring/candidates/{id}(id=${interview.candidate?.id})}"
+                                            <a th:href="@{|${hiringPath}/candidates/${interview.candidate?.id}|}"
                                                class="text-decoration-none fw-semibold"
                                                th:text="${interview.candidate?.fullName ?: 'N/A'}">Candidate</a>
                                         </td>
@@ -97,11 +97,11 @@
                                         </td>
                                         <td>
                                             <div class="d-flex gap-1">
-                                                <a th:href="@{/hiring/interviews/{id}(id=${interview.id})}"
+                                                <a th:href="@{|${hiringPath}/interviews/${interview.id}|}"
                                                    class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a th:href="@{/hiring/interviews/{id}/feedback(id=${interview.id})}"
+                                                <a th:href="@{|${hiringPath}/interviews/${interview.id}/feedback|}"
                                                    class="btn btn-sm btn-outline-success"
                                                    th:if="${interview.status == 'SCHEDULED'}">
                                                     <i class="bi bi-chat-dots"></i>

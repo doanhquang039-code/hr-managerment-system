@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/hiring/candidates")
+@RequestMapping({"/hiring/candidates", "/admin/candidates"})
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN','HR','HIRING','MANAGER')")
 public class CandidateController {
@@ -56,14 +56,14 @@ public class CandidateController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteCandidate(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String deleteCandidate(@PathVariable Integer id, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.deleteCandidate(id);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate deleted successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error deleting candidate: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates";
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates";
     }
 
     @GetMapping("/create")
@@ -74,14 +74,14 @@ public class CandidateController {
     }
 
     @PostMapping("/create")
-    public String createCandidate(@ModelAttribute Candidate candidate, RedirectAttributes redirectAttributes) {
+    public String createCandidate(@ModelAttribute Candidate candidate, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.createCandidate(candidate);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate created successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating candidate: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates";
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates";
     }
 
     @GetMapping("/{id}")
@@ -101,73 +101,73 @@ public class CandidateController {
 
     @PostMapping("/{id}/edit")
     public String editCandidate(@PathVariable Integer id, @ModelAttribute Candidate candidate, 
-                               RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.updateCandidate(id, candidate);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating candidate: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates/" + id;
     }
 
     @PostMapping("/{id}/move-stage")
     public String moveToStage(@PathVariable Integer id, @RequestParam String stage, 
-                             RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.moveToStage(id, stage);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate moved to " + stage + " stage!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error moving candidate: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates/" + id;
     }
 
     @PostMapping("/{id}/score")
     public String updateScore(@PathVariable Integer id, @RequestParam Integer score, 
-                             RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.updateScore(id, score);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate score updated!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating score: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates/" + id;
     }
 
     @PostMapping("/{id}/notes")
     public String addNotes(@PathVariable Integer id, @RequestParam String notes, 
-                          RedirectAttributes redirectAttributes) {
+                            RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.addNotes(id, notes);
             redirectAttributes.addFlashAttribute("successMessage", "Notes added successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error adding notes: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates/" + id;
     }
 
     @PostMapping("/{id}/hire")
-    public String hireCandidate(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String hireCandidate(@PathVariable Integer id, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.hireCandidate(id);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate hired successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error hiring candidate: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates/" + id;
     }
 
     @PostMapping("/{id}/reject")
     public String rejectCandidate(@PathVariable Integer id, @RequestParam String reason, 
-                                 RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             candidateService.rejectCandidate(id, reason);
             redirectAttributes.addFlashAttribute("successMessage", "Candidate rejected!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error rejecting candidate: " + e.getMessage());
         }
-        return "redirect:/hiring/candidates/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/candidates/" + id;
     }
 }
 

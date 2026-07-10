@@ -97,6 +97,12 @@ public class SecurityConfig {
                 .requestMatchers("/admin/groups/**").hasAnyRole("ADMIN", "MANAGER")
                 .requestMatchers("/admin/cache/**").hasRole("ADMIN")
                 .requestMatchers("/admin/cloud/**").hasRole("ADMIN")
+                .requestMatchers(
+                    "/admin/jobs/**",
+                    "/admin/candidates/**",
+                    "/admin/interviews/**",
+                    "/admin/postings/**"
+                ).permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/videos/**").permitAll()
                 .requestMatchers("/user1/**", "/user/**", "/notifications/**").authenticated()

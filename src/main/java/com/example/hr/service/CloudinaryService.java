@@ -59,7 +59,7 @@ public class CloudinaryService {
                 ));
     }
 
-    /** Upload video â€” tráº£ vá» full Map Ä‘á»ƒ láº¥y public_id, duration, secure_url */
+    /** Upload video â€” tráº£ vá»  full Map Ä‘á»ƒ láº¥y public_id, duration, secure_url */
     public Map<?, ?> uploadVideo(MultipartFile file, String folder) throws IOException {
         // DÃ¹ng uploadLarge vá»›i InputStream Ä‘á»ƒ trÃ¡nh OutOfMemoryError vá»›i video lá»›n
         try (java.io.InputStream is = file.getInputStream()) {
@@ -70,6 +70,35 @@ public class CloudinaryService {
                             "chunk_size", 6_000_000   // 6MB per chunk
                     ));
         }
+    }
+
+    /**
+     * Upload video từ InputStream (dùng cho async upload từ file tạm trên disk).
+     * Hỗ trợ tên file gốc để Cloudinary nhận dạng format chính xác hơn.
+     *
+     * @param is           InputStream của file video
+     * @param originalName Tên file gốc (để Cloudinary biết format)
+     * @param folder       Thư mục Cloudinary
+     */
+    public Map<?, ?> uploadVideoFromStream(java.io.InputStream is, String originalName, String folder)
+            throws IOException {
+        return cloudinary.uploader().uploadLarge(is,
+                ObjectUtils.asMap(
+                        "resource_type", "video",
+                        "folder", folder,
+                        "public_id", sanitizePublicId(originalName),
+                        "chunk_size", 6_000_000,  // 6MB per chunk
+                        "use_filename", true,
+                        "unique_filename", true
+                ));
+    }
+
+    /** Tạo public_id an toàn từ tên file gốc (bỏ ký tự đặc biệt) */
+    private String sanitizePublicId(String filename) {
+        if (filename == null) return "video_" + System.currentTimeMillis();
+        // Bỏ extension, thay ký tự không hợp lệ bằng _
+        String name = filename.replaceAll("\\.[^.]+$", ""); // bỏ extension
+        return name.replaceAll("[^a-zA-Z0-9_\\-]", "_").toLowerCase();
     }
 
     /** Upload áº£nh (avatar, thumbnail...) */

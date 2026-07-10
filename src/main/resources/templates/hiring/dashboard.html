@@ -197,22 +197,22 @@
                             </div>
                             <div class="card-body">
                                 <div class="d-grid gap-2">
-                                    <a href="/hiring/jobs/create" class="btn btn-outline-primary">
+                                    <a th:href="@{|${hiringPath}/jobs/create|}" class="btn btn-outline-primary">
                                         <i class="bi bi-plus-circle me-2"></i>Create Job Posting
                                     </a>
-                                    <a href="/hiring/candidates/create" class="btn btn-outline-success">
+                                    <a th:href="@{|${hiringPath}/candidates/create|}" class="btn btn-outline-success">
                                         <i class="bi bi-person-plus me-2"></i>Add Candidate
                                     </a>
-                                    <a href="/hiring/interviews/create" class="btn btn-outline-info">
+                                    <a th:href="@{|${hiringPath}/interviews/create|}" class="btn btn-outline-info">
                                         <i class="bi bi-calendar-plus me-2"></i>Schedule Interview
                                     </a>
-                                    <a href="/hiring/jobs/closing-soon" class="btn btn-outline-warning">
+                                    <a th:href="@{|${hiringPath}/jobs/closing-soon|}" class="btn btn-outline-warning">
                                         <i class="bi bi-clock me-2"></i>Jobs Closing Soon
                                     </a>
-                                    <a href="/hiring/minigame" class="btn btn-outline-primary">
+                                    <a th:href="${hiringPath.startsWith('/admin') ? '/admin/minigame' : '/hiring/minigame'}" class="btn btn-outline-primary">
                                         <i class="bi bi-controller me-2"></i>Play Minigame
                                     </a>
-                                    <a href="/sales/products" class="btn btn-outline-success">
+                                    <a th:href="${hiringPath.startsWith('/admin') ? '/admin/sales/products' : '/sales/products'}" class="btn btn-outline-success">
                                         <i class="bi bi-shop me-2"></i>Products Marketplace
                                     </a>
                                 </div>
@@ -280,7 +280,7 @@
                             </div>
                             <div class="card-body">
                                 <div th:if="${recentJobs.empty}" class="text-muted text-center py-3">
-                                    No recent job postings. <a href="/hiring/jobs/create">Create one</a>
+                                    No recent job postings. <a th:href="@{|${hiringPath}/jobs/create|}">Create one</a>
                                 </div>
                                 <div th:each="job : ${recentJobs}" class="d-flex justify-content-between align-items-center mb-2">
                                     <div>
@@ -304,7 +304,7 @@
                             </div>
                             <div class="card-body">
                                 <div th:if="${upcomingInterviews.empty}" class="text-muted text-center py-3">
-                                    No upcoming interviews. <a href="/hiring/interviews/create">Schedule one</a>
+                                    No upcoming interviews. <a th:href="@{|${hiringPath}/interviews/create|}">Schedule one</a>
                                 </div>
                                 <div th:each="interview : ${upcomingInterviews}" class="d-flex justify-content-between align-items-center mb-2">
                                     <div>
@@ -331,7 +331,7 @@
                             </div>
                             <div class="card-body">
                                 <div th:if="${recentCandidates.empty}" class="text-muted text-center py-3">
-                                    No recent candidates. <a href="/hiring/candidates/create">Add one</a>
+                                    No recent candidates. <a th:href="@{|${hiringPath}/candidates/create|}">Add one</a>
                                 </div>
                                 <div class="table-responsive" th:if="${!recentCandidates.empty}">
                                     <table class="table table-hover">
@@ -357,7 +357,7 @@
                                                 <td th:text="${candidate.overallScore ?: 'N/A'}">85</td>
                                                 <td th:text="${#temporals.format(candidate.appliedAt, 'dd/MM/yyyy')}">30/04/2026</td>
                                                 <td>
-                                                    <a th:href="@{/hiring/candidates/{id}(id=${candidate.id})}" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <a th:href="@{|${hiringPath}/candidates/${candidate.id}|}" class="btn btn-sm btn-outline-primary">View</a>
                                                 </td>
                                             </tr>
                                         </tbody>

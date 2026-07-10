@@ -37,10 +37,10 @@
                     </div>
                 </div>
                 <div class="d-flex gap-2">
-                    <a th:href="@{/hiring/jobs/{id}/edit(id=${job.id})}" class="btn btn-outline-warning">
+                    <a th:href="@{|${hiringPath}/jobs/${job.id}/edit|}" class="btn btn-outline-warning">
                         <i class="bi bi-pencil me-1"></i>Edit
                     </a>
-                    <a th:href="@{/hiring/jobs}" class="btn btn-outline-secondary">
+                    <a th:href="@{|${hiringPath}/jobs|}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left me-1"></i>Back
                     </a>
                 </div>
@@ -88,14 +88,14 @@
                     <div class="card">
                         <div class="card-header"><h6 class="mb-0"><i class="bi bi-lightning me-2"></i>Actions</h6></div>
                         <div class="card-body d-grid gap-2">
-                            <form th:if="${job.status == 'DRAFT'}" th:action="@{/hiring/jobs/{id}/publish(id=${job.id})}" method="post">
+                             <form th:if="${job.status == 'DRAFT'}" th:action="@{|${hiringPath}/jobs/${job.id}/publish|}" method="post">
                                 <button type="submit" class="btn btn-success w-100"><i class="bi bi-upload me-1"></i>Publish</button>
                             </form>
-                            <form th:if="${job.status == 'ACTIVE'}" th:action="@{/hiring/jobs/{id}/close(id=${job.id})}" method="post"
+                            <form th:if="${job.status == 'ACTIVE'}" th:action="@{|${hiringPath}/jobs/${job.id}/close|}" method="post"
                                   onsubmit="return confirm('Close this job posting?')">
                                 <button type="submit" class="btn btn-warning w-100"><i class="bi bi-lock me-1"></i>Close</button>
                             </form>
-                            <form th:action="@{/hiring/jobs/{id}/delete(id=${job.id})}" method="post"
+                            <form th:action="@{|${hiringPath}/jobs/${job.id}/delete|}" method="post"
                                   onsubmit="return confirm('Delete this job posting?')">
                                 <button type="submit" class="btn btn-outline-danger w-100"><i class="bi bi-trash me-1"></i>Delete</button>
                             </form>

@@ -40,32 +40,9 @@
     </style>
 </head>
 <body>
-<div class="sidebar">
-    <div class="sidebar-logo">HRMS ADMIN</div>
-    <hr>
-    <a th:href="@{/admin/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
-    <a th:href="@{/admin/users}"><i class="bi bi-people"></i> Nhân viên</a>
-    <a th:href="@{/admin/groups}"><i class="bi bi-diagram-3"></i> Groups</a>
-    <a class="active nav-parent" data-submenu-toggle="department-options">
-        <span class="left"><i class="bi bi-building"></i> Phòng ban</span>
-        <i class="bi bi-caret-down-fill"></i>
-    </a>
-    <div id="department-options" class="submenu">
-        <a th:href="@{/admin/departments}" class="active">Tất cả phòng ban</a>
-        <a th:each="d : ${allDepartments}" th:href="@{/admin/departments/{id}/members(id=${d.id})}" th:text="${d.departmentName}">Phòng ban</a>
-    </div>
-    <a th:href="@{/admin/positions}"><i class="bi bi-briefcase"></i> Chức vụ</a>
-    <a th:href="@{/admin/reports}"><i class="bi bi-bar-chart-line"></i> Báo cáo</a>
-    <a th:href="@{/admin/announcements}"><i class="bi bi-megaphone"></i> Thông báo công ty</a>
-    <form th:action="@{/logout}" method="post" class="px-3 mt-3">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-        <button type="submit" class="btn btn-outline-light btn-sm w-100">
-            <i class="bi bi-box-arrow-right"></i> Đăng xuất
-        </button>
-    </form>
-</div>
+<div th:replace="fragments/admin-sidebar :: sidebar"></div>
 
-<main class="main">
+<main class="admin-main">
     <section class="page-head">
         <div>
             <h1>Danh sách phòng ban</h1>

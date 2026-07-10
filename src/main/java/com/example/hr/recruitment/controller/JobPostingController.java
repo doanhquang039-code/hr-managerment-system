@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/hiring/jobs")
+@RequestMapping({"/hiring/jobs", "/admin/jobs"})
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN','HR','HIRING','MANAGER')")
 public class JobPostingController {
@@ -78,14 +78,14 @@ public class JobPostingController {
     }
 
     @PostMapping("/create")
-    public String createJob(@ModelAttribute JobPosting job, RedirectAttributes redirectAttributes) {
+    public String createJob(@ModelAttribute JobPosting job, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             jobPostingService.createJobPosting(job);
             redirectAttributes.addFlashAttribute("successMessage", "Job posting created successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error creating job posting: " + e.getMessage());
         }
-        return "redirect:/hiring/jobs";
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/jobs";
     }
 
     @GetMapping("/{id}")
@@ -107,47 +107,47 @@ public class JobPostingController {
 
     @PostMapping("/{id}/edit")
     public String editJob(@PathVariable Integer id, @ModelAttribute JobPosting job, 
-                         RedirectAttributes redirectAttributes) {
+                          RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             jobPostingService.updateJobPosting(id, job);
             redirectAttributes.addFlashAttribute("successMessage", "Job posting updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating job posting: " + e.getMessage());
         }
-        return "redirect:/hiring/jobs/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/jobs/" + id;
     }
 
     @PostMapping("/{id}/publish")
-    public String publishJob(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String publishJob(@PathVariable Integer id, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             jobPostingService.publishJobPosting(id);
             redirectAttributes.addFlashAttribute("successMessage", "Job posting published successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error publishing job posting: " + e.getMessage());
         }
-        return "redirect:/hiring/jobs/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/jobs/" + id;
     }
 
     @PostMapping("/{id}/close")
-    public String closeJob(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String closeJob(@PathVariable Integer id, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             jobPostingService.closeJobPosting(id);
             redirectAttributes.addFlashAttribute("successMessage", "Job posting closed successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error closing job posting: " + e.getMessage());
         }
-        return "redirect:/hiring/jobs/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/jobs/" + id;
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteJob(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String deleteJob(@PathVariable Integer id, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             jobPostingService.deleteJobPosting(id);
             redirectAttributes.addFlashAttribute("successMessage", "Job posting deleted successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error deleting job posting: " + e.getMessage());
         }
-        return "redirect:/hiring/jobs";
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/jobs";
     }
 
     @GetMapping("/closing-soon")

@@ -31,7 +31,7 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2"><i class="bi bi-people me-2"></i>Candidates</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="/hiring/candidates/create" class="btn btn-primary">
+                    <a th:href="@{|${hiringPath}/candidates/create|}" class="btn btn-primary">
                         <i class="bi bi-person-plus me-1"></i>Add Candidate
                     </a>
                 </div>
@@ -114,7 +114,7 @@
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="bi bi-search me-1"></i>Filter
                             </button>
-                            <a href="/hiring/candidates" class="btn btn-outline-secondary">
+                            <a th:href="@{|${hiringPath}/candidates|}" class="btn btn-outline-secondary">
                                 <i class="bi bi-x-circle me-1"></i>Clear
                             </a>
                         </div>
@@ -126,7 +126,7 @@
             <div th:if="${candidates.empty}" class="text-center py-5">
                 <i class="bi bi-people fs-1 text-muted"></i>
                 <p class="text-muted mt-2">No candidates found.</p>
-                <a href="/hiring/candidates/create" class="btn btn-primary">Add First Candidate</a>
+                <a th:href="@{|${hiringPath}/candidates/create|}" class="btn btn-primary">Add First Candidate</a>
             </div>
 
             <div class="row" th:if="${!candidates.empty}">
@@ -185,10 +185,10 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted" th:text="${#temporals.format(candidate.appliedAt, 'dd/MM/yyyy')}">30/04/2026</small>
                                 <div class="btn-group" role="group">
-                                    <a th:href="@{/hiring/candidates/{id}(id=${candidate.id})}" class="btn btn-sm btn-outline-primary">
+                                    <a th:href="@{|${hiringPath}/candidates/${candidate.id}|}" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a th:href="@{/hiring/candidates/{id}/edit(id=${candidate.id})}" class="btn btn-sm btn-outline-secondary">
+                                    <a th:href="@{|${hiringPath}/candidates/${candidate.id}/edit|}" class="btn btn-sm btn-outline-secondary">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <div class="btn-group" role="group">
@@ -197,7 +197,7 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li th:if="${candidate.currentStage == 'APPLIED'}">
-                                                <form th:action="@{/hiring/candidates/{id}/move-stage(id=${candidate.id})}" method="post" style="display: inline;">
+                                                <form th:action="@{|${hiringPath}/candidates/${candidate.id}/move-stage|}" method="post" style="display: inline;">
                                                     <input type="hidden" name="stage" value="SCREENING">
                                                     <button type="submit" class="dropdown-item">
                                                         <i class="bi bi-arrow-right me-2"></i>Move to Screening
@@ -205,7 +205,7 @@
                                                 </form>
                                             </li>
                                             <li th:if="${candidate.currentStage == 'SCREENING'}">
-                                                <form th:action="@{/hiring/candidates/{id}/move-stage(id=${candidate.id})}" method="post" style="display: inline;">
+                                                <form th:action="@{|${hiringPath}/candidates/${candidate.id}/move-stage|}" method="post" style="display: inline;">
                                                     <input type="hidden" name="stage" value="INTERVIEW">
                                                     <button type="submit" class="dropdown-item">
                                                         <i class="bi bi-arrow-right me-2"></i>Move to Interview
@@ -213,13 +213,13 @@
                                                 </form>
                                             </li>
                                             <li th:if="${candidate.currentStage == 'INTERVIEW'}">
-                                                <a th:href="@{/hiring/interviews/create(candidateId=${candidate.id})}" class="dropdown-item">
+                                                <a th:href="@{|${hiringPath}/interviews/create|(candidateId=${candidate.id})}" class="dropdown-item">
                                                     <i class="bi bi-calendar-plus me-2"></i>Schedule Interview
                                                 </a>
                                             </li>
                                             <li><hr class="dropdown-divider"></li>
                                             <li th:if="${candidate.isActive()}">
-                                                <form th:action="@{/hiring/candidates/{id}/hire(id=${candidate.id})}" method="post" style="display: inline;">
+                                                <form th:action="@{|${hiringPath}/candidates/${candidate.id}/hire|}" method="post" style="display: inline;">
                                                     <button type="submit" class="dropdown-item text-success">
                                                         <i class="bi bi-check-circle me-2"></i>Hire
                                                     </button>
@@ -245,7 +245,7 @@
                                     <h5 class="modal-title">Reject Candidate</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                                <form th:action="@{/hiring/candidates/{id}/reject(id=${candidate.id})}" method="post">
+                                <form th:action="@{|${hiringPath}/candidates/${candidate.id}/reject|}" method="post">
                                     <div class="modal-body">
                                         <p>Are you sure you want to reject <strong th:text="${candidate.fullName}">this candidate</strong>?</p>
                                         <div class="mb-3">

@@ -19,7 +19,7 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2"><i class="bi bi-calendar-event me-2"></i>Interviews</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/hiring/interviews/create" class="btn btn-primary">
+                        <a th:href="@{|${hiringPath}/interviews/create|}" class="btn btn-primary">
                             <i class="bi bi-calendar-plus me-1"></i>Schedule Interview
                         </a>
                     </div>
@@ -127,7 +127,7 @@
                                 <button type="submit" class="btn btn-primary me-2">
                                     <i class="bi bi-search me-1"></i>Filter
                                 </button>
-                                <a href="/hiring/interviews" class="btn btn-outline-secondary">
+                                <a th:href="@{|${hiringPath}/interviews|}" class="btn btn-outline-secondary">
                                     <i class="bi bi-x-circle me-1"></i>Clear
                                 </a>
                             </div>
@@ -147,7 +147,7 @@
                         <div th:if="${interviews.empty}" class="text-center py-4">
                             <i class="bi bi-calendar-event fs-1 text-muted"></i>
                             <p class="text-muted mt-2">No interviews found.</p>
-                            <a href="/hiring/interviews/create" class="btn btn-primary">Schedule First Interview</a>
+                            <a th:href="@{|${hiringPath}/interviews/create|}" class="btn btn-primary">Schedule First Interview</a>
                         </div>
                         
                         <div class="table-responsive" th:if="${!interviews.empty}">
@@ -159,12 +159,12 @@
                                         <th>Type</th>
                                         <th>Interviewer</th>
                                         <th>
-                                            <a th:href="@{/hiring/interviews(search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy='scheduledTime',sortDir=${sortField == 'scheduledTime' ? reverseSortDir : 'desc'})}">Scheduled Time</a>
+                                            <a th:href="@{|${hiringPath}/interviews|(search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy='scheduledTime',sortDir=${sortField == 'scheduledTime' ? reverseSortDir : 'desc'})}">Scheduled Time</a>
                                         </th>
                                         <th>Duration</th>
                                         <th>Status</th>
                                         <th>
-                                            <a th:href="@{/hiring/interviews(search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy='overallScore',sortDir=${sortField == 'overallScore' ? reverseSortDir : 'desc'})}">Score</a>
+                                            <a th:href="@{|${hiringPath}/interviews|(search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy='overallScore',sortDir=${sortField == 'overallScore' ? reverseSortDir : 'desc'})}">Score</a>
                                         </th>
                                         <th data-no-sort data-no-filter>Actions</th>
                                     </tr>
@@ -208,10 +208,10 @@
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">
-                                                <a th:href="@{/hiring/interviews/{id}(id=${interview.id})}" class="btn btn-sm btn-outline-primary">
+                                                <a th:href="@{|${hiringPath}/interviews/${interview.id}|}" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a th:href="@{/hiring/interviews/{id}/edit(id=${interview.id})}" 
+                                                <a th:href="@{|${hiringPath}/interviews/${interview.id}/edit|}" 
                                                    th:if="${interview.status == 'SCHEDULED'}" class="btn btn-sm btn-outline-secondary">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
@@ -221,7 +221,7 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li th:if="${interview.status == 'SCHEDULED'}">
-                                                            <a th:href="@{/hiring/interviews/{id}/feedback(id=${interview.id})}" class="dropdown-item">
+                                                            <a th:href="@{|${hiringPath}/interviews/${interview.id}/feedback|}" class="dropdown-item">
                                                                 <i class="bi bi-chat-text me-2"></i>Add Feedback
                                                             </a>
                                                         </li>
@@ -231,7 +231,7 @@
                                                             </button>
                                                         </li>
                                                         <li th:if="${interview.status == 'SCHEDULED'}">
-                                                            <form th:action="@{/hiring/interviews/{id}/no-show(id=${interview.id})}" method="post" style="display: inline;">
+                                                            <form th:action="@{|${hiringPath}/interviews/${interview.id}/no-show|}" method="post" style="display: inline;">
                                                                 <button type="submit" class="dropdown-item text-warning">
                                                                     <i class="bi bi-person-x me-2"></i>Mark No Show
                                                                 </button>
@@ -257,15 +257,15 @@
                 <nav th:if="${totalPages > 1}" class="mt-3">
                     <ul class="pagination justify-content-center">
                         <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                            <a class="page-link" th:href="@{/hiring/interviews(page=${currentPage - 1},size=10,search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy=${sortField},sortDir=${sortDir})}">Previous</a>
+                            <a class="page-link" th:href="@{|${hiringPath}/interviews|(page=${currentPage - 1},size=10,search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy=${sortField},sortDir=${sortDir})}">Previous</a>
                         </li>
                         <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                             th:classappend="${i == currentPage} ? 'active'">
                             <a class="page-link" th:text="${i + 1}"
-                               th:href="@{/hiring/interviews(page=${i},size=10,search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy=${sortField},sortDir=${sortDir})}">1</a>
+                               th:href="@{|${hiringPath}/interviews|(page=${i},size=10,search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy=${sortField},sortDir=${sortDir})}">1</a>
                         </li>
                         <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
-                            <a class="page-link" th:href="@{/hiring/interviews(page=${currentPage + 1},size=10,search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy=${sortField},sortDir=${sortDir})}">Next</a>
+                            <a class="page-link" th:href="@{|${hiringPath}/interviews|(page=${currentPage + 1},size=10,search=${searchKeyword},status=${selectedStatus},type=${selectedType},startDate=${startDate},endDate=${endDate},sortBy=${sortField},sortDir=${sortDir})}">Next</a>
                         </li>
                     </ul>
                 </nav>
@@ -278,7 +278,7 @@
                                 <h5 class="modal-title">Cancel Interview</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
-                            <form th:action="@{/hiring/interviews/{id}/cancel(id=${interview.id})}" method="post">
+                            <form th:action="@{|${hiringPath}/interviews/${interview.id}/cancel|}" method="post">
                                 <div class="modal-body">
                                     <p>Are you sure you want to cancel this interview?</p>
                                     <div class="mb-3">

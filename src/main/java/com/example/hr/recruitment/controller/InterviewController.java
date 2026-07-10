@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
 
 @Controller
-@RequestMapping("/hiring/interviews")
+@RequestMapping({"/hiring/interviews", "/admin/interviews"})
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN') or hasRole('HR') or hasRole('MANAGER')")
 public class InterviewController {
@@ -81,14 +81,14 @@ public class InterviewController {
     }
 
     @PostMapping("/create")
-    public String createInterview(@ModelAttribute Interview interview, RedirectAttributes redirectAttributes) {
+    public String createInterview(@ModelAttribute Interview interview, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             interviewService.scheduleInterview(interview);
             redirectAttributes.addFlashAttribute("successMessage", "Interview scheduled successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error scheduling interview: " + e.getMessage());
         }
-        return "redirect:/hiring/interviews";
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/interviews";
     }
 
     @GetMapping("/{id}")
@@ -109,14 +109,14 @@ public class InterviewController {
 
     @PostMapping("/{id}/edit")
     public String editInterview(@PathVariable Integer id, @ModelAttribute Interview interview, 
-                               RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             interviewService.updateInterview(id, interview);
             redirectAttributes.addFlashAttribute("successMessage", "Interview updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating interview: " + e.getMessage());
         }
-        return "redirect:/hiring/interviews/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/interviews/" + id;
     }
 
     @GetMapping("/{id}/feedback")
@@ -128,12 +128,13 @@ public class InterviewController {
 
     @PostMapping("/{id}/feedback")
     public String submitFeedback(@PathVariable Integer id,
-                                @RequestParam String feedback,
-                                @RequestParam Integer technicalScore,
-                                @RequestParam Integer communicationScore,
-                                @RequestParam Integer culturalFitScore,
-                                @RequestParam String recommendation,
-                                RedirectAttributes redirectAttributes) {
+                                 @RequestParam String feedback,
+                                 @RequestParam Integer technicalScore,
+                                 @RequestParam Integer communicationScore,
+                                 @RequestParam Integer culturalFitScore,
+                                 @RequestParam String recommendation,
+                                 RedirectAttributes redirectAttributes,
+                                 jakarta.servlet.http.HttpServletRequest request) {
         try {
             interviewService.completeInterview(id, feedback, technicalScore, 
                     communicationScore, culturalFitScore, recommendation);
@@ -141,30 +142,30 @@ public class InterviewController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error submitting feedback: " + e.getMessage());
         }
-        return "redirect:/hiring/interviews/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/interviews/" + id;
     }
 
     @PostMapping("/{id}/cancel")
     public String cancelInterview(@PathVariable Integer id, @RequestParam String reason, 
-                                 RedirectAttributes redirectAttributes) {
+                                  RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             interviewService.cancelInterview(id, reason);
             redirectAttributes.addFlashAttribute("successMessage", "Interview cancelled!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error cancelling interview: " + e.getMessage());
         }
-        return "redirect:/hiring/interviews/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/interviews/" + id;
     }
 
     @PostMapping("/{id}/no-show")
-    public String markNoShow(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String markNoShow(@PathVariable Integer id, RedirectAttributes redirectAttributes, jakarta.servlet.http.HttpServletRequest request) {
         try {
             interviewService.markNoShow(id);
             redirectAttributes.addFlashAttribute("successMessage", "Interview marked as no-show!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error marking no-show: " + e.getMessage());
         }
-        return "redirect:/hiring/interviews/" + id;
+        return "redirect:" + HiringPathHelper.getRedirectPrefix(request) + "/interviews/" + id;
     }
 
     @GetMapping("/upcoming")

@@ -40,8 +40,16 @@
         .btn-upload { background: linear-gradient(135deg, #7c3aed, #6366f1); border: none; color: white; padding: 13px 32px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; width: 100%; transition: all 0.2s; }
         .btn-upload:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124,58,237,0.4); color: white; }
         .btn-upload:disabled { opacity: 0.6; transform: none; }
-        .progress-wrap { display: none; margin-top: 16px; }
+        .progress-wrap { display: none; margin-top: 20px; }
         .section-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #f1f5f9; }
+        /* ===== ASYNC PROGRESS STYLES ===== */
+        .progress-card { background: linear-gradient(135deg,#f5f3ff,#eef2ff); border:1.5px solid #c4b5fd; border-radius:16px; padding:20px 22px; }
+        .progress-status { font-size:0.82rem; font-weight:600; color:#5b21b6; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+        .progress-bar-real { height:10px; border-radius:10px; background:#ede9fe; overflow:hidden; }
+        .progress-bar-fill { height:100%; border-radius:10px; background:linear-gradient(90deg,#7c3aed,#6366f1); transition:width 0.4s ease; }
+        .progress-note { font-size:0.75rem; color:#6b7280; margin-top:8px; }
+        .alert-upload-error { background:#fef2f2; border:1.5px solid #fecaca; border-radius:12px; padding:14px 18px; color:#b91c1c; font-size:0.88rem; margin-top:16px; display:none; }
+        .alert-upload-success { background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:12px; padding:14px 18px; color:#15803d; font-size:0.88rem; margin-top:16px; display:none; }
 
       /* ===== LANGUAGE TOGGLE ===== */
       .lang-btn { background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;color:#94a3b8!important;border-radius:8px!important;padding:4px 10px!important;font-size:0.75rem!important;font-weight:600!important;cursor:pointer!important;transition:all 0.2s!important; }
@@ -177,40 +185,41 @@
                     </div>
                 </div>
 
-                <!-- Progress bar -->
+                <!-- Async Progress UI -->
                 <div class="progress-wrap" id="progressWrap">
-                    <div style="font-size:0.85rem;font-weight:600;color:#7c3aed;margin-bottom:6px;">
-                        <i class="bi bi-cloud-upload me-1"></i>Đang upload lên Cloudinary...
+                    <div class="progress-card">
+                        <div class="progress-status">
+                            <span class="spinner-border spinner-border-sm text-violet" role="status" id="progressSpinner" style="color:#7c3aed;"></span>
+                            <span id="progressMsg">Đang xử lý...</span>
+                            <span id="progressPct" style="margin-left:auto;font-size:0.9rem;color:#7c3aed;font-weight:700;">0%</span>
+                        </div>
+                        <div class="progress-bar-real">
+                            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+                        </div>
+                        <div class="progress-note"><i class="bi bi-info-circle me-1"></i>Video lớn có thể mất vài phút upload lên Cloudinary. <strong>Đừng đóng tab này.</strong></div>
                     </div>
-                    <div class="progress" style="height:8px;border-radius:8px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                             style="width:100%;background:linear-gradient(90deg,#7c3aed,#6366f1);"></div>
-                    </div>
-                    <div style="font-size:0.78rem;color:#64748b;margin-top:6px;">Video lớn có thể mất vài phút. Vui lòng không đóng trang.</div>
+                </div>
+
+                <!-- Error / Success alert (hiện sau khi async done/failed) -->
+                <div class="alert-upload-error" id="uploadError">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span id="uploadErrorMsg"></span>
+                </div>
+                <div class="alert-upload-success" id="uploadSuccess">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span id="uploadSuccessMsg"></span>
+                    <a id="viewVideoLink" href="#" class="ms-2 fw-bold">Xem thư viện →</a>
                 </div>
 
                 <button type="submit" class="btn-upload btn mt-4" id="submitBtn">
                     <i class="bi bi-cloud-upload-fill me-2"></i>Upload lên Cloudinary
-                </button>
-                <button type="button" class="btn btn-danger mt-4 ms-2" onclick="document.getElementById('uploadForm').submit()">
-                    🔴 Test Submit (Debug)
                 </button>
             </form>
         </div>
     </div>
 </div>
 
-<!-- DEBUG FORM - xóa sau khi test xong -->
-<div style="position:fixed;bottom:20px;right:20px;background:red;padding:15px;border-radius:8px;z-index:9999;">
-    <form th:action="@{/admin/videos/upload}" method="post" enctype="multipart/form-data">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <input type="file" name="file" accept="video/*" style="color:white;display:block;margin-bottom:8px;"/>
-        <input type="text" name="title" value="Test Debug" style="display:block;margin-bottom:8px;width:200px;"/>
-        <button type="submit" style="background:white;color:red;border:none;padding:8px 16px;cursor:pointer;font-weight:bold;">
-            SUBMIT TEST
-        </button>
-    </form>
-</div>
+<!-- Debug form đã được xóa -->
 
 <script>
     document.querySelectorAll('[data-submenu-toggle]').forEach((toggle) => {
@@ -260,13 +269,116 @@
         return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
-        var btn = document.getElementById('submitBtn');
-        var wrap = document.getElementById('progressWrap');
+    // ================================================================
+    // ASYNC UPLOAD: Dùng fetch() thay vì form submit thông thường
+    // 1. Gửi FormData qua fetch → nhận jobId ngay lập tức
+    // 2. Polling GET /upload-status/{jobId} mỗi 3 giây
+    // 3. Cập nhật progress bar + thông báo kết quả
+    // ================================================================
+
+    let pollingTimer = null;
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Không submit form thông thường
+
+        const btn      = document.getElementById('submitBtn');
+        const wrap     = document.getElementById('progressWrap');
+        const errBox   = document.getElementById('uploadError');
+        const okBox    = document.getElementById('uploadSuccess');
+        const fileInput = document.getElementById('fileInput');
+
+        // Reset UI
+        errBox.style.display = 'none';
+        okBox.style.display  = 'none';
         btn.disabled = true;
-        btn.textContent = 'Đang upload...';
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi file...';
         wrap.style.display = 'block';
+        setProgress(5, 'Đang kiểm tra file bảo mật...');
+
+        // Build FormData từ form
+        const formData = new FormData(this);
+
+        try {
+            // Bước 1: Gửi file lên server — trả về ngay với {jobId}
+            const response = await fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                // Validation thất bại (file giả mạo, sai loại, v.v.)
+                showError(data.error || 'Upload thất bại. Vui lòng thử lại.');
+                resetButton();
+                return;
+            }
+
+            // Bước 2: Đã có jobId — bắt đầu polling
+            const jobId = data.jobId;
+            setProgress(10, 'File hợp lệ. Đang upload lên Cloudinary...');
+            btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Đang upload trong nền...';
+            startPolling(jobId);
+
+        } catch (err) {
+            showError('Lỗi kết nối: ' + err.message);
+            resetButton();
+        }
     });
+
+    function startPolling(jobId) {
+        pollingTimer = setInterval(async () => {
+            try {
+                const res  = await fetch('/admin/videos/upload-status/' + jobId);
+                const data = await res.json();
+
+                setProgress(data.progress || 0, data.message || '');
+
+                if (data.status === 'DONE') {
+                    clearInterval(pollingTimer);
+                    setProgress(100, 'Hoàn thành!');
+                    document.getElementById('progressSpinner').style.display = 'none';
+
+                    const link = document.getElementById('viewVideoLink');
+                    link.href  = '/admin/videos';
+                    document.getElementById('uploadSuccessMsg').textContent =
+                        '✅ Upload thành công! Video đã được lưu vào thư viện.';
+                    document.getElementById('uploadSuccess').style.display = 'block';
+
+                    // Tự redirect sau 3 giây
+                    setTimeout(() => window.location.href = '/admin/videos', 3000);
+
+                } else if (data.status === 'FAILED') {
+                    clearInterval(pollingTimer);
+                    document.getElementById('progressSpinner').style.display = 'none';
+                    showError(data.errorDetail || 'Upload thất bại. Kiểm tra log server.');
+                    resetButton();
+                }
+            } catch (err) {
+                // Lỗi mạng tạm thời — tiếp tục poll
+                console.warn('Polling lỗi (sẽ thử lại):', err);
+            }
+        }, 3000); // Poll mỗi 3 giây
+    }
+
+    function setProgress(pct, msg) {
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressPct').textContent  = pct + '%';
+        document.getElementById('progressMsg').textContent  = msg;
+    }
+
+    function showError(msg) {
+        document.getElementById('progressWrap').style.display = 'none';
+        document.getElementById('uploadErrorMsg').textContent = msg;
+        document.getElementById('uploadError').style.display = 'block';
+    }
+
+    function resetButton() {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-cloud-upload-fill me-2"></i>Upload lên Cloudinary';
+    }
 </script>
 <script th:src="@{/js/lang-toggle.js}"></script>
 <script th:src="@{/js/hrms-settings.js}"></script>

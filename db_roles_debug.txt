@@ -1,0 +1,21 @@
+=== USER ROLES DEBUG ===
+ID: 1 | Username: admin | Legacy Role: ADMIN | Group Role: ADMIN
+ID: 2 | Username: hoang.nv | Legacy Role: USER | Group Role: USER
+ID: 3 | Username: lan.pt | Legacy Role: MANAGER | Group Role: MANAGER
+ID: 4 | Username: minh.td | Legacy Role: MANAGER | Group Role: MANAGER
+ID: 5 | Username: zalo_1774520588170 | Legacy Role: USER | Group Role: USER
+ID: 6 | Username: hung.nq | Legacy Role: USER | Group Role: USER
+ID: 7 | Username: doanhquang039@gmail.com | Legacy Role: USER | Group Role: USER
+ID: 8 | Username: tiktok_1775099414837 | Legacy Role: USER | Group Role: USER
+ID: 9 | Username: instagram_1775099421946 | Legacy Role: USER | Group Role: USER
+ID: 10 | Username: 12hhh4@gmail.com | Legacy Role: MANAGER | Group Role: MANAGER
+ID: 11 | Username: haihai07122000@gmail.com | Legacy Role: USER | Group Role: USER
+ID: 12 | Username: 224001778@daihocthudo.edu.vn | Legacy Role: USER | Group Role: USER
+ID: 13 | Username: 1234@gmail.com123 | Legacy Role: MANAGER | Group Role: MANAGER
+ID: 15 | Username: testquanly | Legacy Role: HIRING | Group Role: HIRING
+ID: 18 | Username: doanh1234 | Legacy Role: HIRING | Group Role: HIRING
+ID: 19 | Username: doanhquang041@gmail.com | Legacy Role: USER | Group Role: USER
+ID: 20 | Username: doanhquang040@gmail.com | Legacy Role: USER | Group Role: USER
+ID: 21 | Username: doanh123 | Legacy Role: HIRING | Group Role: HIRING
+ID: 22 | Username: s3duongtam@gmail.com | Legacy Role: USER | Group Role: USER
+ID: 23 | Username: 224001778@ms.daihocthudo.edu.vn | Legacy Role: USER | Group Role: USER

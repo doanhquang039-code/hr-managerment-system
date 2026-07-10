@@ -62,6 +62,13 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
         </dependency>
+
+        <!-- Apache Tika: detect MIME type thực sự từ magic bytes (chống giả mạo Content-Type) -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.9.1</version>
+        </dependency>
 <!-- Email -->
 <dependency>
     <groupId>org.springframework.boot</groupId>

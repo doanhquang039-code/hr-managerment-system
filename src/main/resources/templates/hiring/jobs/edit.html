@@ -21,7 +21,7 @@
                     <h1 class="h3 fw-bold mb-0"><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Job Posting</h1>
                     <small class="text-muted" th:text="${job.title ?: 'Job posting'}">Job posting</small>
                 </div>
-                <a th:href="@{/hiring/jobs/{id}(id=${job.id})}" class="btn btn-outline-secondary">
+                <a th:href="@{|${hiringPath}/jobs/${job.id}|}" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left me-1"></i>Back
                 </a>
             </div>
@@ -31,7 +31,7 @@
             <div class="card">
                 <div class="card-header"><h5 class="mb-0">Job Details</h5></div>
                 <div class="card-body">
-                    <form th:action="@{/hiring/jobs/{id}/edit(id=${job.id})}" th:object="${job}" method="post">
+                    <form th:action="@{|${hiringPath}/jobs/${job.id}/edit|}" th:object="${job}" method="post">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -109,7 +109,7 @@
                         </div>
 
                         <div class="d-flex justify-content-between border-top pt-3">
-                            <a th:href="@{/hiring/jobs/{id}(id=${job.id})}" class="btn btn-outline-secondary">Cancel</a>
+                            <a th:href="@{|${hiringPath}/jobs/${job.id}|}" class="btn btn-outline-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
                         </div>
                     </form>

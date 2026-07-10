@@ -31,7 +31,7 @@ import java.util.Locale;
 import java.util.List;
 
 @Controller
-@RequestMapping("/hiring")
+@RequestMapping
 @PreAuthorize("hasAnyRole('ADMIN','HIRING','MANAGER')")
 public class RecruitmentController {
 
@@ -44,12 +44,12 @@ public class RecruitmentController {
 
     // ==================== DASHBOARD ====================
 
-    @GetMapping
-    public String hiringRoot() {
-        return "redirect:/hiring/dashboard";
+    @GetMapping({"/hiring", "/admin/hiring-dashboard"})
+    public String hiringRoot(jakarta.servlet.http.HttpServletRequest request) {
+        return "redirect:" + (request.getRequestURI().startsWith("/admin") ? "/admin/dashboard" : "/hiring/dashboard");
     }
 
-    @GetMapping("/dashboard")
+    @GetMapping("/hiring/dashboard")
     public String dashboard(Model model, HttpSession session) {
         // Job postings statistics
         List<JobPosting> postings = jobPostingRepository.findAll();
@@ -126,7 +126,7 @@ public class RecruitmentController {
         return cart == null ? 0 : cart.getTotalItems();
     }
 
-    @GetMapping("/users")
+    @GetMapping({"/hiring/users", "/admin/users-hiring"})
     public String hiringUsers() {
         return "redirect:/admin/users?role=HIRING";
     }
@@ -156,7 +156,7 @@ public class RecruitmentController {
 
     // ==================== JOB POSTINGS ====================
 
-    @GetMapping("/postings")
+    @GetMapping({"/hiring/postings", "/admin/postings"})
     public String listPostings(@RequestParam(required = false) String keyword,
                                @RequestParam(required = false) String category,
                                Model model) {
@@ -197,7 +197,7 @@ public class RecruitmentController {
         return value != null && value.toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT));
     }
 
-    @GetMapping("/postings/add")
+    @GetMapping({"/hiring/postings/add", "/admin/postings/add"})
     public String showAddPosting(Model model) {
         model.addAttribute("posting", new JobPosting());
         model.addAttribute("departments", departmentRepository.findAll());
@@ -205,7 +205,7 @@ public class RecruitmentController {
         return "hiring/posting-form";
     }
 
-    @GetMapping("/postings/edit/{id}")
+    @GetMapping({"/hiring/postings/edit/{id}", "/admin/postings/edit/{id}"})
     public String showEditPosting(@PathVariable Integer id, Model model) {
         JobPosting posting = jobPostingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tin tuyển dụng: " + id));
@@ -220,7 +220,7 @@ public class RecruitmentController {
      * Uses @RequestParam instead of @ModelAttribute to properly resolve
      * ManyToOne relations (Department, JobPosition) from their IDs.
      */
-    @PostMapping("/postings/save")
+    @PostMapping({"/hiring/postings/save", "/admin/postings/save"})
     public String savePosting(
             @RequestParam(value = "id", required = false) Integer id,
             @RequestParam(value = "title", required = false) String title,
@@ -232,7 +232,8 @@ public class RecruitmentController {
             @RequestParam(value = "salaryMax", required = false) BigDecimal salaryMax,
             @RequestParam(value = "closingDate", required = false) String closingDateStr,
             @RequestParam(value = "status", required = false) String status,
-            RedirectAttributes ra) {
+            RedirectAttributes ra,
+            jakarta.servlet.http.HttpServletRequest request) {
         try {
             JobPosting posting = (id != null)
                     ? jobPostingRepository.findById(id).orElse(new JobPosting())
@@ -271,28 +272,28 @@ public class RecruitmentController {
         } catch (Exception e) {
             ra.addFlashAttribute("errorMsg", "❌ Lỗi khi lưu tin tuyển dụng: " + e.getMessage());
         }
-        return "redirect:/hiring/postings";
+        return "redirect:" + (request.getRequestURI().startsWith("/admin") ? "/admin" : "/hiring") + "/postings";
     }
 
-    @GetMapping("/postings/close/{id}")
-    public String closePosting(@PathVariable Integer id, RedirectAttributes ra) {
+    @GetMapping({"/hiring/postings/close/{id}", "/admin/postings/close/{id}"})
+    public String closePosting(@PathVariable Integer id, RedirectAttributes ra, jakarta.servlet.http.HttpServletRequest request) {
         JobPosting posting = jobPostingRepository.findById(id).orElseThrow();
         posting.setStatus("CLOSED");
         jobPostingRepository.save(posting);
         ra.addFlashAttribute("successMsg", "Đã đóng tin tuyển dụng.");
-        return "redirect:/hiring/postings";
+        return "redirect:" + (request.getRequestURI().startsWith("/admin") ? "/admin" : "/hiring") + "/postings";
     }
 
-    @GetMapping("/postings/delete/{id}")
-    public String deletePosting(@PathVariable Integer id, RedirectAttributes ra) {
+    @GetMapping({"/hiring/postings/delete/{id}", "/admin/postings/delete/{id}"})
+    public String deletePosting(@PathVariable Integer id, RedirectAttributes ra, jakarta.servlet.http.HttpServletRequest request) {
         jobPostingRepository.deleteById(id);
         ra.addFlashAttribute("successMsg", "🗑️ Đã xoá tin tuyển dụng.");
-        return "redirect:/hiring/postings";
+        return "redirect:" + (request.getRequestURI().startsWith("/admin") ? "/admin" : "/hiring") + "/postings";
     }
 
     // ==================== JOBS MANAGEMENT ====================
 
-    @GetMapping("/jobs/list")
+    @GetMapping({"/hiring/jobs/list", "/admin/jobs/list"})
     public String jobsList(Model model) {
         List<JobPosting> allJobs = jobPostingRepository.findAll();
 
@@ -327,7 +328,7 @@ public class RecruitmentController {
 
     // ==================== MY DEPARTMENT ====================
 
-    @GetMapping("/my-department")
+    @GetMapping({"/hiring/my-department", "/admin/my-department"})
     public String myDepartment(Authentication authentication, Model model) {
         User user = authUserHelper.getCurrentUser(authentication);
         if (user == null) return "redirect:/login";
@@ -352,5 +353,13 @@ public class RecruitmentController {
         model.addAttribute("hirings", hirings);
         model.addAttribute("user", user);
         return "hiring/my-department";
+    }
+
+    @GetMapping({"/hiring/analytics/pipeline", "/admin/analytics/pipeline",
+                 "/hiring/analytics/performance", "/admin/analytics/performance",
+                 "/hiring/reports", "/admin/reports",
+                 "/hiring/settings", "/admin/settings"})
+    public String placeholderRedirect(jakarta.servlet.http.HttpServletRequest request) {
+        return "redirect:" + (request.getRequestURI().startsWith("/admin") ? "/admin/dashboard" : "/hiring/dashboard");
     }
 }
