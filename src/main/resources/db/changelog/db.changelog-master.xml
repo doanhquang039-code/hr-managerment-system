@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <!-- 1. Create jobposition Table -->
+    <changeSet id="1" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="jobposition"/>
+            </not>
+        </preConditions>
+        <createTable tableName="jobposition">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="job_level" type="int" defaultValueNumeric="1"/>
+            <column name="allowance_coeff" type="decimal(5, 2)" defaultValueNumeric="0.00"/>
+            <column name="next_position_id" type="int"/>
+            <column name="active" type="boolean" defaultValueBoolean="true"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="jobposition" baseColumnNames="next_position_id" constraintName="fk_next_position" referencedTableName="jobposition" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- 2. Create group_roles Table -->
+    <changeSet id="2" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="group_roles"/>
+            </not>
+        </preConditions>
+        <createTable tableName="group_roles">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="varchar(20)"/>
+            <column name="text_color" type="varchar(20)"/>
+            <column name="sort_order" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="datetime"/>
+            <column name="built_in" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- 3. Create department Table (Without manager_id FK first to avoid circular ref) -->
+    <changeSet id="3" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="department"/>
+            </not>
+        </preConditions>
+        <createTable tableName="department">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="department_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="varchar(15)"/>
+            <column name="manager_id" type="int"/>
+            <column name="parent_department_id" type="int"/>
+            <column name="employee_count" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="working_hours" type="varchar(100)"/>
+            <column name="created_at" type="datetime"/>
+            <column name="updated_at" type="datetime"/>
+            <column name="created_by_encrypted" type="varchar(1000)"/>
+            <column name="updated_by_encrypted" type="varchar(1000)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 4. Create user Table -->
+    <changeSet id="4" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(50)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="employee_code" type="varchar(30)">
+                <constraints unique="true"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="full_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(100)">
+                <constraints unique="true"/>
+            </column>
+            <column name="phone_number" type="varchar(20)"/>
+            <column name="cccd" type="varchar(1000)"/>
+            <column name="gender" type="varchar(20)"/>
+            <column name="date_of_birth" type="date"/>
+            <column name="address" type="varchar(255)"/>
+            <column name="hire_date" type="date"/>
+            <column name="profile_image" type="varchar(255)" defaultValue="default_avatar.png"/>
+            <column name="role" type="varchar(20)" defaultValue="USER"/>
+            <column name="group_role_id" type="int"/>
+            <column name="department_id" type="int"/>
+            <column name="position_id" type="int"/>
+            <column name="status" type="varchar(20)" defaultValue="ACTIVE"/>
+            <column name="created_at" type="datetime"/>
+            <column name="updated_at" type="datetime"/>
+            <column name="created_by_encrypted" type="varchar(1000)"/>
+            <column name="updated_by_encrypted" type="varchar(1000)"/>
+            <column name="fcm_token" type="varchar(500)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- 5. Add FK constraints with safe exists precondition checks -->
+    <changeSet id="5-1" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="department"/>
+                <tableExists tableName="user"/>
+                <not>
+                    <foreignKeyConstraintExists foreignKeyName="fk_dept_manager" foreignKeyTableName="department"/>
+                </not>
+            </and>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="department" baseColumnNames="manager_id" constraintName="fk_dept_manager" referencedTableName="user" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5-2" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="department"/>
+                <not>
+                    <foreignKeyConstraintExists foreignKeyName="fk_dept_parent" foreignKeyTableName="department"/>
+                </not>
+            </and>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="department" baseColumnNames="parent_department_id" constraintName="fk_dept_parent" referencedTableName="department" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5-3" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="user"/>
+                <tableExists tableName="department"/>
+                <not>
+                    <foreignKeyConstraintExists foreignKeyName="fk_user_dept" foreignKeyTableName="user"/>
+                </not>
+            </and>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="department_id" constraintName="fk_user_dept" referencedTableName="department" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5-4" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="user"/>
+                <tableExists tableName="jobposition"/>
+                <not>
+                    <foreignKeyConstraintExists foreignKeyName="fk_user_pos" foreignKeyTableName="user"/>
+                </not>
+            </and>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="position_id" constraintName="fk_user_pos" referencedTableName="jobposition" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5-5" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="user"/>
+                <tableExists tableName="group_roles"/>
+                <not>
+                    <foreignKeyConstraintExists foreignKeyName="fk_user_group_role" foreignKeyTableName="user"/>
+                </not>
+            </and>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="user" baseColumnNames="group_role_id" constraintName="fk_user_group_role" referencedTableName="group_roles" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- 6. Create attendance Table -->
+    <changeSet id="6" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="attendance"/>
+            </not>
+        </preConditions>
+        <createTable tableName="attendance">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attendance_date" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_in_time" type="time"/>
+            <column name="check_out_time" type="time"/>
+            <column name="status" type="varchar(20)" defaultValue="PRESENT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="text"/>
+            <column name="created_at" type="datetime"/>
+            <column name="updated_at" type="datetime"/>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="attendance" baseColumnNames="user_id" constraintName="fk_attendance_user" referencedTableName="user" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- 7. Seed Initial Data (Skip if admin user already exists) -->
+    <changeSet id="7" author="antigravity">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="user"/>
+                <sqlCheck expectedResult="0">SELECT COUNT(*) FROM user WHERE username = 'admin'</sqlCheck>
+            </and>
+        </preConditions>
+        
+        <!-- Departments -->
+        <insert tableName="department">
+            <column name="id" valueNumeric="1"/>
+            <column name="department_name" value="Phòng Nhân Sự"/>
+            <column name="phone_number" value="0243.111.222"/>
+        </insert>
+        <insert tableName="department">
+            <column name="id" valueNumeric="2"/>
+            <column name="department_name" value="Phòng Kỹ Thuật"/>
+            <column name="phone_number" value="0243.333.444"/>
+        </insert>
+        <insert tableName="department">
+            <column name="id" valueNumeric="3"/>
+            <column name="department_name" value="Phòng Kinh Doanh"/>
+            <column name="phone_number" value="0243.555.666"/>
+        </insert>
+
+        <!-- Job Positions -->
+        <insert tableName="jobposition">
+            <column name="id" valueNumeric="1"/>
+            <column name="position_name" value="Trưởng Phòng"/>
+            <column name="job_level" valueNumeric="5"/>
+            <column name="allowance_coeff" valueNumeric="1.5"/>
+        </insert>
+        <insert tableName="jobposition">
+            <column name="id" valueNumeric="2"/>
+            <column name="position_name" value="Lập Trình Viên"/>
+            <column name="job_level" valueNumeric="3"/>
+            <column name="allowance_coeff" valueNumeric="1.2"/>
+        </insert>
+        <insert tableName="jobposition">
+            <column name="id" valueNumeric="3"/>
+            <column name="position_name" value="Nhân Viên Kinh Doanh"/>
+            <column name="job_level" valueNumeric="2"/>
+            <column name="allowance_coeff" valueNumeric="1.0"/>
+        </insert>
+
+        <!-- Users -->
+        <insert tableName="user">
+            <column name="id" valueNumeric="1"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$12$R9h/lZ9yWky.q.NInr0.9Ope75C9.S23Xv1BByq8Vd17Z5.S23Xv1"/> <!-- 123456 -->
+            <column name="full_name" value="System Admin"/>
+            <column name="email" value="admin@hrms.com"/>
+            <column name="role" value="ADMIN"/>
+            <column name="department_id" valueNumeric="1"/>
+            <column name="position_id" valueNumeric="1"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="user">
+            <column name="id" valueNumeric="2"/>
+            <column name="username" value="hoang.nv"/>
+            <column name="password" value="$2a$12$R9h/lZ9yWky.q.NInr0.9Ope75C9.S23Xv1BByq8Vd17Z5.S23Xv1"/> <!-- 123456 -->
+            <column name="full_name" value="Nguyễn Văn Hoàng"/>
+            <column name="email" value="hoang.nv@hrms.com"/>
+            <column name="role" value="USER"/>
+            <column name="department_id" valueNumeric="2"/>
+            <column name="position_id" valueNumeric="2"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+        <insert tableName="user">
+            <column name="id" valueNumeric="3"/>
+            <column name="username" value="lan.pt"/>
+            <column name="password" value="$2a$12$R9h/lZ9yWky.q.NInr0.9Ope75C9.S23Xv1BByq8Vd17Z5.S23Xv1"/> <!-- 123456 -->
+            <column name="full_name" value="Phan Thị Lan"/>
+            <column name="email" value="lan.pt@hrms.com"/>
+            <column name="role" value="USER"/>
+            <column name="department_id" valueNumeric="1"/>
+            <column name="position_id" valueNumeric="3"/>
+            <column name="status" value="ACTIVE"/>
+        </insert>
+
+        <!-- Set department manager -->
+        <update tableName="department">
+            <column name="manager_id" valueNumeric="1"/>
+            <where>id = 1</where>
+        </update>
+    </changeSet>
+
+</databaseChangeLog>

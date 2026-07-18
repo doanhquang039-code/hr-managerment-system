@@ -54,7 +54,8 @@ public class SecurityConfig {
                         "/admin/payments/ipn/vnpay", "/admin/payment/ipn/vnpay",
                         "/admin/course/save",
                         "/api/lifestyle/health-insights",
-                        "/careers/apply", "/careers/apply/**"))
+                        "/careers/apply", "/careers/apply/**",
+                        "/graphql", "/graphiql", "/ws/**"))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/index.html", "/login", "/login/**",
@@ -66,7 +67,9 @@ public class SecurityConfig {
                     // Trang tuyển dụng công khai - không cần đăng nhập
                     "/careers", "/careers/**",
                     // WebSocket endpoint
-                    "/ws/**"
+                    "/ws/**",
+                    // GraphQL & GraphiQL endpoints
+                    "/graphql", "/graphiql"
                 ).permitAll()
                 .requestMatchers(
                     "/swagger-ui/**",

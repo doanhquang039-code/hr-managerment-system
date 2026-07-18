@@ -50,18 +50,14 @@
             <version>2.8.9</version>
         </dependency>
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
         <dependency>
     <groupId>com.cloudinary</groupId>
     <artifactId>cloudinary-http5</artifactId>
     <version>2.0.0</version>
 </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-mysql</artifactId>
-        </dependency>
 
         <!-- Apache Tika: detect MIME type thực sự từ magic bytes (chống giả mạo Content-Type) -->
         <dependency>
@@ -365,6 +361,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-graphql</artifactId>
+        </dependency>
+
+        <!-- ========== SOAP WEB SERVICES ========== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
         </dependency>
 
         <!-- ========== RESILIENCE ========== -->
