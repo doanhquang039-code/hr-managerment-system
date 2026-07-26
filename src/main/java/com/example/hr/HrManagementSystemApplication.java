@@ -45,6 +45,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 })
 @EnableScheduling
 @SpringBootApplication
+@org.springframework.cache.annotation.EnableCaching
 public class HrManagementSystemApplication {
 
     public static void main(String[] args) {

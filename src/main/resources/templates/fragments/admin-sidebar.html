@@ -12,7 +12,6 @@
     .admin-nav a, .admin-nav button { width:100%; min-height:46px; border:0; background:transparent; color:#aab7c8; text-decoration:none; display:flex; align-items:center; gap:13px; padding:11px 14px; font-size:.95rem; font-weight:680; text-align:left; border-left:3px solid transparent; border-radius:0; }
     .admin-nav a:hover, .admin-nav button:hover, .admin-nav a.active, .admin-nav button.active { color:#fff; background:rgba(255,255,255,.08); border-left-color:#818cf8; }
     .admin-nav i { width:18px; text-align:center; color:inherit; }
-    .admin-nav hr { border-color:rgba(148,163,184,.18); margin:13px 18px; }
     .admin-parent { cursor:pointer; }
     .admin-parent .caret { margin-left:auto; width:auto; color:#cbd5e1; transition:transform .18s ease; font-size:.78rem; }
     .admin-parent.open .caret { transform:rotate(180deg); }
@@ -20,10 +19,16 @@
     .admin-submenu.open { display:block; }
     .admin-submenu a { min-height:36px; padding:8px 12px; font-size:.84rem; font-weight:650; border-left:0; color:#c7d2e1; }
     .admin-submenu a:hover, .admin-submenu a.active { color:#fff; background:rgba(255,255,255,.06); }
-    .admin-lang { display:flex; align-items:center; justify-content:center; gap:8px; padding:15px 0; }
-    .admin-lang button { border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); color:#cbd5e1; border-radius:8px; padding:6px 12px; font-size:.75rem; font-weight:800; }
-    .admin-logout { padding:12px 6px 0; }
-    .admin-logout button { width:100%; min-height:40px; border:1px solid rgba(255,255,255,.75); color:#fff; background:transparent; border-radius:7px; font-weight:750; }
+    .admin-bottom { padding: 15px; margin-top: auto; border-top: 1px solid rgba(148,163,184,.12); background: rgba(15,23,42,.4); border-radius: 12px; margin-bottom: 10px; }
+    .admin-lang { display:flex; align-items:center; justify-content:center; gap:8px; padding-bottom:12px; }
+    .admin-lang button { border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.08); color:#cbd5e1; border-radius:6px; padding:4px 10px; font-size:.72rem; font-weight:700; transition: all 0.2s; }
+    .admin-lang button:hover { background: rgba(255,255,255,.2); color: #fff; }
+    .admin-logout button { width:100%; min-height:38px; border:0; color:#fff; background:linear-gradient(135deg, #ef4444, #dc2626); border-radius:7px; font-weight:650; font-size:.85rem; transition: all 0.2s; }
+    .admin-logout button:hover { box-shadow: 0 4px 12px rgba(239,68,68,.3); transform: translateY(-1px); }
+    .admin-sidebar::-webkit-scrollbar { width: 6px; }
+    .admin-sidebar::-webkit-scrollbar-track { background: transparent; }
+    .admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+    .admin-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
     .admin-main { margin-left:300px; min-height:100vh; padding:32px 40px; background:#eef3f9; }
     @media (max-width:991px) { .admin-sidebar { position:relative; width:100%; min-height:auto; max-height:480px; } .admin-main { margin-left:0; padding:20px; } }
   </style>
@@ -65,8 +70,6 @@
          th:text="${dept.departmentName}">Tên phòng ban</a>
     </div>
     <a href="/admin/positions"><i class="bi bi-briefcase"></i>Chức vụ</a>
-
-    <hr>
     <button type="button" class="admin-parent" data-menu="contracts"><i class="bi bi-file-text"></i>Hợp đồng<i class="bi bi-chevron-down caret"></i></button>
     <div class="admin-submenu" id="contracts">
       <a href="/admin/contracts">Tất cả hợp đồng</a>
@@ -133,8 +136,6 @@
       <a href="/admin/shifts?period=evening">Ca tối</a>
       <a href="/admin/shifts?period=night">Ca đêm</a>
     </div>
-
-    <hr>
     <a href="/admin/reviews"><i class="bi bi-star-half"></i>Đánh giá KPI</a>
     <a href="/admin/kpi"><i class="bi bi-bullseye"></i>Mục tiêu KPI</a>
 
@@ -169,8 +170,6 @@
       <a href="/admin/videos?category=SOFT_SKILL">Kỹ năng mềm</a>
       <a href="/admin/videos?category=COMPLIANCE">Quy định</a>
     </div>
-
-    <hr>
     <button type="button" class="admin-parent" data-menu="expenses"><i class="bi bi-receipt"></i>Chi phí<i class="bi bi-chevron-down caret"></i></button>
     <div class="admin-submenu" id="expenses">
       <a href="/admin/expenses">Tất cả chi phí</a>
@@ -241,8 +240,6 @@
 
     <a href="/admin/okr/objectives"><i class="bi bi-graph-up"></i>OKR</a>
     <a href="/admin/analytics/dashboard"><i class="bi bi-graph-up-arrow"></i>Phân tích</a>
-
-    <hr>
     <button type="button" class="admin-parent" data-menu="system"><i class="bi bi-sliders"></i>Hệ thống<i class="bi bi-chevron-down caret"></i></button>
     <div class="admin-submenu" id="system">
       <a href="/admin/system-monitor">System Monitor</a>
@@ -253,21 +250,20 @@
     </div>
   </div>
 
-  <div class="admin-lang">
-    <button type="button" class="lang-btn" data-lang="vi">VI</button>
-    <span style="opacity:.25">|</span>
-    <button type="button" class="lang-btn" data-lang="en">EN</button>
-    <span style="opacity:.25">|</span>
-    <button type="button" class="lang-btn" data-lang="zh">ZH</button>
-    <span style="opacity:.25">|</span>
-    <button type="button" class="lang-btn" data-lang="ja">JA</button>
-    <span style="opacity:.25">|</span>
-    <button type="button" class="lang-btn" data-lang="ko">KO</button>
   </div>
-  <form th:action="@{/logout}" method="post" class="admin-logout">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-    <button type="submit"><i class="bi bi-box-arrow-right me-1"></i>Đăng xuất</button>
-  </form>
+  <div class="admin-bottom">
+    <div class="admin-lang">
+      <button type="button" class="lang-btn" data-lang="vi">VI</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="zh">ZH</button>
+      <button type="button" class="lang-btn" data-lang="ja">JA</button>
+      <button type="button" class="lang-btn" data-lang="ko">KO</button>
+    </div>
+    <form th:action="@{/logout}" method="post" class="admin-logout">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <button type="submit"><i class="bi bi-box-arrow-right me-1"></i>Đăng xuất</button>
+    </form>
+  </div>
   <script>
     (() => {
       const path = window.location.pathname;

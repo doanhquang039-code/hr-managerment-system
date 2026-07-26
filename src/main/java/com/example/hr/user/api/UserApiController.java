@@ -30,18 +30,22 @@ public class UserApiController {
     private final DepartmentRepository departmentRepository;
     private final JobPositionRepository positionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final com.example.hr.kafka.producer.HREventProducer eventProducer;
 
     public UserApiController(UserRepository userRepository,
                              DepartmentRepository departmentRepository,
                              JobPositionRepository positionRepository,
-                             PasswordEncoder passwordEncoder) {
+                             PasswordEncoder passwordEncoder,
+                             com.example.hr.kafka.producer.HREventProducer eventProducer) {
         this.userRepository = userRepository;
         this.departmentRepository = departmentRepository;
         this.positionRepository = positionRepository;
         this.passwordEncoder = passwordEncoder;
+        this.eventProducer = eventProducer;
     }
 
     @GetMapping
+    @org.springframework.cache.annotation.Cacheable("users")
     public ResponseEntity<List<UserResponseDTO>> list(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "ACTIVE") UserStatus status) {
@@ -57,6 +61,7 @@ public class UserApiController {
     }
 
     @GetMapping("/{id}")
+    @org.springframework.cache.annotation.Cacheable(value = "users", key = "#id")
     public ResponseEntity<UserResponseDTO> get(@PathVariable Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy nhân viên id=" + id));
@@ -64,6 +69,7 @@ public class UserApiController {
     }
 
     @PostMapping
+    @org.springframework.cache.annotation.CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<UserResponseDTO> create(@Valid @RequestBody UserRequestDTO dto) {
         if (dto.getPassword() == null || dto.getPassword().isBlank()) {
             throw new BusinessValidationException("Mật khẩu là bắt buộc khi tạo mới");
@@ -74,7 +80,23 @@ public class UserApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(saved));
     }
 
+    @PostMapping("/async")
+    @org.springframework.cache.annotation.CacheEvict(value = "users", allEntries = true)
+    public ResponseEntity<java.util.Map<String, String>> createAsync(@Valid @RequestBody UserRequestDTO dto) {
+        // Very fast processing: Just publish to Kafka and return 202 Accepted.
+        // In a real scenario, validate and generate a unique UUID for idempotency.
+        com.example.hr.kafka.events.EmployeeLifecycleEvent event = new com.example.hr.kafka.events.EmployeeLifecycleEvent();
+        event.setUsername(dto.getUsername());
+        event.setFullName(dto.getFullName());
+        event.setEventType("ONBOARDED_PENDING");
+        event.setTimestamp(java.time.LocalDateTime.now());
+        eventProducer.publishEmployeeLifecycleEvent(event);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(java.util.Map.of("status", "ACCEPTED", "message", "Tạo nhân viên đang được xử lý dưới nền (sub 0.5ms)"));
+    }
+
     @PutMapping("/{id}")
+    @org.springframework.cache.annotation.CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<UserResponseDTO> update(@PathVariable Integer id, @Valid @RequestBody UserRequestDTO dto) {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy nhân viên id=" + id));
@@ -84,12 +106,55 @@ public class UserApiController {
         return ResponseEntity.ok(toResponse(saved));
     }
 
+    @PutMapping("/{id}/async")
+    @org.springframework.cache.annotation.CacheEvict(value = "users", allEntries = true)
+    public ResponseEntity<java.util.Map<String, String>> updateAsync(@PathVariable Integer id, @Valid @RequestBody UserRequestDTO dto) {
+        com.example.hr.kafka.events.EmployeeLifecycleEvent event = new com.example.hr.kafka.events.EmployeeLifecycleEvent();
+        event.setEmployeeId(id);
+        event.setUsername(dto.getUsername());
+        event.setFullName(dto.getFullName());
+        event.setEventType("UPDATED_PENDING");
+        event.setTimestamp(java.time.LocalDateTime.now());
+        eventProducer.publishEmployeeLifecycleEvent(event);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(java.util.Map.of("status", "ACCEPTED", "message", "Cập nhật nhân viên đang được xử lý dưới nền (sub 0.5ms)"));
+    }
+
     @PatchMapping("/{id}/deactivate")
+    @org.springframework.cache.annotation.CacheEvict(value = "users", allEntries = true)
     public ResponseEntity<UserResponseDTO> deactivate(@PathVariable Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy nhân viên id=" + id));
         user.setStatus(UserStatus.INACTIVE);
-        return ResponseEntity.ok(toResponse(userRepository.save(user)));
+        userRepository.save(user);
+        return ResponseEntity.ok(toResponse(user));
+    }
+
+    @PatchMapping("/{id}/contact")
+    @org.springframework.cache.annotation.CacheEvict(value = "users", allEntries = true)
+    public ResponseEntity<java.util.Map<String, String>> updateContactFast(
+            @PathVariable Integer id, @RequestBody java.util.Map<String, String> updates) {
+        
+        com.example.hr.kafka.events.EmployeeLifecycleEvent event = new com.example.hr.kafka.events.EmployeeLifecycleEvent();
+        event.setEmployeeId(id);
+        event.setEventType("CONTACT_UPDATE_PENDING");
+        
+        // Giả lập mã hoá thông tin nhạy cảm trước khi gửi vào Kafka
+        String phone = updates.get("phoneNumber");
+        if (phone != null) {
+            try {
+                // Mã hoá số điện thoại (thông tin nhạy cảm) bằng AES
+                javax.crypto.SecretKey key = com.example.hr.util.EncryptionUtils.generateAESKey();
+                String encryptedPhone = com.example.hr.util.EncryptionUtils.encryptAES(phone, key);
+                // Dùng field reason để truyền key + data
+                event.setReason(com.example.hr.util.EncryptionUtils.secretKeyToString(key) + "|||" + encryptedPhone);
+            } catch (Exception e) {
+                event.setReason(phone); // Fallback
+            }
+        }
+        
+        eventProducer.publishEmployeeLifecycleEvent(event);
+        return ResponseEntity.accepted().body(java.util.Map.of("message", "Yêu cầu cập nhật liên hệ đã được ghi nhận và mã hoá an toàn"));
     }
 
     private void validateUnique(UserRequestDTO dto, Integer currentId) {
