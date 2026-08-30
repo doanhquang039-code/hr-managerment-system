@@ -41,7 +41,7 @@ jobs:
 
       - name: Run SonarQube scan
         if: ${{ env.SONAR_HOST_URL != '' && env.SONAR_TOKEN != '' }}
-        uses: SonarSource/sonarqube-scan-action@v3
+        uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ env.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
