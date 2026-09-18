@@ -39,3 +39,11 @@ google-drive-service-account.json
 ### Local secrets / overrides ###
 src/main/resources/application-local.properties
 .env
+
+### JVM Crash Logs ###
+hs_err_pid*.log
+replay_pid*.log
+
+### Node / npm ###
+node_modules/
+package-lock.json
