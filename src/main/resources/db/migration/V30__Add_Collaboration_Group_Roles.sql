@@ -1,10 +1,5 @@
-CREATE TABLE IF NOT EXISTS collaboration_group_roles (
-    group_id INT NOT NULL,
-    role VARCHAR(50) NOT NULL,
-    PRIMARY KEY (group_id, role),
-    CONSTRAINT fk_collaboration_group_roles_group
-        FOREIGN KEY (group_id) REFERENCES collaboration_group(id) ON DELETE CASCADE
-);
+-- NOTE: collaboration_group_roles table was already created in V29.
+-- This migration only seeds additional default roles if missing.
 
 INSERT IGNORE INTO collaboration_group_roles (group_id, role)
 SELECT id, 'ADMIN' FROM collaboration_group WHERE name = 'HR Collaboration Group';
